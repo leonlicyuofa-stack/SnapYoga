@@ -37,10 +37,10 @@ export function SnapYogaPageClient() {
     try {
       const input: AnalyzeYogaPoseInput = { videoDataUri: dataUri };
       const result = await analyzeYogaPose(input);
-      setAnalysisResult(result);
+      setAnalysisResult(result); // Result now includes score
       toast({
         title: "Analysis Complete",
-        description: "Your yoga pose has been analyzed.",
+        description: `Your yoga pose has been analyzed. Score: ${result.score !== undefined ? result.score + '/100' : 'N/A'}`,
       });
     } catch (e) {
       console.error("Error analyzing pose:", e);
@@ -51,6 +51,8 @@ export function SnapYogaPageClient() {
         description: errorMessage,
         variant: "destructive",
       });
+      // Set a default error analysis result to show something went wrong
+      setAnalysisResult({ feedback: "Analysis failed. Please try again.", score: 0 });
     } finally {
       setIsLoadingAnalysis(false);
     }
@@ -100,19 +102,19 @@ export function SnapYogaPageClient() {
         <PoseAnalysisCard
           videoDataUri={videoDataUri}
           videoFileName={videoFileName}
-          analysis={analysisResult}
+          analysis={analysisResult} // This will now contain the score
           isLoading={isLoadingAnalysis}
         />
       </div>
       
       {analysisResult && <Separator className="my-8" />}
 
-      {analysisResult && (
+      {analysisResult && ( // Only show feedback card if analysis was at least attempted
         <FeedbackSubmissionCard
           onFeedbackSubmit={handleFeedbackSubmit}
           isLoading={isLoadingSummary}
           summary={summaryResult}
-          isAnalysisDone={!!analysisResult}
+          isAnalysisDone={!!analysisResult && analysisResult.feedback !== "Analysis failed. Please try again."} // Ensure analysis didn't just fail
         />
       )}
 
