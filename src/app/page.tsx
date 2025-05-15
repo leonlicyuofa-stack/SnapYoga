@@ -13,11 +13,11 @@ export default function HomePage() {
         <Card className="w-full max-w-2xl shadow-2xl overflow-hidden">
           <div className="relative w-full h-64 md:h-80">
             <Image
-              src="https://placehold.co/800x400.png"
+              src="https://placehold.co/800x450.png"
               alt="Yoga practice"
               layout="fill"
               objectFit="cover"
-              data-ai-hint="yoga serene"
+              data-ai-hint="yoga meditation"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
             <div className="absolute bottom-0 left-0 p-6 md:p-8">
