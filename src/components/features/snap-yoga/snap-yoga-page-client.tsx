@@ -1,12 +1,13 @@
+
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { analyzeYogaPose, type AnalyzeYogaPoseInput, type AnalyzeYogaPoseOutput } from '@/ai/flows/analyze-yoga-pose';
 import { summarizeFeedback, type SummarizeFeedbackInput, type SummarizeFeedbackOutput } from '@/ai/flows/summarize-feedback';
 import { VideoUploadCard } from './video-upload-card';
 import { PoseAnalysisCard } from './pose-analysis-card';
 import { FeedbackSubmissionCard } from './feedback-submission-card';
-// RecommendedVideosCard import and YouTubeVideo type import removed
+import { RecommendedVideosCard, type YouTubeVideo } from './recommended-videos-card';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
@@ -17,7 +18,7 @@ export function SnapYogaPageClient() {
   const [videoFileName, setVideoFileName] = useState<string | null>(null);
   const [analysisResult, setAnalysisResult] = useState<AnalyzeYogaPoseOutput | null>(null);
   const [summaryResult, setSummaryResult] = useState<SummarizeFeedbackOutput | null>(null);
-  // recommendedVideos state removed
+  const [recommendedVideos, setRecommendedVideos] = useState<YouTubeVideo[]>([]);
   
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
@@ -30,18 +31,31 @@ export function SnapYogaPageClient() {
     setVideoFileName(fileName);
     setAnalysisResult(null); 
     setSummaryResult(null); 
-    // setRecommendedVideos([]) removed
+    setRecommendedVideos([]); // Clear previous recommendations
     setError(null);
     setIsLoadingAnalysis(true);
 
     try {
       const input: AnalyzeYogaPoseInput = { videoDataUri: dataUri };
       const result = await analyzeYogaPose(input);
-      setAnalysisResult(result); // Result now includes score
+      setAnalysisResult(result);
       toast({
         title: "Analysis Complete",
         description: `Your yoga pose has been analyzed. Score: ${result.score !== undefined ? result.score + '/100' : 'N/A'}`,
       });
+
+      // Populate recommended videos (placeholder logic)
+      // In a real app, this would be based on analysisResult.feedback or specific issues identified.
+      if (result && result.score < 90) { // Example condition
+        setRecommendedVideos([
+          { id: 'v1', title: 'Improve Your Posture with These 5 Exercises', embedUrl: 'https://www.youtube.com/embed/watch?v=BqgS03wTOsA' },
+          { id: 'v2', title: 'Yoga for Better Alignment and Balance', embedUrl: 'https://www.youtube.com/embed/watch?v=o8_jPgtpZ3w' },
+          { id: 'v3', title: 'Core Strengthening for Yoga Stability', embedUrl: 'https://www.youtube.com/embed/watch?v=44mgUselcDU' },
+          { id: 'v4', title: 'Shoulder Opening Yoga Poses', embedUrl: 'https://www.youtube.com/embed/watch?v=n3uQ227u1C8' },
+        ]);
+      }
+
+
     } catch (e) {
       console.error("Error analyzing pose:", e);
       const errorMessage = e instanceof Error ? e.message : "An unknown error occurred during analysis.";
@@ -51,7 +65,6 @@ export function SnapYogaPageClient() {
         description: errorMessage,
         variant: "destructive",
       });
-      // Set a default error analysis result to show something went wrong
       setAnalysisResult({ feedback: "Analysis failed. Please try again.", score: 0 });
     } finally {
       setIsLoadingAnalysis(false);
@@ -85,8 +98,6 @@ export function SnapYogaPageClient() {
     }
   };
 
-  // useEffect for recommended videos removed
-
   return (
     <div className="space-y-8">
       {error && (
@@ -102,23 +113,28 @@ export function SnapYogaPageClient() {
         <PoseAnalysisCard
           videoDataUri={videoDataUri}
           videoFileName={videoFileName}
-          analysis={analysisResult} // This will now contain the score
+          analysis={analysisResult}
           isLoading={isLoadingAnalysis}
         />
       </div>
       
       {analysisResult && <Separator className="my-8" />}
 
-      {analysisResult && ( // Only show feedback card if analysis was at least attempted
+      {analysisResult && (
         <FeedbackSubmissionCard
           onFeedbackSubmit={handleFeedbackSubmit}
           isLoading={isLoadingSummary}
           summary={summaryResult}
-          isAnalysisDone={!!analysisResult && analysisResult.feedback !== "Analysis failed. Please try again."} // Ensure analysis didn't just fail
+          isAnalysisDone={!!analysisResult && analysisResult.feedback !== "Analysis failed. Please try again."}
         />
       )}
 
-      {/* Recommended Videos Section rendering removed */}
+      {analysisResult && recommendedVideos.length > 0 && (
+        <>
+          <Separator className="my-8" />
+          <RecommendedVideosCard videos={recommendedVideos} isLoading={isLoadingAnalysis && recommendedVideos.length === 0} />
+        </>
+      )}
     </div>
   );
 }

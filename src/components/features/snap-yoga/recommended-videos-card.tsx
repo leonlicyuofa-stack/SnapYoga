@@ -1,10 +1,9 @@
+
 "use client";
 
-// This component is intentionally left minimal as part of a revert operation
-// to remove the recommended videos feature.
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Youtube } from 'lucide-react';
 
-// Keeping the interface for type consistency if other files were to import it,
-// though it won't be functionally used if the feature is reverted.
 export interface YouTubeVideo {
   id: string;
   title: string;
@@ -12,10 +11,79 @@ export interface YouTubeVideo {
 }
 
 interface RecommendedVideosCardProps {
-  videos?: YouTubeVideo[]; // Made optional as it won't be actively used
+  videos: YouTubeVideo[];
+  isLoading: boolean; // To potentially show skeletons later
 }
 
-export function RecommendedVideosCard({ videos }: RecommendedVideosCardProps) {
-  // Since the feature is being reverted, this component should render nothing.
-  return null; 
+export function RecommendedVideosCard({ videos, isLoading }: RecommendedVideosCardProps) {
+  if (isLoading) {
+    // TODO: Add skeleton loaders for videos
+    return (
+        <Card className="w-full shadow-lg mt-8">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-2xl">
+                    <Youtube className="h-7 w-7 text-primary" />
+                    Recommended Training Videos
+                </CardTitle>
+                <CardDescription>
+                    Loading recommended videos to help you improve...
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[1, 2].map((i) => (
+                    <div key={i} className="space-y-2">
+                        <div className="aspect-video bg-muted rounded-md animate-pulse"></div>
+                        <div className="h-4 bg-muted rounded w-3/4 animate-pulse"></div>
+                    </div>
+                ))}
+            </CardContent>
+        </Card>
+    );
+  }
+
+
+  if (!videos || videos.length === 0) {
+    return null; // Don't render anything if there are no videos
+  }
+
+  return (
+    <Card className="w-full shadow-lg mt-8">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-2xl">
+          <Youtube className="h-7 w-7 text-primary" />
+          Recommended Training Videos
+        </CardTitle>
+        <CardDescription>
+          Here are some videos that might help you improve your posture and poses.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {videos.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
+            {videos.map((video) => (
+              <div key={video.id} className="rounded-lg overflow-hidden shadow-md border border-border bg-card p-1">
+                <div className="aspect-video">
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    src={video.embedUrl}
+                    title={video.title}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="rounded-md"
+                  ></iframe>
+                </div>
+                <h3 className="mt-3 mb-1 px-2 text-base font-semibold leading-snug text-card-foreground truncate" title={video.title}>
+                  {video.title}
+                </h3>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-muted-foreground text-center py-4">No video recommendations available at the moment.</p>
+        )}
+      </CardContent>
+    </Card>
+  );
 }
