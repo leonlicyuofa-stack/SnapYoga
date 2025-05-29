@@ -4,19 +4,20 @@
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { PersonStanding, Sparkles, ArrowRight, Users, ListChecks, CalendarDays, Trophy, Eye } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { PersonStanding, Sparkles, ArrowRight, Users, ListChecks, CalendarDays, Trophy, Eye, Copy, MessageSquare, Share2 } from 'lucide-react';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';
 import type { Timestamp } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
-import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore'; // Removed 'where' as it's not used here
+import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 
 interface StoredAnalysis {
   id: string;
@@ -31,12 +32,14 @@ export default function HomePage() {
   const { user, loading: authLoading } = useAuth();
   const [analyses, setAnalyses] = useState<StoredAnalysis[]>([]);
   const [loadingAnalyses, setLoadingAnalyses] = useState(true);
+  const [inviteLink, setInviteLink] = useState('');
+  const { toast } = useToast();
 
   useEffect(() => {
     if (user && !authLoading) {
       setLoadingAnalyses(true);
       const analysesRef = collection(firestore, 'users', user.uid, 'poseAnalyses');
-      const q = query(analysesRef, orderBy('createdAt', 'desc'), limit(3)); // Limit to 3 for dashboard card
+      const q = query(analysesRef, orderBy('createdAt', 'desc'), limit(3));
 
       getDocs(q)
         .then((querySnapshot) => {
@@ -56,6 +59,10 @@ export default function HomePage() {
       setAnalyses([]);
       setLoadingAnalyses(false);
     }
+
+    if (typeof window !== 'undefined') {
+      setInviteLink(window.location.origin); // App's homepage URL
+    }
   }, [user, authLoading]);
 
   const getScoreBadgeVariant = (score: number): "default" | "secondary" | "destructive" | "outline" => {
@@ -65,11 +72,54 @@ export default function HomePage() {
     return "destructive";
   };
 
+  const handleCopyInviteLink = () => {
+    if (navigator.clipboard && inviteLink) {
+      navigator.clipboard.writeText(inviteLink)
+        .then(() => {
+          toast({
+            title: "Link Copied!",
+            description: "Invite link copied to your clipboard.",
+          });
+        })
+        .catch(err => {
+          console.error('Failed to copy link: ', err);
+          toast({
+            title: "Copy Failed",
+            description: "Could not copy the link. Please try manually.",
+            variant: "destructive",
+          });
+        });
+    }
+  };
+
+  const whatsappShareText = inviteLink ? `Hey! Check out SnapYoga - an awesome app to analyze and improve your yoga poses: ${inviteLink}` : '';
+  const whatsappShareUrl = inviteLink ? `whatsapp://send?text=${encodeURIComponent(whatsappShareText)}` : '#';
+
+  const handleInstagramShare = () => {
+    if (navigator.clipboard && inviteLink) {
+      navigator.clipboard.writeText(inviteLink)
+        .then(() => {
+          toast({
+            title: "Link Copied for Instagram!",
+            description: "Paste this link in your Instagram bio or stories.",
+            duration: 5000,
+          });
+        })
+        .catch(err => {
+          console.error('Failed to copy link: ', err);
+          toast({
+            title: "Copy Failed",
+            description: "Could not copy the link. Please try manually.",
+            variant: "destructive",
+          });
+        });
+    }
+  };
+
   if (authLoading) {
     return (
       <AppShell>
         <div className="space-y-12 p-4 md:p-8 animate-pulse">
-          {/* Skeleton for dashboard area */}
           <div className="bg-muted/30 p-6 rounded-lg shadow">
             <Skeleton className="h-8 w-3/4 mb-6" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -78,13 +128,11 @@ export default function HomePage() {
               <Skeleton className="h-48 rounded-lg" />
             </div>
           </div>
-          {/* Skeleton for main welcome card */}
           <Card className="w-full max-w-2xl shadow-2xl overflow-hidden mx-auto">
             <Skeleton className="w-full h-64 md:h-80" />
             <CardHeader className="text-center pt-8"><Skeleton className="h-8 w-3/5 mx-auto" /><Skeleton className="h-6 w-4/5 mx-auto mt-2" /></CardHeader>
             <CardContent className="flex flex-col items-center space-y-6 p-8"><Skeleton className="h-12 w-3/4" /></CardContent>
           </Card>
-          {/* Skeleton for challenges card */}
           <Card className="w-full max-w-2xl shadow-2xl overflow-hidden mt-12 mx-auto">
             <CardHeader className="text-center pt-8"><Skeleton className="h-8 w-3/5 mx-auto" /><Skeleton className="h-6 w-4/5 mx-auto mt-2" /></CardHeader>
             <CardContent className="flex flex-col items-center space-y-6 p-8"><Skeleton className="h-12 w-1/2" /></CardContent>
@@ -97,99 +145,154 @@ export default function HomePage() {
   return (
     <AppShell>
       <div className="flex flex-col items-center w-full">
-        {user && ( // Dashboard section - only render if user is logged in
-          <div className="w-full bg-primary/5 p-4 md:p-6 rounded-lg shadow-md border border-primary/20 mb-8 md:mb-12">
-            <h2 className="text-2xl md:text-3xl font-semibold text-primary mb-4 md:mb-6 text-center">
-              Welcome to Your Dashboard, {user.displayName || user.email?.split('@')[0] || 'User'}!
-            </h2>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-              {/* Card 1: Recent Pose Analyses */}
-              <Card className="shadow-lg lg:col-span-2">
-                <CardHeader>
-                  <CardTitle className="flex items-center text-xl md:text-2xl">
-                    <ListChecks className="mr-3 h-7 w-7 text-primary" />
-                    Recent Pose Analyses
-                  </CardTitle>
-                  <CardDescription>Your last few analyzed poses.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {loadingAnalyses ? (
-                    <div className="space-y-3">
-                      {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 w-full rounded-md" />)}
-                    </div>
-                  ) : analyses.length > 0 ? (
-                    <ul className="space-y-3">
-                      {analyses.map((analysis) => (
-                        <li key={analysis.id} className="p-3 bg-card rounded-md border hover:shadow-sm transition-shadow">
-                          <div className="flex justify-between items-start mb-1">
-                            <span className="font-semibold text-lg text-foreground">{analysis.identifiedPose}</span>
-                            <Badge variant={getScoreBadgeVariant(analysis.score)} className="text-sm px-3 py-1">
-                              {analysis.score}/100
-                            </Badge>
-                          </div>
-                          <p className="text-xs text-muted-foreground">
-                            {format(analysis.createdAt.toDate(), 'PPP')}
-                          </p>
-                          <p className="text-sm text-foreground/80 mt-1 truncate" title={analysis.feedback}>
-                            Feedback: {analysis.feedback.substring(0, 70)}{analysis.feedback.length > 70 ? "..." : ""}
-                          </p>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-muted-foreground text-center py-4">No pose analyses found. Analyze a pose to see your progress!</p>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Card 2: App Usage & Challenges Combined or Separate */}
-              <div className="space-y-4 md:space-y-6">
-                <Card className="shadow-lg">
+        {user && (
+          <>
+            <div className="w-full bg-primary/5 p-4 md:p-6 rounded-lg shadow-md border border-primary/20 mb-8 md:mb-12">
+              <h2 className="text-2xl md:text-3xl font-semibold text-primary mb-4 md:mb-6 text-center">
+                Welcome to Your Dashboard, {user.displayName || user.email?.split('@')[0] || 'User'}!
+              </h2>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+                <Card className="shadow-lg lg:col-span-2">
                   <CardHeader>
                     <CardTitle className="flex items-center text-xl md:text-2xl">
-                      <CalendarDays className="mr-3 h-7 w-7 text-primary" />
-                      App Usage
+                      <ListChecks className="mr-3 h-7 w-7 text-primary" />
+                      Recent Pose Analyses
                     </CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-center">
-                    <p className="text-5xl font-bold text-accent">15</p>
-                    <p className="text-muted-foreground">Active Days (This Month)</p>
-                    <p className="mt-3 text-sm text-foreground/80">Keep up the great work!</p>
-                  </CardContent>
-                </Card>
-
-                <Card className="shadow-lg">
-                  <CardHeader>
-                    <CardTitle className="flex items-center text-xl md:text-2xl">
-                      <Trophy className="mr-3 h-7 w-7 text-primary" />
-                      Friend Challenges
-                    </CardTitle>
+                    <CardDescription>Your last few analyzed poses.</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground mb-1 text-sm">Headstand Challenge:</p>
-                    <div className="mb-2">
-                      <div className="flex justify-between text-xs text-foreground/80 mb-0.5"><span>You</span><span>75%</span></div>
-                      <Progress value={75} className="h-2.5" />
-                    </div>
-                    <div>
-                      <div className="flex justify-between text-xs text-muted-foreground mb-0.5"><span>Alex</span><span>60%</span></div>
-                      <Progress value={60} className="h-2.5 bg-secondary/70" />
-                    </div>
-                    <Button variant="outline" size="sm" className="mt-4 w-full" asChild>
-                      <Link href="/challenges">
-                        View All Challenges
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
-                    </Button>
+                    {loadingAnalyses ? (
+                      <div className="space-y-3">
+                        {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 w-full rounded-md" />)}
+                      </div>
+                    ) : analyses.length > 0 ? (
+                      <ul className="space-y-3">
+                        {analyses.map((analysis) => (
+                          <li key={analysis.id} className="p-3 bg-card rounded-md border hover:shadow-sm transition-shadow">
+                            <div className="flex justify-between items-start mb-1">
+                              <span className="font-semibold text-lg text-foreground">{analysis.identifiedPose}</span>
+                              <Badge variant={getScoreBadgeVariant(analysis.score)} className="text-sm px-3 py-1">
+                                {analysis.score}/100
+                              </Badge>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              {format(analysis.createdAt.toDate(), 'PPP')}
+                            </p>
+                            <p className="text-sm text-foreground/80 mt-1 truncate" title={analysis.feedback}>
+                              Feedback: {analysis.feedback.substring(0, 70)}{analysis.feedback.length > 70 ? "..." : ""}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-muted-foreground text-center py-4">No pose analyses found. Analyze a pose to see your progress!</p>
+                    )}
                   </CardContent>
                 </Card>
+
+                <div className="space-y-4 md:space-y-6">
+                  <Card className="shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="flex items-center text-xl md:text-2xl">
+                        <CalendarDays className="mr-3 h-7 w-7 text-primary" />
+                        App Usage
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-center">
+                      <p className="text-5xl font-bold text-accent">15</p>
+                      <p className="text-muted-foreground">Active Days (This Month)</p>
+                      <p className="mt-3 text-sm text-foreground/80">Keep up the great work!</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="flex items-center text-xl md:text-2xl">
+                        <Trophy className="mr-3 h-7 w-7 text-primary" />
+                        Friend Challenges
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground mb-1 text-sm">Headstand Challenge:</p>
+                      <div className="mb-2">
+                        <div className="flex justify-between text-xs text-foreground/80 mb-0.5"><span>You</span><span>75%</span></div>
+                        <Progress value={75} className="h-2.5" />
+                      </div>
+                      <div>
+                        <div className="flex justify-between text-xs text-muted-foreground mb-0.5"><span>Alex</span><span>60%</span></div>
+                        <Progress value={60} className="h-2.5 bg-secondary/70" />
+                      </div>
+                      <Button variant="outline" size="sm" className="mt-4 w-full" asChild>
+                        <Link href="/challenges">
+                          View All Challenges
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
               </div>
             </div>
-          </div>
+
+            <Card className="w-full max-w-2xl shadow-lg mb-8 md:mb-12 mx-auto">
+              <CardHeader>
+                <CardTitle className="text-2xl font-semibold flex items-center justify-center gap-2 text-primary">
+                  <Share2 className="h-7 w-7" />
+                  Invite Friends to SnapYoga
+                </CardTitle>
+                <CardDescription className="text-center mt-1">
+                  Share your love for yoga and help friends improve their practice!
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <p className="text-sm font-medium mb-1">Your unique invite link:</p>
+                  <div className="flex items-center space-x-2">
+                    <Input 
+                      type="text" 
+                      value={inviteLink} 
+                      readOnly 
+                      className="text-sm text-muted-foreground"
+                      aria-label="Invite Link"
+                    />
+                    <Button variant="outline" size="icon" onClick={handleCopyInviteLink} title="Copy Link">
+                      <Copy className="h-5 w-5" />
+                    </Button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Button 
+                    variant="outline" 
+                    className="w-full" 
+                    asChild={!!inviteLink} // Only make it an anchor if link is ready
+                    disabled={!inviteLink}
+                  >
+                    <a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer">
+                      <MessageSquare className="mr-2 h-5 w-5" />
+                      Share on WhatsApp
+                    </a>
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full" 
+                    onClick={handleInstagramShare}
+                    disabled={!inviteLink}
+                  >
+                    <Share2 className="mr-2 h-5 w-5" /> {/* Using generic Share icon for IG */}
+                    Share on Instagram
+                  </Button>
+                </div>
+              </CardContent>
+              <CardFooter>
+                <p className="text-xs text-muted-foreground text-center w-full">
+                  Sharing the link helps others discover SnapYoga.
+                </p>
+              </CardFooter>
+            </Card>
+          </>
         )}
 
-        {/* Main Welcome and Challenges Section */}
-        <div className="w-full max-w-2xl flex flex-col items-center justify-center py-8 md:py-12"> {/* Ensure this content is centered and has some top padding */}
+        <div className="w-full max-w-2xl flex flex-col items-center justify-center py-8 md:py-12">
           <Card className="w-full shadow-2xl overflow-hidden">
             <div className="relative w-full h-64 md:h-80">
               <Image
@@ -258,5 +361,3 @@ export default function HomePage() {
     </AppShell>
   );
 }
-
-    
