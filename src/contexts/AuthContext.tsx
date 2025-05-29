@@ -14,9 +14,9 @@ import {
   signOut,
   type AuthProvider as FirebaseAuthProvider,
   type AuthError,
-  EmailAuthProvider, // Added for password change
-  reauthenticateWithCredential, // Added for password change
-  updatePassword, // Added for password change
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updatePassword,
 } from 'firebase/auth';
 import { auth, firestore } from '@/lib/firebase/clientApp';
 import { doc, setDoc, getDoc, serverTimestamp, type DocumentData } from 'firebase/firestore';
@@ -31,7 +31,7 @@ interface AuthContextType {
   signUpWithEmail: (email: string, pass: string) => Promise<void>;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   signOutUser: () => Promise<void>;
-  updateUserPassword: (currentPassword: string, newPassword: string) => Promise<boolean>; // Added
+  updateUserPassword: (currentPassword: string, newPassword: string) => Promise<boolean>;
 }
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
@@ -70,34 +70,40 @@ const formatAuthError = (error: AuthError): string => {
 
 export const createUserProfileDocument = async (user: User, additionalData: DocumentData = {}) => {
   if (!user) return;
+
   const userRef = doc(firestore, `users/${user.uid}`);
-  const userSnap = await getDoc(userRef);
-
-  const { uid, email, displayName, photoURL } = user;
-  const dataToSet: DocumentData = {
-    uid,
-    email,
-    displayName: displayName || email?.split('@')[0] || 'User',
-    photoURL,
-    ...additionalData,
-  };
-
-  if (!userSnap.exists()) {
-    dataToSet.createdAt = serverTimestamp();
-    if (additionalData.onboardingCompleted === undefined) {
-      dataToSet.onboardingCompleted = false;
-    }
-  } else {
-    dataToSet.updatedAt = serverTimestamp();
-    if (userSnap.data()?.onboardingCompleted === true && additionalData.onboardingCompleted === undefined) {
-      dataToSet.onboardingCompleted = true;
-    }
-  }
-
   try {
+    const userSnap = await getDoc(userRef);
+
+    const { uid, email, displayName, photoURL } = user;
+    const dataToSet: DocumentData = {
+      uid,
+      email,
+      displayName: displayName || email?.split('@')[0] || 'User',
+      photoURL,
+      ...additionalData, // Apply additionalData first
+    };
+
+    if (!userSnap.exists()) {
+      dataToSet.createdAt = serverTimestamp();
+      // Only set onboardingCompleted if it's not already in additionalData
+      if (additionalData.onboardingCompleted === undefined) {
+        dataToSet.onboardingCompleted = false;
+      }
+    } else {
+      dataToSet.updatedAt = serverTimestamp();
+      // If user exists and onboardingCompleted is true, and additionalData doesn't override it, keep it true.
+      if (userSnap.data()?.onboardingCompleted === true && additionalData.onboardingCompleted === undefined) {
+        dataToSet.onboardingCompleted = true;
+      } else if (additionalData.onboardingCompleted === undefined) {
+        // If additionalData doesn't specify onboardingCompleted, retain existing value or default to false
+        dataToSet.onboardingCompleted = userSnap.data()?.onboardingCompleted || false;
+      }
+    }
     await setDoc(userRef, dataToSet, { merge: true });
   } catch (error) {
-    console.error("Error creating/updating user profile in Firestore:", error);
+    console.error("Error in createUserProfileDocument:", error);
+    throw error; // Re-throw the error to be caught by the caller
   }
 };
 
@@ -110,14 +116,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   React.useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        await createUserProfileDocument(currentUser);
+      try {
+        setUser(currentUser);
+        if (currentUser) {
+          await createUserProfileDocument(currentUser);
+        }
+      } catch (error) {
+        console.error("Error processing auth state change or creating user profile:", error);
+        // Optionally show a toast to the user about profile creation failure, but don't block app loading
+      } finally {
+        setLoading(false); // Ensure loading state is always updated
       }
-      setLoading(false);
     });
     return () => unsubscribe();
-  }, []);
+  }, []); // Empty dependency array ensures it runs once on mount
 
   const handleAuthSuccess = async (message: string, authUser: User, redirectPath: string = '/') => {
     toast({ title: 'Success', description: message });
@@ -138,12 +150,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, provider);
+      // createUserProfileDocument is already called by onAuthStateChanged
+      // We just need to determine the redirect path based on onboarding status
       const userDocRef = doc(firestore, 'users', result.user.uid);
       const userSnap = await getDoc(userDocRef);
+
       if (userSnap.exists() && userSnap.data()?.onboardingCompleted) {
         await handleAuthSuccess(`${providerName} sign-in successful.`, result.user, '/');
       } else {
-        await handleAuthSuccess(`${providerName} sign-in successful. Welcome!`, result.user, '/');
+        // If onboarding is not complete, or profile doesn't exist yet (onAuthStateChanged will create it)
+        // redirect to onboarding.
+        await handleAuthSuccess(`${providerName} sign-in successful. Please complete your profile.`, result.user, '/auth/onboarding/details');
       }
     } catch (error) {
       handleAuthError(error, `Failed to sign in with ${providerName}.`);
@@ -162,10 +179,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signUpWithEmail = async (email: string, pass: string) => {
     setLoading(true);
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-      await createUserProfileDocument(userCredential.user, { onboardingCompleted: false });
+      // createUserWithEmailAndPassword will trigger onAuthStateChanged, which handles profile creation.
+      await createUserWithEmailAndPassword(auth, email, pass);
+      // Do not call createUserProfileDocument here directly, onAuthStateChanged handles it.
       toast({ title: 'Account Created!', description: 'Please complete your profile.' });
-      router.push('/auth/onboarding/details');
+      router.push('/auth/onboarding/details'); // Redirect to start onboarding
     } catch (error) {
       handleAuthError(error, 'Failed to create account.');
     } finally {
@@ -177,12 +195,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+      // onAuthStateChanged will handle profile document check/creation.
+      // We need to check onboarding status to redirect appropriately.
       const userDocRef = doc(firestore, 'users', userCredential.user.uid);
       const userSnap = await getDoc(userDocRef);
+
       if (userSnap.exists() && userSnap.data()?.onboardingCompleted) {
          await handleAuthSuccess('Signed in successfully.', userCredential.user, '/');
       } else {
-        await handleAuthSuccess('Signed in successfully. Welcome back!', userCredential.user, '/');
+        // If onboarding not complete, or profile doesn't exist yet, redirect to onboarding
+        await handleAuthSuccess('Signed in successfully. Please complete your profile.', userCredential.user, '/auth/onboarding/details');
       }
     } catch (error) {
       handleAuthError(error, 'Failed to sign in.');
@@ -196,8 +218,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await signOut(auth);
       toast({ title: 'Signed Out', description: 'You have been signed out successfully.' });
-      router.push('/');
-      setUser(null);
+      router.push('/'); // Redirect to home or sign-in page
+      setUser(null); // Explicitly set user to null
     } catch (error) {
       handleAuthError(error, 'Failed to sign out.');
     } finally {
@@ -210,7 +232,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       toast({ title: "Error", description: "No authenticated user found or email is missing.", variant: "destructive" });
       return false;
     }
-    setLoading(true);
+    // setLoading(true); // This loading is for the page, not global auth loading
     try {
       const credential = EmailAuthProvider.credential(user.email, currentPassword);
       await reauthenticateWithCredential(user, credential);
@@ -221,7 +243,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       handleAuthError(error, 'Failed to update password.');
       return false;
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -233,7 +255,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     signUpWithEmail,
     signInWithEmail,
     signOutUser,
-    updateUserPassword, // Added
+    updateUserPassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -246,5 +268,3 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
-
-export { createUserProfileDocument };
