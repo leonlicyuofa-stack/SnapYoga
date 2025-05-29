@@ -2,7 +2,7 @@
 "use client";
 
 import type { ReactNode } from 'react';
-import React from 'react'; // Ensure React itself is imported
+import * as React from 'react'; // Changed import style
 import {
   type User,
   onAuthStateChanged,
@@ -83,12 +83,18 @@ const createUserProfileDocument = async (user: User, additionalData: DocumentDat
     // This is a new user
     dataToSet.createdAt = serverTimestamp();
     // Set onboardingCompleted to false if not explicitly provided in additionalData
+    // This ensures new users (especially social sign-ins) are flagged for onboarding checks
     if (additionalData.onboardingCompleted === undefined) {
       dataToSet.onboardingCompleted = false;
     }
   } else {
     // Existing user
     dataToSet.updatedAt = serverTimestamp();
+    // If onboardingCompleted is already true, don't overwrite it with false
+    // unless explicitly passed in additionalData
+    if (userSnap.data()?.onboardingCompleted === true && additionalData.onboardingCompleted === undefined) {
+      dataToSet.onboardingCompleted = true;
+    }
   }
 
   try {
