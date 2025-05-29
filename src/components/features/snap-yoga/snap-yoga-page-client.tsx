@@ -7,7 +7,7 @@ import { summarizeFeedback, type SummarizeFeedbackInput, type SummarizeFeedbackO
 import { VideoUploadCard } from './video-upload-card';
 import { PoseAnalysisCard } from './pose-analysis-card';
 import { FeedbackSubmissionCard } from './feedback-submission-card';
-import { RecommendedVideosCard, type YouTubeVideo } from './recommended-videos-card';
+import { RecommendedVideosCard, type YouTubeVideo } from './recommended-videos-card'; // Ensure this import is correct
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
@@ -26,6 +26,7 @@ export function SnapYogaPageClient() {
   
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
+  const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false); // For video loading state
   const [error, setError] = useState<string | null>(null);
 
   const { toast } = useToast();
@@ -38,6 +39,7 @@ export function SnapYogaPageClient() {
     setRecommendedVideos([]);
     setError(null);
     setIsLoadingAnalysis(true);
+    setIsLoadingRecommendations(true); // Start loading recommendations
 
     try {
       const input: AnalyzeYogaPoseInput = { videoDataUri: dataUri };
@@ -62,11 +64,8 @@ export function SnapYogaPageClient() {
             });
         } else {
             try {
-              // videoDataUri is too large for Firestore, so we omit it.
-              // In a production app, upload the video to Firebase Storage and store the URL here.
               const analysisDataToSave = {
                 videoFileName: fileName,
-                // videoDataUri: dataUri, // Removed due to Firestore size limits
                 feedback: result.feedback,
                 score: result.score,
                 identifiedPose: result.identifiedPose,
@@ -100,15 +99,21 @@ export function SnapYogaPageClient() {
         console.log("Skipping save analysis. currentUser is falsy or result is falsy.", "currentUser:", currentUser, "result:", result);
       }
 
-
-      // Populate recommended videos (placeholder logic)
-      if (result && result.score < 90) {
-        setRecommendedVideos([
-          { id: 'v1', title: 'Improve Your Posture with These 5 Exercises', embedUrl: 'https://www.youtube.com/embed/watch?v=BqgS03wTOsA' },
-          { id: 'v2', title: 'Yoga for Better Alignment and Balance', embedUrl: 'https://www.youtube.com/embed/watch?v=o8_jPgtpZ3w' },
-          { id: 'v3', title: 'Core Strengthening for Yoga Stability', embedUrl: 'https://www.youtube.com/embed/watch?v=44mgUselcDU' },
-          { id: 'v4', title: 'Shoulder Opening Yoga Poses', embedUrl: 'https://www.youtube.com/embed/watch?v=n3uQ227u1C8' },
-        ]);
+      // Simulate fetching recommended videos based on analysis
+      // In a real app, this might be another AI call or a lookup based on 'result.identifiedPose' or 'result.feedback'
+      if (result && result.score < 90) { // Example condition
+        // Simulate a delay for fetching recommendations
+        setTimeout(() => {
+            setRecommendedVideos([
+              { id: 'vid1', title: 'Improve Your Warrior Pose Alignment', embedUrl: 'https://www.youtube.com/embed/tKAs69_N3aE' }, // Example embed URL
+              { id: 'vid2', title: '5 Tips for a Better Downward Dog', embedUrl: 'https://www.youtube.com/embed/jK0arm2R2gU' },
+              { id: 'vid3', title: 'Core Strengthening for Yoga Stability', embedUrl: 'https://www.youtube.com/embed/44mgUselcDU' },
+              { id: 'vid4', title: 'Shoulder Opening Yoga Poses', embedUrl: 'https://www.youtube.com/embed/n3uQ227u1C8' },
+            ]);
+            setIsLoadingRecommendations(false);
+        }, 1500); // Simulate network delay
+      } else {
+        setIsLoadingRecommendations(false); // No recommendations if condition not met
       }
 
     } catch (e: any) {
@@ -121,8 +126,10 @@ export function SnapYogaPageClient() {
         variant: "destructive",
       });
       setAnalysisResult({ feedback: "Analysis failed. Please try again.", score: 0, identifiedPose: "Unknown" });
+      setIsLoadingRecommendations(false);
     } finally {
       setIsLoadingAnalysis(false);
+      // Note: setIsLoadingRecommendations is handled within the try/catch/finally or after timeout
     }
   };
 
@@ -184,10 +191,10 @@ export function SnapYogaPageClient() {
         />
       )}
 
-      {analysisResult && recommendedVideos.length > 0 && (
+      {analysisResult && (
         <>
           <Separator className="my-8" />
-          <RecommendedVideosCard videos={recommendedVideos} isLoading={isLoadingAnalysis && recommendedVideos.length === 0} />
+          <RecommendedVideosCard videos={recommendedVideos} isLoading={isLoadingRecommendations} />
         </>
       )}
     </div>

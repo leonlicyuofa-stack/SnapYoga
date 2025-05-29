@@ -3,6 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Youtube } from 'lucide-react';
+import { Skeleton } from "@/components/ui/skeleton";
 
 export interface YouTubeVideo {
   id: string;
@@ -12,12 +13,11 @@ export interface YouTubeVideo {
 
 interface RecommendedVideosCardProps {
   videos: YouTubeVideo[];
-  isLoading: boolean; // To potentially show skeletons later
+  isLoading: boolean; 
 }
 
 export function RecommendedVideosCard({ videos, isLoading }: RecommendedVideosCardProps) {
   if (isLoading) {
-    // TODO: Add skeleton loaders for videos
     return (
         <Card className="w-full shadow-lg mt-8">
             <CardHeader>
@@ -32,8 +32,8 @@ export function RecommendedVideosCard({ videos, isLoading }: RecommendedVideosCa
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[1, 2].map((i) => (
                     <div key={i} className="space-y-2">
-                        <div className="aspect-video bg-muted rounded-md animate-pulse"></div>
-                        <div className="h-4 bg-muted rounded w-3/4 animate-pulse"></div>
+                        <Skeleton className="aspect-video bg-muted rounded-md" />
+                        <Skeleton className="h-4 bg-muted rounded w-3/4" />
                     </div>
                 ))}
             </CardContent>
@@ -43,7 +43,7 @@ export function RecommendedVideosCard({ videos, isLoading }: RecommendedVideosCa
 
 
   if (!videos || videos.length === 0) {
-    return null; // Don't render anything if there are no videos
+    return null; // Don't render anything if there are no videos or not loading
   }
 
   return (
