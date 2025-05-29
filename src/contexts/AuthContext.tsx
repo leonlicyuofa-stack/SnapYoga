@@ -1,8 +1,8 @@
 
 "use client";
 
-import type { ReactNode, Dispatch, SetStateAction } from 'react';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
+import React from 'react'; // Ensure React itself is imported
 import {
   type User,
   onAuthStateChanged,
@@ -29,7 +29,7 @@ interface AuthContextType {
   signOutUser: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
 const formatAuthError = (error: AuthError): string => {
   switch (error.code) {
@@ -66,12 +66,12 @@ const formatAuthError = (error: AuthError): string => {
 
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = React.useState<User | null>(null);
+  const [loading, setLoading] = React.useState(true);
   const router = useRouter();
   const { toast } = useToast();
 
-  useEffect(() => {
+  React.useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
@@ -107,7 +107,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signInWithGoogle = () => socialSignIn(new GoogleAuthProvider(), 'Google');
-  
+
   const signInWithApple = () => {
     const provider = new OAuthProvider('apple.com');
     // Optional: You can add scopes if needed, e.g., for name and email
@@ -169,7 +169,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
+  const context = React.useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
