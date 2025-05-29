@@ -105,12 +105,13 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
                   <Activity className="h-6 w-6" /> Identified Pose
                 </h3>
                 <p className="text-2xl font-bold text-foreground">{identifiedPose}</p>
+                <p className="text-sm text-muted-foreground">Does this correctly identify your pose?</p>
                 <div className="flex gap-2 mt-2">
                   {/* Add feedback buttons */}
                   <Button variant="outline" size="sm" onClick={() => console.log('Correct Pose clicked')}>
-                    Correct Pose
+                    Yes
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => console.log('Incorrect Pose clicked')}>Incorrect Pose</Button>
+                  <Button variant="outline" size="sm" onClick={() => console.log('Incorrect Pose clicked')}>No</Button>
                 </div>
               </div>)}
             <div className="space-y-3 p-4 bg-primary/5 rounded-md border border-primary/20">

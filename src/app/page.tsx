@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { PersonStanding, Sparkles, ArrowRight } from 'lucide-react'; // Changed Yoga to PersonStanding
+import { PersonStanding, Sparkles, ArrowRight, Users } from 'lucide-react'; 
 import Image from 'next/image';
 
 export default function HomePage() {
@@ -22,7 +22,7 @@ export default function HomePage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
             <div className="absolute bottom-0 left-0 p-6 md:p-8">
               <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white flex items-center">
-                <PersonStanding className="mr-3 h-10 w-10 md:h-12 md:w-12" /> {/* Changed Yoga to PersonStanding */}
+                <PersonStanding className="mr-3 h-10 w-10 md:h-12 md:w-12" /> 
                 Welcome to SnapYoga
               </h1>
             </div>
@@ -47,6 +47,27 @@ export default function HomePage() {
                 aria-label="Go to SnapYoga Analysis Page"
               >
                 Start Analyzing Your Pose
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        {/* Updated Challenges with Friends Section */}
+        <Card className="w-full max-w-2xl shadow-2xl overflow-hidden mt-12">
+          <CardHeader className="text-center pt-8">
+            <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
+              <Users className="h-8 w-8 text-primary" />
+              Challenges with Friends
+            </CardTitle>
+            <CardDescription className="text-lg text-muted-foreground mt-2 max-w-md mx-auto">
+              Explore and join monthly yoga pose challenges. Invite friends and grow your practice together!
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center space-y-6 p-8">
+            <Link href="/challenges" passHref>
+              <Button size="lg" variant="outline" className="text-lg py-7 px-8 rounded-lg shadow-md hover:shadow-lg transition-transform transform hover:scale-105">
+                Explore Challenges 
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
