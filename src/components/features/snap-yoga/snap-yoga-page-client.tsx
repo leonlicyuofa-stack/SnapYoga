@@ -62,9 +62,11 @@ export function SnapYogaPageClient() {
             });
         } else {
             try {
+              // videoDataUri is too large for Firestore, so we omit it.
+              // In a production app, upload the video to Firebase Storage and store the URL here.
               const analysisDataToSave = {
                 videoFileName: fileName,
-                videoDataUri: dataUri, // For smaller videos or as a reference. Consider Firebase Storage for large files.
+                // videoDataUri: dataUri, // Removed due to Firestore size limits
                 feedback: result.feedback,
                 score: result.score,
                 identifiedPose: result.identifiedPose,
@@ -73,10 +75,10 @@ export function SnapYogaPageClient() {
               console.log("Saving data to Firestore in path:", `users/${currentUser.uid}/poseAnalyses`, "Data:", analysisDataToSave);
               const userAnalysesCollectionRef = collection(firestore, 'users', currentUser.uid, 'poseAnalyses');
               await addDoc(userAnalysesCollectionRef, analysisDataToSave);
-              console.log("Analysis saved successfully to Firestore.");
+              console.log("Analysis metadata saved successfully to Firestore.");
               toast({
                 title: "Analysis Saved",
-                description: "Your pose analysis results have been saved to your profile.",
+                description: "Your pose analysis results (excluding video data) have been saved.",
               });
             } catch (saveError: any) {
               console.error("Error saving analysis to Firestore:", saveError);
