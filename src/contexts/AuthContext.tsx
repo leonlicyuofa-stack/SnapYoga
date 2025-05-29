@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { ReactNode } from 'react';
@@ -15,7 +14,8 @@ import {
   type AuthProvider as FirebaseAuthProvider,
   type AuthError
 } from 'firebase/auth';
-import { auth } from '@/lib/firebase/clientApp';
+import { auth, firestore } from '@/lib/firebase/clientApp'; // Import firestore
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore'; // Firestore functions
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
@@ -23,7 +23,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
-  signInWithApple: () => Promise<void>; // Added for Apple
+  signInWithApple: () => Promise<void>;
   signUpWithEmail: (email: string, pass: string) => Promise<void>;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   signOutUser: () => Promise<void>;
@@ -54,13 +54,41 @@ const formatAuthError = (error: AuthError): string => {
     case 'auth/account-exists-with-different-credential':
       return 'An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.';
     case 'auth/oauth-credential-already-in-use':
-      return 'This Apple ID is already associated with another user account.'; // Specific to Apple if this variant exists
+      return 'This Apple ID is already associated with another user account.';
     default:
-      // For Apple, provider-specific errors might also occur
       if (error.customData && (error.customData as any)._tokenResponse?.error?.message) {
         return (error.customData as any)._tokenResponse.error.message;
       }
       return error.message || 'An unexpected error occurred. Please try again.';
+  }
+};
+
+// Function to create or update user profile in Firestore
+const createUserProfileDocument = async (user: User) => {
+  if (!user) return;
+  const userRef = doc(firestore, `users/${user.uid}`);
+  const userSnap = await getDoc(userRef);
+
+  if (!userSnap.exists()) {
+    const { uid, email, displayName, photoURL } = user;
+    const createdAt = serverTimestamp();
+    try {
+      await setDoc(userRef, {
+        uid,
+        email,
+        displayName: displayName || email?.split('@')[0] || 'User', // Use email part if displayName is null
+        photoURL,
+        createdAt,
+        // Add any other fields you want to store for a user profile
+      });
+    } catch (error) {
+      console.error("Error creating user profile in Firestore:", error);
+      // Optionally, toast an error to the user or handle it silently
+    }
+  } else {
+    // Optionally, update existing fields if needed, e.g., if photoURL or displayName changes on social login
+    // For now, we'll just ensure it exists. You could merge if necessary:
+    // await setDoc(userRef, { photoURL: user.photoURL, displayName: user.displayName }, { merge: true });
   }
 };
 
@@ -72,14 +100,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
 
   React.useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+        // When auth state changes (e.g. initial load, sign-in),
+        // ensure profile exists. This also handles cases where a user
+        // was created but profile creation might have failed.
+        await createUserProfileDocument(currentUser);
+      }
       setLoading(false);
     });
     return () => unsubscribe();
   }, []);
 
-  const handleAuthSuccess = (message: string, redirectPath: string = '/') => {
+  const handleAuthSuccess = async (message: string, authUser: User, redirectPath: string = '/') => {
+    await createUserProfileDocument(authUser); // Ensure profile is created/updated
     toast({ title: 'Success', description: message });
     router.push(redirectPath);
   };
@@ -97,8 +132,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const socialSignIn = async (provider: FirebaseAuthProvider, providerName: string) => {
     setLoading(true);
     try {
-      await signInWithPopup(auth, provider);
-      handleAuthSuccess(`${providerName} sign-in successful.`);
+      const result = await signInWithPopup(auth, provider);
+      await handleAuthSuccess(`${providerName} sign-in successful.`, result.user);
     } catch (error) {
       handleAuthError(error, `Failed to sign in with ${providerName}.`);
     } finally {
@@ -110,19 +145,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signInWithApple = () => {
     const provider = new OAuthProvider('apple.com');
-    // Optional: You can add scopes if needed, e.g., for name and email
-    // provider.addScope('email');
-    // provider.addScope('name');
-    // Optional: You can customize parameters
-    // provider.setCustomParameters({ locale: 'en' });
     return socialSignIn(provider, 'Apple');
   };
 
   const signUpWithEmail = async (email: string, pass: string) => {
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, pass);
-      handleAuthSuccess('Account created successfully! You are now signed in.');
+      const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+      await handleAuthSuccess('Account created successfully! You are now signed in.', userCredential.user);
     } catch (error) {
       handleAuthError(error, 'Failed to create account.');
     } finally {
@@ -133,8 +163,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signInWithEmail = async (email: string, pass: string) => {
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, pass);
-      handleAuthSuccess('Signed in successfully.');
+      const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+      await handleAuthSuccess('Signed in successfully.', userCredential.user);
     } catch (error) {
       handleAuthError(error, 'Failed to sign in.');
     } finally {
@@ -147,7 +177,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await signOut(auth);
       toast({ title: 'Signed Out', description: 'You have been signed out successfully.' });
-      router.push('/'); // Redirect to home or sign-in page after sign out
+      router.push('/'); 
     } catch (error) {
       handleAuthError(error, 'Failed to sign out.');
     } finally {

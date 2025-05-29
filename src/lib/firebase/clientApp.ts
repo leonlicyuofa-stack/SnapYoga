@@ -1,7 +1,7 @@
 
 import { initializeApp, getApps, type FirebaseApp, type FirebaseOptions } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
-// import { getFirestore } from 'firebase/firestore';
+import { getFirestore, type Firestore } from 'firebase/firestore'; // Import Firestore
 // import { getStorage } from 'firebase/storage';
 // import { getAnalytics } from "firebase/analytics";
 
@@ -21,14 +21,14 @@ if (process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID) {
 
 let app: FirebaseApp;
 let auth: Auth;
-// let firestore: Firestore;
+let firestore: Firestore; // Declare Firestore
 // let storage: Storage;
 // let analytics: Analytics;
 
 if (getApps().length === 0) {
   app = initializeApp(firebaseConfigClient);
   auth = getAuth(app);
-  // firestore = getFirestore(app);
+  firestore = getFirestore(app); // Initialize Firestore
   // storage = getStorage(app);
   // if (typeof window !== 'undefined' && firebaseConfigClient.measurementId) {
   //   analytics = getAnalytics(app);
@@ -36,11 +36,12 @@ if (getApps().length === 0) {
 } else {
   app = getApps()[0];
   auth = getAuth(app);
-  // firestore = getFirestore(app);
+  firestore = getFirestore(app); // Initialize Firestore for existing app instance
+  // storage = getFirestore(app); // This was a typo, should be getStorage
   // storage = getStorage(app);
   // if (typeof window !== 'undefined' && firebaseConfigClient.measurementId) {
   //   analytics = getAnalytics(app);
   // }
 }
 
-export { app, auth /*, firestore, storage, analytics */ };
+export { app, auth, firestore /*, storage, analytics */ };

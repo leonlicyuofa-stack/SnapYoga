@@ -1,23 +1,47 @@
 
-"use client"; // Make this a client component to use hooks
+"use client"; 
 
 import { AppShell } from '@/components/layout/app-shell';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, Link2, Copy, Mail, Share2, Search, Users, Send } from 'lucide-react';
-import { usePathname } from 'next/navigation'; // To get the current URL
-import { useToast } from '@/hooks/use-toast'; // For copy feedback
+import { ArrowLeft, Link2, Copy, Mail, Share2, Search, Users, Send, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { usePathname } from 'next/navigation'; 
+import { useToast } from '@/hooks/use-toast'; 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { firestore } from '@/lib/firebase/clientApp';
+import { collection, query, where, getDocs, DocumentData } from 'firebase/firestore';
+import Image from 'next/image'; // For potential user avatars
+import { Checkbox } from '@/components/ui/checkbox'; // For selecting friends
+import { useAuth } from '@/hooks/useAuth'; // To exclude current user
+
+
+interface UserProfile {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+}
 
 export default function HeadstandInvitePage() {
+  const { user: currentUser } = useAuth();
   const pathname = usePathname();
-  const inviteLink = typeof window !== 'undefined' ? `${window.location.origin}${pathname}` : '';
+  const [inviteLink, setInviteLink] = useState('');
   const { toast } = useToast();
   const [friendSearchQuery, setFriendSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<UserProfile[]>([]);
+  const [selectedFriends, setSelectedFriends] = useState<UserProfile[]>([]);
+  const [sendingInvites, setSendingInvites] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setInviteLink(`${window.location.origin}${pathname.replace('/invite', '')}`);
+    }
+  }, [pathname]);
 
   const challengeName = "Headstand (Sirsasana)";
   const emailSubject = `Join me for the ${challengeName} Yoga Challenge on SnapYoga!`;
@@ -56,12 +80,68 @@ export default function HeadstandInvitePage() {
     }
   };
 
-  const handleSearchFriends = () => {
-    // Placeholder for actual search logic
-    toast({
-        title: "Search Submitted",
-        description: `Searching for friends with query: "${friendSearchQuery}". (Functionality to be implemented)`,
-    });
+  const handleSearchFriends = async () => {
+    if (!friendSearchQuery.trim()) {
+      toast({ title: "Empty Search", description: "Please enter an email or username to search.", variant: "destructive" });
+      return;
+    }
+    setIsSearching(true);
+    setSearchResults([]);
+    setSelectedFriends([]);
+    try {
+      const usersRef = collection(firestore, "users");
+      const q = query(usersRef, where("email", "==", friendSearchQuery.trim().toLowerCase()));
+      const querySnapshot = await getDocs(q);
+      const foundUsers: UserProfile[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data() as DocumentData;
+         if (currentUser && data.uid === currentUser.uid) {
+            return;
+        }
+        foundUsers.push({
+          uid: data.uid,
+          email: data.email,
+          displayName: data.displayName,
+          photoURL: data.photoURL,
+        });
+      });
+      setSearchResults(foundUsers);
+      if (foundUsers.length === 0) {
+        toast({ title: "No Users Found", description: "No registered users match your search query." });
+      }
+    } catch (error) {
+      console.error("Error searching friends:", error);
+      toast({ title: "Search Error", description: "Failed to search for friends. Please try again.", variant: "destructive" });
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleToggleFriendSelection = (friend: UserProfile) => {
+    setSelectedFriends(prevSelected =>
+      prevSelected.find(sf => sf.uid === friend.uid)
+        ? prevSelected.filter(sf => sf.uid !== friend.uid)
+        : [...prevSelected, friend]
+    );
+  };
+
+  const handleSendInvitations = async () => {
+    if (selectedFriends.length === 0) {
+      toast({ title: "No Selection", description: "Please select at least one friend to invite.", variant: "destructive" });
+      return;
+    }
+    setSendingInvites(true);
+    console.log("Simulating sending invitations to:", selectedFriends.map(f => f.displayName || f.email));
+    // Placeholder for actual Firestore write to 'invitations' collection
+    
+    setTimeout(() => { // Simulate network delay
+      toast({
+        title: "Invitations Sent (Simulated)",
+        description: `Invites for ${challengeName} sent to ${selectedFriends.length} friend(s).`,
+      });
+      setSelectedFriends([]);
+      setSendingInvites(false);
+    }, 1500);
   };
 
   return (
@@ -78,9 +158,9 @@ export default function HeadstandInvitePage() {
             <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mx-auto mb-4">
                 <Link2 className="h-10 w-10 text-primary" />
             </div>
-            <CardTitle className="text-3xl font-bold">Invite Friends to the Headstand Challenge</CardTitle>
+            <CardTitle className="text-3xl font-bold">Invite Friends to the {challengeName}</CardTitle>
             <CardDescription className="text-lg mt-2 text-muted-foreground">
-              Share this link with your friends and conquer the Headstand (Sirsasana) together!
+              Share this link with your friends and conquer the pose together!
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6 md:p-8 space-y-8">
@@ -138,30 +218,77 @@ export default function HeadstandInvitePage() {
               </CardHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="friend-search" className="text-sm font-medium">Search by email or username</Label>
+                  <Label htmlFor="friend-search" className="text-sm font-medium">Search by email</Label>
                   <div className="flex items-center space-x-2 mt-1">
                     <Input
                       id="friend-search"
-                      type="text"
-                      placeholder="e.g., friend@example.com or yogiBear"
+                      type="email"
+                      placeholder="friend@example.com"
                       value={friendSearchQuery}
                       onChange={(e) => setFriendSearchQuery(e.target.value)}
                       className="flex-grow"
+                      disabled={isSearching || sendingInvites}
                     />
-                    <Button variant="outline" onClick={handleSearchFriends} disabled={!friendSearchQuery.trim()}>
-                      <Search className="mr-2 h-4 w-4" /> Search
+                    <Button variant="outline" onClick={handleSearchFriends} disabled={!friendSearchQuery.trim() || isSearching || sendingInvites}>
+                      {isSearching ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
+                       Search
                     </Button>
                   </div>
                 </div>
 
-                <div className="p-4 border border-dashed rounded-md bg-muted/50 min-h-[80px] flex items-center justify-center">
-                  <p className="text-sm text-muted-foreground">
-                    Search results will appear here. (Feature coming soon)
-                  </p>
-                </div>
+                {isSearching && (
+                  <div className="p-4 border border-dashed rounded-md bg-muted/50 min-h-[80px] flex items-center justify-center">
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                    <p className="ml-2 text-sm text-muted-foreground">Searching...</p>
+                  </div>
+                )}
 
-                <Button className="w-full" disabled>
-                  <Send className="mr-2 h-4 w-4" /> Send In-App Invitations (Coming Soon)
+                {!isSearching && searchResults.length > 0 && (
+                  <div className="space-y-3 max-h-60 overflow-y-auto p-1">
+                    <p className="text-sm font-medium text-muted-foreground">Select friends to invite:</p>
+                    {searchResults.map(friend => (
+                      <div
+                        key={friend.uid}
+                        className="flex items-center justify-between p-3 border rounded-md hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          {friend.photoURL ? (
+                            <Image src={friend.photoURL} alt={friend.displayName || friend.email || 'User'} width={32} height={32} className="rounded-full" />
+                          ) : (
+                            <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-secondary-foreground text-xs">
+                              {friend.displayName?.[0] || friend.email?.[0].toUpperCase()}
+                            </div>
+                          )}
+                          <div>
+                            <p className="font-medium text-sm">{friend.displayName || 'Unnamed User'}</p>
+                            <p className="text-xs text-muted-foreground">{friend.email}</p>
+                          </div>
+                        </div>
+                        <Checkbox
+                          id={`select-${friend.uid}`}
+                          checked={selectedFriends.some(sf => sf.uid === friend.uid)}
+                          onCheckedChange={() => handleToggleFriendSelection(friend)}
+                          aria-label={`Select ${friend.displayName || friend.email}`}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {!isSearching && searchResults.length === 0 && friendSearchQuery && (
+                   <div className="p-4 border border-dashed rounded-md bg-muted/50 min-h-[80px] flex items-center justify-center">
+                    <p className="text-sm text-muted-foreground">
+                      No users found for &quot;{friendSearchQuery}&quot;.
+                    </p>
+                  </div>
+                )}
+
+                <Button 
+                  className="w-full" 
+                  onClick={handleSendInvitations} 
+                  disabled={selectedFriends.length === 0 || sendingInvites}
+                >
+                  {sendingInvites ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
+                  {sendingInvites ? 'Sending...' : `Send In-App Invitations (${selectedFriends.length})`}
                 </Button>
               </div>
             </div>
@@ -177,5 +304,3 @@ export default function HeadstandInvitePage() {
     </AppShell>
   );
 }
-
-    
