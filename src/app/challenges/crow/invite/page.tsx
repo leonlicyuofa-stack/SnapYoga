@@ -5,7 +5,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, Link2, Copy, Mail, Share2, Search, Users, Send, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, Link2, Copy, Mail, Share2, Search, Users, Send, Loader2 } from 'lucide-react';
 import { usePathname } from 'next/navigation'; 
 import { useToast } from '@/hooks/use-toast'; 
 import { Input } from '@/components/ui/input';
@@ -13,10 +13,10 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useState, useEffect } from 'react';
 import { firestore } from '@/lib/firebase/clientApp';
-import { collection, query, where, getDocs, DocumentData } from 'firebase/firestore';
-import Image from 'next/image'; // For potential user avatars
-import { Checkbox } from '@/components/ui/checkbox'; // For selecting friends
-import { useAuth } from '@/hooks/useAuth'; // To exclude current user from search
+import { collection, query, where, getDocs, DocumentData, serverTimestamp, doc, setDoc } from 'firebase/firestore'; // Added Firestore imports
+import Image from 'next/image'; 
+import { Checkbox } from '@/components/ui/checkbox'; 
+import { useAuth } from '@/hooks/useAuth'; 
 
 
 interface UserProfile {
@@ -82,7 +82,7 @@ export default function CrowPoseInvitePage() {
 
   const handleSearchFriends = async () => {
     if (!friendSearchQuery.trim()) {
-      toast({ title: "Empty Search", description: "Please enter an email or username to search.", variant: "destructive" });
+      toast({ title: "Empty Search", description: "Please enter an email to search.", variant: "destructive" });
       return;
     }
     setIsSearching(true);
@@ -90,13 +90,13 @@ export default function CrowPoseInvitePage() {
     setSelectedFriends([]); 
     try {
       const usersRef = collection(firestore, "users");
-      // Simple search by exact email match for now.
-      // In a real app, you'd want more sophisticated search (e.g., by display name, partial match, using Algolia/Typesense)
+      // Search by exact email match. Case-sensitive by default in Firestore, so convert query to lowercase.
+      // Assumes emails are stored in lowercase in Firestore, or you adjust your query/rules.
       const q = query(usersRef, where("email", "==", friendSearchQuery.trim().toLowerCase()));
       const querySnapshot = await getDocs(q);
       const foundUsers: UserProfile[] = [];
-      querySnapshot.forEach((doc) => {
-        const data = doc.data() as DocumentData;
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data() as DocumentData;
         // Exclude current user from search results
         if (currentUser && data.uid === currentUser.uid) {
             return;
@@ -134,36 +134,59 @@ export default function CrowPoseInvitePage() {
       return;
     }
     setSendingInvites(true);
-    // Simulate sending invitations
-    // In a real app, this would involve writing to an 'invitations' collection in Firestore
-    // and potentially triggering notifications.
-    console.log("Simulating sending invitations to:", selectedFriends.map(f => f.displayName || f.email));
-    // Placeholder: create invitation documents in Firestore
-    // const challengeId = pathname.split('/')[2]; // e.g. 'crow'
-    // for (const friend of selectedFriends) {
-    //   const invitationRef = doc(collection(firestore, 'invitations'));
-    //   await setDoc(invitationRef, {
-    //     challengeId,
-    //     challengeName,
-    //     inviterUid: currentUser?.uid,
-    //     inviterName: currentUser?.displayName || currentUser?.email,
-    //     inviteeUid: friend.uid,
-    //     inviteeName: friend.displayName || friend.email,
-    //     status: 'pending',
-    //     createdAt: serverTimestamp(),
-    //   });
-    // }
+    
+    // Simulate sending invitations - In a real app, this is where you'd write to Firestore
+    console.log("Attempting to send invitations to:", selectedFriends.map(f => f.displayName || f.email));
+    const challengeId = pathname.split('/')[2] || 'crow'; // e.g. 'crow'
 
-    setTimeout(() => { // Simulate network delay
-      toast({
-        title: "Invitations Sent (Simulated)",
-        description: `Invites for ${challengeName} sent to ${selectedFriends.length} friend(s).`,
-      });
-      setSelectedFriends([]);
-      // setSearchResults([]); // Optionally clear search results
-      // setFriendSearchQuery(''); // Optionally clear search query
-      setSendingInvites(false);
-    }, 1500);
+    // Placeholder: create invitation documents in Firestore
+    // This part is for demonstration and would need more robust error handling and user feedback.
+    let successCount = 0;
+    try {
+        for (const friend of selectedFriends) {
+          const invitationRef = doc(collection(firestore, 'invitations')); // Creates a ref with a new auto-generated ID
+          await setDoc(invitationRef, {
+            challengeId,
+            challengeName,
+            inviterUid: currentUser?.uid,
+            inviterName: currentUser?.displayName || currentUser?.email,
+            inviteeUid: friend.uid,
+            inviteeEmail: friend.email, // Store email for potential notifications
+            inviteeName: friend.displayName || friend.email,
+            status: 'pending', // e.g., pending, accepted, declined
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          });
+          successCount++;
+        }
+        if (successCount > 0) {
+             toast({
+                title: "Invitations Sent (Simulated)",
+                description: `Invites for ${challengeName} sent to ${successCount} friend(s).`,
+            });
+        }
+        if (successCount < selectedFriends.length) {
+             toast({
+                title: "Some Invitations Failed",
+                description: `${selectedFriends.length - successCount} invitation(s) could not be sent.`,
+                variant: "destructive"
+            });
+        }
+       
+    } catch (error) {
+        console.error("Error sending invitations:", error);
+        toast({
+            title: "Invitation Error",
+            description: "An error occurred while trying to send invitations. Please try again.",
+            variant: "destructive"
+        });
+    }
+
+
+    setSelectedFriends([]); // Clear selection after attempting to send
+    // setSearchResults([]); // Optionally clear search results
+    // setFriendSearchQuery(''); // Optionally clear search query
+    setSendingInvites(false);
   };
 
 
@@ -279,7 +302,7 @@ export default function CrowPoseInvitePage() {
                             <Image src={friend.photoURL} alt={friend.displayName || friend.email || 'User'} width={32} height={32} className="rounded-full" />
                           ) : (
                             <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-secondary-foreground text-xs">
-                              {friend.displayName?.[0] || friend.email?.[0].toUpperCase()}
+                              {(friend.displayName?.[0] || friend.email?.[0] || 'U').toUpperCase()}
                             </div>
                           )}
                           <div>
@@ -297,7 +320,7 @@ export default function CrowPoseInvitePage() {
                     ))}
                   </div>
                 )}
-                {!isSearching && searchResults.length === 0 && friendSearchQuery && (
+                {!isSearching && searchResults.length === 0 && friendSearchQuery && !isSearching && ( // Condition to show only after search and no results
                    <div className="p-4 border border-dashed rounded-md bg-muted/50 min-h-[80px] flex items-center justify-center">
                     <p className="text-sm text-muted-foreground">
                       No users found for &quot;{friendSearchQuery}&quot;.
@@ -309,7 +332,7 @@ export default function CrowPoseInvitePage() {
                 <Button 
                   className="w-full" 
                   onClick={handleSendInvitations} 
-                  disabled={selectedFriends.length === 0 || sendingInvites}
+                  disabled={selectedFriends.length === 0 || sendingInvites || !currentUser}
                 >
                   {sendingInvites ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
                   {sendingInvites ? 'Sending...' : `Send In-App Invitations (${selectedFriends.length})`}

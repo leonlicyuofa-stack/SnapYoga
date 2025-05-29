@@ -1,0 +1,32 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection
+    // - Authenticated users can read basic profile data of other users for search.
+    // - A user can read and write to their own profile document.
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Example for a future 'challenges' collection (adjust as needed)
+    // match /challenges/{challengeId} {
+    //   allow read: if request.auth != null;
+    //   // Add write rules if users can create/modify challenges
+    // }
+
+    // Example for a future 'invitations' collection (adjust as needed)
+    // This will need more granular rules for who can create, read, or update invitations.
+    // match /invitations/{invitationId} {
+    //  allow read: if request.auth != null && (request.auth.uid == resource.data.inviterUid || request.auth.uid == resource.data.inviteeUid);
+    //  allow create: if request.auth != null && request.auth.uid == request.resource.data.inviterUid;
+    //  allow update: if request.auth != null && request.auth.uid == resource.data.inviteeUid; // e.g., to change status
+    // }
+
+    // Deny all other writes by default
+    match /{document=**} {
+      allow write: if false;
+    }
+  }
+}
