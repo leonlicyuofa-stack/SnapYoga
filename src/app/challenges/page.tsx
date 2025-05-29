@@ -10,7 +10,7 @@ interface Challenge {
   id: string;
   name: string;
   description: string;
-  imageUrl: string;
+  imageUrl: string | { src: string; width: number; height: number };
   imageHint: string;
   inviteLink: string;
 }
@@ -20,7 +20,7 @@ const challenges: Challenge[] = [
     id: 'headstand',
     name: 'Headstand (Sirsasana)',
     description: 'Master the headstand this month! Work on your balance and core strength. Practice safely against a wall if you\'re new.',
-    imageUrl: 'https://placehold.co/600x400.png',
+    imageUrl: { src: '/images/headstand.png', width: 600, height: 400 },
     imageHint: 'headstand yoga silhouette',
     inviteLink: '/challenges/headstand/invite',
   },
@@ -28,7 +28,7 @@ const challenges: Challenge[] = [
     id: 'crow',
     name: 'Crow Pose (Bakasana)',
     description: 'Take on the crow pose! Build arm strength and courage. Start by practicing tucking your knees into your armpits.',
-    imageUrl: 'https://placehold.co/600x400.png',
+    imageUrl: { src: '/images/crow-pose-icon.jpg', width: 600, height: 400 },
     imageHint: 'crow pose yoga practice',
     inviteLink: '/challenges/crow/invite',
   },
@@ -53,7 +53,7 @@ export default function ChallengesPage() {
           {challenges.map((challenge, index) => (
             <Card key={challenge.id} className="overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group rounded-lg">
               <div className="relative w-full h-72">
-                <Image
+                <Image 
                   src={challenge.imageUrl}
                   alt={`${challenge.name} background`}
                   layout="fill"
