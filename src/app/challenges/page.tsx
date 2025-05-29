@@ -51,7 +51,7 @@ export default function ChallengesPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
           {challenges.map((challenge) => (
-            <Card key={challenge.id} className="overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group">
+            <Card key={challenge.id} className="overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group rounded-lg">
               <div className="relative w-full h-72">
                 <Image
                   src={challenge.imageUrl}
@@ -65,7 +65,7 @@ export default function ChallengesPage() {
                   <h2 className="text-3xl font-bold text-white mb-2">{challenge.name}</h2>
                 </div>
               </div>
-              <CardContent className="p-6">
+              <CardContent className="p-6 bg-card">
                 <p className="text-muted-foreground mb-6 min-h-[60px]">{challenge.description}</p>
                 <Link href={challenge.inviteLink} passHref>
                   <Button 
