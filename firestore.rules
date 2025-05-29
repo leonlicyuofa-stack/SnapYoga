@@ -5,40 +5,53 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // Users Collection
-    // Users can read their own profile and limited fields of others (for search, adjust as needed)
-    // Users can only write to their own profile
     match /users/{userId} {
-      allow read: if request.auth != null; // Allow authenticated users to read basic profile data
-      allow write: if request.auth != null && request.auth.uid == userId; // Only user can write to their own profile
+      // Allow authenticated users to read all profiles (for search, etc.)
+      // Consider restricting readable fields in production for privacy if needed.
+      allow read: if request.auth != null;
 
-      // Pose Analyses Subcollection
-      // Users can read and write their own pose analyses
-      match /poseAnalyses/{analysisId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
-      }
+      // Allow user to create their own profile document
+      allow create: if request.auth != null && request.auth.uid == userId;
+
+      // Allow user to update their own profile document
+      // Specifically, allow updating the new onboarding fields
+      allow update: if request.auth != null && request.auth.uid == userId &&
+                       (request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['displayName', 'photoURL', 'updatedAt', 
+                                   'gender', 'yogaInterest', 'mainGoal', 'height', 'weight', 
+                                   'onboardingCompleted']));
+      
+      // Optionally, allow delete by user (be cautious with this)
+      // allow delete: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Invitations Collection (Example Rules - adjust as needed when implementing fully)
-    // Inviter can create an invitation
-    // Invitee can read and update (e.g., accept/decline) their invitations
-    // Inviter might also need read access to invitations they sent
-    match /invitations/{invitationId} {
-      allow read: if request.auth != null && 
-                    (request.auth.uid == resource.data.inviteeUid || request.auth.uid == resource.data.inviterUid);
-      allow create: if request.auth != null && request.auth.uid == request.resource.data.inviterUid;
-      allow update: if request.auth != null && 
-                      (request.auth.uid == resource.data.inviteeUid || request.auth.uid == resource.data.inviterUid) &&
-                      // Only allow updating specific fields like 'status' or 'updatedAt'
-                      request.resource.data.keys().hasOnly(['status', 'updatedAt']); 
-                      // Ensure inviter/invitee UIDs are not changed after creation
-                      // && request.resource.data.inviterUid == resource.data.inviterUid
-                      // && request.resource.data.inviteeUid == resource.data.inviteeUid; 
-      // allow delete: if false; // Typically don't allow client-side deletion of invitations directly
+    // Pose Analyses Subcollection
+    match /users/{userId}/poseAnalyses/{analysisId} {
+      // User can read their own pose analyses
+      allow read: if request.auth != null && request.auth.uid == userId;
+      // User can create their own pose analyses
+      allow create: if request.auth != null && request.auth.uid == userId;
+      // User can update their own pose analyses (e.g., if you add notes later)
+      // allow update: if request.auth != null && request.auth.uid == userId;
+      // User can delete their own pose analyses
+      // allow delete: if request.auth != null && request.auth.uid == userId;
     }
-    
+
+    // Invitations Collection (Placeholder for future use)
+    // match /invitations/{invitationId} {
+    //   // Allow inviter or invitee to read
+    //   allow read: if request.auth != null && (request.auth.uid == resource.data.inviterUid || request.auth.uid == resource.data.inviteeUid);
+    //   // Allow inviter to create
+    //   allow create: if request.auth != null && request.auth.uid == request.resource.data.inviterUid;
+    //   // Allow invitee to update status (e.g., accept/decline)
+    //   allow update: if request.auth != null && request.auth.uid == resource.data.inviteeUid &&
+    //                    request.resource.data.status != resource.data.status; // Only status can change by invitee
+    // }
+
     // Deny all other writes to any other unspecified collection
     match /{document=**} {
-      allow write: if false;
+      allow read: if false; // Default deny read for unspecified paths
+      allow write: if false; // Default deny write for unspecified paths
     }
   }
 }

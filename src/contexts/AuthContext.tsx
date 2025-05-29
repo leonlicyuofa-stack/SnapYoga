@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { ReactNode } from 'react';
@@ -64,31 +65,30 @@ const formatAuthError = (error: AuthError): string => {
 };
 
 // Function to create or update user profile in Firestore
-const createUserProfileDocument = async (user: User) => {
+const createUserProfileDocument = async (user: User, additionalData = {}) => {
   if (!user) return;
   const userRef = doc(firestore, `users/${user.uid}`);
   const userSnap = await getDoc(userRef);
 
+  const { uid, email, displayName, photoURL } = user;
+  const dataToSet = {
+    uid,
+    email,
+    displayName: displayName || email?.split('@')[0] || 'User',
+    photoURL,
+    ...additionalData, // Merge additional data
+  };
+
   if (!userSnap.exists()) {
-    const { uid, email, displayName, photoURL } = user;
-    const createdAt = serverTimestamp();
-    try {
-      await setDoc(userRef, {
-        uid,
-        email,
-        displayName: displayName || email?.split('@')[0] || 'User', // Use email part if displayName is null
-        photoURL,
-        createdAt,
-        // Add any other fields you want to store for a user profile
-      });
-    } catch (error) {
-      console.error("Error creating user profile in Firestore:", error);
-      // Optionally, toast an error to the user or handle it silently
-    }
+    dataToSet.createdAt = serverTimestamp();
   } else {
-    // Optionally, update existing fields if needed, e.g., if photoURL or displayName changes on social login
-    // For now, we'll just ensure it exists. You could merge if necessary:
-    // await setDoc(userRef, { photoURL: user.photoURL, displayName: user.displayName }, { merge: true });
+    dataToSet.updatedAt = serverTimestamp(); // Add updatedAt if document exists
+  }
+
+  try {
+    await setDoc(userRef, dataToSet, { merge: true }); // Use merge: true to update or create
+  } catch (error) {
+    console.error("Error creating/updating user profile in Firestore:", error);
   }
 };
 
@@ -103,9 +103,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        // When auth state changes (e.g. initial load, sign-in),
-        // ensure profile exists. This also handles cases where a user
-        // was created but profile creation might have failed.
         await createUserProfileDocument(currentUser);
       }
       setLoading(false);
@@ -114,7 +111,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const handleAuthSuccess = async (message: string, authUser: User, redirectPath: string = '/') => {
-    await createUserProfileDocument(authUser); // Ensure profile is created/updated
+    await createUserProfileDocument(authUser);
     toast({ title: 'Success', description: message });
     router.push(redirectPath);
   };
@@ -133,7 +130,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, provider);
-      await handleAuthSuccess(`${providerName} sign-in successful.`, result.user);
+      // For social sign-ins, check if onboarding is needed or redirect to home.
+      // This logic can be enhanced later to check a flag like 'onboardingCompleted' in Firestore.
+      await handleAuthSuccess(`${providerName} sign-in successful.`, result.user, '/');
     } catch (error) {
       handleAuthError(error, `Failed to sign in with ${providerName}.`);
     } finally {
@@ -152,7 +151,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-      await handleAuthSuccess('Account created successfully! You are now signed in.', userCredential.user);
+      await createUserProfileDocument(userCredential.user); // Create basic profile first
+      toast({ title: 'Account Created!', description: 'Please complete your profile.' });
+      router.push('/auth/onboarding/details'); // Redirect to onboarding
     } catch (error) {
       handleAuthError(error, 'Failed to create account.');
     } finally {
@@ -164,7 +165,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, pass);
-      await handleAuthSuccess('Signed in successfully.', userCredential.user);
+      // For email sign-in, check if onboarding is needed or redirect to home.
+      // This logic can be enhanced later.
+      await handleAuthSuccess('Signed in successfully.', userCredential.user, '/');
     } catch (error) {
       handleAuthError(error, 'Failed to sign in.');
     } finally {
@@ -177,7 +180,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await signOut(auth);
       toast({ title: 'Signed Out', description: 'You have been signed out successfully.' });
-      router.push('/'); 
+      router.push('/');
     } catch (error) {
       handleAuthError(error, 'Failed to sign out.');
     } finally {
@@ -205,3 +208,6 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
+
+// Export createUserProfileDocument if it needs to be used outside
+export { createUserProfileDocument };
