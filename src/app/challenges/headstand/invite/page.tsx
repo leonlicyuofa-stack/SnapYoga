@@ -14,6 +14,11 @@ export default function HeadstandInvitePage() {
   const inviteLink = typeof window !== 'undefined' ? `${window.location.origin}${pathname}` : '';
   const { toast } = useToast();
 
+  const challengeName = "Headstand (Sirsasana)";
+  const emailSubject = `Join me for the ${challengeName} Yoga Challenge on SnapYoga!`;
+  const emailBody = `Hey!\n\nI'm inviting you to join the ${challengeName} Yoga Challenge on SnapYoga. Let's master this pose together!\n\nChallenge link: ${inviteLink}\n\nSee you there!`;
+  const mailtoLink = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+
   const handleCopyLink = () => {
     if (navigator.clipboard && inviteLink && inviteLink.trim() !== '') {
       navigator.clipboard.writeText(inviteLink)
@@ -85,8 +90,10 @@ export default function HeadstandInvitePage() {
             <div className="text-center">
                 <p className="text-sm text-muted-foreground mb-4">Or share via:</p>
                 <div className="flex justify-center gap-4">
-                    <Button variant="outline" disabled className="w-full md:w-auto">
-                        <Mail className="mr-2 h-5 w-5" /> Email (Coming Soon)
+                    <Button variant="outline" asChild className="w-full md:w-auto">
+                      <a href={inviteLink.trim() ? mailtoLink : undefined} target="_blank" rel="noopener noreferrer">
+                        <Mail className="mr-2 h-5 w-5" /> Email
+                      </a>
                     </Button>
                     <Button variant="outline" disabled className="w-full md:w-auto">
                         <Share2 className="mr-2 h-5 w-5" /> Social Media (Coming Soon)
