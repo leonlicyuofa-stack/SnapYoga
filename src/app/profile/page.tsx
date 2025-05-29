@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, KeyRound, Languages, ShieldCheck, UserCircle } from 'lucide-react'; // Added UserCircle
+import { Loader2, KeyRound, Languages, ShieldCheck, UserCircle } from 'lucide-react'; 
 import { Separator } from '@/components/ui/separator';
 
 const passwordChangeSchema = z.object({
@@ -29,6 +29,7 @@ type PasswordChangeFormValues = z.infer<typeof passwordChangeSchema>;
 
 const languageOptions = [
   { value: "en", label: "English" },
+  { value: "id", label: "Bahasa Indonesia" }, // Added Indonesian
   { value: "es", label: "Español (Spanish)" },
   { value: "fr", label: "Français (French)" },
 ];
@@ -37,7 +38,7 @@ export default function ProfilePage() {
   const { user, updateUserPassword, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState("en");
+  const [selectedLanguage, setSelectedLanguage] = useState("en"); // Default to English
 
   const { 
     register: registerPassword, 
