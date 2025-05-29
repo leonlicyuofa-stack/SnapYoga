@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/contexts/AuthContext'; // Ensure this path is correct
+import { useAuth } from '@/hooks/useAuth'; // Changed import path
 import { LogIn, LogOut, UserCircle, Loader2 } from 'lucide-react';
 import {
   DropdownMenu,
