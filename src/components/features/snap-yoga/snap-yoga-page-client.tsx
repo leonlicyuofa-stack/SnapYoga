@@ -7,7 +7,7 @@ import { summarizeFeedback, type SummarizeFeedbackInput, type SummarizeFeedbackO
 import { VideoUploadCard } from './video-upload-card';
 import { PoseAnalysisCard } from './pose-analysis-card';
 import { FeedbackSubmissionCard } from './feedback-submission-card';
-import { RecommendedVideosCard, type YouTubeVideo } from './recommended-videos-card'; // Ensure this import is correct
+import { RecommendedVideosCard, type YouTubeVideo } from './recommended-videos-card';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
@@ -26,7 +26,7 @@ export function SnapYogaPageClient() {
   
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
-  const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false); // For video loading state
+  const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const { toast } = useToast();
@@ -36,10 +36,10 @@ export function SnapYogaPageClient() {
     setVideoFileName(fileName);
     setAnalysisResult(null); 
     setSummaryResult(null); 
-    setRecommendedVideos([]);
+    setRecommendedVideos([]); // Clear previous recommendations
     setError(null);
     setIsLoadingAnalysis(true);
-    setIsLoadingRecommendations(true); // Start loading recommendations
+    setIsLoadingRecommendations(true); // Start loading recommendations immediately
 
     try {
       const input: AnalyzeYogaPoseInput = { videoDataUri: dataUri };
@@ -49,9 +49,6 @@ export function SnapYogaPageClient() {
         title: "Analysis Complete",
         description: `Your yoga pose has been analyzed. Score: ${result.score !== undefined ? result.score + '/100' : 'N/A'}`,
       });
-
-      console.log("handleVideoUpload - currentUser:", currentUser);
-      console.log("handleVideoUpload - analysis result:", result);
 
       if (currentUser && result) {
         console.log("Attempting to save analysis. User ID:", currentUser.uid, "Result exists:", !!result);
@@ -99,22 +96,17 @@ export function SnapYogaPageClient() {
         console.log("Skipping save analysis. currentUser is falsy or result is falsy.", "currentUser:", currentUser, "result:", result);
       }
 
-      // Simulate fetching recommended videos based on analysis
-      // In a real app, this might be another AI call or a lookup based on 'result.identifiedPose' or 'result.feedback'
-      if (result && result.score < 90) { // Example condition
-        // Simulate a delay for fetching recommendations
-        setTimeout(() => {
-            setRecommendedVideos([
-              { id: 'vid1', title: 'Improve Your Warrior Pose Alignment', embedUrl: 'https://www.youtube.com/embed/tKAs69_N3aE' }, // Example embed URL
-              { id: 'vid2', title: '5 Tips for a Better Downward Dog', embedUrl: 'https://www.youtube.com/embed/jK0arm2R2gU' },
-              { id: 'vid3', title: 'Core Strengthening for Yoga Stability', embedUrl: 'https://www.youtube.com/embed/44mgUselcDU' },
-              { id: 'vid4', title: 'Shoulder Opening Yoga Poses', embedUrl: 'https://www.youtube.com/embed/n3uQ227u1C8' },
-            ]);
-            setIsLoadingRecommendations(false);
-        }, 1500); // Simulate network delay
-      } else {
-        setIsLoadingRecommendations(false); // No recommendations if condition not met
-      }
+      // Simulate fetching recommended videos
+      // Forcing recommendation fetch for visibility during dev
+      setTimeout(() => {
+          setRecommendedVideos([
+            { id: 'vid1', title: 'Improve Your Warrior Pose Alignment', embedUrl: 'https://www.youtube.com/embed/tKAs69_N3aE' },
+            { id: 'vid2', title: '5 Tips for a Better Downward Dog', embedUrl: 'https://www.youtube.com/embed/jK0arm2R2gU' },
+            { id: 'vid3', title: 'Core Strengthening for Yoga Stability', embedUrl: 'https://www.youtube.com/embed/44mgUselcDU' },
+            { id: 'vid4', title: 'Shoulder Opening Yoga Poses', embedUrl: 'https://www.youtube.com/embed/n3uQ227u1C8' },
+          ]);
+          setIsLoadingRecommendations(false);
+      }, 1500);
 
     } catch (e: any) {
       console.error("Error analyzing pose:", e);
@@ -126,10 +118,9 @@ export function SnapYogaPageClient() {
         variant: "destructive",
       });
       setAnalysisResult({ feedback: "Analysis failed. Please try again.", score: 0, identifiedPose: "Unknown" });
-      setIsLoadingRecommendations(false);
+      setIsLoadingRecommendations(false); // Also stop loading recommendations on error
     } finally {
       setIsLoadingAnalysis(false);
-      // Note: setIsLoadingRecommendations is handled within the try/catch/finally or after timeout
     }
   };
 
@@ -191,6 +182,7 @@ export function SnapYogaPageClient() {
         />
       )}
 
+      {/* Render RecommendedVideosCard if analysisResult exists, it will handle its own loading/empty state */}
       {analysisResult && (
         <>
           <Separator className="my-8" />

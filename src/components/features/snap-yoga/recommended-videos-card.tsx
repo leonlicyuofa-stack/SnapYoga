@@ -41,11 +41,6 @@ export function RecommendedVideosCard({ videos, isLoading }: RecommendedVideosCa
     );
   }
 
-
-  if (!videos || videos.length === 0) {
-    return null; // Don't render anything if there are no videos or not loading
-  }
-
   return (
     <Card className="w-full shadow-lg mt-8">
       <CardHeader>
@@ -54,7 +49,9 @@ export function RecommendedVideosCard({ videos, isLoading }: RecommendedVideosCa
           Recommended Training Videos
         </CardTitle>
         <CardDescription>
-          Here are some videos that might help you improve your posture and poses.
+          {videos.length > 0 
+            ? "Here are some videos that might help you improve your posture and poses."
+            : "Explore these general tips or check back later for more specific recommendations."}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -81,7 +78,7 @@ export function RecommendedVideosCard({ videos, isLoading }: RecommendedVideosCa
             ))}
           </div>
         ) : (
-          <p className="text-muted-foreground text-center py-4">No video recommendations available at the moment.</p>
+          <p className="text-muted-foreground text-center py-4">No specific video recommendations available at the moment. Consider practicing foundational poses or general flexibility routines.</p>
         )}
       </CardContent>
     </Card>
