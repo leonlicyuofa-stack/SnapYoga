@@ -12,8 +12,12 @@ import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
 import { Separator } from '@/components/ui/separator';
+import { useAuth } from '@/hooks/useAuth';
+import { firestore } from '@/lib/firebase/clientApp';
+import { collection, addDoc, serverTimestamp, doc } from 'firebase/firestore';
 
 export function SnapYogaPageClient() {
+  const { user: currentUser } = useAuth();
   const [videoDataUri, setVideoDataUri] = useState<string | null>(null);
   const [videoFileName, setVideoFileName] = useState<string | null>(null);
   const [analysisResult, setAnalysisResult] = useState<AnalyzeYogaPoseOutput | null>(null);
@@ -31,7 +35,7 @@ export function SnapYogaPageClient() {
     setVideoFileName(fileName);
     setAnalysisResult(null); 
     setSummaryResult(null); 
-    setRecommendedVideos([]); // Clear previous recommendations
+    setRecommendedVideos([]);
     setError(null);
     setIsLoadingAnalysis(true);
 
@@ -44,9 +48,35 @@ export function SnapYogaPageClient() {
         description: `Your yoga pose has been analyzed. Score: ${result.score !== undefined ? result.score + '/100' : 'N/A'}`,
       });
 
+      if (currentUser && result) {
+        try {
+          const analysisDataToSave = {
+            videoFileName: fileName,
+            videoDataUri: dataUri, // For smaller videos or as a reference. Consider Firebase Storage for large files.
+            feedback: result.feedback,
+            score: result.score,
+            identifiedPose: result.identifiedPose,
+            createdAt: serverTimestamp(),
+          };
+          const userAnalysesCollectionRef = collection(firestore, 'users', currentUser.uid, 'poseAnalyses');
+          await addDoc(userAnalysesCollectionRef, analysisDataToSave);
+          toast({
+            title: "Analysis Saved",
+            description: "Your pose analysis results have been saved to your profile.",
+          });
+        } catch (saveError) {
+          console.error("Error saving analysis to Firestore:", saveError);
+          toast({
+            title: "Save Error",
+            description: "Could not save your analysis results. Please try again.",
+            variant: "destructive",
+          });
+        }
+      }
+
+
       // Populate recommended videos (placeholder logic)
-      // In a real app, this would be based on analysisResult.feedback or specific issues identified.
-      if (result && result.score < 90) { // Example condition
+      if (result && result.score < 90) {
         setRecommendedVideos([
           { id: 'v1', title: 'Improve Your Posture with These 5 Exercises', embedUrl: 'https://www.youtube.com/embed/watch?v=BqgS03wTOsA' },
           { id: 'v2', title: 'Yoga for Better Alignment and Balance', embedUrl: 'https://www.youtube.com/embed/watch?v=o8_jPgtpZ3w' },
@@ -54,7 +84,6 @@ export function SnapYogaPageClient() {
           { id: 'v4', title: 'Shoulder Opening Yoga Poses', embedUrl: 'https://www.youtube.com/embed/watch?v=n3uQ227u1C8' },
         ]);
       }
-
 
     } catch (e) {
       console.error("Error analyzing pose:", e);
@@ -65,7 +94,7 @@ export function SnapYogaPageClient() {
         description: errorMessage,
         variant: "destructive",
       });
-      setAnalysisResult({ feedback: "Analysis failed. Please try again.", score: 0 });
+      setAnalysisResult({ feedback: "Analysis failed. Please try again.", score: 0, identifiedPose: "Unknown" });
     } finally {
       setIsLoadingAnalysis(false);
     }

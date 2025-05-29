@@ -1,30 +1,42 @@
 
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Users collection
-    // - Authenticated users can read basic profile data of other users for search.
-    // - A user can read and write to their own profile document.
+
+    // Users Collection
+    // Users can read their own profile and limited fields of others (for search, adjust as needed)
+    // Users can only write to their own profile
     match /users/{userId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null; // Allow authenticated users to read basic profile data
+      allow write: if request.auth != null && request.auth.uid == userId; // Only user can write to their own profile
+
+      // Pose Analyses Subcollection
+      // Users can read and write their own pose analyses
+      match /poseAnalyses/{analysisId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
 
-    // Example for a future 'challenges' collection (adjust as needed)
-    // match /challenges/{challengeId} {
-    //   allow read: if request.auth != null;
-    //   // Add write rules if users can create/modify challenges
-    // }
-
-    // Example for a future 'invitations' collection (adjust as needed)
-    // This will need more granular rules for who can create, read, or update invitations.
-    // match /invitations/{invitationId} {
-    //  allow read: if request.auth != null && (request.auth.uid == resource.data.inviterUid || request.auth.uid == resource.data.inviteeUid);
-    //  allow create: if request.auth != null && request.auth.uid == request.resource.data.inviterUid;
-    //  allow update: if request.auth != null && request.auth.uid == resource.data.inviteeUid; // e.g., to change status
-    // }
-
-    // Deny all other writes by default
+    // Invitations Collection (Example Rules - adjust as needed when implementing fully)
+    // Inviter can create an invitation
+    // Invitee can read and update (e.g., accept/decline) their invitations
+    // Inviter might also need read access to invitations they sent
+    match /invitations/{invitationId} {
+      allow read: if request.auth != null && 
+                    (request.auth.uid == resource.data.inviteeUid || request.auth.uid == resource.data.inviterUid);
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.inviterUid;
+      allow update: if request.auth != null && 
+                      (request.auth.uid == resource.data.inviteeUid || request.auth.uid == resource.data.inviterUid) &&
+                      // Only allow updating specific fields like 'status' or 'updatedAt'
+                      request.resource.data.keys().hasOnly(['status', 'updatedAt']); 
+                      // Ensure inviter/invitee UIDs are not changed after creation
+                      // && request.resource.data.inviterUid == resource.data.inviterUid
+                      // && request.resource.data.inviteeUid == resource.data.inviteeUid; 
+      // allow delete: if false; // Typically don't allow client-side deletion of invitations directly
+    }
+    
+    // Deny all other writes to any other unspecified collection
     match /{document=**} {
       allow write: if false;
     }
