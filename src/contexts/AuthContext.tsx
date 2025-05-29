@@ -16,7 +16,7 @@ import {
   type AuthError
 } from 'firebase/auth';
 import { auth, firestore } from '@/lib/firebase/clientApp'; // Import firestore
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore'; // Firestore functions
+import { doc, setDoc, getDoc, serverTimestamp, type DocumentData } from 'firebase/firestore'; // Firestore functions
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
@@ -65,30 +65,38 @@ const formatAuthError = (error: AuthError): string => {
 };
 
 // Function to create or update user profile in Firestore
-const createUserProfileDocument = async (user: User, additionalData = {}) => {
+const createUserProfileDocument = async (user: User, additionalData: DocumentData = {}) => {
   if (!user) return;
   const userRef = doc(firestore, `users/${user.uid}`);
   const userSnap = await getDoc(userRef);
 
   const { uid, email, displayName, photoURL } = user;
-  const dataToSet = {
+  const dataToSet: DocumentData = {
     uid,
     email,
     displayName: displayName || email?.split('@')[0] || 'User',
     photoURL,
-    ...additionalData, // Merge additional data
+    ...additionalData,
   };
 
   if (!userSnap.exists()) {
+    // This is a new user
     dataToSet.createdAt = serverTimestamp();
+    // Set onboardingCompleted to false if not explicitly provided in additionalData
+    if (additionalData.onboardingCompleted === undefined) {
+      dataToSet.onboardingCompleted = false;
+    }
   } else {
-    dataToSet.updatedAt = serverTimestamp(); // Add updatedAt if document exists
+    // Existing user
+    dataToSet.updatedAt = serverTimestamp();
   }
 
   try {
-    await setDoc(userRef, dataToSet, { merge: true }); // Use merge: true to update or create
+    // Use merge: true to update or create, and to not overwrite fields not in dataToSet if doc exists
+    await setDoc(userRef, dataToSet, { merge: true });
   } catch (error) {
     console.error("Error creating/updating user profile in Firestore:", error);
+    // Optionally, throw the error or handle it with a toast if critical for UX
   }
 };
 
@@ -103,6 +111,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
+        // Create/update profile on auth state change if user exists
+        // This handles social sign-ins where user object is available immediately
         await createUserProfileDocument(currentUser);
       }
       setLoading(false);
@@ -111,7 +121,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const handleAuthSuccess = async (message: string, authUser: User, redirectPath: string = '/') => {
-    await createUserProfileDocument(authUser);
+    // Profile creation is handled by onAuthStateChanged or signUpWithEmail for new users
     toast({ title: 'Success', description: message });
     router.push(redirectPath);
   };
@@ -130,9 +140,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, provider);
-      // For social sign-ins, check if onboarding is needed or redirect to home.
-      // This logic can be enhanced later to check a flag like 'onboardingCompleted' in Firestore.
-      await handleAuthSuccess(`${providerName} sign-in successful.`, result.user, '/');
+      // createUserProfileDocument will be called by onAuthStateChanged
+      // Check if onboarding is needed or redirect to home.
+      const userDocRef = doc(firestore, 'users', result.user.uid);
+      const userSnap = await getDoc(userDocRef);
+      if (userSnap.exists() && userSnap.data()?.onboardingCompleted) {
+        await handleAuthSuccess(`${providerName} sign-in successful.`, result.user, '/');
+      } else {
+         // New user or onboarding not completed, profile created by onAuthStateChanged,
+         // homepage will handle prompt to /auth/onboarding/details
+        await handleAuthSuccess(`${providerName} sign-in successful. Welcome!`, result.user, '/');
+      }
     } catch (error) {
       handleAuthError(error, `Failed to sign in with ${providerName}.`);
     } finally {
@@ -151,7 +169,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-      await createUserProfileDocument(userCredential.user); // Create basic profile first
+      // Explicitly pass onboardingCompleted: false for new email sign-ups
+      await createUserProfileDocument(userCredential.user, { onboardingCompleted: false });
       toast({ title: 'Account Created!', description: 'Please complete your profile.' });
       router.push('/auth/onboarding/details'); // Redirect to onboarding
     } catch (error) {
@@ -165,9 +184,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, pass);
-      // For email sign-in, check if onboarding is needed or redirect to home.
-      // This logic can be enhanced later.
-      await handleAuthSuccess('Signed in successfully.', userCredential.user, '/');
+      // createUserProfileDocument will be called by onAuthStateChanged if needed
+      const userDocRef = doc(firestore, 'users', userCredential.user.uid);
+      const userSnap = await getDoc(userDocRef);
+      if (userSnap.exists() && userSnap.data()?.onboardingCompleted) {
+         await handleAuthSuccess('Signed in successfully.', userCredential.user, '/');
+      } else {
+        // Onboarding not completed, homepage will handle prompt to /auth/onboarding/details
+        await handleAuthSuccess('Signed in successfully. Welcome back!', userCredential.user, '/');
+      }
     } catch (error) {
       handleAuthError(error, 'Failed to sign in.');
     } finally {
@@ -180,7 +205,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await signOut(auth);
       toast({ title: 'Signed Out', description: 'You have been signed out successfully.' });
-      router.push('/');
+      router.push('/'); // Redirect to home after sign out
+      setUser(null); // Explicitly set user to null
     } catch (error) {
       handleAuthError(error, 'Failed to sign out.');
     } finally {

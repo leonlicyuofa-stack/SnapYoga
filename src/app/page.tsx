@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { PersonStanding, Sparkles, ArrowRight, Users, ListChecks, CalendarDays, Trophy, Eye, Copy, MessageSquare, Share2, PlayCircle } from 'lucide-react';
+import { PersonStanding, Sparkles, ArrowRight, Users, ListChecks, CalendarDays, Trophy, Eye, Copy, MessageSquare, Share2, PlayCircle, UserPlus } from 'lucide-react';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';
@@ -34,6 +34,9 @@ interface UserProfileData extends DocumentData {
   displayName?: string;
   photoURL?: string;
   onboardingCompleted?: boolean;
+  height?: number;
+  weight?: number;
+  yogaInterest?: string;
   // Add other profile fields as needed
 }
 
@@ -62,7 +65,11 @@ export default function HomePage() {
           if (docSnap.exists()) {
             setUserProfile(docSnap.data() as UserProfileData);
           } else {
-            setUserProfile(null); // Should not happen if AuthContext creates profile
+            // Profile might not be created yet if this is a very new social sign-in
+            // AuthContext's onAuthStateChanged should handle creating it.
+            // We can set a temporary profile or rely on !userProfile below.
+            setUserProfile(null); 
+            console.log("User profile not found in Firestore, might be a new social sign-in.");
           }
         })
         .catch((error) => {
@@ -150,7 +157,7 @@ export default function HomePage() {
     }
   };
 
-  if (authLoading) {
+  if (authLoading || (!user && loadingUserProfile)) { // Show loading skeleton if auth is loading OR if no user and profile is still loading
     return (
       <AppShell>
         <div className="space-y-12 p-4 md:p-8 animate-pulse">
@@ -176,29 +183,36 @@ export default function HomePage() {
     );
   }
 
-  const isNewUser = !loadingUserProfile && user && (!userProfile || !userProfile.onboardingCompleted);
-  const showStatsDashboard = !loadingUserProfile && user && userProfile && userProfile.onboardingCompleted;
+  // Condition for users who need to complete onboarding (new users or social sign-ins before details page)
+  const needsOnboarding = user && !authLoading && (loadingUserProfile || !userProfile || !userProfile.onboardingCompleted);
+  // Condition for users who have completed onboarding
+  const showStatsDashboard = user && !authLoading && !loadingUserProfile && userProfile && userProfile.onboardingCompleted;
+
 
   return (
     <AppShell>
       <div className="flex flex-col items-center w-full">
         {user && !authLoading && (
           <div className="w-full bg-primary/5 p-4 md:p-6 rounded-lg shadow-md border border-primary/20 mb-8 md:mb-12">
-            {loadingUserProfile ? (
-              <Skeleton className="h-8 w-3/4 mb-6 mx-auto" />
-            ) : isNewUser ? (
+            {loadingUserProfile && !userProfile ? ( // Show skeleton if profile is loading and not yet available
               <div className="text-center py-8">
-                <Sparkles className="mx-auto h-12 w-12 text-primary mb-4" />
+                <Skeleton className="h-10 w-3/4 mb-4 mx-auto" />
+                <Skeleton className="h-6 w-1/2 mb-6 mx-auto" />
+                <Skeleton className="h-12 w-1/3 mx-auto" />
+              </div>
+            ) : needsOnboarding ? (
+              <div className="text-center py-8">
+                <UserPlus className="mx-auto h-12 w-12 text-primary mb-4" />
                 <h2 className="text-2xl md:text-3xl font-semibold text-primary mb-3">
                   Welcome to SnapYoga, {user.displayName || user.email?.split('@')[0] || 'Yogi'}!
                 </h2>
-                <p className="text-lg text-muted-foreground mb-6">
-                  Ready to perfect your poses?
+                <p className="text-lg text-muted-foreground mb-6 max-w-md mx-auto">
+                  Complete your profile to personalize your experience and unlock all features.
                 </p>
                 <Button size="lg" asChild className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-7 px-8 rounded-lg shadow-lg transition-transform transform hover:scale-105">
-                  <Link href="/snap-yoga">
-                    <PlayCircle className="mr-2 h-5 w-5" />
-                    Start Your Journey Today!
+                  <Link href="/auth/onboarding/details">
+                    <ArrowRight className="mr-2 h-5 w-5" />
+                    Complete Your Profile
                   </Link>
                 </Button>
               </div>
@@ -289,15 +303,11 @@ export default function HomePage() {
                   </div>
                 </div>
               </>
-            ) : (
-               <div className="text-center py-8">
-                  <Skeleton className="h-8 w-1/2 mb-4 mx-auto" />
-                  <Skeleton className="h-24 w-full mb-4 mx-auto" />
-                </div>
-            )}
+            ) : null // End of showStatsDashboard
+            }
 
-            {/* Invite Friends Card - shown only if user is logged in and onboarding is complete, or if they are a new user */}
-            {(!loadingUserProfile && user && !isNewUser) && (
+            {/* Invite Friends Card - shown only if user is logged in and onboarding is complete */}
+            {showStatsDashboard && (
               <Card className="w-full max-w-2xl shadow-lg mt-8 mx-auto">
                 <CardHeader>
                   <CardTitle className="text-2xl font-semibold flex items-center justify-center gap-2 text-primary">
