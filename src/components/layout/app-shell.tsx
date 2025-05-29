@@ -6,7 +6,7 @@ import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth'; // Changed import path
-import { LogIn, LogOut, UserCircle, Loader2 } from 'lucide-react';
+import { LogIn, LogOut, UserCircle, Loader2, Home } from 'lucide-react'; // Added Home icon
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,7 +41,13 @@ export function AppShell({ children }: AppShellProps) {
             <SnapYogaLogo />
           </Link>
           
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            <Button variant="ghost" asChild>
+              <Link href="/">
+                <Home className="mr-0 sm:mr-2 h-5 w-5" />
+                <span className="hidden sm:inline">Home</span>
+              </Link>
+            </Button>
             {loading ? (
               <Loader2 className="h-6 w-6 animate-spin text-primary" />
             ) : user ? (
