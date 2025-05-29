@@ -48,30 +48,54 @@ export function SnapYogaPageClient() {
         description: `Your yoga pose has been analyzed. Score: ${result.score !== undefined ? result.score + '/100' : 'N/A'}`,
       });
 
+      console.log("handleVideoUpload - currentUser:", currentUser);
+      console.log("handleVideoUpload - analysis result:", result);
+
       if (currentUser && result) {
-        try {
-          const analysisDataToSave = {
-            videoFileName: fileName,
-            videoDataUri: dataUri, // For smaller videos or as a reference. Consider Firebase Storage for large files.
-            feedback: result.feedback,
-            score: result.score,
-            identifiedPose: result.identifiedPose,
-            createdAt: serverTimestamp(),
-          };
-          const userAnalysesCollectionRef = collection(firestore, 'users', currentUser.uid, 'poseAnalyses');
-          await addDoc(userAnalysesCollectionRef, analysisDataToSave);
-          toast({
-            title: "Analysis Saved",
-            description: "Your pose analysis results have been saved to your profile.",
-          });
-        } catch (saveError) {
-          console.error("Error saving analysis to Firestore:", saveError);
-          toast({
-            title: "Save Error",
-            description: "Could not save your analysis results. Please try again.",
-            variant: "destructive",
-          });
+        console.log("Attempting to save analysis. User ID:", currentUser.uid, "Result exists:", !!result);
+        if (!currentUser.uid) {
+            console.error("Cannot save analysis: Current user UID is missing.");
+            toast({
+                title: "Save Error",
+                description: "User authentication data is incomplete. Cannot save analysis.",
+                variant: "destructive",
+            });
+        } else {
+            try {
+              const analysisDataToSave = {
+                videoFileName: fileName,
+                videoDataUri: dataUri, // For smaller videos or as a reference. Consider Firebase Storage for large files.
+                feedback: result.feedback,
+                score: result.score,
+                identifiedPose: result.identifiedPose,
+                createdAt: serverTimestamp(),
+              };
+              console.log("Saving data to Firestore in path:", `users/${currentUser.uid}/poseAnalyses`, "Data:", analysisDataToSave);
+              const userAnalysesCollectionRef = collection(firestore, 'users', currentUser.uid, 'poseAnalyses');
+              await addDoc(userAnalysesCollectionRef, analysisDataToSave);
+              console.log("Analysis saved successfully to Firestore.");
+              toast({
+                title: "Analysis Saved",
+                description: "Your pose analysis results have been saved to your profile.",
+              });
+            } catch (saveError: any) {
+              console.error("Error saving analysis to Firestore:", saveError);
+              let description = "Could not save your analysis results. Please try again.";
+              if (saveError.message) {
+                description += ` Error: ${saveError.message}`;
+              }
+              if (saveError.code) {
+                description += ` Code: ${saveError.code}`;
+              }
+              toast({
+                title: "Firestore Save Error",
+                description: description,
+                variant: "destructive",
+              });
+            }
         }
+      } else {
+        console.log("Skipping save analysis. currentUser is falsy or result is falsy.", "currentUser:", currentUser, "result:", result);
       }
 
 
@@ -85,13 +109,13 @@ export function SnapYogaPageClient() {
         ]);
       }
 
-    } catch (e) {
+    } catch (e: any) {
       console.error("Error analyzing pose:", e);
       const errorMessage = e instanceof Error ? e.message : "An unknown error occurred during analysis.";
       setError(`Failed to analyze pose: ${errorMessage}`);
       toast({
         title: "Analysis Failed",
-        description: errorMessage,
+        description: `${errorMessage}${e.code ? ` (Code: ${e.code})` : ''}`,
         variant: "destructive",
       });
       setAnalysisResult({ feedback: "Analysis failed. Please try again.", score: 0, identifiedPose: "Unknown" });
@@ -113,13 +137,13 @@ export function SnapYogaPageClient() {
         title: "Feedback Submitted",
         description: "Thank you! Your feedback has been summarized.",
       });
-    } catch (e) {
+    } catch (e: any) {
       console.error("Error summarizing feedback:", e);
       const errorMessage = e instanceof Error ? e.message : "An unknown error occurred while submitting feedback.";
       setError(`Failed to submit feedback: ${errorMessage}`);
       toast({
         title: "Feedback Submission Failed",
-        description: errorMessage,
+        description: `${errorMessage}${e.code ? ` (Code: ${e.code})` : ''}`,
         variant: "destructive",
       });
     } finally {
