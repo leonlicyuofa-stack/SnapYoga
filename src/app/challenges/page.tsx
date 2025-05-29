@@ -21,7 +21,7 @@ const challenges: Challenge[] = [
     name: 'Headstand (Sirsasana)',
     description: 'Master the headstand this month! Work on your balance and core strength. Practice safely against a wall if you\'re new.',
     imageUrl: 'https://placehold.co/600x400.png',
-    imageHint: 'headstand yoga',
+    imageHint: 'headstand yoga silhouette',
     inviteLink: '/challenges/headstand/invite',
   },
   {
@@ -29,7 +29,7 @@ const challenges: Challenge[] = [
     name: 'Crow Pose (Bakasana)',
     description: 'Take on the crow pose! Build arm strength and courage. Start by practicing tucking your knees into your armpits.',
     imageUrl: 'https://placehold.co/600x400.png',
-    imageHint: 'crow pose yoga',
+    imageHint: 'crow pose yoga practice',
     inviteLink: '/challenges/crow/invite',
   },
   // Add more challenges here if needed
@@ -50,7 +50,7 @@ export default function ChallengesPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-          {challenges.map((challenge) => (
+          {challenges.map((challenge, index) => (
             <Card key={challenge.id} className="overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group rounded-lg">
               <div className="relative w-full h-72">
                 <Image
@@ -58,6 +58,8 @@ export default function ChallengesPage() {
                   alt={`${challenge.name} background`}
                   layout="fill"
                   objectFit="cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority={index === 0} // Prioritize loading the first image
                   data-ai-hint={challenge.imageHint}
                   className="transition-transform duration-500 group-hover:scale-105"
                 />
