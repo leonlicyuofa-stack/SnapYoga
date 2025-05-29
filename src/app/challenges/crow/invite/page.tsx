@@ -15,7 +15,7 @@ export default function CrowPoseInvitePage() {
   const { toast } = useToast();
 
   const handleCopyLink = () => {
-    if (navigator.clipboard && inviteLink) {
+    if (navigator.clipboard && inviteLink && inviteLink.trim() !== '') {
       navigator.clipboard.writeText(inviteLink)
         .then(() => {
           toast({
@@ -30,6 +30,12 @@ export default function CrowPoseInvitePage() {
             description: "Could not copy the link. Please try manually.",
             variant: "destructive",
           });
+        });
+    } else if (!inviteLink || inviteLink.trim() === '') {
+        toast({
+            title: "Link Not Ready",
+            description: "The invite link is not yet available. Please wait a moment and try again.",
+            variant: "destructive",
         });
     } else {
         toast({

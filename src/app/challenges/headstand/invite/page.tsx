@@ -15,7 +15,7 @@ export default function HeadstandInvitePage() {
   const { toast } = useToast();
 
   const handleCopyLink = () => {
-    if (navigator.clipboard && inviteLink) {
+    if (navigator.clipboard && inviteLink && inviteLink.trim() !== '') {
       navigator.clipboard.writeText(inviteLink)
         .then(() => {
           toast({
@@ -31,9 +31,13 @@ export default function HeadstandInvitePage() {
             variant: "destructive",
           });
         });
+    } else if (!inviteLink || inviteLink.trim() === '') {
+        toast({
+            title: "Link Not Ready",
+            description: "The invite link is not yet available. Please wait a moment and try again.",
+            variant: "destructive",
+        });
     } else {
-        // Fallback for older browsers or if clipboard API is not available
-        // This part might need a more robust solution like a hidden textarea
         toast({
             title: "Copy Not Supported",
             description: "Automatic copying is not supported by your browser. Please copy the link manually.",
