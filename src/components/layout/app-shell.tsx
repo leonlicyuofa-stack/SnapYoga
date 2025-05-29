@@ -1,12 +1,12 @@
 
-"use client"; // Make AppShell a client component to use hooks
+"use client"; 
 
 import type { ReactNode } from 'react';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/hooks/useAuth'; // Changed import path
-import { LogIn, LogOut, UserCircle, Loader2, Home } from 'lucide-react'; // Added Home icon
+import { useAuth } from '@/hooks/useAuth';
+import { LogIn, LogOut, UserCircle, Loader2, Home, Settings } from 'lucide-react'; // Added Settings icon
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,13 +24,22 @@ interface AppShellProps {
 export function AppShell({ children }: AppShellProps) {
   const { user, signOutUser, loading } = useAuth();
 
-  const getInitials = (email?: string | null) => {
-    if (!email) return 'U';
-    const parts = email.split('@')[0].split(/[._-]/);
-    if (parts.length > 1) {
-      return (parts[0][0] + parts[1][0]).toUpperCase();
+  const getInitials = (email?: string | null, displayName?: string | null) => {
+    if (displayName) {
+      const names = displayName.split(' ');
+      if (names.length > 1) {
+        return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+      }
+      return displayName.substring(0, 2).toUpperCase();
     }
-    return email.substring(0, 2).toUpperCase();
+    if (email) {
+      const parts = email.split('@')[0].split(/[._-]/);
+      if (parts.length > 1) {
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+      }
+      return email.substring(0, 2).toUpperCase();
+    }
+    return 'U';
   };
 
   return (
@@ -55,9 +64,8 @@ export function AppShell({ children }: AppShellProps) {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                     <Avatar className="h-9 w-9">
-                       {/* Firebase user.photoURL might be available for Google/Facebook */}
                       <AvatarImage src={user.photoURL || undefined} alt={user.displayName || user.email || 'User'} />
-                      <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
+                      <AvatarFallback>{getInitials(user.email, user.displayName)}</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
@@ -73,8 +81,13 @@ export function AppShell({ children }: AppShellProps) {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  {/* Add more items like "Profile", "Settings" here if needed */}
-                  {/* <DropdownMenuItem asChild><Link href="/profile">Profile</Link></DropdownMenuItem> */}
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link href="/profile">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={signOutUser} className="cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Sign Out</span>

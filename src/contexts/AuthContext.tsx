@@ -2,21 +2,24 @@
 "use client";
 
 import type { ReactNode } from 'react';
-import * as React from 'react'; // Changed import style
+import * as React from 'react';
 import {
   type User,
   onAuthStateChanged,
   GoogleAuthProvider,
-  OAuthProvider, // Added for Apple
+  OAuthProvider,
   signInWithPopup,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   type AuthProvider as FirebaseAuthProvider,
-  type AuthError
+  type AuthError,
+  EmailAuthProvider, // Added for password change
+  reauthenticateWithCredential, // Added for password change
+  updatePassword, // Added for password change
 } from 'firebase/auth';
-import { auth, firestore } from '@/lib/firebase/clientApp'; // Import firestore
-import { doc, setDoc, getDoc, serverTimestamp, type DocumentData } from 'firebase/firestore'; // Firestore functions
+import { auth, firestore } from '@/lib/firebase/clientApp';
+import { doc, setDoc, getDoc, serverTimestamp, type DocumentData } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
@@ -28,6 +31,7 @@ interface AuthContextType {
   signUpWithEmail: (email: string, pass: string) => Promise<void>;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   signOutUser: () => Promise<void>;
+  updateUserPassword: (currentPassword: string, newPassword: string) => Promise<boolean>; // Added
 }
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
@@ -64,8 +68,7 @@ const formatAuthError = (error: AuthError): string => {
   }
 };
 
-// Function to create or update user profile in Firestore
-const createUserProfileDocument = async (user: User, additionalData: DocumentData = {}) => {
+export const createUserProfileDocument = async (user: User, additionalData: DocumentData = {}) => {
   if (!user) return;
   const userRef = doc(firestore, `users/${user.uid}`);
   const userSnap = await getDoc(userRef);
@@ -80,29 +83,21 @@ const createUserProfileDocument = async (user: User, additionalData: DocumentDat
   };
 
   if (!userSnap.exists()) {
-    // This is a new user
     dataToSet.createdAt = serverTimestamp();
-    // Set onboardingCompleted to false if not explicitly provided in additionalData
-    // This ensures new users (especially social sign-ins) are flagged for onboarding checks
     if (additionalData.onboardingCompleted === undefined) {
       dataToSet.onboardingCompleted = false;
     }
   } else {
-    // Existing user
     dataToSet.updatedAt = serverTimestamp();
-    // If onboardingCompleted is already true, don't overwrite it with false
-    // unless explicitly passed in additionalData
     if (userSnap.data()?.onboardingCompleted === true && additionalData.onboardingCompleted === undefined) {
       dataToSet.onboardingCompleted = true;
     }
   }
 
   try {
-    // Use merge: true to update or create, and to not overwrite fields not in dataToSet if doc exists
     await setDoc(userRef, dataToSet, { merge: true });
   } catch (error) {
     console.error("Error creating/updating user profile in Firestore:", error);
-    // Optionally, throw the error or handle it with a toast if critical for UX
   }
 };
 
@@ -117,8 +112,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        // Create/update profile on auth state change if user exists
-        // This handles social sign-ins where user object is available immediately
         await createUserProfileDocument(currentUser);
       }
       setLoading(false);
@@ -127,7 +120,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const handleAuthSuccess = async (message: string, authUser: User, redirectPath: string = '/') => {
-    // Profile creation is handled by onAuthStateChanged or signUpWithEmail for new users
     toast({ title: 'Success', description: message });
     router.push(redirectPath);
   };
@@ -146,15 +138,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, provider);
-      // createUserProfileDocument will be called by onAuthStateChanged
-      // Check if onboarding is needed or redirect to home.
       const userDocRef = doc(firestore, 'users', result.user.uid);
       const userSnap = await getDoc(userDocRef);
       if (userSnap.exists() && userSnap.data()?.onboardingCompleted) {
         await handleAuthSuccess(`${providerName} sign-in successful.`, result.user, '/');
       } else {
-         // New user or onboarding not completed, profile created by onAuthStateChanged,
-         // homepage will handle prompt to /auth/onboarding/details
         await handleAuthSuccess(`${providerName} sign-in successful. Welcome!`, result.user, '/');
       }
     } catch (error) {
@@ -175,10 +163,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-      // Explicitly pass onboardingCompleted: false for new email sign-ups
       await createUserProfileDocument(userCredential.user, { onboardingCompleted: false });
       toast({ title: 'Account Created!', description: 'Please complete your profile.' });
-      router.push('/auth/onboarding/details'); // Redirect to onboarding
+      router.push('/auth/onboarding/details');
     } catch (error) {
       handleAuthError(error, 'Failed to create account.');
     } finally {
@@ -190,13 +177,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, pass);
-      // createUserProfileDocument will be called by onAuthStateChanged if needed
       const userDocRef = doc(firestore, 'users', userCredential.user.uid);
       const userSnap = await getDoc(userDocRef);
       if (userSnap.exists() && userSnap.data()?.onboardingCompleted) {
          await handleAuthSuccess('Signed in successfully.', userCredential.user, '/');
       } else {
-        // Onboarding not completed, homepage will handle prompt to /auth/onboarding/details
         await handleAuthSuccess('Signed in successfully. Welcome back!', userCredential.user, '/');
       }
     } catch (error) {
@@ -211,10 +196,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await signOut(auth);
       toast({ title: 'Signed Out', description: 'You have been signed out successfully.' });
-      router.push('/'); // Redirect to home after sign out
-      setUser(null); // Explicitly set user to null
+      router.push('/');
+      setUser(null);
     } catch (error) {
       handleAuthError(error, 'Failed to sign out.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateUserPassword = async (currentPassword: string, newPassword: string): Promise<boolean> => {
+    if (!user || !user.email) {
+      toast({ title: "Error", description: "No authenticated user found or email is missing.", variant: "destructive" });
+      return false;
+    }
+    setLoading(true);
+    try {
+      const credential = EmailAuthProvider.credential(user.email, currentPassword);
+      await reauthenticateWithCredential(user, credential);
+      await updatePassword(user, newPassword);
+      toast({ title: "Success", description: "Password updated successfully." });
+      return true;
+    } catch (error: any) {
+      handleAuthError(error, 'Failed to update password.');
+      return false;
     } finally {
       setLoading(false);
     }
@@ -228,6 +233,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     signUpWithEmail,
     signInWithEmail,
     signOutUser,
+    updateUserPassword, // Added
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -241,5 +247,4 @@ export const useAuth = (): AuthContextType => {
   return context;
 };
 
-// Export createUserProfileDocument if it needs to be used outside
 export { createUserProfileDocument };
