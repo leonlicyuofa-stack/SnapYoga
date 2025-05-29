@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, KeyRound, Languages, ShieldCheck } from 'lucide-react';
+import { Loader2, KeyRound, Languages, ShieldCheck, UserCircle } from 'lucide-react'; // Added UserCircle
 import { Separator } from '@/components/ui/separator';
 
 const passwordChangeSchema = z.object({
@@ -77,7 +77,7 @@ export default function ProfilePage() {
 
   return (
     <AppShell>
-      <div className="max-w-3xl mx-auto py-12 space-y-10">
+      <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8 space-y-10">
         <header className="text-center">
           <h1 className="text-4xl font-extrabold tracking-tight text-primary flex items-center justify-center gap-3">
             <UserCircle className="h-10 w-10" /> Your Profile
