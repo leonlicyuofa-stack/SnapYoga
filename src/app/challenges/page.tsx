@@ -18,7 +18,7 @@ interface Challenge {
 const challenges: Challenge[] = [
   {
     id: 'headstand',
-    name: 'Headstand Challenge (Sirsasana)',
+    name: 'Headstand (Sirsasana)',
     description: 'Master the headstand this month! Work on your balance and core strength. Practice safely against a wall if you\'re new.',
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'headstand yoga',
@@ -26,7 +26,7 @@ const challenges: Challenge[] = [
   },
   {
     id: 'crow',
-    name: 'Crow Pose Challenge (Bakasana)',
+    name: 'Crow Pose (Bakasana)',
     description: 'Take on the crow pose! Build arm strength and courage. Start by practicing tucking your knees into your armpits.',
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'crow pose yoga',
