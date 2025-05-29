@@ -73,7 +73,7 @@ export default function ChallengesPage() {
                     className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md hover:shadow-lg transition-all transform hover:scale-105"
                     aria-label={`Invite friends to ${challenge.name}`}
                   >
-                    Invite Friends & Start Challenge
+                    Invite Friends Now!
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
