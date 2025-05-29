@@ -23,6 +23,7 @@ export type AnalyzeYogaPoseInput = z.infer<typeof AnalyzeYogaPoseInputSchema>;
 const AnalyzeYogaPoseOutputSchema = z.object({
   feedback: z.string().describe('Feedback on the user\'s yoga pose, including areas for improvement.'),
   score: z.number().min(0).max(100).describe('A score from 0 to 100 representing the quality of the yoga pose.'),
+  identifiedPose: z.string().describe('The name of the identified yoga pose.'),
 });
 export type AnalyzeYogaPoseOutput = z.infer<typeof AnalyzeYogaPoseOutputSchema>;
 
@@ -34,11 +35,12 @@ const prompt = ai.definePrompt({
   name: 'analyzeYogaPosePrompt',
   input: {schema: AnalyzeYogaPoseInputSchema},
   output: {schema: AnalyzeYogaPoseOutputSchema},
-  prompt: `You are an expert yoga instructor. Analyze the user's yoga pose in the provided video.
+  prompt: `You are an expert yoga instructor. Analyze the user's yoga pose in the provided video. First, identify the yoga pose being performed.
 Provide feedback on their form, including specific areas for improvement.
 Also, provide a score from 0 to 100 representing the quality of the yoga pose, where 100 is a perfect pose.
+Include the identified pose name in the feedback summary.
 
-Video: {{media url=videoDataUri}}`,
+Video: {{media url=videoDataUri}}`, // Use url for data URI
 });
 
 const analyzeYogaPoseFlow = ai.defineFlow(
@@ -57,6 +59,7 @@ const analyzeYogaPoseFlow = ai.defineFlow(
       return {
         feedback: "Analysis could not be completed. The AI did not return structured output.",
         score: 0, // Default score
+        identifiedPose: "Unknown Pose", // Default identified pose
       };
     }
     // Ensure score is within range, although Zod schema should handle this at output validation

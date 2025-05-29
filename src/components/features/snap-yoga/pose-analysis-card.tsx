@@ -1,8 +1,9 @@
 "use client";
 
 import Image from 'next/image';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"; // Keep the original import
 import type { AnalyzeYogaPoseOutput } from '@/ai/flows/analyze-yoga-pose';
+import { Button } from "@/components/ui/button"; // Import Button
 import { Activity, MessageSquareText, VideoOff, Award } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from "@/components/ui/progress";
@@ -17,6 +18,7 @@ interface PoseAnalysisCardProps {
 
 export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoading }: PoseAnalysisCardProps) {
   const score = analysis?.score ?? null;
+  const identifiedPose = analysis?.identifiedPose ?? null;
 
   return (
     <Card className="w-full shadow-lg">
@@ -60,6 +62,13 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
                 <Skeleton className="h-4 w-full bg-gray-300" />
             </div>
             <div>
+              <h3 className="text-xl font-semibold flex items-center gap-2 mt-4">
+                <Activity className="h-6 w-6 text-primary" />
+                Identified Pose
+              </h3>
+              <Skeleton className="h-6 w-1/4 bg-gray-300 mt-2" />
+            </div>
+            <div>
                 <h3 className="text-xl font-semibold flex items-center gap-2 mt-4">
                 <MessageSquareText className="h-6 w-6 text-primary" />
                 Feedback
@@ -90,6 +99,20 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
                 {score >= 90 && <p className="text-sm text-green-500">Excellent form! You're doing wonderfully.</p>}
               </div>
             )}
+            {identifiedPose && (
+              <div className="space-y-2 p-4 bg-secondary/30 rounded-md border border-border">
+                <h3 className="text-xl font-semibold flex items-center gap-2 text-primary">
+                  <Activity className="h-6 w-6" /> Identified Pose
+                </h3>
+                <p className="text-2xl font-bold text-foreground">{identifiedPose}</p>
+                <div className="flex gap-2 mt-2">
+                  {/* Add feedback buttons */}
+                  <Button variant="outline" size="sm" onClick={() => console.log('Correct Pose clicked')}>
+                    Correct Pose
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => console.log('Incorrect Pose clicked')}>Incorrect Pose</Button>
+                </div>
+              </div>)}
             <div className="space-y-3 p-4 bg-primary/5 rounded-md border border-primary/20">
               <h3 className="text-xl font-semibold flex items-center gap-2 text-primary">
                 <MessageSquareText className="h-6 w-6" />
