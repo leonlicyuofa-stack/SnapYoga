@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/hooks/useAuth';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
-import { FacebookIcon } from '@/components/icons/FacebookIcon';
+import { AppleIcon } from '@/components/icons/AppleIcon'; // Import AppleIcon
 import { Mail, KeyRound, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { AppShell } from '@/components/layout/app-shell';
@@ -25,7 +25,7 @@ const signInSchema = z.object({
 type SignInFormValues = z.infer<typeof signInSchema>;
 
 export default function SignInPage() {
-  const { signInWithEmail, signInWithGoogle, signInWithFacebook, loading: authLoading } = useAuth();
+  const { signInWithEmail, signInWithGoogle, signInWithApple, loading: authLoading } = useAuth(); // Added signInWithApple
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<SignInFormValues>({
@@ -98,9 +98,9 @@ export default function SignInPage() {
                 {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <GoogleIcon className="mr-2 h-5 w-5" />}
                 Google
               </Button>
-              <Button variant="outline" onClick={signInWithFacebook} disabled={isLoading} className="py-6 text-base">
-                 {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <FacebookIcon className="mr-2 h-5 w-5" />}
-                Facebook
+              <Button variant="outline" onClick={signInWithApple} disabled={isLoading} className="py-6 text-base"> {/* Changed to Apple */}
+                 {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <AppleIcon className="mr-2 h-5 w-5" />} {/* Changed to AppleIcon */}
+                Apple
               </Button>
             </div>
           </CardContent>

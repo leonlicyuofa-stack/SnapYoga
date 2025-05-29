@@ -7,7 +7,7 @@ import {
   type User,
   onAuthStateChanged,
   GoogleAuthProvider,
-  FacebookAuthProvider,
+  OAuthProvider, // Added for Apple
   signInWithPopup,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -23,7 +23,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
-  signInWithFacebook: () => Promise<void>;
+  signInWithApple: () => Promise<void>; // Added for Apple
   signUpWithEmail: (email: string, pass: string) => Promise<void>;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   signOutUser: () => Promise<void>;
@@ -53,7 +53,13 @@ const formatAuthError = (error: AuthError): string => {
        return 'Multiple popup requests. Please complete one before starting another.';
     case 'auth/account-exists-with-different-credential':
       return 'An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.';
+    case 'auth/oauth-credential-already-in-use':
+      return 'This Apple ID is already associated with another user account.'; // Specific to Apple if this variant exists
     default:
+      // For Apple, provider-specific errors might also occur
+      if (error.customData && (error.customData as any)._tokenResponse?.error?.message) {
+        return (error.customData as any)._tokenResponse.error.message;
+      }
       return error.message || 'An unexpected error occurred. Please try again.';
   }
 };
@@ -89,42 +95,63 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const socialSignIn = async (provider: FirebaseAuthProvider, providerName: string) => {
+    setLoading(true);
     try {
       await signInWithPopup(auth, provider);
       handleAuthSuccess(`${providerName} sign-in successful.`);
     } catch (error) {
       handleAuthError(error, `Failed to sign in with ${providerName}.`);
+    } finally {
+      setLoading(false);
     }
   };
 
   const signInWithGoogle = () => socialSignIn(new GoogleAuthProvider(), 'Google');
-  const signInWithFacebook = () => socialSignIn(new FacebookAuthProvider(), 'Facebook');
+  
+  const signInWithApple = () => {
+    const provider = new OAuthProvider('apple.com');
+    // Optional: You can add scopes if needed, e.g., for name and email
+    // provider.addScope('email');
+    // provider.addScope('name');
+    // Optional: You can customize parameters
+    // provider.setCustomParameters({ locale: 'en' });
+    return socialSignIn(provider, 'Apple');
+  };
 
   const signUpWithEmail = async (email: string, pass: string) => {
+    setLoading(true);
     try {
       await createUserWithEmailAndPassword(auth, email, pass);
       handleAuthSuccess('Account created successfully! You are now signed in.');
     } catch (error) {
       handleAuthError(error, 'Failed to create account.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const signInWithEmail = async (email: string, pass: string) => {
+    setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, pass);
       handleAuthSuccess('Signed in successfully.');
     } catch (error) {
       handleAuthError(error, 'Failed to sign in.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const signOutUser = async () => {
+    setLoading(true);
     try {
       await signOut(auth);
       toast({ title: 'Signed Out', description: 'You have been signed out successfully.' });
       router.push('/'); // Redirect to home or sign-in page after sign out
     } catch (error) {
       handleAuthError(error, 'Failed to sign out.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -132,7 +159,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     user,
     loading,
     signInWithGoogle,
-    signInWithFacebook,
+    signInWithApple,
     signUpWithEmail,
     signInWithEmail,
     signOutUser,
