@@ -62,6 +62,7 @@ export default function HomePage() {
       setLoadingAnalyses(true);
       setLoadingUserProfile(true);
       setLoadingAppUsageStats(true);
+      console.log(`[DEBUG] Fetching data for user: ${user.uid}`);
 
       const userDocRef = doc(firestore, 'users', user.uid);
       getDoc(userDocRef)
@@ -70,7 +71,7 @@ export default function HomePage() {
             setUserProfile(docSnap.data() as UserProfileData);
           } else {
             setUserProfile(null); 
-            console.log("User profile not found in Firestore, might be a new social sign-in.");
+            console.log("[DEBUG] User profile not found in Firestore for homepage, might be a new social sign-in.");
           }
         })
         .catch((error) => {
@@ -100,47 +101,49 @@ export default function HomePage() {
         });
 
       // Fetch App Usage Stats
-      const currentMonth = getMonth(new Date());
+      const currentMonth = getMonth(new Date()); // 0-indexed
       const currentYear = getYear(new Date());
-      const currentMonthStr = format(new Date(), 'yyyy-MM');
+      const currentMonthStr = format(new Date(), 'yyyy-MM'); // e.g., "2023-11"
       
       const firstDayOfMonth = startOfMonth(new Date(currentYear, currentMonth));
       const lastDayOfMonth = dateFnsEndOfMonth(new Date(currentYear, currentMonth));
 
-      // Fetch Active Login Days
+      console.log(`[DEBUG] Current Month Str for Logins Query: ${currentMonthStr}`);
+      console.log(`[DEBUG] Poses Query Date Range: ${firstDayOfMonth.toISOString()} to ${lastDayOfMonth.toISOString()}`);
+
       const dailyLoginsRef = collection(firestore, 'users', user.uid, 'dailyLogins');
-      // Document IDs are YYYY-MM-DD, so we query for IDs starting with current YYYY-MM
       const loginsQuery = query(dailyLoginsRef, 
         where(documentId(), '>=', `${currentMonthStr}-01`),
-        where(documentId(), '<=', `${currentMonthStr}-31`) // Firestore handles non-existent dates gracefully
+        where(documentId(), '<=', `${currentMonthStr}-31`)
       );
       
-      getDocs(loginsQuery)
-        .then((snapshot) => setActiveLoginDays(snapshot.size))
-        .catch(err => {
-            console.error("Error fetching active login days:", err);
-            setActiveLoginDays(0); // Default to 0 on error
-        });
-
-      // Fetch Poses Analyzed This Month
       const monthlyAnalysesQuery = query(
         analysesRef,
         where('createdAt', '>=', firstDayOfMonth),
         where('createdAt', '<=', lastDayOfMonth)
       );
-      getDocs(monthlyAnalysesQuery)
-        .then((snapshot) => setPosesAnalyzedThisMonth(snapshot.size))
-        .catch(err => {
-            console.error("Error fetching poses analyzed this month:", err);
-            setPosesAnalyzedThisMonth(0); // Default to 0 on error
-        });
-      
-      // Simulating the end of loading for app usage stats.
-      // In a real scenario, Promise.all would wrap the getDocs calls
-      Promise.all([getDocs(loginsQuery), getDocs(monthlyAnalysesQuery)])
-        .then(() => setLoadingAppUsageStats(false))
-        .catch(() => setLoadingAppUsageStats(false));
 
+      const fetchLoginsPromise = getDocs(loginsQuery);
+      const fetchAnalysesPromise = getDocs(monthlyAnalysesQuery);
+
+      Promise.all([fetchLoginsPromise, fetchAnalysesPromise])
+        .then(([loginsSnapshot, analysesSnapshot]) => {
+          console.log(`[DEBUG] Active Logins Query for ${user.uid} (${currentMonthStr}): Found ${loginsSnapshot.size} documents.`);
+          loginsSnapshot.forEach(doc => console.log(`[DEBUG] Login Doc ID: ${doc.id}`));
+          setActiveLoginDays(loginsSnapshot.size);
+
+          console.log(`[DEBUG] Poses Analyzed Query for ${user.uid} (Month: ${currentMonth + 1}): Found ${analysesSnapshot.size} documents.`);
+          analysesSnapshot.forEach(doc => console.log(`[DEBUG] Pose Doc ID: ${doc.id}, CreatedAt: ${doc.data().createdAt?.toDate()}`));
+          setPosesAnalyzedThisMonth(analysesSnapshot.size);
+        })
+        .catch(err => {
+          console.error("Error fetching app usage stats:", err);
+          setActiveLoginDays(0);
+          setPosesAnalyzedThisMonth(0);
+        })
+        .finally(() => {
+          setLoadingAppUsageStats(false);
+        });
 
     } else if (!authLoading && !user) {
       setAnalyses([]);
@@ -492,5 +495,6 @@ export default function HomePage() {
     </AppShell>
   );
 }
+    
 
     
