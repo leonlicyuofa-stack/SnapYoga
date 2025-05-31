@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import type { Timestamp, DocumentData } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, query, orderBy, limit, getDocs, doc, getDoc, where, documentId } from 'firebase/firestore';
-import { format, startOfMonth, endOfMonth as dateFnsEndOfMonth, getMonth, getYear } from 'date-fns';
+import { format, startOfMonth, endOfMonth, getMonth, getYear } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -101,20 +101,22 @@ export default function HomePage() {
         });
 
       // Fetch App Usage Stats
-      const currentMonth = getMonth(new Date()); // 0-indexed
-      const currentYear = getYear(new Date());
-      const currentMonthStr = format(new Date(), 'yyyy-MM'); // e.g., "2023-11"
+      const now = new Date();
+      console.log(`[DEBUG] Current client date (from new Date()): ${now.toString()}`);
       
-      const firstDayOfMonth = startOfMonth(new Date(currentYear, currentMonth));
-      const lastDayOfMonth = dateFnsEndOfMonth(new Date(currentYear, currentMonth));
+      const currentMonthStr = format(now, 'yyyy-MM'); // e.g., "2023-11" used for login doc IDs
+      
+      const firstDayOfMonth = startOfMonth(now); // Date object for Timestamp comparison
+      const lastDayOfMonth = endOfMonth(now);   // Date object for Timestamp comparison
 
       console.log(`[DEBUG] Current Month Str for Logins Query: ${currentMonthStr}`);
       console.log(`[DEBUG] Poses Query Date Range: ${firstDayOfMonth.toISOString()} to ${lastDayOfMonth.toISOString()}`);
 
       const dailyLoginsRef = collection(firestore, 'users', user.uid, 'dailyLogins');
+      // Query for document IDs like 'YYYY-MM-01', 'YYYY-MM-02', etc.
       const loginsQuery = query(dailyLoginsRef, 
         where(documentId(), '>=', `${currentMonthStr}-01`),
-        where(documentId(), '<=', `${currentMonthStr}-31`)
+        where(documentId(), '<=', `${currentMonthStr}-31`) // `-31` is safe as non-existent dates won't match
       );
       
       const monthlyAnalysesQuery = query(
@@ -132,7 +134,7 @@ export default function HomePage() {
           loginsSnapshot.forEach(doc => console.log(`[DEBUG] Login Doc ID: ${doc.id}`));
           setActiveLoginDays(loginsSnapshot.size);
 
-          console.log(`[DEBUG] Poses Analyzed Query for ${user.uid} (Month: ${currentMonth + 1}): Found ${analysesSnapshot.size} documents.`);
+          console.log(`[DEBUG] Poses Analyzed Query for ${user.uid} (Month: ${getMonth(now) + 1}): Found ${analysesSnapshot.size} documents.`);
           analysesSnapshot.forEach(doc => console.log(`[DEBUG] Pose Doc ID: ${doc.id}, CreatedAt: ${doc.data().createdAt?.toDate()}`));
           setPosesAnalyzedThisMonth(analysesSnapshot.size);
         })
