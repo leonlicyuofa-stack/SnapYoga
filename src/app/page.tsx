@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import type { Timestamp, DocumentData } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, query, orderBy, limit, getDocs, doc, getDoc, where, documentId } from 'firebase/firestore';
-import { format, subDays } from 'date-fns';
+import { format, subDays, startOfMonth, endOfMonth } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -102,21 +102,23 @@ export default function HomePage() {
 
       // Fetch App Usage Stats for the Past 30 Days
       const now = new Date();
-      const thirtyDaysAgo = subDays(now, 30); // Get date 30 days ago
+      const thirtyDaysAgo = subDays(now, 30);
 
       console.log(`[DEBUG] Current client date (from new Date()): ${now.toString()}`);
       console.log(`[DEBUG] Thirty days ago: ${thirtyDaysAgo.toString()}`);
       
       const dailyLoginsRef = collection(firestore, 'users', user.uid, 'dailyLogins');
+      // Query for logins within the last 30 days based on the 'loggedInAt' timestamp field
       const loginsQuery = query(dailyLoginsRef, 
         where('loggedInAt', '>=', thirtyDaysAgo),
-        where('loggedInAt', '<=', now)
+        where('loggedInAt', '<=', now) // Ensure we don't count future logins if clock is very off
       );
       
+      // Query for pose analyses within the last 30 days based on the 'createdAt' timestamp field
       const past30DaysAnalysesQuery = query(
         analysesRef,
         where('createdAt', '>=', thirtyDaysAgo),
-        where('createdAt', '<=', now)
+        where('createdAt', '<=', now) // Ensure we don't count future poses
       );
 
       const fetchLoginsPromise = getDocs(loginsQuery);
@@ -312,23 +314,25 @@ export default function HomePage() {
                           App Usage (Past 30 Days)
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className="space-y-5 text-center">
-                        <div>
-                          <div className="text-4xl md:text-5xl font-bold text-accent">
-                            {loadingAppUsageStats ? <Skeleton className="h-10 w-16 inline-block" /> : activeLoginDays ?? '-'}
+                      <CardContent className="flex flex-row justify-around items-center text-center space-x-2 md:space-x-4">
+                        <div className="flex-1">
+                          <div className="text-3xl md:text-4xl font-bold text-accent">
+                            {loadingAppUsageStats ? <Skeleton className="h-9 w-12 md:h-10 md:w-16 inline-block" /> : activeLoginDays ?? '-'}
                           </div>
-                          <p className="text-sm text-muted-foreground flex items-center justify-center gap-1"><CalendarDays className="h-4 w-4"/>Active Login Days</p>
+                          <p className="text-xs md:text-sm text-muted-foreground flex items-center justify-center gap-1"><CalendarDays className="h-3 w-3 md:h-4 md:w-4"/>Active Days</p>
                         </div>
-                        <div>
-                           <div className="text-4xl md:text-5xl font-bold text-accent">
-                            {loadingAppUsageStats ? <Skeleton className="h-10 w-16 inline-block" /> : posesAnalyzedPast30Days ?? '-'}
+                        <div className="flex-1">
+                           <div className="text-3xl md:text-4xl font-bold text-accent">
+                            {loadingAppUsageStats ? <Skeleton className="h-9 w-12 md:h-10 md:w-16 inline-block" /> : posesAnalyzedPast30Days ?? '-'}
                           </div>
-                          <p className="text-sm text-muted-foreground flex items-center justify-center gap-1"><Activity className="h-4 w-4"/>Poses Analyzed</p>
+                          <p className="text-xs md:text-sm text-muted-foreground flex items-center justify-center gap-1"><Activity className="h-3 w-3 md:h-4 md:w-4"/>Poses Done</p>
                         </div>
-                         { (!loadingAppUsageStats && (activeLoginDays ?? 0) > 0) &&
-                            <p className="mt-2 text-xs text-foreground/80">Keep up the great work!</p>
-                         }
                       </CardContent>
+                      { (!loadingAppUsageStats && ((activeLoginDays ?? 0) > 0 || (posesAnalyzedPast30Days ?? 0) > 0)) &&
+                        <CardFooter className="pt-3 pb-4">
+                             <p className="text-xs text-foreground/80 text-center w-full">Keep up the great work!</p>
+                        </CardFooter>
+                      }
                     </Card>
 
                     <Card className="shadow-lg">
@@ -494,3 +498,4 @@ export default function HomePage() {
     
 
     
+
