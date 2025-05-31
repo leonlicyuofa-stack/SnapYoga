@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import type { Timestamp, DocumentData } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, query, orderBy, limit, getDocs, doc, getDoc, where, documentId } from 'firebase/firestore';
-import { format, startOfMonth, endOfMonth, getMonth, getYear } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -49,7 +49,7 @@ export default function HomePage() {
   const [loadingUserProfile, setLoadingUserProfile] = useState(true);
 
   const [activeLoginDays, setActiveLoginDays] = useState<number | null>(null);
-  const [posesAnalyzedThisMonth, setPosesAnalyzedThisMonth] = useState<number | null>(null);
+  const [posesAnalyzedPast30Days, setPosesAnalyzedPast30Days] = useState<number | null>(null);
   const [loadingAppUsageStats, setLoadingAppUsageStats] = useState(true);
 
 
@@ -100,48 +100,42 @@ export default function HomePage() {
           setLoadingAnalyses(false);
         });
 
-      // Fetch App Usage Stats
+      // Fetch App Usage Stats for the Past 30 Days
       const now = new Date();
+      const thirtyDaysAgo = subDays(now, 30); // Get date 30 days ago
+
       console.log(`[DEBUG] Current client date (from new Date()): ${now.toString()}`);
+      console.log(`[DEBUG] Thirty days ago: ${thirtyDaysAgo.toString()}`);
       
-      const currentMonthStr = format(now, 'yyyy-MM'); // e.g., "2023-11" used for login doc IDs
-      
-      const firstDayOfMonth = startOfMonth(now); // Date object for Timestamp comparison
-      const lastDayOfMonth = endOfMonth(now);   // Date object for Timestamp comparison
-
-      console.log(`[DEBUG] Current Month Str for Logins Query: ${currentMonthStr}`);
-      console.log(`[DEBUG] Poses Query Date Range: ${firstDayOfMonth.toISOString()} to ${lastDayOfMonth.toISOString()}`);
-
       const dailyLoginsRef = collection(firestore, 'users', user.uid, 'dailyLogins');
-      // Query for document IDs like 'YYYY-MM-01', 'YYYY-MM-02', etc.
       const loginsQuery = query(dailyLoginsRef, 
-        where(documentId(), '>=', `${currentMonthStr}-01`),
-        where(documentId(), '<=', `${currentMonthStr}-31`) // `-31` is safe as non-existent dates won't match
+        where('loggedInAt', '>=', thirtyDaysAgo),
+        where('loggedInAt', '<=', now)
       );
       
-      const monthlyAnalysesQuery = query(
+      const past30DaysAnalysesQuery = query(
         analysesRef,
-        where('createdAt', '>=', firstDayOfMonth),
-        where('createdAt', '<=', lastDayOfMonth)
+        where('createdAt', '>=', thirtyDaysAgo),
+        where('createdAt', '<=', now)
       );
 
       const fetchLoginsPromise = getDocs(loginsQuery);
-      const fetchAnalysesPromise = getDocs(monthlyAnalysesQuery);
+      const fetchAnalysesPromise = getDocs(past30DaysAnalysesQuery);
 
       Promise.all([fetchLoginsPromise, fetchAnalysesPromise])
         .then(([loginsSnapshot, analysesSnapshot]) => {
-          console.log(`[DEBUG] Active Logins Query for ${user.uid} (${currentMonthStr}): Found ${loginsSnapshot.size} documents.`);
-          loginsSnapshot.forEach(doc => console.log(`[DEBUG] Login Doc ID: ${doc.id}`));
+          console.log(`[DEBUG] Active Logins Query (Past 30 Days) for ${user.uid}: Found ${loginsSnapshot.size} documents.`);
+          loginsSnapshot.forEach(doc => console.log(`[DEBUG] Login Doc ID: ${doc.id}, LoggedInAt: ${doc.data().loggedInAt?.toDate()}`));
           setActiveLoginDays(loginsSnapshot.size);
 
-          console.log(`[DEBUG] Poses Analyzed Query for ${user.uid} (Month: ${getMonth(now) + 1}): Found ${analysesSnapshot.size} documents.`);
+          console.log(`[DEBUG] Poses Analyzed Query (Past 30 Days) for ${user.uid}: Found ${analysesSnapshot.size} documents.`);
           analysesSnapshot.forEach(doc => console.log(`[DEBUG] Pose Doc ID: ${doc.id}, CreatedAt: ${doc.data().createdAt?.toDate()}`));
-          setPosesAnalyzedThisMonth(analysesSnapshot.size);
+          setPosesAnalyzedPast30Days(analysesSnapshot.size);
         })
         .catch(err => {
-          console.error("Error fetching app usage stats:", err);
+          console.error("Error fetching app usage stats (past 30 days):", err);
           setActiveLoginDays(0);
-          setPosesAnalyzedThisMonth(0);
+          setPosesAnalyzedPast30Days(0);
         })
         .finally(() => {
           setLoadingAppUsageStats(false);
@@ -153,7 +147,7 @@ export default function HomePage() {
       setUserProfile(null);
       setLoadingUserProfile(false);
       setActiveLoginDays(null);
-      setPosesAnalyzedThisMonth(null);
+      setPosesAnalyzedPast30Days(null);
       setLoadingAppUsageStats(false);
     }
   }, [user, authLoading, toast]);
@@ -315,7 +309,7 @@ export default function HomePage() {
                       <CardHeader>
                         <CardTitle className="flex items-center text-xl md:text-2xl">
                           <BarChart3 className="mr-3 h-7 w-7 text-primary" />
-                          App Usage (This Month)
+                          App Usage (Past 30 Days)
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-5 text-center">
@@ -327,7 +321,7 @@ export default function HomePage() {
                         </div>
                         <div>
                            <div className="text-4xl md:text-5xl font-bold text-accent">
-                            {loadingAppUsageStats ? <Skeleton className="h-10 w-16 inline-block" /> : posesAnalyzedThisMonth ?? '-'}
+                            {loadingAppUsageStats ? <Skeleton className="h-10 w-16 inline-block" /> : posesAnalyzedPast30Days ?? '-'}
                           </div>
                           <p className="text-sm text-muted-foreground flex items-center justify-center gap-1"><Activity className="h-4 w-4"/>Poses Analyzed</p>
                         </div>
