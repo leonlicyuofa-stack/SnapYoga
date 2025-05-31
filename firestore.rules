@@ -4,54 +4,54 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Users Collection
-    match /users/{userId} {
-      // Allow authenticated users to read all profiles (for search, etc.)
-      // Consider restricting readable fields in production for privacy if needed.
-      allow read: if request.auth != null;
-
-      // Allow user to create their own profile document
-      allow create: if request.auth != null && request.auth.uid == userId;
-
-      // Allow user to update their own profile document
-      // Specifically, allow updating the new onboarding fields
-      allow update: if request.auth != null && request.auth.uid == userId &&
-                       (request.resource.data.diff(resource.data).affectedKeys()
-                         .hasOnly(['displayName', 'photoURL', 'updatedAt', 
-                                   'gender', 'yogaInterest', 'mainGoal', 'height', 'weight', 
-                                   'onboardingCompleted']));
-      
-      // Optionally, allow delete by user (be cautious with this)
-      // allow delete: if request.auth != null && request.auth.uid == userId;
-    }
-
-    // Pose Analyses Subcollection
-    match /users/{userId}/poseAnalyses/{analysisId} {
-      // User can read their own pose analyses
-      allow read: if request.auth != null && request.auth.uid == userId;
-      // User can create their own pose analyses
-      allow create: if request.auth != null && request.auth.uid == userId;
-      // User can update their own pose analyses (e.g., if you add notes later)
-      // allow update: if request.auth != null && request.auth.uid == userId;
-      // User can delete their own pose analyses
-      // allow delete: if request.auth != null && request.auth.uid == userId;
-    }
-
-    // Invitations Collection (Placeholder for future use)
-    // match /invitations/{invitationId} {
-    //   // Allow inviter or invitee to read
-    //   allow read: if request.auth != null && (request.auth.uid == resource.data.inviterUid || request.auth.uid == resource.data.inviteeUid);
-    //   // Allow inviter to create
-    //   allow create: if request.auth != null && request.auth.uid == request.resource.data.inviterUid;
-    //   // Allow invitee to update status (e.g., accept/decline)
-    //   allow update: if request.auth != null && request.auth.uid == resource.data.inviteeUid &&
-    //                    request.resource.data.status != resource.data.status; // Only status can change by invitee
-    // }
-
-    // Deny all other writes to any other unspecified collection
+    // Default deny all access to prevent unintended access.
     match /{document=**} {
-      allow read: if false; // Default deny read for unspecified paths
-      allow write: if false; // Default deny write for unspecified paths
+      allow read, write: if false;
+    }
+
+    // Users collection
+    // - Authenticated users can read profiles (e.g., for friend search functionality).
+    // - Users can only create and update their own profile document.
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null && request.auth.uid == userId;
+      // Deleting user profiles from the client-side is generally not recommended for safety.
+    }
+
+    // Pose Analyses subcollection (under each user)
+    // Users can manage (create, read, update, delete) their own pose analyses.
+    match /users/{userId}/poseAnalyses/{analysisId} {
+      allow read, create, update, delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Daily Logins subcollection (under each user)
+    // Users can create and read their own daily login records.
+    // (Write access includes create and update. Delete is not typically needed here from client.)
+    match /users/{userId}/dailyLogins/{dayId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Invitations collection
+    // - Authenticated users can create invitations, but only if they set themselves as the inviter
+    //   and correctly set initial status and server timestamps.
+    // - The inviter or the invitee can read an invitation.
+    // - Only the invitee can update an invitation's status, and only 'status' and 'updatedAt' can be changed,
+    //   with 'updatedAt' being a server timestamp.
+    match /invitations/{invitationId} {
+      allow create: if request.auth != null
+                      && request.resource.data.inviterUid == request.auth.uid
+                      && request.resource.data.status == 'pending'
+                      && request.resource.data.createdAt == request.time  // Enforce server timestamp
+                      && request.resource.data.updatedAt == request.time;  // Enforce server timestamp
+
+      allow read: if request.auth != null
+                    && (request.auth.uid == resource.data.inviterUid || request.auth.uid == resource.data.inviteeUid);
+
+      allow update: if request.auth != null && request.auth.uid == resource.data.inviteeUid // Only invitee can update
+                      && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt']) // Only status and updatedAt fields are being modified
+                      && request.resource.data.status != resource.data.status // Ensures status is actually changing
+                      && request.resource.data.updatedAt == request.time; // Enforce server timestamp for updatedAt
+      // Deleting invitations from client-side can be complex (who can delete?); generally handled by server functions or TTL policies if needed.
     }
   }
 }
