@@ -315,15 +315,15 @@ export default function HomePage() {
                       </CardHeader>
                       <CardContent className="space-y-5 text-center">
                         <div>
-                          <p className="text-4xl md:text-5xl font-bold text-accent">
+                          <div className="text-4xl md:text-5xl font-bold text-accent">
                             {loadingAppUsageStats ? <Skeleton className="h-10 w-16 inline-block" /> : activeLoginDays ?? '-'}
-                          </p>
+                          </div>
                           <p className="text-sm text-muted-foreground flex items-center justify-center gap-1"><CalendarDays className="h-4 w-4"/>Active Login Days</p>
                         </div>
                         <div>
-                           <p className="text-4xl md:text-5xl font-bold text-accent">
+                           <div className="text-4xl md:text-5xl font-bold text-accent">
                             {loadingAppUsageStats ? <Skeleton className="h-10 w-16 inline-block" /> : posesAnalyzedThisMonth ?? '-'}
-                          </p>
+                          </div>
                           <p className="text-sm text-muted-foreground flex items-center justify-center gap-1"><Activity className="h-4 w-4"/>Poses Analyzed</p>
                         </div>
                          { (!loadingAppUsageStats && (activeLoginDays ?? 0) > 0) &&
