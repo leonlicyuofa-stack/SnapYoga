@@ -5,13 +5,13 @@ import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { PersonStanding, Sparkles, ArrowRight, Users, ListChecks, CalendarDays, Trophy, Eye, Copy, MessageSquare, Share2, PlayCircle, UserPlus, BarChart3, Activity } from 'lucide-react';
+import { PersonStanding, Sparkles, ArrowRight, Users, ListChecks, CalendarDays, Trophy, Eye, Copy, MessageSquare, Share2, PlayCircle, UserPlus, BarChart3, Activity, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';
 import type { Timestamp, DocumentData } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
-import { collection, query, orderBy, limit, getDocs, doc, getDoc, where, documentId } from 'firebase/firestore';
+import { collection, query, orderBy, limit, getDocs, doc, getDoc, where } from 'firebase/firestore';
 import { format, subDays, startOfMonth, endOfMonth } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
@@ -55,7 +55,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setInviteLink(window.location.origin); 
+      setInviteLink(window.location.origin);
     }
 
     if (user && !authLoading) {
@@ -70,7 +70,7 @@ export default function HomePage() {
           if (docSnap.exists()) {
             setUserProfile(docSnap.data() as UserProfileData);
           } else {
-            setUserProfile(null); 
+            setUserProfile(null);
             console.log("[DEBUG] User profile not found in Firestore for homepage, might be a new social sign-in.");
           }
         })
@@ -100,25 +100,21 @@ export default function HomePage() {
           setLoadingAnalyses(false);
         });
 
-      // Fetch App Usage Stats for the Past 30 Days
       const now = new Date();
-      const thirtyDaysAgo = subDays(now, 30);
-
       console.log(`[DEBUG] Current client date (from new Date()): ${now.toString()}`);
+      const thirtyDaysAgo = subDays(now, 30);
       console.log(`[DEBUG] Thirty days ago: ${thirtyDaysAgo.toString()}`);
-      
+
       const dailyLoginsRef = collection(firestore, 'users', user.uid, 'dailyLogins');
-      // Query for logins within the last 30 days based on the 'loggedInAt' timestamp field
-      const loginsQuery = query(dailyLoginsRef, 
+      const loginsQuery = query(dailyLoginsRef,
         where('loggedInAt', '>=', thirtyDaysAgo),
-        where('loggedInAt', '<=', now) // Ensure we don't count future logins if clock is very off
+        where('loggedInAt', '<=', now)
       );
-      
-      // Query for pose analyses within the last 30 days based on the 'createdAt' timestamp field
+
       const past30DaysAnalysesQuery = query(
         analysesRef,
         where('createdAt', '>=', thirtyDaysAgo),
-        where('createdAt', '<=', now) // Ensure we don't count future poses
+        where('createdAt', '<=', now)
       );
 
       const fetchLoginsPromise = getDocs(loginsQuery);
@@ -205,7 +201,7 @@ export default function HomePage() {
     }
   };
 
-  if (authLoading || (!user && loadingUserProfile)) { 
+  if (authLoading || (!user && loadingUserProfile)) {
     return (
       <AppShell>
         <div className="space-y-12 p-4 md:p-8 animate-pulse">
@@ -240,7 +236,7 @@ export default function HomePage() {
       <div className="flex flex-col items-center w-full">
         {user && !authLoading && (
           <div className="w-full bg-primary/5 p-4 md:p-6 rounded-lg shadow-md border border-primary/20 mb-8 md:mb-12">
-            {loadingUserProfile && !userProfile ? ( 
+            {loadingUserProfile && !userProfile ? (
               <div className="text-center py-8">
                 <Skeleton className="h-10 w-3/4 mb-4 mx-auto" />
                 <Skeleton className="h-6 w-1/2 mb-6 mx-auto" />
@@ -274,7 +270,7 @@ export default function HomePage() {
                         <ListChecks className="mr-3 h-7 w-7 text-primary" />
                         Recent Pose Analyses
                       </CardTitle>
-                      <CardDescription>Your last few analyzed poses.</CardDescription>
+                      <CardDescription>Your last few analyzed poses. Click to view details.</CardDescription>
                     </CardHeader>
                     <CardContent>
                       {loadingAnalyses ? (
@@ -284,19 +280,25 @@ export default function HomePage() {
                       ) : analyses.length > 0 ? (
                         <ul className="space-y-3">
                           {analyses.map((analysis) => (
-                            <li key={analysis.id} className="p-3 bg-card rounded-md border hover:shadow-sm transition-shadow">
-                              <div className="flex justify-between items-start mb-1">
-                                <span className="font-semibold text-lg text-foreground">{analysis.identifiedPose}</span>
-                                <Badge variant={getScoreBadgeVariant(analysis.score)} className="text-sm px-3 py-1">
-                                  {analysis.score}/100
-                                </Badge>
-                              </div>
-                              <p className="text-xs text-muted-foreground">
-                                {analysis.createdAt ? format(analysis.createdAt.toDate(), 'PPP') : 'Date unknown'}
-                              </p>
-                              <p className="text-sm text-foreground/80 mt-1 truncate" title={analysis.feedback}>
-                                Feedback: {analysis.feedback.substring(0, 70)}{analysis.feedback.length > 70 ? "..." : ""}
-                              </p>
+                            <li key={analysis.id}>
+                              <Link href={`/analysis/${analysis.id}`} className="block p-3 bg-card rounded-md border hover:shadow-md hover:bg-muted/50 transition-all group">
+                                <div className="flex justify-between items-start mb-1">
+                                  <span className="font-semibold text-lg text-foreground group-hover:text-primary">{analysis.identifiedPose}</span>
+                                  <Badge variant={getScoreBadgeVariant(analysis.score)} className="text-sm px-3 py-1">
+                                    {analysis.score}/100
+                                  </Badge>
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                  {analysis.createdAt ? format(analysis.createdAt.toDate(), 'PPP p') : 'Date unknown'}
+                                </p>
+                                <p className="text-sm text-foreground/80 mt-1 truncate" title={analysis.feedback}>
+                                  Feedback: {analysis.feedback.substring(0, 70)}{analysis.feedback.length > 70 ? "..." : ""}
+                                </p>
+                                <div className="flex justify-end items-center mt-2">
+                                    <span className="text-xs text-primary group-hover:underline">View Details</span>
+                                    <ChevronRight className="h-4 w-4 text-primary ml-1 transform transition-transform group-hover:translate-x-1" />
+                                </div>
+                              </Link>
                             </li>
                           ))}
                         </ul>
@@ -304,6 +306,13 @@ export default function HomePage() {
                         <p className="text-muted-foreground text-center py-4">No pose analyses found. Analyze a pose to see your progress!</p>
                       )}
                     </CardContent>
+                     {analyses.length > 0 && (
+                        <CardFooter>
+                            <Button variant="outline" className="w-full" asChild>
+                                <Link href="/snap-yoga">Analyze Another Pose <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                            </Button>
+                        </CardFooter>
+                    )}
                   </Card>
 
                   <div className="space-y-4 md:space-y-6">
@@ -363,7 +372,7 @@ export default function HomePage() {
                   </div>
                 </div>
               </>
-            ) : null 
+            ) : null
             }
 
             {showStatsDashboard && (
@@ -426,7 +435,7 @@ export default function HomePage() {
           </div>
         )}
 
-         <div className="w-full max-w-2xl flex flex-col items-center justify-center py-8 md:py-6"> 
+         <div className="w-full max-w-2xl flex flex-col items-center justify-center py-8 md:py-6">
           <Card className="w-full shadow-2xl overflow-hidden">
             <div className="relative w-full h-64 md:h-80">
               <Image
@@ -498,4 +507,3 @@ export default function HomePage() {
     
 
     
-
