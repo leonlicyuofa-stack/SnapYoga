@@ -104,11 +104,11 @@ export default function HomePage() {
       console.log(`[DEBUG] Current client date (from new Date()): ${now.toString()}`);
       const thirtyDaysAgo = subDays(now, 30);
       console.log(`[DEBUG] Thirty days ago: ${thirtyDaysAgo.toString()}`);
-
+      
       const dailyLoginsRef = collection(firestore, 'users', user.uid, 'dailyLogins');
       const loginsQuery = query(dailyLoginsRef,
         where('loggedInAt', '>=', thirtyDaysAgo),
-        where('loggedInAt', '<=', now)
+        where('loggedInAt', '<=', now) 
       );
 
       const past30DaysAnalysesQuery = query(
@@ -116,7 +116,7 @@ export default function HomePage() {
         where('createdAt', '>=', thirtyDaysAgo),
         where('createdAt', '<=', now)
       );
-
+      
       const fetchLoginsPromise = getDocs(loginsQuery);
       const fetchAnalysesPromise = getDocs(past30DaysAnalysesQuery);
 
@@ -325,7 +325,7 @@ export default function HomePage() {
                       </CardHeader>
                       <CardContent className="flex flex-row justify-around items-center text-center space-x-2 md:space-x-4">
                         <div className="flex-1">
-                          <div className="text-3xl md:text-4xl font-bold text-accent">
+                           <div className="text-3xl md:text-4xl font-bold text-accent">
                             {loadingAppUsageStats ? <Skeleton className="h-9 w-12 md:h-10 md:w-16 inline-block" /> : activeLoginDays ?? '-'}
                           </div>
                           <p className="text-xs md:text-sm text-muted-foreground flex items-center justify-center gap-1"><CalendarDays className="h-3 w-3 md:h-4 md:w-4"/>Active Days</p>
@@ -450,17 +450,17 @@ export default function HomePage() {
               <div className="absolute bottom-0 left-0 p-6 md:p-8">
                 <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white flex items-center">
                   <PersonStanding className="mr-3 h-10 w-10 md:h-12 md:w-12" />
-                  Welcome to SnapYoga
+                  SnapYoga
                 </h1>
               </div>
             </div>
             <CardHeader className="text-center pt-8">
               <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
                 <Sparkles className="h-8 w-8 text-primary" />
-                Refine Your Practice
+                Yoga for Everyone
               </CardTitle>
               <CardDescription className="text-lg text-muted-foreground mt-2 max-w-md mx-auto">
-                Get AI-powered feedback on your yoga poses. Upload a video, and let our smart assistant help you improve your alignment and form.
+                Your mat, your pace. Get AI-powered feedback on your yoga poses. Upload a video, and let our smart assistant help you improve your alignment and form.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col items-center space-y-6 p-8">
@@ -504,6 +504,3 @@ export default function HomePage() {
     </AppShell>
   );
 }
-    
-
-    

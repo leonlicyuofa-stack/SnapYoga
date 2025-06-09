@@ -5,92 +5,96 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 270 10% 30%; /* Dark grayish purple for text */
+    --background: 40 25% 97%; /* Very light, slightly warm off-white */
+    --foreground: 7 10% 25%; /* Dark brownish-gray text */
+    
     --card: 0 0% 100%;
-    --card-foreground: 270 10% 30%;
+    --card-foreground: 7 10% 25%;
+    
     --popover: 0 0% 100%;
-    --popover-foreground: 270 10% 30%;
+    --popover-foreground: 7 10% 25%;
     
-    --primary: 270 60% 50%; /* Vibrant Purple */
-    --primary-foreground: 0 0% 98%; /* White/Off-white for text on primary */
+    --primary: 7 9% 38%; /* Brownish Gray: #695958 */
+    --primary-foreground: 0 0% 98%; /* Off-white for text on primary */
 
-    --secondary: 270 15% 94%; /* Very light purple-gray */
-    --secondary-foreground: 270 40% 30%; /* Darker purple for text on secondary */
+    --secondary: 134 35% 16%; /* Dark Green: #19381F */
+    --secondary-foreground: 134 20% 85%; /* Light grayish green for text on secondary */
     
-    --muted: 270 10% 96.1%; /* Light purple-gray for muted backgrounds */
-    --muted-foreground: 270 10% 45.1%; /* Grayish purple for muted text */
+    --muted: 40 15% 92%; /* Light warm gray for muted backgrounds */
+    --muted-foreground: 7 10% 45%; /* Grayish brown for muted text */
     
-    --accent: 270 70% 80%; /* Soft Lavender */
-    --accent-foreground: 270 50% 30%; /* Darker Purple for text on accent */
+    --accent: 15 70% 62%; /* Muted Orange/Terracotta: #E07A5F */
+    --accent-foreground: 15 30% 20%; /* Dark brown/desaturated orange for text on accent */
     
-    --destructive: 0 70% 60%; /* Adjusted red for better harmony */
+    --destructive: 0 70% 60%; /* Standard red for destructive actions */
     --destructive-foreground: 0 0% 98%;
     
-    --border: 270 15% 88%; /* Light purple-gray border */
-    --input: 270 15% 88%; /* Light purple-gray input border */
-    --ring: 270 70% 60%; /* Brighter Purple for focus rings */
+    --border: 40 10% 88%; /* Light warm gray border */
+    --input: 40 10% 88%; /* Light warm gray input border */
+    --ring: 15 70% 62%; /* Accent color for focus rings */
     
-    --chart-1: 270 60% 55%;
-    --chart-2: 280 50% 65%;
-    --chart-3: 260 55% 60%;
-    --chart-4: 290 45% 70%;
-    --chart-5: 250 50% 68%;
+    --chart-1: 7 9% 50%;
+    --chart-2: 134 30% 30%;
+    --chart-3: 15 70% 50%;
+    --chart-4: 7 9% 60%;
+    --chart-5: 134 30% 40%;
     --radius: 0.75rem;
 
-    /* Sidebar variables, adjusted to match theme */
-    --sidebar-background: 270 20% 98%; /* Very light purple tint */
-    --sidebar-foreground: 270 30% 25%; /* Dark purple for sidebar text */
-    --sidebar-primary: 270 60% 50%; /* Vibrant Purple for sidebar primary */
+    /* Sidebar variables */
+    --sidebar-background: 40 20% 95%;
+    --sidebar-foreground: 7 10% 20%;
+    --sidebar-primary: 7 9% 38%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 270 70% 80%; /* Soft Lavender for sidebar accent */
-    --sidebar-accent-foreground: 270 50% 30%;
-    --sidebar-border: 270 20% 85%;
-    --sidebar-ring: 270 70% 60%;
+    --sidebar-accent: 15 70% 62%;
+    --sidebar-accent-foreground: 15 30% 20%;
+    --sidebar-border: 40 15% 85%;
+    --sidebar-ring: 15 70% 62%;
   }
 
   .dark {
-    --background: 270 15% 10%; /* Dark Purple-Gray */
-    --foreground: 270 20% 90%; /* Light lavender-gray for text */
-    --card: 270 15% 12%; /* Slightly lighter dark purple-gray */
-    --card-foreground: 270 20% 90%;
-    --popover: 270 15% 10%;
-    --popover-foreground: 270 20% 90%;
+    --background: 10 8% 12%; /* Dark, slightly warm off-black/brown */
+    --foreground: 40 15% 88%; /* Light warm gray text */
+    
+    --card: 10 8% 15%;
+    --card-foreground: 40 15% 88%;
+    
+    --popover: 10 8% 12%;
+    --popover-foreground: 40 15% 88%;
 
-    --primary: 270 60% 65%; /* Lighter Vibrant Purple for dark mode */
-    --primary-foreground: 270 10% 15%; /* Darker text for brighter Purple */
+    --primary: 7 9% 55%; /* Lighter Brownish Gray for dark mode */
+    --primary-foreground: 0 0% 10%; /* Darker text for brighter Primary */
 
-    --secondary: 270 10% 20%; /* Darker purple-gray */
-    --secondary-foreground: 270 15% 80%; /* Lighter text for dark secondary */
+    --secondary: 134 30% 25%; /* Lighter Dark Green for dark mode */
+    --secondary-foreground: 134 20% 75%; 
     
-    --muted: 270 10% 20%;
-    --muted-foreground: 270 10% 60%; /* Muted lavender-gray text */
+    --muted: 10 8% 20%;
+    --muted-foreground: 40 15% 65%;
     
-    --accent: 270 60% 55%; /* A more saturated lavender for dark mode accent */
-    --accent-foreground: 0 0% 98%; /* White text for accent */
+    --accent: 15 65% 70%; /* Lighter Accent for dark mode */
+    --accent-foreground: 15 30% 15%; 
     
-    --destructive: 0 60% 50%; /* Adjusted red */
+    --destructive: 0 60% 50%; 
     --destructive-foreground: 0 0% 98%;
     
-    --border: 270 10% 25%; /* Darker purple-gray border */
-    --input: 270 10% 25%;
-    --ring: 270 70% 75%; /* Even brighter Purple for dark mode rings */
+    --border: 10 8% 22%; 
+    --input: 10 8% 22%;
+    --ring: 15 65% 70%; 
 
-    --chart-1: 270 60% 70%;
-    --chart-2: 280 50% 75%;
-    --chart-3: 260 55% 65%;
-    --chart-4: 290 45% 80%;
-    --chart-5: 250 50% 72%;
+    --chart-1: 7 9% 65%;
+    --chart-2: 134 30% 45%;
+    --chart-3: 15 65% 60%;
+    --chart-4: 7 9% 75%;
+    --chart-5: 134 30% 55%;
 
     /* Sidebar variables for dark mode */
-    --sidebar-background: 270 15% 12%;
-    --sidebar-foreground: 270 20% 88%;
-    --sidebar-primary: 270 60% 65%;
-    --sidebar-primary-foreground: 270 10% 15%;
-    --sidebar-accent: 270 60% 55%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 270 10% 22%;
-    --sidebar-ring: 270 70% 75%;
+    --sidebar-background: 10 8% 15%;
+    --sidebar-foreground: 40 15% 85%;
+    --sidebar-primary: 7 9% 55%;
+    --sidebar-primary-foreground: 0 0% 10%;
+    --sidebar-accent: 15 65% 70%;
+    --sidebar-accent-foreground: 15 30% 15%;
+    --sidebar-border: 10 8% 20%;
+    --sidebar-ring: 15 65% 70%;
   }
 }
 
@@ -100,6 +104,5 @@
   }
   body {
     @apply bg-background text-foreground;
-    /* font-family removed as Geist is applied in layout.tsx */
   }
 }
