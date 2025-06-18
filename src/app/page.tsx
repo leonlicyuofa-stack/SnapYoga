@@ -12,6 +12,7 @@ import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc, type DocumentData } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 // Define UserProfileData interface, similar to what was in the old homepage
 interface UserProfileData extends DocumentData {
@@ -71,26 +72,17 @@ export default function WelcomePageAsRoot() {
   return (
     <AppShell>
       <div className="relative flex min-h-[calc(100vh-10rem)] items-center justify-center py-12 overflow-hidden">
-        {/* Background Pebbles - Adjusted for size, overlap, and positioning */}
-        {/* Top Pebble - Left (Accent Color #E07A5F) - Largest */}
-        <div className="absolute top-[10%] left-[-15%] sm:left-[-10%] md:left-[-5%] w-64 h-32 sm:w-80 sm:h-40 opacity-25 transform -rotate-[25deg] z-0">
-          <svg viewBox="0 0 100 50" className="w-full h-full drop-shadow-lg">
-            <ellipse cx="50" cy="25" rx="45" ry="22" fill="#E07A5F" />
-          </svg>
-        </div>
-
-        {/* Middle Pebble - Center (Primary Color #695958) - Medium */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-52 h-28 sm:w-72 sm:h-36 opacity-20 transform rotate-[15deg] z-0">
-          <svg viewBox="0 0 100 50" className="w-full h-full drop-shadow-lg">
-            <ellipse cx="50" cy="25" rx="48" ry="23" fill="#695958" />
-          </svg>
-        </div>
-
-        {/* Bottom Pebble - Right (Secondary Color #19381F) - Smallest, slightly more opaque */}
-        <div className="absolute bottom-[15%] right-[-20%] sm:right-[-10%] md:right-[-5%] w-48 h-24 sm:w-60 sm:h-30 opacity-30 transform rotate-[30deg] z-0">
-          <svg viewBox="0 0 100 50" className="w-full h-full drop-shadow-lg">
-            <ellipse cx="50" cy="25" rx="46" ry="24" fill="#19381F" />
-          </svg>
+        {/* Background Yoga Pose Shadow */}
+        <div className="absolute inset-0 z-0 flex items-center justify-center opacity-10">
+          <Image
+            src="https://placehold.co/800x600.png" 
+            alt="Yoga pose shadow background"
+            layout="fill"
+            objectFit="contain" 
+            className="transform scale-150" 
+            data-ai-hint="yoga pose silhouette"
+            priority
+          />
         </div>
         
         <Card className="w-full max-w-lg shadow-xl text-center overflow-hidden z-10 bg-card/90 backdrop-blur-sm">
@@ -121,10 +113,10 @@ export default function WelcomePageAsRoot() {
               aria-label="Get Started"
             >
               {(authLoading || loadingProfile) ? (
-                <Loader2 className="h-12 w-12 animate-spin text-primary my-4" />
+                <Loader2 className="h-16 w-16 animate-spin text-primary my-4" />
               ) : (
                 <>
-                  <SmileyPebbleIcon className="h-24 w-24 animate-pebble-pulse text-primary group-hover:scale-105 transition-transform" />
+                  <SmileyPebbleIcon className="h-28 w-28 animate-pebble-pulse text-primary group-hover:scale-105 transition-transform" />
                   <p className="mt-3 text-base text-muted-foreground group-hover:text-foreground transition-colors">
                     click to enter
                   </p>
@@ -142,4 +134,3 @@ export default function WelcomePageAsRoot() {
     </AppShell>
   );
 }
-
