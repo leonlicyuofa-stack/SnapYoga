@@ -76,7 +76,7 @@ export default function WelcomePageAsRoot() {
           layout="fill"
           objectFit="contain" 
           className="transform scale-150" 
-          data-ai-hint="abstract lines shapes"
+          data-ai-hint="abstract lines icon"
           priority
         />
       </div>
