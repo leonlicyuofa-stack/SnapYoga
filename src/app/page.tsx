@@ -54,14 +54,13 @@ export default function WelcomePageAsRoot() {
     if (authLoading || loadingProfile || isProcessingClick) return;
 
     setIsProcessingClick(true);
-    sessionStorage.setItem('snapYogaPebbleIncoming', 'true');
     
     setTimeout(() => {
       if (user) {
         if (userProfile && userProfile.onboardingCompleted) {
           router.push('/dashboard');
         } else {
-          router.push('/onboarding/gender-profile');
+          router.push('/onboarding/gender-profile'); 
         }
       } else {
         router.push('/auth/signup');
@@ -73,16 +72,18 @@ export default function WelcomePageAsRoot() {
 
   return (
     <div className="relative flex min-h-screen flex-col items-stretch justify-between overflow-hidden">
+      {/* Background Image and Overlay */}
       <Image
         src="https://placehold.co/1920x1080.png" 
         alt="Person meditating overlooking a mountain sunset"
         fill
         priority
         className="-z-10 object-cover"
-        data-ai-hint="mountain sunset meditation" 
+        data-ai-hint="mountain sunset meditation"
       />
       <div className="absolute inset-0 bg-black/40 -z-10" />
 
+      {/* Top Left Content */}
       <div className="relative z-10 p-8 sm:p-10 md:p-12 text-left">
         <p className="text-2xl sm:text-3xl md:text-4xl text-stone-200 uppercase tracking-wider font-medium">
           Welcome to
