@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
 import { cn } from '@/lib/utils';
 import { MoveUpRight, Loader2 } from 'lucide-react';
+import Image from 'next/image';
 
 interface UserProfileData extends DocumentData {
   uid?: string;
@@ -53,50 +54,59 @@ export default function WelcomePageAsRoot() {
     if (authLoading || loadingProfile || isProcessingClick) return;
 
     setIsProcessingClick(true);
-    // No pebble run animation, direct navigation after short delay
     
     setTimeout(() => {
       if (user) {
         if (userProfile && userProfile.onboardingCompleted) {
           router.push('/dashboard');
         } else {
-          // If onboarding not completed, or no profile yet, go to first step
-          sessionStorage.setItem('snapYogaPebbleIncoming', 'true'); // For pebble landing animation
+          sessionStorage.setItem('snapYogaPebbleIncoming', 'true'); 
           router.push('/onboarding/gender-profile');
         }
       } else {
         router.push('/auth/signup');
       }
-      // setIsProcessingClick(false); // Already navigating away
     }, 150); 
   };
 
   const isLoading = authLoading || loadingProfile || isProcessingClick;
 
   return (
-    <div className="relative flex min-h-screen flex-col items-stretch justify-between overflow-hidden bg-background">
+    <div className="relative flex min-h-screen flex-col items-stretch justify-between overflow-hidden">
+      <Image
+        src="https://storage.googleapis.com/project-emblem-images/images/woman_meditating_framed_sunset_illustration.png"
+        alt="Woman meditating in a framed sunset view"
+        layout="fill"
+        objectFit="cover"
+        quality={90}
+        priority
+        className="-z-10"
+        data-ai-hint="woman meditating sunset"
+      />
+      <div className="absolute inset-0 bg-black/30 -z-10" /> {/* Overlay for text contrast */}
+
       {/* Top Left Content */}
       <div className="relative z-10 p-8 sm:p-10 md:p-12 text-left">
-        <p className="text-2xl sm:text-3xl md:text-4xl text-primary uppercase tracking-wider font-medium">
+        <p className="text-2xl sm:text-3xl md:text-4xl text-stone-200 uppercase tracking-wider font-medium">
           Welcome to
         </p>
         <div className="flex items-center my-1 sm:my-2">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold text-primary leading-tight">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold text-white leading-tight">
             SnapYoga
           </h1>
           <SmileyPebbleIcon
             className={cn(
-              "h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-accent ml-2 sm:ml-3 md:ml-4 drop-shadow-lg",
+              "h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-white/80 ml-2 sm:ml-3 md:ml-4 drop-shadow-lg",
               isLoading ? "animate-pebble-hop" : "animate-pebble-pulse"
             )}
           />
         </div>
-        <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-xs sm:max-w-sm md:max-w-md">
+        <p className="text-lg sm:text-xl md:text-2xl text-stone-300 max-w-xs sm:max-w-sm md:max-w-md">
           Your AI companion for perfecting yoga poses and tracking progress.
         </p>
         <Button
           onClick={handleGetStarted}
-          className="mt-6 sm:mt-8 rounded-full w-14 h-14 sm:w-16 sm:h-16 bg-primary hover:bg-primary/90 text-primary-foreground p-0 shadow-lg"
+          className="mt-6 sm:mt-8 rounded-full w-14 h-14 sm:w-16 sm:h-16 bg-white/90 hover:bg-white text-primary p-0 shadow-lg"
           aria-label="Get Started"
           disabled={isLoading}
         >
