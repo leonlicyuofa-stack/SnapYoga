@@ -33,7 +33,16 @@ export default function DrawResultPage() {
     }
     setIsFinalizing(true);
     try {
-      await createUserProfileDocument(user, { onboardingCompleted: true, luckyDrawResult: prize || 'No prize' });
+      let prizeToSave = 'No prize';
+      if (prize) {
+        try {
+          prizeToSave = decodeURIComponent(prize);
+        } catch (e) {
+          console.warn("Failed to decode prize for saving, saving raw value:", prize, e);
+          prizeToSave = prize; // Save raw prize if decoding fails
+        }
+      }
+      await createUserProfileDocument(user, { onboardingCompleted: true, luckyDrawResult: prizeToSave });
       toast({
         title: "🎉 Onboarding Complete! Welcome to SnapYoga! 🎉",
         description: "You're all set to start your yoga journey. Let's explore your dashboard!",
@@ -77,7 +86,16 @@ export default function DrawResultPage() {
             {error ? (
               <p className="text-destructive">There was an issue with the lucky spin. Please try again later or proceed.</p>
             ) : prize ? (
-              <p className="text-xl font-semibold text-accent">You won: {decodeURIComponent(prize)}!</p>
+              (() => {
+                let displayedPrize = prize;
+                try {
+                  displayedPrize = decodeURIComponent(prize);
+                } catch (e) {
+                  console.warn("Failed to decode prize from URL for display, showing raw value:", prize, e);
+                  // Keep prize as is for display if decoding fails
+                }
+                return <p className="text-xl font-semibold text-accent">You won: {displayedPrize}!</p>;
+              })()
             ) : (
               <p className="text-muted-foreground">No prize from the lucky wheel this time, but you're ready to start!</p>
             )}
