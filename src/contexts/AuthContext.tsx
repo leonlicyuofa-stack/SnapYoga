@@ -12,7 +12,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  type AuthProvider as FirebaseAuthProvider,
+  type FirebaseAuthProvider,
   type AuthError,
   EmailAuthProvider,
   reauthenticateWithCredential,
@@ -80,7 +80,7 @@ export const createUserProfileDocument = async (user: User, additionalData: Docu
     const dataToSet: DocumentData = {
       uid,
       email,
-      displayName: displayName || email?.split('@')[0] || 'User',
+      displayName: displayName || additionalData.name || email?.split('@')[0] || 'User', // Use name from additionalData if provided
       photoURL,
       ...additionalData, 
     };
@@ -115,7 +115,6 @@ const recordDailyLogin = async (userId: string) => {
     console.log(`Login recorded for user ${userId} on ${todayStr}`);
   } catch (error) {
     console.error("Error recording daily login:", error);
-    // Optionally, inform the user via a non-intrusive toast if this fails
   }
 };
 
@@ -131,8 +130,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         setUser(currentUser);
         if (currentUser) {
+          // This will create profile if it doesn't exist, setting onboardingCompleted to false by default for new users.
           await createUserProfileDocument(currentUser);
-          // Do not record login here, as this fires on every auth state change (e.g. page reload)
         }
       } catch (error) {
         console.error("Error processing auth state change or creating user profile:", error);
@@ -142,12 +141,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
     return () => unsubscribe();
   }, []); 
-
-  const handleAuthSuccess = async (message: string, authUser: User, redirectPath: string = '/') => {
-    await recordDailyLogin(authUser.uid); // Record login on successful auth action
-    toast({ title: 'Success', description: message });
-    router.push(redirectPath);
-  };
 
   const handleAuthError = (error: any, defaultMessage: string) => {
     console.error(defaultMessage, error);
@@ -163,16 +156,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, provider);
+      await recordDailyLogin(result.user.uid);
+      
+      // createUserProfileDocument in onAuthStateChanged handles the initial profile creation.
+      // We can call it here again to ensure any updated provider data (like displayName) is merged.
+      await createUserProfileDocument(result.user);
+
       const userDocRef = doc(firestore, 'users', result.user.uid);
-      const userSnap = await getDoc(userDocRef);
-      // Profile creation is handled by onAuthStateChanged, login record by handleAuthSuccess
+      const userSnap = await getDoc(userDocRef); // Re-fetch to get the latest profile state
 
       if (userSnap.exists() && userSnap.data()?.onboardingCompleted) {
-        await handleAuthSuccess(`${providerName} sign-in successful. Welcome back!`, result.user, '/');
+        toast({ title: 'Success', description: `${providerName} sign-in successful. Welcome back!` });
+        router.push('/');
       } else {
-        // This handles new social users or those who didn't complete onboarding
-        await createUserProfileDocument(result.user, { onboardingCompleted: false }); // Ensure profile exists
-        await handleAuthSuccess(`${providerName} sign-in successful. Please complete your profile.`, result.user, '/auth/onboarding/details');
+        toast({ title: 'Success', description: `${providerName} sign-in successful. Welcome to SnapYoga!` });
+        router.push('/welcome'); // Redirect to welcome page
       }
     } catch (error) {
       handleAuthError(error, `Failed to sign in with ${providerName}.`);
@@ -192,11 +190,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-      // onAuthStateChanged handles initial profile creation with onboardingCompleted: false.
-      // No need to call createUserProfileDocument here explicitly for that.
+      // onAuthStateChanged handles initial profile creation (onboardingCompleted: false).
       await recordDailyLogin(userCredential.user.uid); 
-      toast({ title: 'Account Created!', description: 'Welcome! Let\'s set up your profile.' });
-      router.push('/auth/onboarding/details'); 
+      toast({ title: 'Account Created!', description: 'Welcome to SnapYoga! Let\'s get you started.' });
+      router.push('/welcome'); // Redirect to welcome page
     } catch (error) {
       handleAuthError(error, 'Failed to create account.');
     } finally {
@@ -208,15 +205,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+      await recordDailyLogin(userCredential.user.uid);
+      
+      // Ensure profile data is up-to-date.
+      await createUserProfileDocument(userCredential.user);
+
       const userDocRef = doc(firestore, 'users', userCredential.user.uid);
-      const userSnap = await getDoc(userDocRef);
+      const userSnap = await getDoc(userDocRef); // Re-fetch to get the latest profile state
 
       if (userSnap.exists() && userSnap.data()?.onboardingCompleted) {
-         await handleAuthSuccess('Signed in successfully. Welcome back!', userCredential.user, '/');
+         toast({ title: 'Success', description: 'Signed in successfully. Welcome back!' });
+         router.push('/');
       } else {
-        // This handles users who signed up with email but didn't complete onboarding
-        await createUserProfileDocument(userCredential.user, { onboardingCompleted: false }); // Ensure profile exists
-        await handleAuthSuccess('Signed in successfully. Please complete your profile.', userCredential.user, '/auth/onboarding/details');
+        toast({ title: 'Success', description: 'Signed in successfully. Welcome to SnapYoga!' });
+        router.push('/welcome'); // Redirect to welcome page
       }
     } catch (error) {
       handleAuthError(error, 'Failed to sign in.');
@@ -244,6 +246,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       toast({ title: "Error", description: "No authenticated user found or email is missing.", variant: "destructive" });
       return false;
     }
+    setLoading(true);
     try {
       const credential = EmailAuthProvider.credential(user.email, currentPassword);
       await reauthenticateWithCredential(user, credential);
@@ -253,7 +256,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (error: any) {
       handleAuthError(error, 'Failed to update password.');
       return false;
-    } 
+    } finally {
+      setLoading(false);
+    }
   };
 
   const value = {
@@ -277,5 +282,3 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
-
-    
