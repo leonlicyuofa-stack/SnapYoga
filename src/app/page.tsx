@@ -68,11 +68,10 @@ export default function WelcomePageAsRoot() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="https://placehold.co/800x1200.png" 
+          src="https://storage.googleapis.com/project-emblem-images/images/woman_meditating_framed_sunset_illustration.png"
           alt="Woman meditating in a framed sunset view"
           layout="fill"
           objectFit="cover"
-          data-ai-hint="woman meditating framed sunset illustration"
           priority
         />
       </div>
