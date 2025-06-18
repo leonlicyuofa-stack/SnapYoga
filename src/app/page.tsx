@@ -94,7 +94,7 @@ export default function WelcomePageAsRoot() {
                We're thrilled to have you join our community! SnapYoga uses AI to help you analyze your yoga poses, track your progress, and achieve your wellness goals. Let's get you set up.
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-6 md:p-8">
+          <CardContent className="p-6 md:p-8 pt-0 md:pt-2"> {/* Adjusted padding for CardContent */}
             <div
               onClick={!(authLoading || loadingProfile) ? handleGetStarted : undefined}
               role={!(authLoading || loadingProfile) ? "button" : undefined}
@@ -106,7 +106,7 @@ export default function WelcomePageAsRoot() {
                 }
               }}
               className={cn(
-                "flex flex-col items-center justify-center text-center py-4 rounded-lg transition-colors",
+                "flex flex-col items-center justify-center text-center py-2 rounded-lg transition-colors", // Reduced py-4 to py-2
                 (authLoading || loadingProfile) ? "cursor-default" : "cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background hover:bg-black/5 dark:hover:bg-white/5"
               )}
               aria-label="Get Started"
@@ -116,7 +116,7 @@ export default function WelcomePageAsRoot() {
               ) : (
                 <>
                   <SmileyPebbleIcon className="h-32 w-32 animate-pebble-pulse text-primary group-hover:scale-105 transition-transform" />
-                  <p className="mt-3 text-base text-muted-foreground group-hover:text-foreground transition-colors">
+                  <p className="mt-2 text-base text-muted-foreground group-hover:text-foreground transition-colors"> {/* Reduced mt-3 to mt-2 */}
                     click to enter
                   </p>
                 </>
