@@ -17,6 +17,7 @@ import {
   EmailAuthProvider,
   reauthenticateWithCredential,
   updatePassword,
+  sendEmailVerification, // Added
 } from 'firebase/auth';
 import { auth, firestore } from '@/lib/firebase/clientApp';
 import { doc, setDoc, getDoc, serverTimestamp, type DocumentData } from 'firebase/firestore';
@@ -80,34 +81,33 @@ export const createUserProfileDocument = async (user: User, additionalData: Docu
     const dataToSet: DocumentData = {
       uid,
       email,
-      displayName: displayName || additionalData.name || additionalData.displayName || email?.split('@')[0] || 'User', 
+      displayName: displayName || additionalData.name || additionalData.displayName || email?.split('@')[0] || 'User',
       photoURL,
-      ...additionalData, 
+      emailVerified: user.emailVerified, // Reflect current verification status
+      ...additionalData,
     };
 
     if (!userSnap.exists()) {
       dataToSet.createdAt = serverTimestamp();
-      // Ensure onboardingCompleted is explicitly set for new users if not provided
       if (additionalData.onboardingCompleted === undefined) {
         dataToSet.onboardingCompleted = false;
       }
     } else {
       dataToSet.updatedAt = serverTimestamp();
-      // Preserve existing onboardingCompleted status if not explicitly being updated
       if (additionalData.onboardingCompleted === undefined) {
         dataToSet.onboardingCompleted = userSnap.data()?.onboardingCompleted || false;
       }
     }
     
-    // Remove 'name' if it was only used for displayName logic and not a true profile field
-    if (additionalData.name && !additionalData.displayName) {
+    if (dataToSet.name && !additionalData.displayName && dataToSet.displayName === dataToSet.name) {
         delete dataToSet.name;
     }
+
 
     await setDoc(userRef, dataToSet, { merge: true });
   } catch (error) {
     console.error("Error in createUserProfileDocument:", error);
-    throw error; 
+    throw error;
   }
 };
 
@@ -136,17 +136,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         setUser(currentUser);
         if (currentUser) {
-          // Create profile document if it doesn't exist, but don't overwrite onboarding status yet.
+          // Ensure profile document reflects current user state, especially emailVerified
           await createUserProfileDocument(currentUser); 
         }
       } catch (error) {
         console.error("Error processing auth state change or creating user profile:", error);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     });
     return () => unsubscribe();
-  }, []); 
+  }, []);
 
   const handleAuthError = (error: any, defaultMessage: string) => {
     console.error(defaultMessage, error);
@@ -163,9 +163,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const result = await signInWithPopup(auth, provider);
       await recordDailyLogin(result.user.uid);
-      // Create/update profile, but critically, check if onboarding is complete *after* this.
-      await createUserProfileDocument(result.user, { displayName: result.user.displayName, email: result.user.email, photoURL: result.user.photoURL });
-
+      // Social sign-ins usually have verified emails.
+      await createUserProfileDocument(result.user, { 
+        displayName: result.user.displayName, 
+        email: result.user.email, 
+        photoURL: result.user.photoURL,
+        emailVerified: result.user.emailVerified // Reflect provider's verification status
+      });
 
       const userDocRef = doc(firestore, 'users', result.user.uid);
       const userSnap = await getDoc(userDocRef);
@@ -174,9 +178,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         toast({ title: 'Success', description: `${providerName} sign-in successful. Welcome back!` });
         router.push('/dashboard');
       } else {
-        // If onboarding not completed, or doc doesn't exist (fresh social sign-up)
         toast({ title: 'Success', description: `${providerName} sign-in successful. Let's get you set up.` });
-        router.push('/onboarding/gender-profile'); // New onboarding flow
+        router.push('/onboarding/gender-profile');
       }
     } catch (error) {
       handleAuthError(error, `Failed to sign in with ${providerName}.`);
@@ -196,11 +199,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+      await sendEmailVerification(userCredential.user);
       await recordDailyLogin(userCredential.user.uid);
-      // Create basic profile, onboardingCompleted will default to false.
-      await createUserProfileDocument(userCredential.user, { email });
-      toast({ title: 'Account Created!', description: 'Welcome to SnapYoga! Let\'s complete your profile.' });
-      router.push('/onboarding/gender-profile'); // New onboarding flow
+      // Create profile with emailVerified: false (default from userCredential.user)
+      await createUserProfileDocument(userCredential.user, { email }); 
+      
+      toast({ title: 'Account Created!', description: 'A verification email has been sent. Please check your inbox.' });
+      router.push('/auth/verify-email');
     } catch (error) {
       handleAuthError(error, 'Failed to create account.');
     } finally {
@@ -212,8 +217,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+      
+      if (!userCredential.user.emailVerified) {
+        toast({ 
+          title: 'Verification Required', 
+          description: 'Please verify your email before signing in. Check your inbox for the verification link or resend it.',
+          variant: 'destructive' 
+        });
+        // Optionally send another verification email
+        // await sendEmailVerification(userCredential.user); 
+        // It might be better to redirect to /auth/verify-email page where they can resend.
+        router.push('/auth/verify-email');
+        // Keep user signed in so /auth/verify-email can access currentUser for resend
+        // await signOut(auth); // Don't sign out, let verify page handle it
+        return; 
+      }
+      
       await recordDailyLogin(userCredential.user.uid);
-      await createUserProfileDocument(userCredential.user); // Ensure profile exists or is updated
+      await createUserProfileDocument(userCredential.user); // Ensure profile reflects verified status
 
       const userDocRef = doc(firestore, 'users', userCredential.user.uid);
       const userSnap = await getDoc(userDocRef);
@@ -223,7 +244,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
          router.push('/dashboard');
       } else {
         toast({ title: 'Success', description: 'Signed in successfully. Let\'s complete your profile.' });
-        router.push('/onboarding/gender-profile'); // New onboarding flow
+        router.push('/onboarding/gender-profile');
       }
     } catch (error) {
       handleAuthError(error, 'Failed to sign in.');
@@ -237,8 +258,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await signOut(auth);
       toast({ title: 'Signed Out', description: 'You have been signed out successfully.' });
-      router.push('/'); 
-      setUser(null); 
+      router.push('/');
+      setUser(null);
     } catch (error) {
       handleAuthError(error, 'Failed to sign out.');
     } finally {
@@ -287,5 +308,3 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
-
-    
