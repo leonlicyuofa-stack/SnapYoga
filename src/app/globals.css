@@ -117,6 +117,9 @@
   .animate-pebble-run-right {
     animation: pebble-run-right 0.7s ease-in forwards;
   }
+  .animate-pebble-land-on-icon {
+    animation: pebble-land-on-icon 0.7s ease-out forwards;
+  }
 }
 
 @keyframes pebble-pulse {
@@ -131,15 +134,10 @@
 }
 
 @keyframes pebble-hop {
-  0%, 50%, 100% { 
-    transform: translateX(0) translateY(0);
-  }
-  25% { 
-    transform: translateX(-10px) translateY(-5px);
-  }
-  75% { 
-    transform: translateX(10px) translateY(-5px);
-  }
+  0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+  25% { transform: translateX(-10px) translateY(-5px) rotate(-15deg); }
+  50% { transform: translateX(0px) translateY(0px) rotate(0deg); }
+  75% { transform: translateX(10px) translateY(-5px) rotate(15deg); }
 }
 
 @keyframes pebble-run-right {
@@ -148,11 +146,30 @@
     opacity: 1;
   }
   50% {
-    transform: translateX(50vw) rotate(180deg);
+    transform: translateX(50vw) rotate(180deg); /* Halfway across screen, rotate */
     opacity: 1;
   }
   100% {
-    transform: translateX(150vw) rotate(360deg);
+    transform: translateX(150vw) rotate(360deg); /* Fly off screen */
     opacity: 0;
+  }
+}
+
+@keyframes pebble-land-on-icon {
+  0% {
+    transform: translateX(-80px) translateY(20px) scale(0.3) rotate(-90deg);
+    opacity: 0;
+  }
+  60% {
+    transform: translateX(0px) translateY(0px) scale(1.1) rotate(15deg);
+    opacity: 1;
+  }
+  80% {
+    transform: translateX(0px) translateY(0px) scale(0.95) rotate(-5deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0px) translateY(0px) scale(1) rotate(0deg);
+    opacity: 1;
   }
 }

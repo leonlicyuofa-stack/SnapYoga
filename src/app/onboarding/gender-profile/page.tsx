@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,7 +13,9 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
-import { Loader2, User, Users, ArrowRight } from 'lucide-react'; // Added Users icon
+import { Loader2, User, Users, ArrowRight } from 'lucide-react';
+import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
+import { cn } from '@/lib/utils';
 
 const genderProfileSchema = z.object({
   gender: z.string().min(1, { message: "Please select a gender option" }),
@@ -33,6 +35,17 @@ export default function GenderProfilePage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [animateLandingPebble, setAnimateLandingPebble] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && sessionStorage.getItem('snapYogaPebbleIncoming') === 'true') {
+      setAnimateLandingPebble(true);
+      sessionStorage.removeItem('snapYogaPebbleIncoming');
+      setTimeout(() => {
+        setAnimateLandingPebble(false);
+      }, 1000); // Animation duration (0.7s) + buffer
+    }
+  }, []);
 
   const { control, handleSubmit, formState: { errors } } = useForm<GenderProfileFormValues>({
     resolver: zodResolver(genderProfileSchema),
@@ -73,7 +86,12 @@ export default function GenderProfilePage() {
       <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
         <Card className="w-full max-w-lg shadow-xl">
           <CardHeader className="text-center">
-            <Users className="mx-auto h-12 w-12 text-primary mb-4" />
+            <div className="relative mx-auto mb-4">
+              <Users className="h-12 w-12 text-primary" />
+              {animateLandingPebble && (
+                <SmileyPebbleIcon className="absolute -bottom-2 -right-3 h-8 w-8 text-accent animate-pebble-land-on-icon" />
+              )}
+            </div>
             <CardTitle className="text-3xl font-bold">Your Profile</CardTitle>
             <CardDescription>Please select your gender.</CardDescription>
           </CardHeader>
@@ -124,5 +142,3 @@ export default function GenderProfilePage() {
     </AppShell>
   );
 }
-
-    

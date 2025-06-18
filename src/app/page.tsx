@@ -52,6 +52,9 @@ export default function WelcomePageAsRoot() {
     if (authLoading || loadingProfile || isNavigatingWithPebble) return;
 
     setIsNavigatingWithPebble(true);
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('snapYogaPebbleIncoming', 'true');
+    }
 
     setTimeout(() => {
       if (user) {
@@ -63,9 +66,7 @@ export default function WelcomePageAsRoot() {
       } else {
         router.push('/auth/signup');
       }
-      // Resetting state in case of back navigation, though component will likely unmount.
-      // setIsNavigatingWithPebble(false); 
-    }, 600); // Duration should be slightly less than the CSS animation (0.7s)
+    }, 700); // Duration matches pebble-run-right animation
   };
 
   const isLoading = authLoading || loadingProfile;
@@ -121,10 +122,10 @@ export default function WelcomePageAsRoot() {
             onClick={handleGetStarted}
             className={cn(
               "group cursor-pointer rounded-full p-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-primary",
-              !isNavigatingWithPebble && "hover:bg-black/10 dark:hover:bg-white/5" // Only apply hover if not animating away
+              !isNavigatingWithPebble && "hover:bg-black/10 dark:hover:bg-white/5"
             )}
             role="button"
-            tabIndex={isNavigatingWithPebble ? -1 : 0} // Make non-focusable during animation
+            tabIndex={isNavigatingWithPebble ? -1 : 0}
             onKeyDown={(e) => { if (!isNavigatingWithPebble && (e.key === 'Enter' || e.key === ' ')) handleGetStarted(); }}
             aria-label="Get Started / Click to enter"
           >
