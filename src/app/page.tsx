@@ -5,14 +5,14 @@ import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { PersonStanding, Sparkles, ArrowRight, Users, ListChecks, CalendarDays, Trophy, Eye, Copy, MessageSquare, Share2, PlayCircle, UserPlus, BarChart3, Activity, ChevronRight } from 'lucide-react';
-import Image from 'next/image';
+import { PersonStanding, Sparkles, ArrowRight, Users, ListChecks, CalendarDays, Trophy, Eye, Copy, MessageSquare, Share2, PlayCircle, UserPlus, BarChart3, Activity, ChevronRight, AlertCircle } from 'lucide-react';
+// Image component is no longer needed for the banner
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';
 import type { Timestamp, DocumentData } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, query, orderBy, limit, getDocs, doc, getDoc, where } from 'firebase/firestore';
-import { format, subDays, startOfMonth, endOfMonth } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -39,6 +39,11 @@ interface UserProfileData extends DocumentData {
   yogaInterest?: string;
 }
 
+interface DailyQuote {
+  content: string;
+  author: string;
+}
+
 export default function HomePage() {
   const { user, loading: authLoading } = useAuth();
   const [analyses, setAnalyses] = useState<StoredAnalysis[]>([]);
@@ -51,6 +56,33 @@ export default function HomePage() {
   const [activeLoginDays, setActiveLoginDays] = useState<number | null>(null);
   const [posesAnalyzedPast30Days, setPosesAnalyzedPast30Days] = useState<number | null>(null);
   const [loadingAppUsageStats, setLoadingAppUsageStats] = useState(true);
+
+  const [quote, setQuote] = useState<DailyQuote | null>(null);
+  const [loadingQuote, setLoadingQuote] = useState(true);
+  const [quoteError, setQuoteError] = useState<string | null>(null);
+
+
+  useEffect(() => {
+    const fetchDailyQuote = async () => {
+      setLoadingQuote(true);
+      setQuoteError(null);
+      try {
+        const response = await fetch('https://api.quotable.io/random?tags=wisdom|inspiration|life|philosophy&maxLength=150');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch quote: ${response.status}`);
+        }
+        const data = await response.json();
+        setQuote({ content: data.content, author: data.author });
+      } catch (err: any) {
+        console.error("Error fetching quote:", err);
+        setQuoteError("Could not load daily inspiration. Please try again later.");
+        setQuote(null);
+      } finally {
+        setLoadingQuote(false);
+      }
+    };
+    fetchDailyQuote();
+  }, []);
 
 
   useEffect(() => {
@@ -213,10 +245,16 @@ export default function HomePage() {
               <Skeleton className="h-48 rounded-lg" />
             </div>
           </div>
-          <Card className="w-full max-w-2xl shadow-2xl overflow-hidden mx-auto">
-            <Skeleton className="w-full h-64 md:h-80" />
-            <CardHeader className="text-center pt-8"><Skeleton className="h-8 w-3/5 mx-auto" /><Skeleton className="h-6 w-4/5 mx-auto mt-2" /></CardHeader>
-            <CardContent className="flex flex-col items-center space-y-6 p-8"><Skeleton className="h-12 w-3/4" /></CardContent>
+           <Card className="w-full max-w-2xl shadow-2xl overflow-hidden mx-auto">
+            <CardHeader className="text-center pt-8">
+              <Skeleton className="h-10 w-4/5 mx-auto mb-3" />
+              <Skeleton className="h-6 w-3/5 mx-auto" />
+            </CardHeader>
+            <CardContent className="flex flex-col items-center space-y-4 p-8 min-h-[200px] justify-center">
+              <Skeleton className="h-6 w-3/4" />
+              <Skeleton className="h-5 w-1/2" />
+              <Skeleton className="h-5 w-1/4" />
+            </CardContent>
           </Card>
           <Card className="w-full max-w-2xl shadow-2xl overflow-hidden mt-12 mx-auto">
             <CardHeader className="text-center pt-8"><Skeleton className="h-8 w-3/5 mx-auto" /><Skeleton className="h-6 w-4/5 mx-auto mt-2" /></CardHeader>
@@ -436,71 +474,95 @@ export default function HomePage() {
         )}
 
          <div className="w-full max-w-2xl flex flex-col items-center justify-center py-8 md:py-6">
-          <Card className="w-full shadow-2xl overflow-hidden">
-            <div className="relative w-full h-64 md:h-80">
-              <Image
-                src="https://placehold.co/800x450.png"
-                alt="Yoga practice"
-                layout="fill"
-                objectFit="cover"
-                data-ai-hint="yoga meditation"
-                priority
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-              <div className="absolute bottom-0 left-0 p-6 md:p-8">
-                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white flex items-center">
-                  <PersonStanding className="mr-3 h-10 w-10 md:h-12 md:w-12" />
-                  SnapYoga
-                </h1>
-              </div>
-            </div>
-            <CardHeader className="text-center pt-8">
-              <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
-                <Sparkles className="h-8 w-8 text-primary" />
-                Yoga for Everyone
-              </CardTitle>
-              <CardDescription className="text-lg text-muted-foreground mt-2 max-w-md mx-auto">
-                Your mat, your pace. Get AI-powered feedback on your yoga poses. Upload a video, and let our smart assistant help you improve your alignment and form.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col items-center space-y-6 p-8">
-              <p className="text-center text-foreground/80">
-                Ready to take your yoga journey to the next level? Click below to start analyzing your poses and unlock personalized insights.
-              </p>
-              <Link href="/snap-yoga" passHref>
-                <Button
-                  size="lg"
-                  className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-7 px-8 rounded-lg shadow-lg transition-transform transform hover:scale-105"
-                  aria-label="Go to SnapYoga Analysis Page"
-                >
-                  Start Analyzing Your Pose
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+            {/* Daily Quote Card - Replaces the Image Banner */}
+            <Card className="w-full shadow-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-background to-secondary/10 border-primary/20 mb-8 md:mb-12">
+              <CardHeader className="text-center p-6 md:p-8">
+                  <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-primary flex items-center justify-center">
+                    <PersonStanding className="mr-3 h-10 w-10 md:h-12 md:w-12" />
+                    SnapYoga
+                  </h1>
+                  <p className="mt-3 text-lg text-muted-foreground max-w-xl mx-auto">
+                    Yoga for Everyone. Your mat, your pace.
+                  </p>
+              </CardHeader>
+              <CardContent className="p-6 md:p-8 pt-0 min-h-[150px] md:min-h-[200px] flex flex-col items-center justify-center text-center">
+                {loadingQuote ? (
+                  <>
+                    <Skeleton className="h-6 w-3/4 mb-3" />
+                    <Skeleton className="h-5 w-1/2 mb-4" />
+                    <Skeleton className="h-4 w-1/4" />
+                  </>
+                ) : quoteError ? (
+                  <div className="text-destructive">
+                    <AlertCircle className="h-10 w-10 mx-auto mb-3" />
+                    <p className="font-semibold">Oops!</p>
+                    <p className="text-sm">{quoteError}</p>
+                  </div>
+                ) : quote ? (
+                  <>
+                    <blockquote className="text-xl md:text-2xl font-medium text-foreground/90 italic leading-relaxed">
+                      &ldquo;{quote.content}&rdquo;
+                    </blockquote>
+                    <cite className="mt-4 block text-sm md:text-base text-muted-foreground not-italic">
+                      &ndash; {quote.author}
+                    </cite>
+                  </>
+                ) : (
+                  <p className="text-muted-foreground">Loading daily inspiration...</p>
+                )}
+              </CardContent>
+            </Card>
+            
+            {/* Card for "Start Analyzing Your Pose" */}
+            <Card className="w-full shadow-2xl overflow-hidden">
+              <CardHeader className="text-center pt-8">
+                <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
+                  <Sparkles className="h-8 w-8 text-primary" />
+                  Analyze Your Pose
+                </CardTitle>
+                <CardDescription className="text-lg text-muted-foreground mt-2 max-w-md mx-auto">
+                  Get AI-powered feedback on your yoga poses. Upload a video, and let our smart assistant help you improve your alignment and form.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col items-center space-y-6 p-8">
+                <p className="text-center text-foreground/80">
+                  Ready to take your yoga journey to the next level? Click below to start analyzing your poses and unlock personalized insights.
+                </p>
+                <Link href="/snap-yoga" passHref>
+                  <Button
+                    size="lg"
+                    className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-7 px-8 rounded-lg shadow-lg transition-transform transform hover:scale-105"
+                    aria-label="Go to SnapYoga Analysis Page"
+                  >
+                    Start Analyzing Your Pose
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
 
-          <Card className="w-full shadow-2xl overflow-hidden mt-12">
-            <CardHeader className="text-center pt-8">
-              <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
-                <Users className="h-8 w-8 text-primary" />
-                Challenges with Friends
-              </CardTitle>
-              <CardDescription className="text-lg text-muted-foreground mt-2 max-w-md mx-auto">
-                Explore and join monthly yoga pose challenges. Invite friends and grow your practice together!
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col items-center space-y-6 p-8">
-              <Link href="/challenges" passHref>
-                <Button size="lg" variant="outline" className="text-lg py-7 px-8 rounded-lg shadow-md hover:shadow-lg transition-transform transform hover:scale-105">
-                  Explore Challenges
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
+            <Card className="w-full shadow-2xl overflow-hidden mt-12">
+              <CardHeader className="text-center pt-8">
+                <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
+                  <Users className="h-8 w-8 text-primary" />
+                  Challenges with Friends
+                </CardTitle>
+                <CardDescription className="text-lg text-muted-foreground mt-2 max-w-md mx-auto">
+                  Explore and join monthly yoga pose challenges. Invite friends and grow your practice together!
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col items-center space-y-6 p-8">
+                <Link href="/challenges" passHref>
+                  <Button size="lg" variant="outline" className="text-lg py-7 px-8 rounded-lg shadow-md hover:shadow-lg transition-transform transform hover:scale-105">
+                    Explore Challenges
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+         </div>
       </div>
     </AppShell>
   );
 }
+
