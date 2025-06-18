@@ -72,15 +72,15 @@ export default function WelcomePageAsRoot() {
   return (
     <AppShell>
       <div className="relative flex min-h-[calc(100vh-10rem)] items-center justify-center py-12 overflow-hidden">
-        {/* Background Yoga Pose Shadow */}
+        {/* Background Image */}
         <div className="absolute inset-0 z-0 flex items-center justify-center opacity-10">
           <Image
             src="https://placehold.co/800x600.png" 
-            alt="Yoga pose shadow background"
+            alt="Abstract background"
             layout="fill"
             objectFit="contain" 
             className="transform scale-150" 
-            data-ai-hint="yoga pose silhouette"
+            data-ai-hint="abstract lines shapes"
             priority
           />
         </div>
@@ -94,7 +94,7 @@ export default function WelcomePageAsRoot() {
                We're thrilled to have you join our community! SnapYoga uses AI to help you analyze your yoga poses, track your progress, and achieve your wellness goals. Let's get you set up.
             </CardDescription>
           </CardHeader>
-          <CardContent className="px-4 pb-4 pt-0"> {/* Further reduced padding */}
+          <CardContent className="px-4 pb-4 pt-0">
             <div
               onClick={!(authLoading || loadingProfile) ? handleGetStarted : undefined}
               role={!(authLoading || loadingProfile) ? "button" : undefined}
