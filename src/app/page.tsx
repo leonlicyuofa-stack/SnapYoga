@@ -99,7 +99,7 @@ export default function WelcomePageAsRoot() {
             <CardTitle className="text-3xl md:text-4xl font-bold text-primary flex items-center justify-center gap-2">
               Welcome to SnapYoga!
             </CardTitle>
-            <CardDescription className="text-lg md:text-xl text-muted-foreground mt-3 px-2">
+            <CardDescription className="text-base text-muted-foreground mt-3 px-2">
                We're thrilled to have you join our community! SnapYoga uses AI to help you analyze your yoga poses, track your progress, and achieve your wellness goals. Let's get you set up.
             </CardDescription>
           </CardHeader>
@@ -124,7 +124,7 @@ export default function WelcomePageAsRoot() {
                 <Loader2 className="h-12 w-12 animate-spin text-primary my-4" />
               ) : (
                 <>
-                  <SmileyPebbleIcon className="h-20 w-20 animate-pebble-pulse text-primary group-hover:scale-105 transition-transform" />
+                  <SmileyPebbleIcon className="h-24 w-24 animate-pebble-pulse text-primary group-hover:scale-105 transition-transform" />
                   <p className="mt-3 text-base text-muted-foreground group-hover:text-foreground transition-colors">
                     click to enter
                   </p>
@@ -142,3 +142,4 @@ export default function WelcomePageAsRoot() {
     </AppShell>
   );
 }
+
