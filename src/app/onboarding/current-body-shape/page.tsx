@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
-import { Loader2, Body, ArrowRight, ArrowLeft } from 'lucide-react'; // Using Body icon
+import { Loader2, PersonStanding, ArrowRight, ArrowLeft } from 'lucide-react'; // Replaced Body with PersonStanding
 
 const currentBodyShapeSchema = z.object({
   currentBodyShape: z.string().min(1, { message: "Please select your current body shape" }),
@@ -79,7 +79,7 @@ export default function CurrentBodyShapePage() {
       <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
         <Card className="w-full max-w-lg shadow-xl">
           <CardHeader className="text-center">
-            <Body className="mx-auto h-12 w-12 text-primary mb-4" />
+            <PersonStanding className="mx-auto h-12 w-12 text-primary mb-4" />
             <CardTitle className="text-3xl font-bold">Current Body Shape</CardTitle>
             <CardDescription>Step 6 of 14: How would you describe your current body shape? (Optional)</CardDescription>
           </CardHeader>
