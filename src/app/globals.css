@@ -155,16 +155,16 @@
 }
 
 @keyframes pebble-hop {
-  0%, 100% {
+  0%, 100% { /* Middle */
     transform: translateX(0) translateY(0);
   }
-  25% {
+  25% { /* Left */
     transform: translateX(-10px) translateY(-5px);
   }
-  50% {
+  50% { /* Middle */
     transform: translateX(0) translateY(0);
   }
-  75% {
+  75% { /* Right */
     transform: translateX(10px) translateY(-5px);
   }
 }
