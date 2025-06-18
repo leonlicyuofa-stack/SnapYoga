@@ -111,6 +111,9 @@
   .animate-bg-abstract {
     animation: bg-abstract-pan-zoom 40s infinite alternate ease-in-out;
   }
+  .animate-pebble-pulse {
+    animation: pebble-pulse 2.5s infinite ease-in-out;
+  }
 }
 
 
@@ -134,5 +137,16 @@
   100% {
     transform: scale(1.5) translate(0%, 0%);
     opacity: 0.1;
+  }
+}
+
+@keyframes pebble-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
   }
 }

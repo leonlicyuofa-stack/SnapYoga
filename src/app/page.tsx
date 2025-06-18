@@ -2,16 +2,14 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc, type DocumentData } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
-import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { Loader2, ArrowRight, Sparkles } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
 
-// Define UserProfileData interface
 interface UserProfileData extends DocumentData {
   uid?: string;
   email?: string;
@@ -63,6 +61,8 @@ export default function WelcomePageAsRoot() {
     }
   };
 
+  const isLoading = authLoading || loadingProfile;
+
   return (
     <div className="relative flex min-h-screen flex-col items-stretch justify-end overflow-hidden bg-background text-foreground">
       {/* Background Image */}
@@ -90,35 +90,38 @@ export default function WelcomePageAsRoot() {
         />
       </div>
 
-      {/* Text and Button Overlay Area */}
+      {/* Text and Interactive Element Overlay Area */}
       <div className="relative z-20 mt-[-60px] sm:mt-[-80px] md:mt-[-100px] flex justify-center px-4 pb-8 sm:pb-12 md:pb-16">
-        <div className="bg-secondary/20 dark:bg-secondary/30 backdrop-blur-md p-6 sm:p-8 md:p-10 rounded-3xl shadow-2xl w-full max-w-md sm:max-w-lg text-center">
-          {/* Headline */}
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-light text-primary dark:text-primary-foreground leading-tight mb-6 sm:mb-8">
-            Let the <span className="font-semibold">threads of</span>
-            <br className="xs:hidden sm:inline-block" /> life get connected
-            <br />
-            with <Sparkles className="inline-block h-5 w-5 sm:h-6 sm:w-6 text-accent mx-1" />
-            <span className="font-semibold">yoga</span>
+        <div className="bg-primary/80 dark:bg-primary/70 text-primary-foreground backdrop-blur-md p-6 sm:p-8 md:p-10 rounded-3xl shadow-2xl w-full max-w-md sm:max-w-lg text-center">
+          
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+            Welcome to SnapYoga!
           </h1>
 
-          {/* Get Started Button */}
-          <Button
+          <p className="text-sm sm:text-base text-primary-foreground/90 mb-6">
+            We&apos;re thrilled to have you join our community! SnapYoga uses AI to help you
+            analyze your yoga poses, track your progress, and achieve your wellness goals.
+            Let&apos;s get you set up.
+          </p>
+
+          <div
             onClick={handleGetStarted}
-            size="lg"
-            className="bg-accent hover:bg-accent/80 text-accent-foreground rounded-xl py-3 px-6 sm:px-8 text-base sm:text-lg shadow-xl transition-transform transform hover:scale-105 w-full max-w-[280px] sm:max-w-xs mx-auto"
-            disabled={authLoading || loadingProfile}
-            aria-label="Get Started"
+            className="group cursor-pointer rounded-full p-3 transition-colors hover:bg-black/10 dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleGetStarted(); }}
+            aria-label="Get Started / Click to enter"
           >
-            {authLoading || loadingProfile ? (
-              <Loader2 className="h-6 w-6 animate-spin" />
+            {isLoading ? (
+              <Loader2 className="h-16 w-16 sm:h-20 sm:w-20 animate-spin text-accent mx-auto" />
             ) : (
-              <>
-                <span>Get Started</span>
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </>
+              <SmileyPebbleIcon className="h-20 w-20 sm:h-24 sm:w-24 text-accent animate-pebble-pulse mx-auto" />
             )}
-          </Button>
+          </div>
+
+          <p className="text-xs sm:text-sm text-primary-foreground/80 group-hover:text-primary-foreground transition-colors mt-2">
+            click to enter
+          </p>
         </div>
       </div>
     </div>
