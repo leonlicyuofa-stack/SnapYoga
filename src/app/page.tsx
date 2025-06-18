@@ -84,26 +84,6 @@ export default function WelcomePageAsRoot() {
         />
       </div>
 
-      {/* Decorative Background Pebbles */}
-      <div className="absolute bottom-0 left-0 right-0 z-10 flex justify-between items-end px-4 pointer-events-none">
-        {/* Left Pebble Stack */}
-        <div className="opacity-70">
-          <svg width="750" height="525" viewBox="0 0 150 105">
-            <ellipse cx="45" cy="82" rx="30" ry="15" className="fill-secondary/40" />
-            <ellipse cx="60" cy="60" rx="22" ry="12" className="fill-primary/30" />
-          </svg>
-        </div>
-        {/* Right Pebble Stack */}
-        <div className="opacity-70">
-          <svg width="900" height="600" viewBox="0 0 180 120">
-            <ellipse cx="135" cy="98" rx="38" ry="18" className="fill-secondary/40" />
-            <ellipse cx="120" cy="72" rx="27" ry="14" className="fill-primary/30" />
-            <ellipse cx="105" cy="52" rx="18" ry="9" className="fill-secondary/30" />
-          </svg>
-        </div>
-      </div>
-
-
       {/* Content Card Area */}
       <div className="relative z-20 flex justify-center px-4 pb-8 sm:pb-12 md:pb-16">
         <div className="bg-primary/80 dark:bg-primary/70 text-primary-foreground backdrop-blur-md p-6 sm:p-8 md:p-10 rounded-3xl shadow-2xl w-full max-w-md sm:max-w-lg text-center">
