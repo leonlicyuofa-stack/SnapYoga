@@ -66,6 +66,7 @@ export default function WelcomePageAsRoot() {
       } else {
         router.push('/auth/signup');
       }
+      // setIsProcessingClick(false); // Moved out of timeout to prevent multiple clicks during animation
     }, 150); 
   };
 
@@ -74,14 +75,12 @@ export default function WelcomePageAsRoot() {
   return (
     <div className="relative flex min-h-screen flex-col items-stretch justify-between overflow-hidden">
       <Image
-        src="https://storage.googleapis.com/project-emblem-images/images/woman_meditating_framed_sunset_illustration.png"
-        alt="Woman meditating in a framed sunset view"
-        layout="fill"
-        objectFit="cover"
-        quality={90}
-        priority
-        className="-z-10"
+        src="https://placehold.co/1920x1080.png"
+        alt="Placeholder background image"
         data-ai-hint="woman meditating sunset"
+        fill
+        priority
+        className="-z-10 object-cover"
       />
       <div className="absolute inset-0 bg-black/30 -z-10" /> {/* Overlay for text contrast */}
 
