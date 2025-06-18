@@ -36,21 +36,49 @@ const buttonVariants = cva(
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
-  asChild?: boolean
+  asChild?: boolean;
+  isLoadingWithBar?: boolean;
+  progressPercent?: number;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button"
+  ({ className, variant, size, asChild = false, isLoadingWithBar = false, progressPercent = 25, children, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button";
+
+    if (isLoadingWithBar) {
+      return (
+        <Comp
+          className={cn(buttonVariants({ variant, size, className }), "relative overflow-hidden cursor-default")}
+          ref={ref}
+          disabled // isLoadingWithBar implies disabled
+          {...props} // Spread other props, children are effectively ignored
+        >
+          {/* Progress bar track */}
+          <div className="absolute inset-0 bg-muted/30 rounded-md"></div>
+          {/* Progress bar fill */}
+          <div
+            className="absolute inset-y-0 left-0 h-full bg-primary/70 transition-all duration-300 ease-linear"
+            style={{ width: `${props.disabled ? progressPercent : 0}%` }} // Example static fill
+          ></div>
+          {/* Loading text overlay */}
+          <span className="relative z-10 text-primary-foreground/90 text-sm flex items-center justify-center">
+            Loading...
+          </span>
+        </Comp>
+      );
+    }
+
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
-      />
-    )
+      >
+        {children}
+      </Comp>
+    );
   }
-)
-Button.displayName = "Button"
+);
+Button.displayName = "Button";
 
-export { Button, buttonVariants }
+export { Button, buttonVariants };

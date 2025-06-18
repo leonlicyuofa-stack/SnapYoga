@@ -33,7 +33,6 @@ export default function SubscriptionPage() {
         trialStatus: 'active', 
         trialStartDate: new Date().toISOString(), 
       });
-      // Toast removed as per request
       router.push('/onboarding/lucky-wheel'); 
     } catch (error) {
       console.error("Error activating free trial:", error);
@@ -76,9 +75,10 @@ export default function SubscriptionPage() {
             <Button 
               onClick={handleStartFreeTrial} 
               className="w-full text-lg py-6 bg-green-600 hover:bg-green-700 text-white"
+              isLoadingWithBar={isSubmitting}
               disabled={isSubmitting}
             >
-              {isSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Star className="mr-2 h-5 w-5" /> }
+              <Star className="mr-2 h-5 w-5" />
               Start 7-Day Free Trial (Mock)
             </Button>
             
@@ -88,7 +88,7 @@ export default function SubscriptionPage() {
                     Back
                 </Button>
                 <Button onClick={handleProceedToLuckyWheel} className="w-full text-lg py-6 flex-grow bg-accent hover:bg-accent/90 text-accent-foreground" disabled={isSubmitting}>
-                   {isSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <ArrowRight className="mr-2 h-5 w-5" />}
+                   <ArrowRight className="mr-2 h-5 w-5" />
                     Next: Try the Lucky Wheel!
                 </Button>
               </div>

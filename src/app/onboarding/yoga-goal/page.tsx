@@ -108,8 +108,13 @@ export default function YogaGoalPage() {
                     <ArrowLeft className="mr-2 h-5 w-5" />
                     Back
                 </Button>
-                <Button type="submit" className="w-full text-lg py-6 flex-grow" disabled={isSubmitting || authLoading}>
-                    {isSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <ArrowRight className="mr-2 h-5 w-5" />}
+                <Button 
+                  type="submit" 
+                  className="w-full text-lg py-6 flex-grow" 
+                  isLoadingWithBar={isSubmitting}
+                  disabled={isSubmitting || authLoading}
+                >
+                    <ArrowRight className="mr-2 h-5 w-5" />
                     Next
                 </Button>
               </div>

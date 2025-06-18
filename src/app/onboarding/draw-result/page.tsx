@@ -87,9 +87,10 @@ export default function DrawResultPage() {
             <Button 
               onClick={handleCompleteOnboarding} 
               className="w-full text-lg py-6 bg-primary hover:bg-primary/90"
+              isLoadingWithBar={isFinalizing}
               disabled={isFinalizing}
             >
-              {isFinalizing ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <ArrowRight className="mr-2 h-5 w-5" />}
+              <ArrowRight className="mr-2 h-5 w-5" />
               Complete Setup & Go to Dashboard
             </Button>
           </CardContent>
