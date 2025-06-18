@@ -60,6 +60,9 @@ export default function WelcomePageAsRoot() {
         if (userProfile && userProfile.onboardingCompleted) {
           router.push('/dashboard');
         } else {
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem('snapYogaPebbleIncoming', 'true');
+          }
           router.push('/onboarding/gender-profile'); 
         }
       } else {
@@ -84,30 +87,32 @@ export default function WelcomePageAsRoot() {
 
       {/* Top Left Content */}
       <div className="relative z-10 p-8 sm:p-10 md:p-12 text-left">
-        <p className="text-2xl sm:text-3xl md:text-4xl text-stone-200 uppercase tracking-wider font-medium">
+        <p className="text-2xl text-stone-200 uppercase tracking-wider font-medium sm:text-3xl md:text-4xl">
           Welcome to
         </p>
         <div className="flex items-center my-1 sm:my-2">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold text-white leading-tight">
+          <h1 className="text-5xl font-extrabold text-white leading-tight sm:text-6xl md:text-7xl">
             SnapYoga
           </h1>
            <SmileyPebbleIcon
             className={cn(
-              "h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-white/80 ml-2 sm:ml-3 md:ml-4 drop-shadow-lg",
+              "h-10 w-10 text-white/80 ml-2 sm:ml-3 md:ml-4 drop-shadow-lg sm:h-12 sm:w-12 md:h-14 md:w-14",
               isLoading ? "animate-pebble-hop" : "animate-pebble-pulse"
             )}
           />
         </div>
-        <p className="text-lg sm:text-xl md:text-2xl text-stone-300 max-w-xs sm:max-w-sm md:max-w-md">
-          Your AI companion for perfecting yoga poses and tracking progress.
+        <p className="text-lg text-stone-300 max-w-xs sm:max-w-sm md:max-w-md sm:text-xl md:text-2xl">
+          Your AI companion for perfecting yoga poses
+          <br />
+          and tracking progress.
         </p>
         <Button
           onClick={handleGetStarted}
-          className="mt-6 sm:mt-8 rounded-full w-14 h-14 sm:w-16 sm:h-16 bg-white/90 hover:bg-white text-primary p-0 shadow-lg"
+          className="mt-6 rounded-full w-14 h-14 bg-white/90 hover:bg-white text-primary p-0 shadow-lg sm:mt-8 sm:w-16 sm:h-16"
           aria-label="Get Started"
           disabled={isLoading}
         >
-          {isLoading ? <Loader2 className="h-6 w-6 sm:h-7 sm:w-7 animate-spin" /> : <MoveUpRight className="h-6 w-6 sm:h-7 sm:w-7" />}
+          {isLoading ? <Loader2 className="h-6 w-6 animate-spin sm:h-7 sm:w-7" /> : <MoveUpRight className="h-6 w-6 sm:h-7 sm:w-7" />}
         </Button>
       </div>
     </div>
