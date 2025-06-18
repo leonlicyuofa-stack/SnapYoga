@@ -23,6 +23,7 @@ export default function WelcomePageAsRoot() {
   const { user, loading: authLoading } = useAuth();
   const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
+  const [isNavigatingWithPebble, setIsNavigatingWithPebble] = useState(false);
 
   useEffect(() => {
     if (user && !authLoading) {
@@ -48,17 +49,23 @@ export default function WelcomePageAsRoot() {
   }, [user, authLoading]);
 
   const handleGetStarted = () => {
-    if (authLoading || loadingProfile) return;
+    if (authLoading || loadingProfile || isNavigatingWithPebble) return;
 
-    if (user) {
-      if (userProfile && userProfile.onboardingCompleted) {
-        router.push('/dashboard');
+    setIsNavigatingWithPebble(true);
+
+    setTimeout(() => {
+      if (user) {
+        if (userProfile && userProfile.onboardingCompleted) {
+          router.push('/dashboard');
+        } else {
+          router.push('/onboarding/gender-profile'); 
+        }
       } else {
-        router.push('/auth/onboarding/details');
+        router.push('/auth/signup');
       }
-    } else {
-      router.push('/auth/signup');
-    }
+      // Resetting state in case of back navigation, though component will likely unmount.
+      // setIsNavigatingWithPebble(false); 
+    }, 600); // Duration should be slightly less than the CSS animation (0.7s)
   };
 
   const isLoading = authLoading || loadingProfile;
@@ -112,22 +119,26 @@ export default function WelcomePageAsRoot() {
 
           <div
             onClick={handleGetStarted}
-            className="group cursor-pointer rounded-full p-3 transition-colors hover:bg-black/10 dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
+            className={cn(
+              "group cursor-pointer rounded-full p-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-primary",
+              !isNavigatingWithPebble && "hover:bg-black/10 dark:hover:bg-white/5" // Only apply hover if not animating away
+            )}
             role="button"
-            tabIndex={0}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleGetStarted(); }}
+            tabIndex={isNavigatingWithPebble ? -1 : 0} // Make non-focusable during animation
+            onKeyDown={(e) => { if (!isNavigatingWithPebble && (e.key === 'Enter' || e.key === ' ')) handleGetStarted(); }}
             aria-label="Get Started / Click to enter"
           >
             <SmileyPebbleIcon 
               className={cn(
                 "h-20 w-20 sm:h-24 sm:w-24 text-accent mx-auto",
+                isNavigatingWithPebble ? "animate-pebble-run-right" : 
                 isLoading ? "animate-pebble-hop" : "animate-pebble-pulse"
               )} 
             />
           </div>
 
           <p className="text-xs sm:text-sm text-primary-foreground/80 group-hover:text-primary-foreground transition-colors mt-2">
-            click to enter
+            {isNavigatingWithPebble ? "Let's Go!" : "click to enter"}
           </p>
         </div>
       </div>

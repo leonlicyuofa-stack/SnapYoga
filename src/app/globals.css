@@ -108,38 +108,14 @@
 }
 
 @layer utilities {
-  .animate-bg-abstract {
-    animation: bg-abstract-pan-zoom 40s infinite alternate ease-in-out;
-  }
   .animate-pebble-pulse {
     animation: pebble-pulse 2.5s infinite ease-in-out;
   }
   .animate-pebble-hop {
     animation: pebble-hop 1s infinite ease-in-out;
   }
-}
-
-
-@keyframes bg-abstract-pan-zoom {
-  0% {
-    transform: scale(1.5) translate(0%, 0%);
-    opacity: 0.1;
-  }
-  25% {
-    transform: scale(1.55) translate(2%, -2%);
-    opacity: 0.12;
-  }
-  50% {
-    transform: scale(1.5) translate(-2%, 2%);
-    opacity: 0.1;
-  }
-  75% {
-    transform: scale(1.55) translate(-2%, -2%);
-    opacity: 0.12;
-  }
-  100% {
-    transform: scale(1.5) translate(0%, 0%);
-    opacity: 0.1;
+  .animate-pebble-run-right {
+    animation: pebble-run-right 0.7s ease-in forwards;
   }
 }
 
@@ -155,16 +131,28 @@
 }
 
 @keyframes pebble-hop {
-  0%, 100% { /* Middle */
+  0%, 50%, 100% { 
     transform: translateX(0) translateY(0);
   }
-  25% { /* Left */
+  25% { 
     transform: translateX(-10px) translateY(-5px);
   }
-  50% { /* Middle */
-    transform: translateX(0) translateY(0);
-  }
-  75% { /* Right */
+  75% { 
     transform: translateX(10px) translateY(-5px);
+  }
+}
+
+@keyframes pebble-run-right {
+  0% {
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(50vw) rotate(180deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(150vw) rotate(360deg);
+    opacity: 0;
   }
 }
