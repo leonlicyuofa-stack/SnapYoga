@@ -7,8 +7,10 @@ import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc, type DocumentData } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { Button } from '@/components/ui/button';
 import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
 import { cn } from '@/lib/utils';
+import { MoveUpRight, Loader2 } from 'lucide-react';
 
 interface UserProfileData extends DocumentData {
   uid?: string;
@@ -23,7 +25,7 @@ export default function WelcomePageAsRoot() {
   const { user, loading: authLoading } = useAuth();
   const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
-  const [isNavigatingWithPebble, setIsNavigatingWithPebble] = useState(false);
+  const [isProcessingClick, setIsProcessingClick] = useState(false);
 
   useEffect(() => {
     if (user && !authLoading) {
@@ -49,30 +51,32 @@ export default function WelcomePageAsRoot() {
   }, [user, authLoading]);
 
   const handleGetStarted = () => {
-    if (authLoading || loadingProfile || isNavigatingWithPebble) return;
+    if (authLoading || loadingProfile || isProcessingClick) return;
 
-    setIsNavigatingWithPebble(true);
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem('snapYogaPebbleIncoming', 'true');
-    }
+    setIsProcessingClick(true);
 
+    // Short delay to allow UI to update if needed (e.g. show loader on button)
     setTimeout(() => {
       if (user) {
         if (userProfile && userProfile.onboardingCompleted) {
           router.push('/dashboard');
         } else {
-          router.push('/onboarding/gender-profile'); 
+          // User exists but hasn't completed onboarding
+          router.push('/onboarding/gender-profile');
         }
       } else {
+        // No user, direct to sign-up
         router.push('/auth/signup');
       }
-    }, 700); // Duration matches pebble-run-right animation
+      // setIsProcessingClick(false); // Reset if navigation fails or for SPA-like non-full reloads.
+      // For full page navigations, this component unmounts, so resetting might not be strictly necessary.
+    }, 300);
   };
 
-  const isLoading = authLoading || loadingProfile;
+  const isLoading = authLoading || loadingProfile || isProcessingClick;
 
   return (
-    <div className="relative flex min-h-screen flex-col items-stretch justify-end overflow-hidden text-foreground">
+    <div className="relative flex min-h-screen flex-col items-stretch justify-between overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -81,46 +85,47 @@ export default function WelcomePageAsRoot() {
           layout="fill"
           objectFit="cover"
           priority
+          className="opacity-90"
         />
+        {/* Dark overlay for better text contrast at the top */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-transparent"></div>
       </div>
 
-      {/* Content Card Area */}
-      <div className="relative z-20 flex justify-center px-4 pb-8 sm:pb-12 md:pb-16">
-        <div className="bg-primary/80 dark:bg-primary/70 text-primary-foreground backdrop-blur-md p-6 sm:p-8 md:p-10 rounded-3xl shadow-2xl w-full max-w-md sm:max-w-lg text-center">
-          
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
-            Welcome to SnapYoga!
-          </h1>
+      {/* Top Left Content */}
+      <div className="relative z-10 p-8 sm:p-10 md:p-12 text-left">
+        <p className="text-sm sm:text-base md:text-lg text-primary-foreground/80 uppercase tracking-wider font-medium">
+          Welcome to
+        </p>
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold my-1 sm:my-2 text-primary-foreground leading-tight">
+          SnapYoga
+        </h1>
+        <p className="text-xs sm:text-sm text-primary-foreground/70 max-w-xs sm:max-w-sm md:max-w-md">
+          Your AI companion for perfecting yoga poses and tracking progress.
+        </p>
+        <Button
+          onClick={handleGetStarted}
+          className="mt-6 sm:mt-8 rounded-full w-14 h-14 sm:w-16 sm:h-16 bg-primary-foreground/20 hover:bg-primary-foreground/30 backdrop-blur-sm text-primary-foreground p-0 shadow-lg"
+          aria-label="Get Started"
+          disabled={isLoading}
+        >
+          {isLoading ? <Loader2 className="h-6 w-6 sm:h-7 sm:w-7 animate-spin" /> : <MoveUpRight className="h-6 w-6 sm:h-7 sm:w-7" />}
+        </Button>
+      </div>
 
-          <p className="text-xs sm:text-sm text-primary-foreground/90 mb-6">
-            We&apos;re thrilled to have you join our community! SnapYoga uses AI to help you
-            analyze your yoga poses, track your progress, and achieve your wellness goals.
-            Let&apos;s get you set up.
-          </p>
-
+      {/* Bottom Center Pebble with Sunset Glow */}
+      <div className="relative z-10 flex justify-center pb-6 sm:pb-8">
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center justify-center">
+          {/* Sunset glow element */}
           <div
-            onClick={handleGetStarted}
+            className="absolute bottom-0 w-40 h-20 sm:w-48 sm:h-24 bg-radial-sunset-glow opacity-60 blur-xl"
+            aria-hidden="true"
+          ></div>
+          <SmileyPebbleIcon
             className={cn(
-              "group cursor-pointer rounded-full p-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-primary",
-              !isNavigatingWithPebble && "hover:bg-black/10 dark:hover:bg-white/5"
+              "h-16 w-16 sm:h-20 sm:w-20 text-accent relative z-20 drop-shadow-lg",
+              isLoading ? "animate-pebble-hop" : "animate-pebble-pulse"
             )}
-            role="button"
-            tabIndex={isNavigatingWithPebble ? -1 : 0}
-            onKeyDown={(e) => { if (!isNavigatingWithPebble && (e.key === 'Enter' || e.key === ' ')) handleGetStarted(); }}
-            aria-label="Get Started / Click to enter"
-          >
-            <SmileyPebbleIcon 
-              className={cn(
-                "h-20 w-20 sm:h-24 sm:w-24 text-accent mx-auto",
-                isNavigatingWithPebble ? "animate-pebble-run-right" : 
-                isLoading ? "animate-pebble-hop" : "animate-pebble-pulse"
-              )} 
-            />
-          </div>
-
-          <p className="text-xs sm:text-sm text-primary-foreground/80 group-hover:text-primary-foreground transition-colors mt-2">
-            {isNavigatingWithPebble ? "Let's Go!" : "click to enter"}
-          </p>
+          />
         </div>
       </div>
     </div>
