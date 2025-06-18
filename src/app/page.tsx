@@ -2,15 +2,14 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-// Card imports removed
-import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
-import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc, type DocumentData } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { Loader2, ArrowRight, Sparkles } from 'lucide-react';
 
 // Define UserProfileData interface
 interface UserProfileData extends DocumentData {
@@ -36,7 +35,7 @@ export default function WelcomePageAsRoot() {
           if (docSnap.exists()) {
             setUserProfile(docSnap.data() as UserProfileData);
           } else {
-            setUserProfile(null); 
+            setUserProfile(null);
           }
         })
         .catch(error => {
@@ -57,7 +56,6 @@ export default function WelcomePageAsRoot() {
       if (userProfile && userProfile.onboardingCompleted) {
         router.push('/dashboard');
       } else {
-        // If profile is still loading but user exists, or if onboarding isn't complete
         router.push('/auth/onboarding/details');
       }
     } else {
@@ -66,60 +64,62 @@ export default function WelcomePageAsRoot() {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center py-12 overflow-hidden bg-background">
+    <div className="relative flex min-h-screen flex-col items-stretch justify-end overflow-hidden bg-background text-foreground">
       {/* Background Image */}
-      <div className="absolute inset-0 z-0 flex items-center justify-center overflow-hidden">
+      <div className="absolute inset-0 z-0">
         <Image
-          src="https://placehold.co/800x600.png" 
+          src="https://placehold.co/1200x800.png"
           alt="Abstract background"
           layout="fill"
-          objectFit="cover" 
-          className="animate-bg-abstract"
-          data-ai-hint="abstract lines icon"
+          objectFit="cover"
+          className="animate-bg-abstract opacity-30"
+          data-ai-hint="abstract organic waves light"
           priority
         />
       </div>
-      
-      {/* Content Wrapper instead of Card */}
-      <div className="w-full max-w-lg text-center z-10 p-6 space-y-6">
-        <h1 className="text-3xl md:text-4xl font-bold text-primary">
-          Welcome to SnapYoga!
-        </h1>
-        <p className="text-xs text-muted-foreground">
-          We're thrilled to have you join our community! SnapYoga uses AI to help you analyze your yoga poses, track your progress, and achieve your wellness goals. Let's get you set up.
-        </p>
-        
-        <div
-          onClick={!(authLoading || loadingProfile) ? handleGetStarted : undefined}
-          role={!(authLoading || loadingProfile) ? "button" : undefined}
-          tabIndex={!(authLoading || loadingProfile) ? 0 : undefined}
-          onKeyDown={(e) => {
-            if (!(authLoading || loadingProfile) && (e.key === 'Enter' || e.key === ' ')) {
-              e.preventDefault(); 
-              handleGetStarted();
-            }
-          }}
-          className={cn(
-            "flex flex-col items-center justify-center text-center py-2 rounded-lg transition-colors",
-            (authLoading || loadingProfile) ? "cursor-default" : "cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background hover:bg-black/10 dark:hover:bg-white/10"
-          )}
-          aria-label="Get Started"
-        >
-          {(authLoading || loadingProfile) ? (
-            <Loader2 className="h-24 w-24 animate-spin text-primary my-4" />
-          ) : (
-            <>
-              <SmileyPebbleIcon className="h-24 w-24 animate-pebble-pulse text-primary group-hover:scale-105 transition-transform" />
-              <p className="mt-1 text-base text-muted-foreground group-hover:text-foreground transition-colors">
-                click to enter
-              </p>
-            </>
-          )}
-        </div>
 
-        <p className="text-xs text-muted-foreground">
-          You're one step closer to a more mindful yoga experience.
-        </p>
+      {/* Illustration Area */}
+      <div className="relative z-10 flex-grow flex flex-col items-center justify-center pt-10 sm:pt-16 md:pt-20 px-4">
+        <Image
+          src="https://placehold.co/300x280.png"
+          alt="Woman in yoga pose with foliage"
+          width={300}
+          height={280}
+          className="object-contain max-w-[70vw] sm:max-w-[50vw] md:max-w-[300px]"
+          data-ai-hint="woman meditating yoga foliage"
+        />
+      </div>
+
+      {/* Text and Button Overlay Area */}
+      <div className="relative z-20 mt-[-60px] sm:mt-[-80px] md:mt-[-100px] flex justify-center px-4 pb-8 sm:pb-12 md:pb-16">
+        <div className="bg-secondary/20 dark:bg-secondary/30 backdrop-blur-md p-6 sm:p-8 md:p-10 rounded-3xl shadow-2xl w-full max-w-md sm:max-w-lg text-center">
+          {/* Headline */}
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-light text-primary dark:text-primary-foreground leading-tight mb-6 sm:mb-8">
+            Let the <span className="font-semibold">threads of</span>
+            <br className="xs:hidden sm:inline-block" /> life get connected
+            <br />
+            with <Sparkles className="inline-block h-5 w-5 sm:h-6 sm:w-6 text-accent mx-1" />
+            <span className="font-semibold">yoga</span>
+          </h1>
+
+          {/* Get Started Button */}
+          <Button
+            onClick={handleGetStarted}
+            size="lg"
+            className="bg-accent hover:bg-accent/80 text-accent-foreground rounded-xl py-3 px-6 sm:px-8 text-base sm:text-lg shadow-xl transition-transform transform hover:scale-105 w-full max-w-[280px] sm:max-w-xs mx-auto"
+            disabled={authLoading || loadingProfile}
+            aria-label="Get Started"
+          >
+            {authLoading || loadingProfile ? (
+              <Loader2 className="h-6 w-6 animate-spin" />
+            ) : (
+              <>
+                <span>Get Started</span>
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );
