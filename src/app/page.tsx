@@ -58,6 +58,7 @@ export default function WelcomePageAsRoot() {
       if (userProfile && userProfile.onboardingCompleted) {
         router.push('/dashboard');
       } else {
+        // If profile is still loading but user exists, or if onboarding isn't complete
         router.push('/auth/onboarding/details');
       }
     } else {
@@ -66,16 +67,15 @@ export default function WelcomePageAsRoot() {
   };
 
   return (
-    // Removed AppShell wrapper. Using a div to occupy full screen and center content.
     <div className="relative flex min-h-screen items-center justify-center py-12 overflow-hidden bg-background">
       {/* Background Image */}
-      <div className="absolute inset-0 z-0 flex items-center justify-center opacity-10">
+      <div className="absolute inset-0 z-0 flex items-center justify-center overflow-hidden">
         <Image
           src="https://placehold.co/800x600.png" 
           alt="Abstract background"
           layout="fill"
-          objectFit="contain" 
-          className="transform scale-150" 
+          objectFit="cover" 
+          className="animate-bg-abstract"
           data-ai-hint="abstract lines icon"
           priority
         />
@@ -86,7 +86,7 @@ export default function WelcomePageAsRoot() {
           <CardTitle className="text-3xl md:text-4xl font-bold text-primary flex items-center justify-center gap-2">
             Welcome to SnapYoga!
           </CardTitle>
-          <CardDescription className="text-sm text-muted-foreground mt-3 px-2">
+          <CardDescription className="text-xs text-muted-foreground mt-3 px-2">
              We're thrilled to have you join our community! SnapYoga uses AI to help you analyze your yoga poses, track your progress, and achieve your wellness goals. Let's get you set up.
           </CardDescription>
         </CardHeader>
@@ -111,8 +111,8 @@ export default function WelcomePageAsRoot() {
               <Loader2 className="h-20 w-20 animate-spin text-primary my-4" />
             ) : (
               <>
-                <SmileyPebbleIcon className="h-32 w-32 animate-pebble-pulse text-primary group-hover:scale-105 transition-transform" />
-                <p className="mt-2 text-base text-muted-foreground group-hover:text-foreground transition-colors">
+                <SmileyPebbleIcon className="h-24 w-24 animate-pebble-pulse text-primary group-hover:scale-105 transition-transform" />
+                <p className="mt-1 text-base text-muted-foreground group-hover:text-foreground transition-colors">
                   click to enter
                 </p>
               </>

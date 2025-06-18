@@ -111,6 +111,9 @@
   .animate-pebble-pulse {
     animation: pebble-pulse 2.5s infinite ease-in-out;
   }
+  .animate-bg-abstract {
+    animation: bg-abstract-pan-zoom 40s infinite alternate ease-in-out;
+  }
 }
 
 @keyframes pebble-pulse {
@@ -121,5 +124,28 @@
   50% {
     transform: scale(1.08);
     opacity: 1;
+  }
+}
+
+@keyframes bg-abstract-pan-zoom {
+  0% {
+    transform: scale(1.5) translate(0%, 0%);
+    opacity: 0.1;
+  }
+  25% {
+    transform: scale(1.55) translate(2%, -2%);
+    opacity: 0.12;
+  }
+  50% {
+    transform: scale(1.5) translate(-2%, 2%);
+    opacity: 0.1;
+  }
+  75% {
+    transform: scale(1.55) translate(-2%, -2%);
+    opacity: 0.12;
+  }
+  100% {
+    transform: scale(1.5) translate(0%, 0%);
+    opacity: 0.1;
   }
 }
