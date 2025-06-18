@@ -54,6 +54,7 @@ export default function WelcomePageAsRoot() {
     if (authLoading || loadingProfile || isProcessingClick) return;
 
     setIsProcessingClick(true);
+    sessionStorage.setItem('snapYogaPebbleIncoming', 'true');
     
     setTimeout(() => {
       if (user) {
@@ -72,7 +73,6 @@ export default function WelcomePageAsRoot() {
 
   return (
     <div className="relative flex min-h-screen flex-col items-stretch justify-between overflow-hidden">
-      {/* Background Image */}
       <Image
         src="https://placehold.co/1920x1080.png" 
         alt="Person meditating overlooking a mountain sunset"
@@ -81,9 +81,8 @@ export default function WelcomePageAsRoot() {
         className="-z-10 object-cover"
         data-ai-hint="mountain sunset meditation" 
       />
-      <div className="absolute inset-0 bg-black/40 -z-10" /> {/* Overlay for text contrast */}
+      <div className="absolute inset-0 bg-black/40 -z-10" />
 
-      {/* Top Left Content */}
       <div className="relative z-10 p-8 sm:p-10 md:p-12 text-left">
         <p className="text-2xl sm:text-3xl md:text-4xl text-stone-200 uppercase tracking-wider font-medium">
           Welcome to
