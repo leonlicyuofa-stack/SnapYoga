@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -44,7 +45,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
             <video src={videoDataUri} controls className="w-full h-full object-contain" aria-label={videoFileName || "Uploaded yoga pose video"} />
           ) : !isLoading && (
             <div className="flex flex-col items-center text-muted-foreground p-8 text-center">
-              <VideoOff className="h-16 w-16 mb-4" />
+              <VideoOff className="h-16 w-16 mb-4 text-muted-foreground" />
               <p className="font-semibold text-lg">No Video Uploaded</p>
               <p className="text-sm">Your video and analysis will appear here.</p>
             </div>

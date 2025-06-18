@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -38,7 +39,7 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
       <Card className="w-full shadow-lg opacity-50 cursor-not-allowed">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-2xl">
-            <MessageCircleQuestion className="h-7 w-7" />
+            <MessageCircleQuestion className="h-7 w-7 text-primary" />
             Provide Feedback
           </CardTitle>
           <CardDescription>

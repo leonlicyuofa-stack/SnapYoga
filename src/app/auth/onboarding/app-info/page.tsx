@@ -66,14 +66,14 @@ export default function OnboardingAppInfoPage() {
       <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
         <Card className="w-full max-w-lg shadow-xl">
           <CardHeader className="text-center">
-            <CheckCircle className="mx-auto h-12 w-12 text-green-500 mb-4" />
+            <CheckCircle className="mx-auto h-12 w-12 text-primary mb-4" />
             <CardTitle className="text-3xl font-bold">You're Almost There!</CardTitle>
             <CardDescription>Discover what SnapYoga offers and how we can help you.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="p-6 bg-primary/5 rounded-lg border border-primary/20">
               <h3 className="text-xl font-semibold text-primary mb-2 flex items-center">
-                <Sparkles className="mr-2 h-6 w-6" />
+                <Sparkles className="mr-2 h-6 w-6 text-primary" />
                 SnapYoga Features
               </h3>
               <ul className="list-disc list-inside space-y-1 text-foreground/80 text-sm">
@@ -98,7 +98,7 @@ export default function OnboardingAppInfoPage() {
             
             <Button 
               onClick={handleCompleteSetup} 
-              className="w-full text-lg py-6 bg-green-600 hover:bg-green-700 text-white"
+              className="w-full text-lg py-6 bg-primary hover:bg-primary/90 text-primary-foreground"
               disabled={isSubmitting || authLoading}
             >
               {isSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <ArrowRight className="mr-2 h-5 w-5" /> }
