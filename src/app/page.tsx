@@ -80,8 +80,8 @@ export default function WelcomePageAsRoot() {
         src="https://i.imgur.com/kTwdOTn.jpeg" 
         alt="Woman meditating in a framed sunset view"
         fill
-        priority
         className="-z-10 object-cover"
+        priority
       />
       <div className="absolute inset-0 bg-black/40 -z-10" />
 
@@ -102,7 +102,9 @@ export default function WelcomePageAsRoot() {
           />
         </div>
         <p className="text-lg text-stone-300 max-w-xs sm:max-w-sm md:max-w-md sm:text-xl md:text-2xl">
-          Your AI companion for perfecting yoga poses
+          Your AI companion
+          <br />
+          for perfecting yoga poses
           <br />
           and tracking progress.
         </p>
