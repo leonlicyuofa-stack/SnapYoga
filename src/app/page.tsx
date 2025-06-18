@@ -80,7 +80,7 @@ export default function WelcomePageAsRoot() {
               Welcome to SnapYoga!
             </CardTitle>
             <CardDescription className="text-lg md:text-xl text-muted-foreground mt-3">
-              Embark on a journey to perfect your poses and deepen your practice.
+              {/* Removed sentence: "Embark on a journey to perfect your poses and deepen your practice." */}
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6 md:p-8 space-y-6">
