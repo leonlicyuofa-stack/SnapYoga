@@ -69,8 +69,30 @@ export default function WelcomePageAsRoot() {
 
   return (
     <AppShell>
-      <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
-        <Card className="w-full max-w-lg shadow-xl text-center overflow-hidden">
+      <div className="relative flex min-h-[calc(100vh-10rem)] items-center justify-center py-12 overflow-hidden">
+        {/* Background Pebbles */}
+        {/* Top Pebble - Left (Accent Color #E07A5F) */}
+        <div className="absolute top-1/4 left-[-10%] sm:left-[2%] md:left-[5%] w-32 h-16 sm:w-48 sm:h-24 opacity-30 transform -rotate-12 z-0">
+          <svg viewBox="0 0 100 50" className="w-full h-full drop-shadow-lg">
+            <ellipse cx="50" cy="25" rx="45" ry="22" fill="#E07A5F" />
+          </svg>
+        </div>
+
+        {/* Middle Pebble - Center (Primary Color #695958) */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-3/4 w-40 h-20 sm:w-60 sm:h-32 opacity-20 transform rotate-6 z-0">
+          <svg viewBox="0 0 100 50" className="w-full h-full drop-shadow-lg">
+            <ellipse cx="50" cy="25" rx="48" ry="23" fill="#695958" />
+          </svg>
+        </div>
+
+        {/* Bottom Pebble - Right (Secondary Color #19381F) */}
+        <div className="absolute bottom-1/4 right-[-10%] sm:right-[2%] md:right-[5%] w-36 h-18 sm:w-52 sm:h-26 opacity-35 transform rotate-10 z-0">
+          <svg viewBox="0 0 100 50" className="w-full h-full drop-shadow-lg">
+            <ellipse cx="50" cy="25" rx="46" ry="24" fill="#19381F" />
+          </svg>
+        </div>
+        
+        <Card className="w-full max-w-lg shadow-xl text-center overflow-hidden z-10 bg-card/90 backdrop-blur-sm">
           <CardHeader className="bg-muted/30 p-8">
             <div className="mb-4">
               <SmileyPebbleIcon className="mx-auto h-20 w-20 text-primary drop-shadow-lg" />
