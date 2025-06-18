@@ -7,8 +7,8 @@ import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc, type DocumentData } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Loader2 } from 'lucide-react';
 import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
+import { cn } from '@/lib/utils';
 
 interface UserProfileData extends DocumentData {
   uid?: string;
@@ -118,11 +118,12 @@ export default function WelcomePageAsRoot() {
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleGetStarted(); }}
             aria-label="Get Started / Click to enter"
           >
-            {isLoading ? (
-              <Loader2 className="h-16 w-16 sm:h-20 sm:w-20 animate-spin text-accent mx-auto" />
-            ) : (
-              <SmileyPebbleIcon className="h-20 w-20 sm:h-24 sm:w-24 text-accent animate-pebble-pulse mx-auto" />
-            )}
+            <SmileyPebbleIcon 
+              className={cn(
+                "h-20 w-20 sm:h-24 sm:w-24 text-accent mx-auto",
+                isLoading ? "animate-pebble-hop" : "animate-pebble-pulse"
+              )} 
+            />
           </div>
 
           <p className="text-xs sm:text-sm text-primary-foreground/80 group-hover:text-primary-foreground transition-colors mt-2">
