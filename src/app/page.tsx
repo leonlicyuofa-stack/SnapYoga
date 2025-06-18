@@ -80,17 +80,17 @@ export default function WelcomePageAsRoot() {
       <div className="absolute bottom-0 left-0 right-0 z-10 flex justify-between items-end px-4 pointer-events-none">
         {/* Left Pebble Stack */}
         <div className="opacity-70">
-          <svg width="100" height="70" viewBox="0 0 100 70">
-            <ellipse cx="30" cy="55" rx="20" ry="10" className="fill-secondary/40" />
-            <ellipse cx="40" cy="40" rx="15" ry="8" className="fill-primary/30" />
+          <svg width="150" height="105" viewBox="0 0 150 105">
+            <ellipse cx="45" cy="82" rx="30" ry="15" className="fill-secondary/40" />
+            <ellipse cx="60" cy="60" rx="22" ry="12" className="fill-primary/30" />
           </svg>
         </div>
         {/* Right Pebble Stack */}
         <div className="opacity-70">
-          <svg width="120" height="80" viewBox="0 0 120 80">
-            <ellipse cx="90" cy="65" rx="25" ry="12" className="fill-secondary/40" />
-            <ellipse cx="80" cy="48" rx="18" ry="9" className="fill-primary/30" />
-            <ellipse cx="70" cy="35" rx="12" ry="6" className="fill-secondary/30" />
+          <svg width="180" height="120" viewBox="0 0 180 120">
+            <ellipse cx="135" cy="98" rx="38" ry="18" className="fill-secondary/40" />
+            <ellipse cx="120" cy="72" rx="27" ry="14" className="fill-primary/30" />
+            <ellipse cx="105" cy="52" rx="18" ry="9" className="fill-secondary/30" />
           </svg>
         </div>
       </div>
@@ -133,4 +133,3 @@ export default function WelcomePageAsRoot() {
     </div>
   );
 }
-
