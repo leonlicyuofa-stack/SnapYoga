@@ -6,7 +6,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Sparkles, ArrowRight, Users, ListChecks, CalendarDays, Trophy, Eye, Copy, MessageSquare, Share2, PlayCircle, UserPlus, BarChart3, Activity, ChevronRight, AlertCircle } from 'lucide-react';
-import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon'; // Changed import
+import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';
 import type { Timestamp, DocumentData } from 'firebase/firestore';
@@ -18,6 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { LuckyWheelDialog } from '@/components/features/homepage/lucky-wheel-dialog'; // New import
 
 interface StoredAnalysis {
   id: string;
@@ -60,6 +61,7 @@ export default function HomePage() {
   const [quote, setQuote] = useState<DailyQuote | null>(null);
   const [loadingQuote, setLoadingQuote] = useState(true);
   const [quoteError, setQuoteError] = useState<string | null>(null);
+  const [showLuckyWheelDialog, setShowLuckyWheelDialog] = useState(false);
 
 
   useEffect(() => {
@@ -94,6 +96,14 @@ export default function HomePage() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setInviteLink(window.location.origin);
+
+      // Lucky Wheel Logic
+      const hasSeenWheel = sessionStorage.getItem('seenLuckyWheelSnapYoga');
+      if (!authLoading && !hasSeenWheel) { 
+        // Only show if auth state is resolved and wheel hasn't been seen this session
+        setShowLuckyWheelDialog(true);
+        sessionStorage.setItem('seenLuckyWheelSnapYoga', 'true');
+      }
     }
 
     if (user && !authLoading) {
@@ -277,6 +287,7 @@ export default function HomePage() {
 
   return (
     <AppShell>
+      <LuckyWheelDialog isOpen={showLuckyWheelDialog} onClose={() => setShowLuckyWheelDialog(false)} />
       <div className="flex flex-col items-center w-full">
         {user && !authLoading && (
           <div className="w-full bg-primary/5 p-4 md:p-6 rounded-lg shadow-md border border-primary/20 mb-8 md:mb-12">
@@ -484,7 +495,7 @@ export default function HomePage() {
             <Card className="w-full shadow-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-background to-secondary/10 border-primary/20 mb-8 md:mb-12">
               <CardHeader className="text-center p-6 md:p-8">
                   <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-primary flex items-center justify-center">
-                    <SmileyPebbleIcon className="mr-3 h-10 w-10 md:h-12 md:w-12" /> {/* Replaced icon */}
+                    <SmileyPebbleIcon className="mr-3 h-10 w-10 md:h-12 md:w-12" />
                     SnapYoga
                   </h1>
                   <p className="mt-3 text-lg text-muted-foreground max-w-xl mx-auto">
