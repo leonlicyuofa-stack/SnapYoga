@@ -68,30 +68,17 @@ export default function WelcomePageAsRoot() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="https://placehold.co/1200x800.png"
-          alt="Abstract background"
+          src="https://placehold.co/800x1000.png" // Updated placeholder
+          alt="Woman meditating at sunset background"
           layout="fill"
           objectFit="cover"
-          className="animate-bg-abstract opacity-30"
-          data-ai-hint="abstract organic waves light"
+          data-ai-hint="woman meditating sunset landscape" // Updated hint
           priority
         />
       </div>
 
-      {/* Illustration Area */}
-      <div className="relative z-10 flex-grow flex flex-col items-center justify-center pt-10 sm:pt-16 md:pt-20 px-4">
-        <Image
-          src="https://placehold.co/300x280.png"
-          alt="Woman in yoga pose with foliage"
-          width={300}
-          height={280}
-          className="object-contain max-w-[70vw] sm:max-w-[50vw] md:max-w-[300px]"
-          data-ai-hint="woman meditating yoga foliage"
-        />
-      </div>
-
-      {/* Text and Interactive Element Overlay Area */}
-      <div className="relative z-20 mt-[-60px] sm:mt-[-80px] md:mt-[-100px] flex justify-center px-4 pb-8 sm:pb-12 md:pb-16">
+      {/* Content Card Area */}
+      <div className="relative z-20 flex justify-center px-4 pb-8 sm:pb-12 md:pb-16">
         <div className="bg-primary/80 dark:bg-primary/70 text-primary-foreground backdrop-blur-md p-6 sm:p-8 md:p-10 rounded-3xl shadow-2xl w-full max-w-md sm:max-w-lg text-center">
           
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
@@ -106,7 +93,7 @@ export default function WelcomePageAsRoot() {
 
           <div
             onClick={handleGetStarted}
-            className="group cursor-pointer rounded-full p-3 transition-colors hover:bg-black/10 dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
+            className="group cursor-pointer rounded-full p-3 transition-colors hover:bg-black/10 dark:hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
             role="button"
             tabIndex={0}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleGetStarted(); }}
