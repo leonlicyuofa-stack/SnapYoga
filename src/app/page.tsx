@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { PersonStanding, Sparkles, ArrowRight, Users, ListChecks, CalendarDays, Trophy, Eye, Copy, MessageSquare, Share2, PlayCircle, UserPlus, BarChart3, Activity, ChevronRight, AlertCircle } from 'lucide-react';
-// Image component is no longer needed for the banner
+import { Sparkles, ArrowRight, Users, ListChecks, CalendarDays, Trophy, Eye, Copy, MessageSquare, Share2, PlayCircle, UserPlus, BarChart3, Activity, ChevronRight, AlertCircle } from 'lucide-react';
+import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon'; // Changed import
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';
 import type { Timestamp, DocumentData } from 'firebase/firestore';
@@ -478,7 +478,7 @@ export default function HomePage() {
             <Card className="w-full shadow-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-background to-secondary/10 border-primary/20 mb-8 md:mb-12">
               <CardHeader className="text-center p-6 md:p-8">
                   <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-primary flex items-center justify-center">
-                    <PersonStanding className="mr-3 h-10 w-10 md:h-12 md:w-12" />
+                    <SmileyPebbleIcon className="mr-3 h-10 w-10 md:h-12 md:w-12" /> {/* Replaced icon */}
                     SnapYoga
                   </h1>
                   <p className="mt-3 text-lg text-muted-foreground max-w-xl mx-auto">
