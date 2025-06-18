@@ -1,0 +1,112 @@
+
+"use client";
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
+import { AppShell } from '@/components/layout/app-shell';
+import { Loader2, Check, Star, ArrowRight, ArrowLeft } from 'lucide-react';
+
+export default function SubscriptionPage() {
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  if (authLoading) {
+    return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div></AppShell>;
+  }
+
+  if (!user && !authLoading) {
+    router.replace('/auth/signin');
+    return <AppShell><div className="flex justify-center items-center min-h-screen"><p>Redirecting to sign in...</p></div></AppShell>;
+  }
+
+  const handleStartFreeTrial = async () => {
+    if (!user) return;
+    setIsSubmitting(true);
+    try {
+      // In a real app, you'd handle trial activation logic here.
+      // For now, just saving a placeholder status.
+      await createUserProfileDocument(user, { 
+        trialStatus: 'active', 
+        trialStartDate: new Date().toISOString(), // Example
+      });
+      toast({
+        title: "Free Trial Activated!",
+        description: "Enjoy your 7-day free trial of SnapYoga Premium!",
+      });
+      router.push('/onboarding/lucky-wheel'); 
+    } catch (error) {
+      console.error("Error activating free trial:", error);
+      toast({
+        title: "Error",
+        description: "Could not activate free trial. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
+  const handleProceedToLuckyWheel = () => {
+      router.push('/onboarding/lucky-wheel');
+  }
+
+  return (
+    <AppShell>
+      <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
+        <Card className="w-full max-w-md shadow-xl">
+          <CardHeader className="text-center">
+            <Star className="mx-auto h-12 w-12 text-yellow-400 mb-4" />
+            <CardTitle className="text-3xl font-bold">Unlock SnapYoga Premium</CardTitle>
+            <CardDescription>Step 12 of 14: Choose your plan or try our lucky wheel!</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="p-6 border rounded-lg bg-primary/5 text-center">
+              <h3 className="text-2xl font-semibold text-primary">Monthly Subscription</h3>
+              <p className="text-4xl font-bold my-2 text-accent">IDR 100,000</p>
+              <p className="text-muted-foreground text-sm">per month</p>
+              <ul className="text-left space-y-2 mt-4 text-sm text-foreground/80">
+                <li className="flex items-center"><Check className="h-5 w-5 text-green-500 mr-2" /> Unlimited Pose Analysis</li>
+                <li className="flex items-center"><Check className="h-5 w-5 text-green-500 mr-2" /> Advanced Feedback</li>
+                <li className="flex items-center"><Check className="h-5 w-5 text-green-500 mr-2" /> Progress Tracking & History</li>
+                <li className="flex items-center"><Check className="h-5 w-5 text-green-500 mr-2" /> Exclusive Challenges</li>
+              </ul>
+            </div>
+
+            <Button 
+              onClick={handleStartFreeTrial} 
+              className="w-full text-lg py-6 bg-green-600 hover:bg-green-700 text-white"
+              disabled={isSubmitting}
+            >
+              {isSubmitting && false ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Star className="mr-2 h-5 w-5" /> }
+              Start 7-Day Free Trial (Mock)
+            </Button>
+            
+             <div className="flex flex-col sm:flex-row gap-2 mt-4">
+                <Button type="button" variant="outline" onClick={() => router.back()} className="w-full sm:w-auto">
+                    <ArrowLeft className="mr-2 h-5 w-5" />
+                    Back
+                </Button>
+                <Button onClick={handleProceedToLuckyWheel} className="w-full text-lg py-6 flex-grow bg-accent hover:bg-accent/90 text-accent-foreground" disabled={isSubmitting}>
+                   {isSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <ArrowRight className="mr-2 h-5 w-5" />}
+                    Next: Try the Lucky Wheel!
+                </Button>
+              </div>
+          </CardContent>
+          <CardFooter>
+            <p className="text-xs text-muted-foreground text-center w-full">
+              Cancel anytime. Payment will be processed after the trial if not cancelled (mock).
+            </p>
+          </CardFooter>
+        </Card>
+      </div>
+    </AppShell>
+  );
+}
+
+    

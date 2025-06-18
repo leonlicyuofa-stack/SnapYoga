@@ -1,0 +1,107 @@
+
+"use client";
+
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { AppShell } from '@/components/layout/app-shell';
+import { Loader2, CheckCircle, XCircle, Gift, ArrowRight } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
+export default function DrawResultPage() {
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { toast } = useToast();
+  const [isFinalizing, setIsFinalizing] = useState(false);
+
+  const prize = searchParams.get('prize');
+  const error = searchParams.get('error');
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace('/auth/signin');
+    }
+  }, [user, authLoading, router]);
+
+  const handleCompleteOnboarding = async () => {
+    if (!user) {
+      toast({ title: "Error", description: "No authenticated user found.", variant: "destructive" });
+      return;
+    }
+    setIsFinalizing(true);
+    try {
+      await createUserProfileDocument(user, { onboardingCompleted: true, luckyDrawResult: prize || 'No prize' });
+      toast({
+        title: "🎉 Onboarding Complete! Welcome to SnapYoga! 🎉",
+        description: "You're all set to start your yoga journey. Let's explore your dashboard!",
+        duration: 5000,
+      });
+      router.push('/dashboard');
+    } catch (e) {
+      console.error("Error finalizing onboarding:", e);
+      toast({
+        title: "Finalization Error",
+        description: "Could not complete your setup. Please try again or contact support.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsFinalizing(false);
+    }
+  };
+  
+  if (authLoading) {
+    return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div></AppShell>;
+  }
+
+  return (
+    <AppShell>
+      <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
+        <Card className="w-full max-w-md shadow-xl text-center">
+          <CardHeader>
+            {error ? (
+              <XCircle className="mx-auto h-16 w-16 text-destructive mb-4" />
+            ) : prize ? (
+              <Gift className="mx-auto h-16 w-16 text-yellow-400 mb-4" />
+            ) : (
+              <CheckCircle className="mx-auto h-16 w-16 text-green-500 mb-4" />
+            )}
+            <CardTitle className="text-3xl font-bold">
+              {error ? "Spin Error" : prize ? "Congratulations!" : "Onboarding Nearly Done!"}
+            </CardTitle>
+            <CardDescription>Step 14 of 14: Your lucky draw result.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {error ? (
+              <p className="text-destructive">There was an issue with the lucky spin. Please try again later or proceed.</p>
+            ) : prize ? (
+              <p className="text-xl font-semibold text-accent">You won: {decodeURIComponent(prize)}!</p>
+            ) : (
+              <p className="text-muted-foreground">No prize from the lucky wheel this time, but you're ready to start!</p>
+            )}
+            <p className="text-sm text-foreground/80">
+              {prize ? `Your prize will be applied to your account (mock feature).` : `You've completed the main setup steps.`}
+            </p>
+            <Button 
+              onClick={handleCompleteOnboarding} 
+              className="w-full text-lg py-6 bg-primary hover:bg-primary/90"
+              disabled={isFinalizing}
+            >
+              {isFinalizing ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <ArrowRight className="mr-2 h-5 w-5" />}
+              Complete Setup & Go to Dashboard
+            </Button>
+          </CardContent>
+          <CardFooter>
+            <p className="text-xs text-muted-foreground text-center w-full">
+              Welcome to the SnapYoga family!
+            </p>
+          </CardFooter>
+        </Card>
+      </div>
+    </AppShell>
+  );
+}
+
+    

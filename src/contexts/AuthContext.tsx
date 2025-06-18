@@ -80,24 +80,30 @@ export const createUserProfileDocument = async (user: User, additionalData: Docu
     const dataToSet: DocumentData = {
       uid,
       email,
-      displayName: displayName || additionalData.name || email?.split('@')[0] || 'User', 
+      displayName: displayName || additionalData.name || additionalData.displayName || email?.split('@')[0] || 'User', 
       photoURL,
       ...additionalData, 
     };
 
     if (!userSnap.exists()) {
       dataToSet.createdAt = serverTimestamp();
+      // Ensure onboardingCompleted is explicitly set for new users if not provided
       if (additionalData.onboardingCompleted === undefined) {
         dataToSet.onboardingCompleted = false;
       }
     } else {
       dataToSet.updatedAt = serverTimestamp();
-      if (userSnap.data()?.onboardingCompleted === true && additionalData.onboardingCompleted === undefined) {
-        dataToSet.onboardingCompleted = true;
-      } else if (additionalData.onboardingCompleted === undefined) {
+      // Preserve existing onboardingCompleted status if not explicitly being updated
+      if (additionalData.onboardingCompleted === undefined) {
         dataToSet.onboardingCompleted = userSnap.data()?.onboardingCompleted || false;
       }
     }
+    
+    // Remove 'name' if it was only used for displayName logic and not a true profile field
+    if (additionalData.name && !additionalData.displayName) {
+        delete dataToSet.name;
+    }
+
     await setDoc(userRef, dataToSet, { merge: true });
   } catch (error) {
     console.error("Error in createUserProfileDocument:", error);
@@ -130,7 +136,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         setUser(currentUser);
         if (currentUser) {
-          await createUserProfileDocument(currentUser);
+          // Create profile document if it doesn't exist, but don't overwrite onboarding status yet.
+          await createUserProfileDocument(currentUser); 
         }
       } catch (error) {
         console.error("Error processing auth state change or creating user profile:", error);
@@ -156,17 +163,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const result = await signInWithPopup(auth, provider);
       await recordDailyLogin(result.user.uid);
-      await createUserProfileDocument(result.user);
+      // Create/update profile, but critically, check if onboarding is complete *after* this.
+      await createUserProfileDocument(result.user, { displayName: result.user.displayName, email: result.user.email, photoURL: result.user.photoURL });
+
 
       const userDocRef = doc(firestore, 'users', result.user.uid);
       const userSnap = await getDoc(userDocRef);
 
       if (userSnap.exists() && userSnap.data()?.onboardingCompleted) {
         toast({ title: 'Success', description: `${providerName} sign-in successful. Welcome back!` });
-        router.push('/dashboard'); // Changed from /
+        router.push('/dashboard');
       } else {
+        // If onboarding not completed, or doc doesn't exist (fresh social sign-up)
         toast({ title: 'Success', description: `${providerName} sign-in successful. Let's get you set up.` });
-        router.push('/auth/onboarding/details'); // Changed from /welcome
+        router.push('/onboarding/gender-profile'); // New onboarding flow
       }
     } catch (error) {
       handleAuthError(error, `Failed to sign in with ${providerName}.`);
@@ -186,9 +196,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-      await recordDailyLogin(userCredential.user.uid); 
-      toast({ title: 'Account Created!', description: 'Welcome to SnapYoga! Let\'s get you started.' });
-      router.push('/auth/onboarding/details'); // Changed from /welcome
+      await recordDailyLogin(userCredential.user.uid);
+      // Create basic profile, onboardingCompleted will default to false.
+      await createUserProfileDocument(userCredential.user, { email });
+      toast({ title: 'Account Created!', description: 'Welcome to SnapYoga! Let\'s complete your profile.' });
+      router.push('/onboarding/gender-profile'); // New onboarding flow
     } catch (error) {
       handleAuthError(error, 'Failed to create account.');
     } finally {
@@ -201,17 +213,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, pass);
       await recordDailyLogin(userCredential.user.uid);
-      await createUserProfileDocument(userCredential.user);
+      await createUserProfileDocument(userCredential.user); // Ensure profile exists or is updated
 
       const userDocRef = doc(firestore, 'users', userCredential.user.uid);
       const userSnap = await getDoc(userDocRef);
 
       if (userSnap.exists() && userSnap.data()?.onboardingCompleted) {
          toast({ title: 'Success', description: 'Signed in successfully. Welcome back!' });
-         router.push('/dashboard'); // Changed from /
+         router.push('/dashboard');
       } else {
-        toast({ title: 'Success', description: 'Signed in successfully. Let\'s get you set up.' });
-        router.push('/auth/onboarding/details'); // Changed from /welcome
+        toast({ title: 'Success', description: 'Signed in successfully. Let\'s complete your profile.' });
+        router.push('/onboarding/gender-profile'); // New onboarding flow
       }
     } catch (error) {
       handleAuthError(error, 'Failed to sign in.');
@@ -225,7 +237,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await signOut(auth);
       toast({ title: 'Signed Out', description: 'You have been signed out successfully.' });
-      router.push('/'); // Redirect to the new root Welcome page
+      router.push('/'); 
       setUser(null); 
     } catch (error) {
       handleAuthError(error, 'Failed to sign out.');
@@ -275,3 +287,5 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
+
+    

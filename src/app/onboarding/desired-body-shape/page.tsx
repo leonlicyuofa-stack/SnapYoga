@@ -1,0 +1,134 @@
+
+"use client";
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
+import { AppShell } from '@/components/layout/app-shell';
+import { Loader2, HeartPulse, ArrowRight, ArrowLeft } from 'lucide-react'; // Using HeartPulse as a goal-oriented icon
+
+const desiredBodyShapeSchema = z.object({
+  desiredBodyShape: z.string().min(1, { message: "Please select your desired body shape or goal" }),
+});
+
+type DesiredBodyShapeFormValues = z.infer<typeof desiredBodyShapeSchema>;
+
+const desiredShapeOptions = [
+  { value: "leaner", label: "Leaner / More Defined" },
+  { value: "toned", label: "More Toned" },
+  { value: "stronger", label: "Stronger / More Muscular" },
+  { value: "flexible", label: "More Flexible" },
+  { value: "maintain", label: "Maintain Current Shape" },
+  { value: "healthier", label: "Overall Healthier" },
+  { value: "prefer-not-to-say", label: "Prefer not to say / Not applicable" },
+];
+
+export default function DesiredBodyShapePage() {
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { control, handleSubmit, formState: { errors } } = useForm<DesiredBodyShapeFormValues>({
+    resolver: zodResolver(desiredBodyShapeSchema),
+  });
+
+  if (authLoading) {
+    return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div></AppShell>;
+  }
+
+  if (!user && !authLoading) {
+    router.replace('/auth/signin');
+    return <AppShell><div className="flex justify-center items-center min-h-screen"><p>Redirecting to sign in...</p></div></AppShell>;
+  }
+
+  const onSubmit: SubmitHandler<DesiredBodyShapeFormValues> = async (data) => {
+    if (!user) {
+      toast({ title: "Error", description: "No authenticated user found.", variant: "destructive" });
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      await createUserProfileDocument(user, { desiredBodyShape: data.desiredBodyShape });
+      toast({
+        title: "Desired Shape Saved",
+        description: "We're getting closer!",
+      });
+      router.push('/onboarding/focus-areas');
+    } catch (error) {
+      console.error("Error saving desired body shape:", error);
+      toast({
+        title: "Save Failed",
+        description: "Could not save your desired body shape. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <AppShell>
+      <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
+        <Card className="w-full max-w-lg shadow-xl">
+          <CardHeader className="text-center">
+            <HeartPulse className="mx-auto h-12 w-12 text-primary mb-4" />
+            <CardTitle className="text-3xl font-bold">Desired Body Shape</CardTitle>
+            <CardDescription>Step 7 of 14: What are your aspirations for your body? (Optional)</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="desiredBodyShape">Desired Outcome</Label>
+                <Controller
+                  name="desiredBodyShape"
+                  control={control}
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <SelectTrigger id="desiredBodyShape" className="w-full">
+                        <SelectValue placeholder="Select your desired outcome" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {desiredShapeOptions.map(option => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.desiredBodyShape && <p className="text-sm text-destructive">{errors.desiredBodyShape.message}</p>}
+              </div>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button type="button" variant="outline" onClick={() => router.back()} className="w-full sm:w-auto">
+                    <ArrowLeft className="mr-2 h-5 w-5" />
+                    Back
+                </Button>
+                <Button type="submit" className="w-full text-lg py-6 flex-grow" disabled={isSubmitting || authLoading}>
+                    {isSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <ArrowRight className="mr-2 h-5 w-5" />}
+                    Next
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+          <CardFooter>
+            <p className="text-xs text-muted-foreground text-center w-full">
+              Your goals help us suggest relevant yoga practices.
+            </p>
+          </CardFooter>
+        </Card>
+      </div>
+    </AppShell>
+  );
+}
+
+    
