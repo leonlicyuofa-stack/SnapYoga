@@ -95,9 +95,7 @@ export default function WelcomePageAsRoot() {
         
         <Card className="w-full max-w-lg shadow-xl text-center overflow-hidden z-10 bg-card/90 backdrop-blur-sm">
           <CardHeader className="bg-muted/30 p-8">
-            <div className="mb-4">
-              <SmileyPebbleIcon className="mx-auto h-20 w-20 text-primary drop-shadow-lg" />
-            </div>
+            {/* Icon removed from here */}
             <CardTitle className="text-3xl md:text-4xl font-bold text-primary flex items-center justify-center gap-2">
               Welcome to SnapYoga!
             </CardTitle>
