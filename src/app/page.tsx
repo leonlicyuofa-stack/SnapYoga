@@ -2,8 +2,7 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-// AppShell import removed
+// Card imports removed
 import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -81,50 +80,47 @@ export default function WelcomePageAsRoot() {
         />
       </div>
       
-      <Card className="w-full max-w-lg shadow-xl text-center overflow-hidden z-10 bg-transparent backdrop-blur-sm">
-        <CardHeader className="bg-transparent p-6">
-          <CardTitle className="text-3xl md:text-4xl font-bold text-primary flex items-center justify-center gap-2">
-            Welcome to SnapYoga!
-          </CardTitle>
-          <CardDescription className="text-xs text-muted-foreground mt-3 px-2">
-             We're thrilled to have you join our community! SnapYoga uses AI to help you analyze your yoga poses, track your progress, and achieve your wellness goals. Let's get you set up.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="px-4 pb-4 pt-0">
-          <div
-            onClick={!(authLoading || loadingProfile) ? handleGetStarted : undefined}
-            role={!(authLoading || loadingProfile) ? "button" : undefined}
-            tabIndex={!(authLoading || loadingProfile) ? 0 : undefined}
-            onKeyDown={(e) => {
-              if (!(authLoading || loadingProfile) && (e.key === 'Enter' || e.key === ' ')) {
-                e.preventDefault(); 
-                handleGetStarted();
-              }
-            }}
-            className={cn(
-              "flex flex-col items-center justify-center text-center py-2 rounded-lg transition-colors",
-              (authLoading || loadingProfile) ? "cursor-default" : "cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background hover:bg-black/5 dark:hover:bg-white/5"
-            )}
-            aria-label="Get Started"
-          >
-            {(authLoading || loadingProfile) ? (
-              <Loader2 className="h-20 w-20 animate-spin text-primary my-4" />
-            ) : (
-              <>
-                <SmileyPebbleIcon className="h-24 w-24 animate-pebble-pulse text-primary group-hover:scale-105 transition-transform" />
-                <p className="mt-1 text-base text-muted-foreground group-hover:text-foreground transition-colors">
-                  click to enter
-                </p>
-              </>
-            )}
-          </div>
-        </CardContent>
-        <CardFooter className="bg-transparent p-4">
-          <p className="text-xs text-muted-foreground w-full">
-              You're one step closer to a more mindful yoga experience.
-          </p>
-        </CardFooter>
-      </Card>
+      {/* Content Wrapper instead of Card */}
+      <div className="w-full max-w-lg text-center z-10 p-6 space-y-6">
+        <h1 className="text-3xl md:text-4xl font-bold text-primary">
+          Welcome to SnapYoga!
+        </h1>
+        <p className="text-xs text-muted-foreground">
+          We're thrilled to have you join our community! SnapYoga uses AI to help you analyze your yoga poses, track your progress, and achieve your wellness goals. Let's get you set up.
+        </p>
+        
+        <div
+          onClick={!(authLoading || loadingProfile) ? handleGetStarted : undefined}
+          role={!(authLoading || loadingProfile) ? "button" : undefined}
+          tabIndex={!(authLoading || loadingProfile) ? 0 : undefined}
+          onKeyDown={(e) => {
+            if (!(authLoading || loadingProfile) && (e.key === 'Enter' || e.key === ' ')) {
+              e.preventDefault(); 
+              handleGetStarted();
+            }
+          }}
+          className={cn(
+            "flex flex-col items-center justify-center text-center py-2 rounded-lg transition-colors",
+            (authLoading || loadingProfile) ? "cursor-default" : "cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background hover:bg-black/10 dark:hover:bg-white/10"
+          )}
+          aria-label="Get Started"
+        >
+          {(authLoading || loadingProfile) ? (
+            <Loader2 className="h-24 w-24 animate-spin text-primary my-4" />
+          ) : (
+            <>
+              <SmileyPebbleIcon className="h-24 w-24 animate-pebble-pulse text-primary group-hover:scale-105 transition-transform" />
+              <p className="mt-1 text-base text-muted-foreground group-hover:text-foreground transition-colors">
+                click to enter
+              </p>
+            </>
+          )}
+        </div>
+
+        <p className="text-xs text-muted-foreground">
+          You're one step closer to a more mindful yoga experience.
+        </p>
+      </div>
     </div>
   );
 }
