@@ -2,7 +2,7 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+// Removed Button import as it's no longer used directly for the main action
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { AppShell } from '@/components/layout/app-shell';
 import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
@@ -11,6 +11,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc, type DocumentData } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
+import { cn } from '@/lib/utils';
 
 // Define UserProfileData interface, similar to what was in the old homepage
 interface UserProfileData extends DocumentData {
@@ -100,28 +101,38 @@ export default function WelcomePageAsRoot() {
             <CardTitle className="text-3xl md:text-4xl font-bold text-primary flex items-center justify-center gap-2">
               Welcome to SnapYoga!
             </CardTitle>
-            <CardDescription className="text-lg md:text-xl text-muted-foreground mt-3">
+            <CardDescription className="text-lg md:text-xl text-muted-foreground mt-3 px-2">
+               We're thrilled to have you join our community! SnapYoga uses AI to help you analyze your yoga poses, track your progress, and achieve your wellness goals. Let's get you set up.
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-6 md:p-8 space-y-6">
-            <p className="text-foreground/80 leading-relaxed">
-              We're thrilled to have you join our community! SnapYoga uses AI to help you
-              analyze your yoga poses, track your progress, and achieve your wellness goals.
-              Let's get you set up.
-            </p>
-            <Button
-              onClick={handleGetStarted}
-              className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md hover:shadow-lg transition-all transform hover:scale-105 flex items-center justify-center"
-              size="lg"
-              disabled={authLoading || loadingProfile}
+          <CardContent className="p-6 md:p-8">
+            <div
+              onClick={!(authLoading || loadingProfile) ? handleGetStarted : undefined}
+              role={!(authLoading || loadingProfile) ? "button" : undefined}
+              tabIndex={!(authLoading || loadingProfile) ? 0 : undefined}
+              onKeyDown={(e) => {
+                if (!(authLoading || loadingProfile) && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault(); 
+                  handleGetStarted();
+                }
+              }}
+              className={cn(
+                "flex flex-col items-center justify-center text-center py-4 rounded-lg transition-colors",
+                (authLoading || loadingProfile) ? "cursor-default" : "cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background hover:bg-muted/50"
+              )}
               aria-label="Get Started"
             >
               {(authLoading || loadingProfile) ? (
-                <Loader2 className="h-8 w-8 animate-spin" />
+                <Loader2 className="h-12 w-12 animate-spin text-primary my-4" />
               ) : (
-                <SmileyPebbleIcon className="h-10 w-10 animate-pebble-pulse" />
+                <>
+                  <SmileyPebbleIcon className="h-20 w-20 animate-pebble-pulse text-primary group-hover:scale-105 transition-transform" />
+                  <p className="mt-3 text-base text-muted-foreground group-hover:text-foreground transition-colors">
+                    click to enter
+                  </p>
+                </>
               )}
-            </Button>
+            </div>
           </CardContent>
           <CardFooter className="bg-muted/30 p-4">
             <p className="text-xs text-muted-foreground w-full">
