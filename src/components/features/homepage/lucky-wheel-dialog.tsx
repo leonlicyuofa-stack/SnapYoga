@@ -8,16 +8,16 @@ import { Award, Loader2, Gift, RotateCw, X } from 'lucide-react';
 
 interface LuckyWheelDialogProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (prizeWon?: string) => void; // Modified to pass the prize name
 }
 
 const prizes = [
-  { name: "10% Off Next Analysis", icon: <Award className="h-6 w-6 text-yellow-500" /> },
-  { name: "Free Pose Guide PDF", icon: <Gift className="h-6 w-6 text-green-500" /> },
-  { name: "SnapYoga Sticker Pack", icon: <Gift className="h-6 w-6 text-blue-500" /> },
-  { name: "1 Extra Free Analysis", icon: <Award className="h-6 w-6 text-purple-500" /> },
-  { name: "Good Vibes Only!", icon: <Gift className="h-6 w-6 text-pink-500" /> },
-  { name: "Better Luck Next Time!", icon: <RotateCw className="h-6 w-6 text-gray-500" /> },
+  { name: "3-Month Free Trial", icon: <Award className="h-6 w-6 text-yellow-500" /> },
+  { name: "10% Off Subscription", icon: <Gift className="h-6 w-6 text-green-500" /> },
+  { name: "20% Off Subscription", icon: <Gift className="h-6 w-6 text-blue-500" /> },
+  { name: "50% Off Subscription", icon: <Award className="h-6 w-6 text-purple-500" /> },
+  { name: "Good Vibes Only!", icon: <Gift className="h-6 w-6 text-pink-500" /> }, // Non-discount prize
+  { name: "Better Luck Next Time!", icon: <RotateCw className="h-6 w-6 text-gray-500" /> }, // Non-prize
 ];
 
 export function LuckyWheelDialog({ isOpen, onClose }: LuckyWheelDialogProps) {
@@ -29,7 +29,13 @@ export function LuckyWheelDialog({ isOpen, onClose }: LuckyWheelDialogProps) {
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
+    // Reset state if dialog is reopened
+    if (isOpen) {
+        setResult(null);
+        setHasSpun(false);
+        // setRotation(0); // Optional: reset visual rotation if desired when reopening
+    }
+  }, [isOpen]);
 
   const handleSpin = () => {
     if (!isClient || hasSpun || isSpinning) return;
@@ -37,24 +43,38 @@ export function LuckyWheelDialog({ isOpen, onClose }: LuckyWheelDialogProps) {
     setIsSpinning(true);
     setResult(null);
 
-    const totalSpins = 3 + Math.floor(Math.random() * 3); // 3 to 5 full rotations
+    const totalSpins = 3 + Math.floor(Math.random() * 3); 
     const randomExtraRotation = Math.random() * 360;
-    // Add a base rotation to ensure it always spins a noticeable amount from current position
-    const finalRotation = rotation + (totalSpins * 360) + randomExtraRotation + 720; // Add 2 more full spins for visual
+    const finalRotation = rotation + (totalSpins * 360) + randomExtraRotation + 720; 
     
     setRotation(finalRotation);
 
     setTimeout(() => {
       const prizeIndex = Math.floor(Math.random() * prizes.length);
-      setResult(prizes[prizeIndex]);
+      const wonPrize = prizes[prizeIndex];
+      setResult(wonPrize);
       setIsSpinning(false);
       setHasSpun(true);
-    }, 3800); // Slightly less than CSS duration to show result before animation fully stops if any jitter
+      // Do not call onClose here yet, let user see result and click a button
+    }, 3800); 
   };
 
   const handleDialogClose = () => {
-    onClose();
+    // Pass the won prize name (or undefined if no prize/error)
+    // Only pass actual prizes, not "Good Vibes" or "Better Luck" as a "prize" for the result page,
+    // unless you want to specifically record those. For this example, we'll only pass "real" prizes.
+    let prizeToReport = result?.name;
+    if (result?.name === "Good Vibes Only!" || result?.name === "Better Luck Next Time!") {
+        prizeToReport = undefined; 
+    }
+    onClose(prizeToReport);
   };
+  
+  const handleProceed = () => {
+    // This function will now be called by a button in the dialog footer after spinning.
+    handleDialogClose();
+  };
+
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) handleDialogClose(); }}>
@@ -115,25 +135,27 @@ export function LuckyWheelDialog({ isOpen, onClose }: LuckyWheelDialogProps) {
         </div>
 
         {result && hasSpun && (
-          <div className="px-6 pb-6">
+          <div className="px-6 pb-2">
             <div className="p-4 sm:p-6 bg-primary/10 border border-primary/20 rounded-lg text-center space-y-2 sm:space-y-3">
-              <h3 className="text-lg sm:text-xl font-semibold text-primary">Congratulations!</h3>
+              <h3 className="text-lg sm:text-xl font-semibold text-primary">
+                {result.name === "Better Luck Next Time!" || result.name === "Good Vibes Only!" ? "Result:" : "Congratulations!"}
+              </h3>
               <div className="flex items-center justify-center gap-2 text-xl sm:text-2xl font-medium text-foreground">
                 {result.icon}
                 <span>{result.name}</span>
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                {result.name === "Better Luck Next Time!" ? "Don't worry, keep practicing and try again another day!" : "Your prize will be noted (mock feature for now)."}
+                {result.name === "Better Luck Next Time!" ? "Don't worry, keep practicing!" : result.name === "Good Vibes Only!" ? "The best prize of all!" : "Your prize will be noted (mock feature for now)."}
               </p>
             </div>
           </div>
         )}
 
-        {!result && !hasSpun && (
-             <div className="px-6 pb-6 text-center">
-                <p className="text-sm text-muted-foreground">Click "Spin Now!" to test your luck.</p>
-            </div>
-        )}
+        <DialogFooter className="px-6 pb-6 pt-4 sm:pt-2">
+            <Button onClick={handleProceed} className="w-full" variant={result && hasSpun ? "default" : "outline"}>
+                {hasSpun ? "Continue to Next Step" : "Skip & Continue"}
+            </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

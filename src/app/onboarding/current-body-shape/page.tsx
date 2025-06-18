@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
-import { Loader2, PersonStanding, ArrowRight, ArrowLeft } from 'lucide-react'; // Replaced Body with PersonStanding
+import { Loader2, PersonStanding, ArrowRight, ArrowLeft } from 'lucide-react'; 
 
 const currentBodyShapeSchema = z.object({
   currentBodyShape: z.string().min(1, { message: "Please select your current body shape" }),
@@ -57,10 +57,6 @@ export default function CurrentBodyShapePage() {
     setIsSubmitting(true);
     try {
       await createUserProfileDocument(user, { currentBodyShape: data.currentBodyShape });
-      toast({
-        title: "Body Shape Saved",
-        description: "Great! Let's move on.",
-      });
       router.push('/onboarding/desired-body-shape');
     } catch (error) {
       console.error("Error saving current body shape:", error);
@@ -81,7 +77,7 @@ export default function CurrentBodyShapePage() {
           <CardHeader className="text-center">
             <PersonStanding className="mx-auto h-12 w-12 text-primary mb-4" />
             <CardTitle className="text-3xl font-bold">Current Body Shape</CardTitle>
-            <CardDescription>Step 6 of 14: How would you describe your current body shape? (Optional)</CardDescription>
+            <CardDescription>How would you describe your current body shape? (Optional)</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

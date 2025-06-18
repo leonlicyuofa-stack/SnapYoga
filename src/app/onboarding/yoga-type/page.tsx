@@ -60,10 +60,6 @@ export default function YogaTypePage() {
     setIsSubmitting(true);
     try {
       await createUserProfileDocument(user, { preferredYogaType: data.preferredYogaType });
-      toast({
-        title: "Yoga Type Saved",
-        description: "Let's continue personalizing your experience.",
-      });
       router.push('/onboarding/current-body-shape');
     } catch (error) {
       console.error("Error saving preferred yoga type:", error);
@@ -84,7 +80,7 @@ export default function YogaTypePage() {
           <CardHeader className="text-center">
             <Sparkles className="mx-auto h-12 w-12 text-primary mb-4" />
             <CardTitle className="text-3xl font-bold">Preferred Yoga Type</CardTitle>
-            <CardDescription>Step 5 of 14: What style of yoga are you most interested in?</CardDescription>
+            <CardDescription>What style of yoga are you most interested in?</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

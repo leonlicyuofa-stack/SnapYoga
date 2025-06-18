@@ -109,7 +109,7 @@ export default function ProfileSummaryPage() {
           <CardHeader className="text-center">
             <UserCheck className="mx-auto h-12 w-12 text-primary mb-4" />
             <CardTitle className="text-3xl font-bold">Fitness Profile Summary</CardTitle>
-            <CardDescription>Step 10 & 11 of 14: Review your selections. You can edit them if needed.</CardDescription>
+            <CardDescription>Review your selections. You can edit them if needed.</CardDescription>
           </CardHeader>
           <CardContent className="px-4 sm:px-6">
             {profileData ? (

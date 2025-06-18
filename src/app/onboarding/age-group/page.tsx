@@ -58,10 +58,6 @@ export default function AgeGroupPage() {
     setIsSubmitting(true);
     try {
       await createUserProfileDocument(user, { ageGroup: data.ageGroup });
-      toast({
-        title: "Age Group Saved",
-        description: "Let's continue to the next step.",
-      });
       router.push('/onboarding/yoga-goal');
     } catch (error) {
       console.error("Error saving age group:", error);
@@ -82,7 +78,7 @@ export default function AgeGroupPage() {
           <CardHeader className="text-center">
             <CalendarRange className="mx-auto h-12 w-12 text-primary mb-4" />
             <CardTitle className="text-3xl font-bold">Your Age Group</CardTitle>
-            <CardDescription>Step 2 of 14: This helps us suggest appropriate content.</CardDescription>
+            <CardDescription>This helps us suggest appropriate content.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

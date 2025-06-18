@@ -55,10 +55,6 @@ export default function GenderProfilePage() {
     setIsSubmitting(true);
     try {
       await createUserProfileDocument(user, { gender: data.gender });
-      toast({
-        title: "Gender Saved",
-        description: "Let's move to the next step.",
-      });
       router.push('/onboarding/age-group');
     } catch (error) {
       console.error("Error saving gender:", error);
@@ -79,7 +75,7 @@ export default function GenderProfilePage() {
           <CardHeader className="text-center">
             <Users className="mx-auto h-12 w-12 text-primary mb-4" />
             <CardTitle className="text-3xl font-bold">Your Profile</CardTitle>
-            <CardDescription>Step 1 of 14: Please select your gender.</CardDescription>
+            <CardDescription>Please select your gender.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

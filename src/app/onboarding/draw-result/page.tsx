@@ -71,7 +71,7 @@ export default function DrawResultPage() {
             <CardTitle className="text-3xl font-bold">
               {error ? "Spin Error" : prize ? "Congratulations!" : "Onboarding Nearly Done!"}
             </CardTitle>
-            <CardDescription>Step 14 of 14: Your lucky draw result.</CardDescription>
+            <CardDescription>Your lucky draw result.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {error ? (

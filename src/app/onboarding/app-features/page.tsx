@@ -14,7 +14,7 @@ export default function OnboardingAppFeaturesPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Though not strictly needed here
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -28,7 +28,6 @@ export default function OnboardingAppFeaturesPage() {
       return;
     }
     // This step doesn't collect new data, just progresses.
-    // The actual "onboardingCompleted" flag will be set at the very end.
     router.push('/onboarding/profile-summary'); 
   };
   
@@ -46,7 +45,7 @@ export default function OnboardingAppFeaturesPage() {
           <CardHeader className="text-center">
             <CheckCircle className="mx-auto h-12 w-12 text-primary mb-4" />
             <CardTitle className="text-3xl font-bold">Discover SnapYoga</CardTitle>
-            <CardDescription>Step 9 of 14: Learn about what SnapYoga offers.</CardDescription>
+            <CardDescription>Learn about what SnapYoga offers.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="p-6 bg-primary/5 rounded-lg border border-primary/20">

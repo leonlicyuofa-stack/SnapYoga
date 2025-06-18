@@ -57,10 +57,6 @@ export default function YogaGoalPage() {
     setIsSubmitting(true);
     try {
       await createUserProfileDocument(user, { mainGoal: data.mainGoal });
-      toast({
-        title: "Goal Saved",
-        description: "Let's move to the next step.",
-      });
       router.push('/onboarding/measurements');
     } catch (error) {
       console.error("Error saving main goal:", error);
@@ -81,7 +77,7 @@ export default function YogaGoalPage() {
           <CardHeader className="text-center">
             <Target className="mx-auto h-12 w-12 text-primary mb-4" />
             <CardTitle className="text-3xl font-bold">Your Main Yoga Goal</CardTitle>
-            <CardDescription>Step 3 of 14: What do you hope to achieve with yoga?</CardDescription>
+            <CardDescription>What do you hope to achieve with yoga?</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

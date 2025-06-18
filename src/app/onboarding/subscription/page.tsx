@@ -29,16 +29,11 @@ export default function SubscriptionPage() {
     if (!user) return;
     setIsSubmitting(true);
     try {
-      // In a real app, you'd handle trial activation logic here.
-      // For now, just saving a placeholder status.
       await createUserProfileDocument(user, { 
         trialStatus: 'active', 
-        trialStartDate: new Date().toISOString(), // Example
+        trialStartDate: new Date().toISOString(), 
       });
-      toast({
-        title: "Free Trial Activated!",
-        description: "Enjoy your 7-day free trial of SnapYoga Premium!",
-      });
+      // Toast removed as per request
       router.push('/onboarding/lucky-wheel'); 
     } catch (error) {
       console.error("Error activating free trial:", error);
@@ -63,7 +58,7 @@ export default function SubscriptionPage() {
           <CardHeader className="text-center">
             <Star className="mx-auto h-12 w-12 text-yellow-400 mb-4" />
             <CardTitle className="text-3xl font-bold">Unlock SnapYoga Premium</CardTitle>
-            <CardDescription>Step 12 of 14: Choose your plan or try our lucky wheel!</CardDescription>
+            <CardDescription>Choose your plan or try our lucky wheel!</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="p-6 border rounded-lg bg-primary/5 text-center">
@@ -83,7 +78,7 @@ export default function SubscriptionPage() {
               className="w-full text-lg py-6 bg-green-600 hover:bg-green-700 text-white"
               disabled={isSubmitting}
             >
-              {isSubmitting && false ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Star className="mr-2 h-5 w-5" /> }
+              {isSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Star className="mr-2 h-5 w-5" /> }
               Start 7-Day Free Trial (Mock)
             </Button>
             

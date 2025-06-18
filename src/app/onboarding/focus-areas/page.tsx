@@ -65,10 +65,6 @@ export default function FocusAreasPage() {
     setIsSubmitting(true);
     try {
       await createUserProfileDocument(user, { focusBodyParts: data.focusBodyParts });
-      toast({
-        title: "Focus Areas Saved",
-        description: "Almost done with personalization!",
-      });
       router.push('/onboarding/app-features');
     } catch (error) {
       console.error("Error saving focus areas:", error);
@@ -89,7 +85,7 @@ export default function FocusAreasPage() {
           <CardHeader className="text-center">
             <Crosshair className="mx-auto h-12 w-12 text-primary mb-4" />
             <CardTitle className="text-3xl font-bold">Focus Body Parts/Areas</CardTitle>
-            <CardDescription>Step 8 of 14: Which areas would you like to focus on? (Select all that apply)</CardDescription>
+            <CardDescription>Which areas would you like to focus on? (Select all that apply)</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

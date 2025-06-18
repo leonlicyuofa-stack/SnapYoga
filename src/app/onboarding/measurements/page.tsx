@@ -71,10 +71,6 @@ export default function MeasurementsPage() {
       profileData.weightUnit = data.weightUnit;
       
       await createUserProfileDocument(user, profileData);
-      toast({
-        title: "Measurements Saved",
-        description: "Let's move to the next step.",
-      });
       router.push('/onboarding/yoga-type');
     } catch (error) {
       console.error("Error saving measurements:", error);
@@ -96,7 +92,7 @@ export default function MeasurementsPage() {
             <Ruler className="mx-auto h-10 w-10 text-primary mb-2" />
             <Scale className="mx-auto h-10 w-10 text-primary mb-4" />
             <CardTitle className="text-3xl font-bold">Your Measurements</CardTitle>
-            <CardDescription>Step 4 of 14: Provide your height and weight (optional).</CardDescription>
+            <CardDescription>Provide your height and weight (optional).</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
