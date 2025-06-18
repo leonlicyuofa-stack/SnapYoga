@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { AppShell } from '@/components/layout/app-shell';
 import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
-import { ArrowRight, PartyPopper, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc, type DocumentData } from 'firebase/firestore';
@@ -98,11 +98,9 @@ export default function WelcomePageAsRoot() {
               <SmileyPebbleIcon className="mx-auto h-20 w-20 text-primary drop-shadow-lg" />
             </div>
             <CardTitle className="text-3xl md:text-4xl font-bold text-primary flex items-center justify-center gap-2">
-              <PartyPopper className="h-8 w-8" />
               Welcome to SnapYoga!
             </CardTitle>
             <CardDescription className="text-lg md:text-xl text-muted-foreground mt-3">
-              {/* Removed sentence: "Embark on a journey to perfect your poses and deepen your practice." */}
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6 md:p-8 space-y-6">
@@ -113,13 +111,16 @@ export default function WelcomePageAsRoot() {
             </p>
             <Button
               onClick={handleGetStarted}
-              className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md hover:shadow-lg transition-all transform hover:scale-105"
+              className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md hover:shadow-lg transition-all transform hover:scale-105 flex items-center justify-center"
               size="lg"
               disabled={authLoading || loadingProfile}
+              aria-label="Get Started"
             >
-              {(authLoading || loadingProfile) && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
-              Let's Get Started
-              <ArrowRight className="ml-2 h-5 w-5" />
+              {(authLoading || loadingProfile) ? (
+                <Loader2 className="h-8 w-8 animate-spin" />
+              ) : (
+                <SmileyPebbleIcon className="h-10 w-10 animate-pebble-pulse" />
+              )}
             </Button>
           </CardContent>
           <CardFooter className="bg-muted/30 p-4">
@@ -132,4 +133,3 @@ export default function WelcomePageAsRoot() {
     </AppShell>
   );
 }
-
