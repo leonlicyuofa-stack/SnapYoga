@@ -6,7 +6,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc, type DocumentData } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
 import { cn } from '@/lib/utils';
@@ -68,6 +67,7 @@ export default function WelcomePageAsRoot() {
       } else {
         router.push('/auth/signup');
       }
+      // No need to setIsProcessingClick(false) here as the page navigates away
     }, 300); 
   };
 
@@ -80,9 +80,17 @@ export default function WelcomePageAsRoot() {
         <p className="text-sm sm:text-base md:text-lg text-muted-foreground uppercase tracking-wider font-medium">
           Welcome to
         </p>
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold my-1 sm:my-2 text-primary leading-tight">
-          SnapYoga
-        </h1>
+        <div className="flex items-center my-1 sm:my-2">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-primary leading-tight">
+            SnapYoga
+          </h1>
+          <SmileyPebbleIcon
+            className={cn(
+              "h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-accent ml-2 sm:ml-3 md:ml-4 drop-shadow-lg",
+              isLoading ? "animate-pebble-hop" : "animate-pebble-pulse"
+            )}
+          />
+        </div>
         <p className="text-xs sm:text-sm text-foreground/80 max-w-xs sm:max-w-sm md:max-w-md">
           Your AI companion for perfecting yoga poses and tracking progress.
         </p>
@@ -96,22 +104,8 @@ export default function WelcomePageAsRoot() {
         </Button>
       </div>
 
-      {/* Bottom Center Pebble with Sunset Glow */}
-      <div className="relative z-10 flex justify-center pb-6 sm:pb-8 mt-auto"> {/* Added mt-auto to push to bottom */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center justify-center">
-          {/* Sunset glow element */}
-          <div
-            className="absolute bottom-0 w-40 h-20 sm:w-48 sm:h-24 bg-radial-sunset-glow opacity-60 blur-xl"
-            aria-hidden="true"
-          ></div>
-          <SmileyPebbleIcon
-            className={cn(
-              "h-16 w-16 sm:h-20 sm:w-20 text-accent relative z-20 drop-shadow-lg",
-              isLoading ? "animate-pebble-hop" : "animate-pebble-pulse"
-            )}
-          />
-        </div>
-      </div>
+      {/* Removed bottom center pebble and sunset glow container */}
+      {/* The main container's justify-between will push the footer (if any) or content down */}
     </div>
   );
 }
