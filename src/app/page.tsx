@@ -64,7 +64,7 @@ export default function WelcomePageAsRoot() {
   const isLoading = authLoading || loadingProfile;
 
   return (
-    <div className="relative flex min-h-screen flex-col items-stretch justify-end overflow-hidden bg-background text-foreground">
+    <div className="relative flex min-h-screen flex-col items-stretch justify-end overflow-hidden text-foreground">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -133,3 +133,4 @@ export default function WelcomePageAsRoot() {
     </div>
   );
 }
+
