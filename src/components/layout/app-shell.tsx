@@ -6,7 +6,7 @@ import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
-import { LogIn, LogOut, UserCircle, Loader2, Home, Settings } from 'lucide-react'; // Added Settings icon
+import { LogIn, LogOut, UserCircle, Loader2, Home, Settings, CalendarDays } from 'lucide-react'; // Added CalendarDays
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +16,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { usePathname } from 'next/navigation'; // Import usePathname
+
 
 interface AppShellProps {
   children: ReactNode;
@@ -23,6 +25,7 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const { user, signOutUser, loading } = useAuth();
+  const pathname = usePathname(); // Get current path
 
   const getInitials = (email?: string | null, displayName?: string | null) => {
     if (displayName) {
@@ -42,6 +45,12 @@ export function AppShell({ children }: AppShellProps) {
     return 'U';
   };
 
+  const navLinkClasses = (path: string) => 
+    cn(
+      "flex items-center",
+      pathname === path ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground"
+    );
+
   return (
     <div className="flex flex-col min-h-screen bg-background selection:bg-primary/20 selection:text-primary">
       <header className="sticky top-0 z-50 w-full border-b bg-card shadow-sm">
@@ -50,13 +59,24 @@ export function AppShell({ children }: AppShellProps) {
             <SnapYogaLogo />
           </Link>
           
-          <div className="flex items-center space-x-2 sm:space-x-4">
-            <Button variant="ghost" asChild>
+          <nav className="flex items-center space-x-2 sm:space-x-4">
+            <Button variant="ghost" asChild className={navLinkClasses("/")}>
               <Link href="/">
                 <Home className="mr-0 sm:mr-2 h-5 w-5" />
                 <span className="hidden sm:inline">Home</span>
               </Link>
             </Button>
+            {user && ( // Only show Calendar link if user is logged in
+              <Button variant="ghost" asChild className={navLinkClasses("/practice-calendar")}>
+                <Link href="/practice-calendar">
+                  <CalendarDays className="mr-0 sm:mr-2 h-5 w-5" />
+                  <span className="hidden sm:inline">Calendar</span>
+                </Link>
+              </Button>
+            )}
+            {/* Spacer to push auth buttons to the right if no calendar, or just structure */}
+            <div className="flex-grow sm:hidden"></div> 
+            
             {loading ? (
               <Loader2 className="h-6 w-6 animate-spin text-primary" />
             ) : user ? (
@@ -110,7 +130,7 @@ export function AppShell({ children }: AppShellProps) {
                 </Button>
               </>
             )}
-          </div>
+          </nav>
         </div>
       </header>
       <main className="flex-grow container mx-auto px-4 py-8 sm:px-6 lg:px-8">
@@ -126,3 +146,7 @@ export function AppShell({ children }: AppShellProps) {
     </div>
   );
 }
+
+// Helper function for cn if not already globally available/imported
+// For brevity, assuming 'cn' is available from '@/lib/utils' as in other files.
+import { cn } from '@/lib/utils';
