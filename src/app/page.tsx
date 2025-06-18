@@ -71,15 +71,14 @@ export default function WelcomePageAsRoot() {
   const isLoading = authLoading || loadingProfile || isProcessingClick;
 
   return (
-    <div className="relative flex min-h-screen flex-col items-stretch justify-between overflow-hidden">
+    <div className="relative flex min-h-screen flex-col items-stretch justify-start overflow-hidden">
       {/* Background Image and Overlay */}
       <Image
-        src="https://placehold.co/1920x1080.png" 
-        alt="Person meditating overlooking a mountain sunset"
+        src="https://i.imgur.com/kTwdOTn.jpeg" 
+        alt="Woman meditating in a framed sunset view"
         fill
         priority
         className="-z-10 object-cover"
-        data-ai-hint="mountain sunset meditation"
       />
       <div className="absolute inset-0 bg-black/40 -z-10" />
 
@@ -92,7 +91,7 @@ export default function WelcomePageAsRoot() {
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold text-white leading-tight">
             SnapYoga
           </h1>
-          <SmileyPebbleIcon
+           <SmileyPebbleIcon
             className={cn(
               "h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 text-white/80 ml-2 sm:ml-3 md:ml-4 drop-shadow-lg",
               isLoading ? "animate-pebble-hop" : "animate-pebble-pulse"
