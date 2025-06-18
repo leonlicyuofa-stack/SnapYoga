@@ -86,7 +86,7 @@ export default function WelcomePageAsRoot() {
         </div>
         
         <Card className="w-full max-w-lg shadow-xl text-center overflow-hidden z-10 bg-transparent backdrop-blur-sm">
-          <CardHeader className="bg-transparent p-8">
+          <CardHeader className="bg-transparent p-6">
             <CardTitle className="text-3xl md:text-4xl font-bold text-primary flex items-center justify-center gap-2">
               Welcome to SnapYoga!
             </CardTitle>
@@ -94,7 +94,7 @@ export default function WelcomePageAsRoot() {
                We're thrilled to have you join our community! SnapYoga uses AI to help you analyze your yoga poses, track your progress, and achieve your wellness goals. Let's get you set up.
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-6 md:p-8 pt-0 md:pt-2"> {/* Adjusted padding for CardContent */}
+          <CardContent className="px-4 pb-4 pt-0"> {/* Further reduced padding */}
             <div
               onClick={!(authLoading || loadingProfile) ? handleGetStarted : undefined}
               role={!(authLoading || loadingProfile) ? "button" : undefined}
@@ -106,7 +106,7 @@ export default function WelcomePageAsRoot() {
                 }
               }}
               className={cn(
-                "flex flex-col items-center justify-center text-center py-2 rounded-lg transition-colors", // Reduced py-4 to py-2
+                "flex flex-col items-center justify-center text-center py-2 rounded-lg transition-colors",
                 (authLoading || loadingProfile) ? "cursor-default" : "cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background hover:bg-black/5 dark:hover:bg-white/5"
               )}
               aria-label="Get Started"
@@ -116,7 +116,7 @@ export default function WelcomePageAsRoot() {
               ) : (
                 <>
                   <SmileyPebbleIcon className="h-32 w-32 animate-pebble-pulse text-primary group-hover:scale-105 transition-transform" />
-                  <p className="mt-2 text-base text-muted-foreground group-hover:text-foreground transition-colors"> {/* Reduced mt-3 to mt-2 */}
+                  <p className="mt-2 text-base text-muted-foreground group-hover:text-foreground transition-colors">
                     click to enter
                   </p>
                 </>
