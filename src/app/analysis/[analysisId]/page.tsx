@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { firestore } from '@/lib/firebase/clientApp';
@@ -13,10 +13,11 @@ import { RecommendedVideosCard, type YouTubeVideo } from '@/components/features/
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Loader2, ArrowLeft, AlertCircle, FileText, YoutubeIcon } from 'lucide-react';
+import { Loader2, ArrowLeft, AlertCircle, FileText, YoutubeIcon, Share2, Copy } from 'lucide-react';
 import type { AnalyzeYogaPoseOutput } from '@/ai/flows/analyze-yoga-pose';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { format } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
 
 // Redefined here for simplicity. Ideally, this would be in a shared types file.
 interface StoredAnalysisData {
@@ -31,6 +32,8 @@ interface StoredAnalysisData {
 export default function PastAnalysisPage() {
   const params = useParams();
   const router = useRouter();
+  const pathname = usePathname();
+  const { toast } = useToast();
   const analysisId = params.analysisId as string;
   const { user: currentUser, loading: authLoading } = useAuth();
 
@@ -97,6 +100,28 @@ export default function PastAnalysisPage() {
     }
   }, [currentUser, analysisId, authLoading, router]);
 
+  const handleShareAnalysis = () => {
+    if (typeof window !== 'undefined') {
+      const shareUrl = `${window.location.origin}${pathname}`;
+      navigator.clipboard.writeText(shareUrl)
+        .then(() => {
+          toast({
+            title: "Link Copied!",
+            description: "A shareable link to this analysis has been copied to your clipboard.",
+          });
+        })
+        .catch(err => {
+          console.error('Failed to copy link: ', err);
+          toast({
+            title: "Copy Failed",
+            description: "Could not copy the link. Please try manually.",
+            variant: "destructive",
+          });
+        });
+    }
+  };
+
+
   if (authLoading || loadingData) {
     return (
       <AppShell>
@@ -152,10 +177,18 @@ export default function PastAnalysisPage() {
   return (
     <AppShell>
       <div className="container mx-auto px-4 py-12">
-        <Button variant="outline" onClick={() => router.back()} className="mb-8 group">
-          <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-          Back to Dashboard
-        </Button>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+            <Button variant="outline" onClick={() => router.back()} className="group self-start sm:self-center">
+              <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+              Back to Dashboard
+            </Button>
+            <Button variant="outline" onClick={handleShareAnalysis} className="group self-start sm:self-center">
+              <Share2 className="mr-2 h-4 w-4" />
+              Share this Analysis
+              <Copy className="ml-2 h-4 w-4 opacity-70 group-hover:opacity-100 transition-opacity"/>
+            </Button>
+        </div>
+        
 
         <Card className="mb-8 shadow-lg">
           <CardHeader>
@@ -192,5 +225,3 @@ export default function PastAnalysisPage() {
     </AppShell>
   );
 }
-
-    
