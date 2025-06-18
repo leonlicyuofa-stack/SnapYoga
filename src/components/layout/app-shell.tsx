@@ -6,7 +6,7 @@ import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
-import { LogIn, LogOut, UserCircle, Loader2, Home, Settings, CalendarDays } from 'lucide-react'; // Added CalendarDays
+import { LogIn, LogOut, UserCircle, Loader2, Home, Settings, CalendarDays } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { usePathname } from 'next/navigation'; // Import usePathname
+import { usePathname } from 'next/navigation'; 
 
 
 interface AppShellProps {
@@ -25,7 +25,7 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const { user, signOutUser, loading } = useAuth();
-  const pathname = usePathname(); // Get current path
+  const pathname = usePathname(); 
 
   const getInitials = (email?: string | null, displayName?: string | null) => {
     if (displayName) {
@@ -51,22 +51,27 @@ export function AppShell({ children }: AppShellProps) {
       pathname === path ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground"
     );
 
+  // Determine the correct "Home" link based on auth and onboarding status
+  // The logo always links to `/dashboard` for logged-in users, or `/` (welcome) for guests.
+  // The "Home" button in nav is more contextual.
+  const homeLinkPath = user ? "/dashboard" : "/";
+
   return (
     <div className="flex flex-col min-h-screen bg-background selection:bg-primary/20 selection:text-primary">
       <header className="sticky top-0 z-50 w-full border-b bg-card shadow-sm">
         <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm">
+          <Link href={user ? "/dashboard" : "/"} className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm">
             <SnapYogaLogo />
           </Link>
           
           <nav className="flex items-center space-x-2 sm:space-x-4">
-            <Button variant="ghost" asChild className={navLinkClasses("/")}>
-              <Link href="/">
+            <Button variant="ghost" asChild className={navLinkClasses(homeLinkPath)}>
+              <Link href={homeLinkPath}>
                 <Home className="mr-0 sm:mr-2 h-5 w-5" />
                 <span className="hidden sm:inline">Home</span>
               </Link>
             </Button>
-            {user && ( // Only show Calendar link if user is logged in
+            {user && ( 
               <Button variant="ghost" asChild className={navLinkClasses("/practice-calendar")}>
                 <Link href="/practice-calendar">
                   <CalendarDays className="mr-0 sm:mr-2 h-5 w-5" />
@@ -74,7 +79,6 @@ export function AppShell({ children }: AppShellProps) {
                 </Link>
               </Button>
             )}
-            {/* Spacer to push auth buttons to the right if no calendar, or just structure */}
             <div className="flex-grow sm:hidden"></div> 
             
             {loading ? (
@@ -147,6 +151,4 @@ export function AppShell({ children }: AppShellProps) {
   );
 }
 
-// Helper function for cn if not already globally available/imported
-// For brevity, assuming 'cn' is available from '@/lib/utils' as in other files.
 import { cn } from '@/lib/utils';

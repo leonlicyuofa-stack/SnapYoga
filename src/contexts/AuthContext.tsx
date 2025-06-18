@@ -80,7 +80,7 @@ export const createUserProfileDocument = async (user: User, additionalData: Docu
     const dataToSet: DocumentData = {
       uid,
       email,
-      displayName: displayName || additionalData.name || email?.split('@')[0] || 'User', // Use name from additionalData if provided
+      displayName: displayName || additionalData.name || email?.split('@')[0] || 'User', 
       photoURL,
       ...additionalData, 
     };
@@ -130,7 +130,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         setUser(currentUser);
         if (currentUser) {
-          // This will create profile if it doesn't exist, setting onboardingCompleted to false by default for new users.
           await createUserProfileDocument(currentUser);
         }
       } catch (error) {
@@ -157,20 +156,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const result = await signInWithPopup(auth, provider);
       await recordDailyLogin(result.user.uid);
-      
-      // createUserProfileDocument in onAuthStateChanged handles the initial profile creation.
-      // We can call it here again to ensure any updated provider data (like displayName) is merged.
       await createUserProfileDocument(result.user);
 
       const userDocRef = doc(firestore, 'users', result.user.uid);
-      const userSnap = await getDoc(userDocRef); // Re-fetch to get the latest profile state
+      const userSnap = await getDoc(userDocRef);
 
       if (userSnap.exists() && userSnap.data()?.onboardingCompleted) {
         toast({ title: 'Success', description: `${providerName} sign-in successful. Welcome back!` });
-        router.push('/');
+        router.push('/dashboard'); // Changed from /
       } else {
-        toast({ title: 'Success', description: `${providerName} sign-in successful. Welcome to SnapYoga!` });
-        router.push('/welcome'); // Redirect to welcome page
+        toast({ title: 'Success', description: `${providerName} sign-in successful. Let's get you set up.` });
+        router.push('/auth/onboarding/details'); // Changed from /welcome
       }
     } catch (error) {
       handleAuthError(error, `Failed to sign in with ${providerName}.`);
@@ -190,10 +186,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-      // onAuthStateChanged handles initial profile creation (onboardingCompleted: false).
       await recordDailyLogin(userCredential.user.uid); 
       toast({ title: 'Account Created!', description: 'Welcome to SnapYoga! Let\'s get you started.' });
-      router.push('/welcome'); // Redirect to welcome page
+      router.push('/auth/onboarding/details'); // Changed from /welcome
     } catch (error) {
       handleAuthError(error, 'Failed to create account.');
     } finally {
@@ -206,19 +201,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, pass);
       await recordDailyLogin(userCredential.user.uid);
-      
-      // Ensure profile data is up-to-date.
       await createUserProfileDocument(userCredential.user);
 
       const userDocRef = doc(firestore, 'users', userCredential.user.uid);
-      const userSnap = await getDoc(userDocRef); // Re-fetch to get the latest profile state
+      const userSnap = await getDoc(userDocRef);
 
       if (userSnap.exists() && userSnap.data()?.onboardingCompleted) {
          toast({ title: 'Success', description: 'Signed in successfully. Welcome back!' });
-         router.push('/');
+         router.push('/dashboard'); // Changed from /
       } else {
-        toast({ title: 'Success', description: 'Signed in successfully. Welcome to SnapYoga!' });
-        router.push('/welcome'); // Redirect to welcome page
+        toast({ title: 'Success', description: 'Signed in successfully. Let\'s get you set up.' });
+        router.push('/auth/onboarding/details'); // Changed from /welcome
       }
     } catch (error) {
       handleAuthError(error, 'Failed to sign in.');
@@ -232,7 +225,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await signOut(auth);
       toast({ title: 'Signed Out', description: 'You have been signed out successfully.' });
-      router.push('/'); 
+      router.push('/'); // Redirect to the new root Welcome page
       setUser(null); 
     } catch (error) {
       handleAuthError(error, 'Failed to sign out.');

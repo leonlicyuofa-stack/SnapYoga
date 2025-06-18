@@ -17,8 +17,6 @@ export default function OnboardingAppInfoPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    // Redirect if user is not logged in and auth is not loading
-    // This prevents direct access if the onboarding flow wasn't started correctly
     if (!authLoading && !user) {
       router.replace('/auth/signin');
     }
@@ -32,7 +30,6 @@ export default function OnboardingAppInfoPage() {
     }
     setIsSubmitting(true);
     try {
-      // Mark onboarding as complete in Firestore
       await createUserProfileDocument(user, { onboardingCompleted: true });
       
       toast({
@@ -40,7 +37,7 @@ export default function OnboardingAppInfoPage() {
         description: "You're all set to start your yoga journey with us. Let's get started!",
         duration: 5000,
       });
-      router.push('/');
+      router.push('/dashboard'); // Changed from / to /dashboard
     } catch (error) {
       console.error("Error marking onboarding complete:", error);
       toast({
@@ -102,7 +99,7 @@ export default function OnboardingAppInfoPage() {
               disabled={isSubmitting || authLoading}
             >
               {isSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <ArrowRight className="mr-2 h-5 w-5" /> }
-              Complete Setup & Go to Homepage
+              Complete Setup & Go to Dashboard
             </Button>
           </CardContent>
            <CardFooter>
