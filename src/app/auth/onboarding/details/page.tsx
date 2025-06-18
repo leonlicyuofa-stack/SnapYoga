@@ -13,10 +13,11 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, UserCheck, Bone, Target, TrendingUp, Activity, Weight } from 'lucide-react';
+import { Loader2, UserCheck, Bone, Target, TrendingUp, Activity, Weight, User } from 'lucide-react'; // Added User icon
 import { AppShell } from '@/components/layout/app-shell';
 
 const profileDetailsSchema = z.object({
+  name: z.string().min(1, { message: "Name is required" }), // Added name field
   gender: z.string().min(1, { message: "Gender is required" }),
   yogaInterest: z.string().min(1, { message: "Yoga interest is required" }),
   mainGoal: z.string().min(1, { message: "Main goal is required" }),
@@ -65,6 +66,7 @@ export default function OnboardingDetailsPage() {
   const { control, register, handleSubmit, formState: { errors } } = useForm<ProfileDetailsFormValues>({
     resolver: zodResolver(profileDetailsSchema),
     defaultValues: {
+      name: user?.displayName || '', // Pre-fill with displayName if available
       gender: '',
       yogaInterest: '',
       mainGoal: '',
@@ -88,7 +90,8 @@ export default function OnboardingDetailsPage() {
     }
     setIsSubmitting(true);
     try {
-      await createUserProfileDocument(user, data); // Pass data as additionalData
+      // Update additionalData to include displayName as the entered name
+      await createUserProfileDocument(user, { ...data, displayName: data.name });
       toast({
         title: "Profile Details Saved!",
         description: "Let's continue to the next step.",
@@ -117,6 +120,22 @@ export default function OnboardingDetailsPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              {/* Name */}
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Your full name"
+                    {...register("name")}
+                    className="pl-10"
+                  />
+                </div>
+                {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+              </div>
+
               {/* Gender */}
               <div className="space-y-2">
                 <Label htmlFor="gender">Gender</Label>
