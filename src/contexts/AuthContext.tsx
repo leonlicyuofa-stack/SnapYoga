@@ -168,8 +168,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Profile creation is handled by onAuthStateChanged, login record by handleAuthSuccess
 
       if (userSnap.exists() && userSnap.data()?.onboardingCompleted) {
-        await handleAuthSuccess(`${providerName} sign-in successful.`, result.user, '/');
+        await handleAuthSuccess(`${providerName} sign-in successful. Welcome back!`, result.user, '/');
       } else {
+        // This handles new social users or those who didn't complete onboarding
+        await createUserProfileDocument(result.user, { onboardingCompleted: false }); // Ensure profile exists
         await handleAuthSuccess(`${providerName} sign-in successful. Please complete your profile.`, result.user, '/auth/onboarding/details');
       }
     } catch (error) {
@@ -190,18 +192,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-      // onAuthStateChanged handles profile creation.
-      // For new sign-ups, we record the first login implicitly by redirecting,
-      // but explicit call here ensures it if redirection is slow or user drops.
-      // However, handleAuthSuccess will be called effectively by the redirect logic.
-      // For direct sign up, we push to onboarding then potentially to home.
-      // The login event can be recorded once user lands on dashboard after onboarding.
-      // Or, record it when they sign up. Let's record it after sign up if successful.
-      // For now, `handleAuthSuccess` is not called directly here to avoid double toast, onAuthStateChanged leads to createUserProfileDocument.
-      // The redirect to onboarding then to home page will trigger a fresh user load there which can then count as first login.
-      // To be more direct:
+      // onAuthStateChanged handles initial profile creation with onboardingCompleted: false.
+      // No need to call createUserProfileDocument here explicitly for that.
       await recordDailyLogin(userCredential.user.uid); 
-      toast({ title: 'Account Created!', description: 'Please complete your profile.' });
+      toast({ title: 'Account Created!', description: 'Welcome! Let\'s set up your profile.' });
       router.push('/auth/onboarding/details'); 
     } catch (error) {
       handleAuthError(error, 'Failed to create account.');
@@ -218,8 +212,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const userSnap = await getDoc(userDocRef);
 
       if (userSnap.exists() && userSnap.data()?.onboardingCompleted) {
-         await handleAuthSuccess('Signed in successfully.', userCredential.user, '/');
+         await handleAuthSuccess('Signed in successfully. Welcome back!', userCredential.user, '/');
       } else {
+        // This handles users who signed up with email but didn't complete onboarding
+        await createUserProfileDocument(userCredential.user, { onboardingCompleted: false }); // Ensure profile exists
         await handleAuthSuccess('Signed in successfully. Please complete your profile.', userCredential.user, '/auth/onboarding/details');
       }
     } catch (error) {
