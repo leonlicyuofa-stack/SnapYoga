@@ -68,14 +68,34 @@ export default function WelcomePageAsRoot() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="https://placehold.co/800x1000.png" // Updated placeholder
-          alt="Woman meditating at sunset background"
+          src="https://placehold.co/800x1200.png" 
+          alt="Woman meditating in a framed sunset view"
           layout="fill"
           objectFit="cover"
-          data-ai-hint="woman meditating sunset landscape" // Updated hint
+          data-ai-hint="woman meditating framed sunset illustration"
           priority
         />
       </div>
+
+      {/* Decorative Background Pebbles */}
+      <div className="absolute bottom-0 left-0 right-0 z-10 flex justify-between items-end px-4 pointer-events-none">
+        {/* Left Pebble Stack */}
+        <div className="opacity-70">
+          <svg width="100" height="70" viewBox="0 0 100 70">
+            <ellipse cx="30" cy="55" rx="20" ry="10" className="fill-secondary/40" />
+            <ellipse cx="40" cy="40" rx="15" ry="8" className="fill-primary/30" />
+          </svg>
+        </div>
+        {/* Right Pebble Stack */}
+        <div className="opacity-70">
+          <svg width="120" height="80" viewBox="0 0 120 80">
+            <ellipse cx="90" cy="65" rx="25" ry="12" className="fill-secondary/40" />
+            <ellipse cx="80" cy="48" rx="18" ry="9" className="fill-primary/30" />
+            <ellipse cx="70" cy="35" rx="12" ry="6" className="fill-secondary/30" />
+          </svg>
+        </div>
+      </div>
+
 
       {/* Content Card Area */}
       <div className="relative z-20 flex justify-center px-4 pb-8 sm:pb-12 md:pb-16">
@@ -85,7 +105,7 @@ export default function WelcomePageAsRoot() {
             Welcome to SnapYoga!
           </h1>
 
-          <p className="text-sm sm:text-base text-primary-foreground/90 mb-6">
+          <p className="text-xs sm:text-sm text-primary-foreground/90 mb-6">
             We&apos;re thrilled to have you join our community! SnapYoga uses AI to help you
             analyze your yoga poses, track your progress, and achieve your wellness goals.
             Let&apos;s get you set up.
