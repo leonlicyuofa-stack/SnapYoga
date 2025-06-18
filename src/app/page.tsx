@@ -85,13 +85,12 @@ export default function WelcomePageAsRoot() {
           />
         </div>
         
-        <Card className="w-full max-w-lg shadow-xl text-center overflow-hidden z-10 bg-card/90 backdrop-blur-sm">
-          <CardHeader className="bg-muted/30 p-8">
-            {/* Icon removed from here */}
+        <Card className="w-full max-w-lg shadow-xl text-center overflow-hidden z-10 bg-transparent backdrop-blur-sm">
+          <CardHeader className="bg-transparent p-8">
             <CardTitle className="text-3xl md:text-4xl font-bold text-primary flex items-center justify-center gap-2">
               Welcome to SnapYoga!
             </CardTitle>
-            <CardDescription className="text-base text-muted-foreground mt-3 px-2">
+            <CardDescription className="text-sm text-muted-foreground mt-3 px-2">
                We're thrilled to have you join our community! SnapYoga uses AI to help you analyze your yoga poses, track your progress, and achieve your wellness goals. Let's get you set up.
             </CardDescription>
           </CardHeader>
@@ -108,15 +107,15 @@ export default function WelcomePageAsRoot() {
               }}
               className={cn(
                 "flex flex-col items-center justify-center text-center py-4 rounded-lg transition-colors",
-                (authLoading || loadingProfile) ? "cursor-default" : "cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background hover:bg-muted/50"
+                (authLoading || loadingProfile) ? "cursor-default" : "cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background hover:bg-black/5 dark:hover:bg-white/5"
               )}
               aria-label="Get Started"
             >
               {(authLoading || loadingProfile) ? (
-                <Loader2 className="h-16 w-16 animate-spin text-primary my-4" />
+                <Loader2 className="h-20 w-20 animate-spin text-primary my-4" />
               ) : (
                 <>
-                  <SmileyPebbleIcon className="h-28 w-28 animate-pebble-pulse text-primary group-hover:scale-105 transition-transform" />
+                  <SmileyPebbleIcon className="h-32 w-32 animate-pebble-pulse text-primary group-hover:scale-105 transition-transform" />
                   <p className="mt-3 text-base text-muted-foreground group-hover:text-foreground transition-colors">
                     click to enter
                   </p>
@@ -124,7 +123,7 @@ export default function WelcomePageAsRoot() {
               )}
             </div>
           </CardContent>
-          <CardFooter className="bg-muted/30 p-4">
+          <CardFooter className="bg-transparent p-4">
             <p className="text-xs text-muted-foreground w-full">
                 You're one step closer to a more mindful yoga experience.
             </p>
