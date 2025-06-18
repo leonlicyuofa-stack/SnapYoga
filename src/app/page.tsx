@@ -55,21 +55,16 @@ export default function WelcomePageAsRoot() {
 
     setIsProcessingClick(true);
     
-    // No pebble run animation needed, direct navigation after short delay for click feedback
     setTimeout(() => {
       if (user) {
         if (userProfile && userProfile.onboardingCompleted) {
           router.push('/dashboard');
         } else {
-          // If we still want the pebble landing effect on next page, set session storage
-          // For now, removing it as pebble is not the primary focus of navigation
-          // sessionStorage.setItem('snapYogaPebbleIncoming', 'true'); 
           router.push('/onboarding/gender-profile');
         }
       } else {
         router.push('/auth/signup');
       }
-      // setIsProcessingClick(false); // Can be set here if no further animation before navigation
     }, 150); 
   };
 
@@ -79,13 +74,14 @@ export default function WelcomePageAsRoot() {
     <div className="relative flex min-h-screen flex-col items-stretch justify-between overflow-hidden">
       {/* Background Image */}
       <Image
-        src="https://storage.googleapis.com/project-emblem-images/images/woman_meditating_framed_sunset_illustration.png"
-        alt="Woman meditating in a framed sunset view"
+        src="https://placehold.co/1920x1080.png" 
+        alt="Person meditating overlooking a mountain sunset"
         fill
         priority
         className="-z-10 object-cover"
+        data-ai-hint="mountain sunset meditation" 
       />
-      <div className="absolute inset-0 bg-black/30 -z-10" /> {/* Overlay for text contrast */}
+      <div className="absolute inset-0 bg-black/40 -z-10" /> {/* Overlay for text contrast */}
 
       {/* Top Left Content */}
       <div className="relative z-10 p-8 sm:p-10 md:p-12 text-left">
@@ -115,8 +111,6 @@ export default function WelcomePageAsRoot() {
           {isLoading ? <Loader2 className="h-6 w-6 sm:h-7 sm:w-7 animate-spin" /> : <MoveUpRight className="h-6 w-6 sm:h-7 sm:w-7" />}
         </Button>
       </div>
-
-      {/* Removed bottom pebble section */}
     </div>
   );
 }
