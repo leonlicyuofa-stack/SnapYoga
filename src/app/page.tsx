@@ -62,12 +62,12 @@ export default function WelcomePageAsRoot() {
         if (userProfile && userProfile.onboardingCompleted) {
           router.push('/dashboard');
         } else {
+          // If onboarding not completed, or no profile yet, go to first step
           router.push('/onboarding/gender-profile');
         }
       } else {
         router.push('/auth/signup');
       }
-      // No need to setIsProcessingClick(false) here as the page navigates away
     }, 300); 
   };
 
@@ -77,11 +77,11 @@ export default function WelcomePageAsRoot() {
     <div className="relative flex min-h-screen flex-col items-stretch justify-between overflow-hidden bg-background">
       {/* Top Left Content */}
       <div className="relative z-10 p-8 sm:p-10 md:p-12 text-left">
-        <p className="text-sm sm:text-base md:text-lg text-muted-foreground uppercase tracking-wider font-medium">
+        <p className="text-4xl sm:text-5xl md:text-6xl text-primary uppercase tracking-wider font-medium">
           Welcome to
         </p>
         <div className="flex items-center my-1 sm:my-2">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-primary leading-tight">
+          <h1 className="text-8xl sm:text-9xl md:text-9xl font-extrabold text-primary leading-tight">
             SnapYoga
           </h1>
           <SmileyPebbleIcon
@@ -91,7 +91,7 @@ export default function WelcomePageAsRoot() {
             )}
           />
         </div>
-        <p className="text-xs sm:text-sm text-foreground/80 max-w-xs sm:max-w-sm md:max-w-md">
+        <p className="text-3xl sm:text-4xl md:text-5xl text-muted-foreground max-w-xs sm:max-w-sm md:max-w-md">
           Your AI companion for perfecting yoga poses and tracking progress.
         </p>
         <Button
@@ -103,9 +103,6 @@ export default function WelcomePageAsRoot() {
           {isLoading ? <Loader2 className="h-6 w-6 sm:h-7 sm:w-7 animate-spin" /> : <MoveUpRight className="h-6 w-6 sm:h-7 sm:w-7" />}
         </Button>
       </div>
-
-      {/* Removed bottom center pebble and sunset glow container */}
-      {/* The main container's justify-between will push the footer (if any) or content down */}
     </div>
   );
 }
