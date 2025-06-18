@@ -69,13 +69,19 @@ export default function HomePage() {
       try {
         const response = await fetch('https://api.quotable.io/random?tags=wisdom|inspiration|life|philosophy&maxLength=150');
         if (!response.ok) {
-          throw new Error(`Failed to fetch quote: ${response.status}`);
+          throw new Error(`Failed to fetch quote: ${response.status} ${response.statusText}`);
         }
         const data = await response.json();
         setQuote({ content: data.content, author: data.author });
       } catch (err: any) {
         console.error("Error fetching quote:", err);
-        setQuoteError("Could not load daily inspiration. Please try again later.");
+        let detailedError = "Could not load daily inspiration. Please try again later.";
+        if (err.message && err.message.toLowerCase().includes("failed to fetch")) {
+          detailedError = "Network error: Could not connect to the quote service. Please check your internet connection and try again.";
+        } else if (err.message) {
+          detailedError = `Error: ${err.message}. Please try again later.`;
+        }
+        setQuoteError(detailedError);
         setQuote(null);
       } finally {
         setLoadingQuote(false);
