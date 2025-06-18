@@ -23,13 +23,13 @@ const desiredBodyShapeSchema = z.object({
 type DesiredBodyShapeFormValues = z.infer<typeof desiredBodyShapeSchema>;
 
 const desiredShapeOptions = [
-  { value: "leaner", label: "Leaner / More Defined", imageUrl: "https://placehold.co/300x450.png", hint: "lean body fitness" },
-  { value: "toned", label: "More Toned", imageUrl: "https://placehold.co/300x450.png", hint: "toned body muscle" },
-  { value: "stronger", label: "Stronger / More Muscular", imageUrl: "https://placehold.co/300x450.png", hint: "strong body muscular" },
-  { value: "flexible", label: "More Flexible", imageUrl: "https://placehold.co/300x450.png", hint: "flexible body yoga" },
-  { value: "maintain", label: "Maintain Current Shape", imageUrl: "https://placehold.co/300x450.png", hint: "healthy body maintain" },
-  { value: "healthier", label: "Overall Healthier", imageUrl: "https://placehold.co/300x450.png", hint: "healthy lifestyle active" },
-  { value: "prefer-not-to-say", label: "Prefer not to say / Not applicable", imageUrl: "https://placehold.co/300x450.png", hint: "yoga silhouette meditation" },
+  { value: "leaner", label: "Leaner / More Defined", imageUrl: "https://placehold.co/200x300.png", hint: "lean body fitness" },
+  { value: "toned", label: "More Toned", imageUrl: "https://placehold.co/200x300.png", hint: "toned body muscle" },
+  { value: "stronger", label: "Stronger / More Muscular", imageUrl: "https://placehold.co/200x300.png", hint: "strong body muscular" },
+  { value: "flexible", label: "More Flexible", imageUrl: "https://placehold.co/200x300.png", hint: "flexible body yoga" },
+  { value: "maintain", label: "Maintain Current Shape", imageUrl: "https://placehold.co/200x300.png", hint: "healthy body maintain" },
+  { value: "healthier", label: "Overall Healthier", imageUrl: "https://placehold.co/200x300.png", hint: "healthy lifestyle active" },
+  { value: "prefer-not-to-say", label: "Prefer not to say / Not applicable", imageUrl: "https://placehold.co/200x300.png", hint: "yoga silhouette meditation" },
 ];
 
 export default function DesiredBodyShapePage() {
