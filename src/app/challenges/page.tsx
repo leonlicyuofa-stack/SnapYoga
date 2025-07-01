@@ -12,8 +12,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowRight, Users, PlusCircle, Crown, CalendarCheck2 } from 'lucide-react';
+import { ArrowRight, Users, PlusCircle, Crown, CalendarCheck2, Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 interface Friend {
   id: string;
@@ -28,10 +29,12 @@ interface Challenge {
   description: string;
   imageUrl: string | { src: string; width: number; height: number };
   imageHint: string;
+  detailLink: string;
   inviteLink: string;
   status: 'active' | 'upcoming' | 'completed';
   daysInChallenge?: number;
   totalDays?: number;
+  difficulty: number;
 }
 
 const initialFriends: Friend[] = [
@@ -47,10 +50,12 @@ const challenges: Challenge[] = [
     description: 'Master the headstand this month! Work on your balance and core strength. Practice safely against a wall if you\'re new.',
     imageUrl: { src: '/images/headstand.png', width: 600, height: 400 },
     imageHint: 'headstand yoga silhouette',
+    detailLink: '/challenges/headstand',
     inviteLink: '/challenges/headstand/invite',
     status: 'active',
     daysInChallenge: 12,
     totalDays: 30,
+    difficulty: 4,
   },
   {
     id: 'crow',
@@ -58,8 +63,10 @@ const challenges: Challenge[] = [
     description: 'Take on the crow pose! Build arm strength and courage. Start by practicing tucking your knees into your armpits.',
     imageUrl: { src: '/images/crow-pose-icon.jpg', width: 600, height: 400 },
     imageHint: 'crow pose yoga practice',
+    detailLink: '/challenges/crow',
     inviteLink: '/challenges/crow/invite',
     status: 'upcoming',
+    difficulty: 3,
   },
   {
     id: 'warrior',
@@ -67,8 +74,10 @@ const challenges: Challenge[] = [
     description: 'A previous challenge to build strength and improve balance. Review your progress or try it again!',
     imageUrl: { src: 'https://placehold.co/600x400.png', width: 600, height: 400 },
     imageHint: 'yoga warrior pose',
+    detailLink: '#',
     inviteLink: '#',
     status: 'completed',
+    difficulty: 3,
   },
   {
     id: 'lotus',
@@ -76,8 +85,10 @@ const challenges: Challenge[] = [
     description: 'A foundational meditation pose. Work on hip flexibility to sit comfortably and safely.',
     imageUrl: { src: 'https://placehold.co/600x400.png', width: 600, height: 400 },
     imageHint: 'yoga lotus pose',
+    detailLink: '#',
     inviteLink: '#',
     status: 'upcoming',
+    difficulty: 2,
   }
 ];
 
@@ -114,7 +125,7 @@ export default function ChallengesPage() {
 
   const getButtonText = (status: Challenge['status']) => {
     switch (status) {
-        case 'active': return 'Invite & View Challenge';
+        case 'active': return 'View Challenge';
         case 'upcoming': return 'View Challenge';
         case 'completed': return 'View Results';
         default: return 'Learn More';
@@ -221,13 +232,29 @@ export default function ChallengesPage() {
                   </div>
                 </div>
                 <CardContent className="p-6 bg-card flex-grow flex flex-col">
+                   <div className="flex justify-between items-center mb-4">
+                    <p className="text-muted-foreground text-sm">Difficulty:</p>
+                    <div className="flex items-center">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={cn(
+                            "h-5 w-5",
+                            i < challenge.difficulty
+                              ? "text-yellow-400 fill-yellow-400"
+                              : "text-muted-foreground/50"
+                          )}
+                        />
+                      ))}
+                    </div>
+                  </div>
                   <p className="text-muted-foreground mb-6 flex-grow">{challenge.description}</p>
-                  <Link href={challenge.inviteLink} passHref>
+                  <Link href={challenge.detailLink} passHref>
                     <Button
                       size="lg"
                       className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md hover:shadow-lg transition-all transform hover:scale-105"
                       aria-label={`Action for ${challenge.name}`}
-                      disabled={challenge.status === 'completed'}
+                      disabled={challenge.detailLink === '#'}
                     >
                       {getButtonText(challenge.status)}
                       <ArrowRight className="ml-2 h-5 w-5" />
