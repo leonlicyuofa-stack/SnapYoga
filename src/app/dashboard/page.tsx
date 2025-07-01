@@ -60,29 +60,26 @@ export default function DashboardPage() {
 
   const [quote, setQuote] = useState<DailyQuote | null>(null);
   const [loadingQuote, setLoadingQuote] = useState(true);
-  const [quoteError, setQuoteError] = useState<string | null>(null);
   const [showLuckyWheelDialog, setShowLuckyWheelDialog] = useState(false);
 
 
   useEffect(() => {
     const fetchDailyQuote = async () => {
       setLoadingQuote(true);
-      setQuoteError(null);
       try {
         const response = await fetch('https://api.quotable.io/random?tags=wisdom|inspiration|life|philosophy&maxLength=150');
         if (!response.ok) {
-          throw new Error(`Failed to fetch quote: ${response.status} ${response.statusText}`);
+          // If API fails, we'll throw and the catch block will handle it
+          throw new Error('Quotable API failed');
         }
         const data = await response.json();
         setQuote({ content: data.content, author: data.author });
-      } catch (err: any) {
-        console.error("Error fetching daily quote, providing a fallback:", err);
-        // Instead of showing an error, provide a graceful fallback quote.
+      } catch (err) {
+        // Gracefully fallback to a default quote without logging an error
         setQuote({ 
             content: "The body benefits from movement, and the mind benefits from stillness.", 
             author: "Sakyong Mipham" 
         });
-        setQuoteError(null); // Clear any previous errors
       } finally {
         setLoadingQuote(false);
       }
@@ -504,12 +501,6 @@ export default function DashboardPage() {
                     <Skeleton className="h-5 w-1/2 mb-4" />
                     <Skeleton className="h-4 w-1/4" />
                   </>
-                ) : quoteError ? (
-                  <div className="text-destructive">
-                    <AlertCircle className="h-10 w-10 mx-auto mb-3" />
-                    <p className="font-semibold">Oops!</p>
-                    <p className="text-sm">{quoteError}</p>
-                  </div>
                 ) : quote ? (
                   <>
                     <blockquote className="text-xl md:text-2xl font-medium text-foreground/90 italic leading-relaxed">
