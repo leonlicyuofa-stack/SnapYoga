@@ -16,7 +16,7 @@ import { firestore } from '@/lib/firebase/clientApp';
 import { collection, query, where, getDocs, DocumentData, serverTimestamp, doc, setDoc } from 'firebase/firestore'; // Added Firestore imports
 import Image from 'next/image'; 
 import { Checkbox } from '@/components/ui/checkbox'; 
-import { useAuth } from '@/hooks/useAuth'; 
+import { useAuth } from '@/contexts/AuthContext'; 
 
 
 interface UserProfile {

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Sparkles, ArrowRight, Users, ListChecks, CalendarDays, Trophy, Eye, Copy, MessageSquare, Share2, PlayCircle, UserPlus, BarChart3, Activity, ChevronRight, AlertCircle } from 'lucide-react';
 import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
 import type { Timestamp, DocumentData } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
@@ -578,4 +578,3 @@ export default function DashboardPage() {
     </AppShell>
   );
 }
-

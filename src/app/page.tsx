@@ -2,7 +2,7 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc, type DocumentData } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
@@ -102,11 +102,7 @@ export default function WelcomePageAsRoot() {
           />
         </div>
         <p className="text-lg text-stone-300 max-w-xs sm:max-w-sm md:max-w-md sm:text-xl md:text-2xl">
-          Your AI companion
-          <br />
-          for perfecting yoga poses
-          <br />
-          and tracking progress.
+          Your AI companion<br />for perfecting yoga poses<br />and tracking progress.
         </p>
         <Button
           onClick={handleGetStarted}

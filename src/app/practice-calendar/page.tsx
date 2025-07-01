@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, getDocs, query, where, type Timestamp, orderBy } from 'firebase/firestore';
 import { AppShell } from '@/components/layout/app-shell';
@@ -152,4 +152,3 @@ export default function PracticeCalendarPage() {
     </AppShell>
   );
 }
-
