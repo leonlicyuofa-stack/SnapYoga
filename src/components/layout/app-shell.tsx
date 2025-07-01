@@ -6,7 +6,7 @@ import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogIn, LogOut, UserCircle, Loader2, Home, Settings, CalendarDays } from 'lucide-react';
+import { LogIn, LogOut, UserCircle, Loader2, Home, Settings, CalendarDays, Trophy } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -72,12 +72,20 @@ export function AppShell({ children }: AppShellProps) {
               </Link>
             </Button>
             {user && ( 
-              <Button variant="ghost" asChild className={navLinkClasses("/practice-calendar")}>
-                <Link href="/practice-calendar">
-                  <CalendarDays className="mr-0 sm:mr-2 h-5 w-5" />
-                  <span className="hidden sm:inline">Calendar</span>
-                </Link>
-              </Button>
+              <>
+                <Button variant="ghost" asChild className={navLinkClasses("/practice-calendar")}>
+                  <Link href="/practice-calendar">
+                    <CalendarDays className="mr-0 sm:mr-2 h-5 w-5" />
+                    <span className="hidden sm:inline">Calendar</span>
+                  </Link>
+                </Button>
+                <Button variant="ghost" asChild className={navLinkClasses("/challenges")}>
+                  <Link href="/challenges">
+                    <Trophy className="mr-0 sm:mr-2 h-5 w-5" />
+                    <span className="hidden sm:inline">Challenges</span>
+                  </Link>
+                </Button>
+              </>
             )}
             <div className="flex-grow sm:hidden"></div> 
             
