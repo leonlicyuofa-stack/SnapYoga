@@ -7,7 +7,7 @@ import { firestore } from '@/lib/firebase/clientApp';
 import { collection, getDocs, query, where, type Timestamp, orderBy } from 'firebase/firestore';
 import { AppShell } from '@/components/layout/app-shell';
 import { Calendar } from '@/components/ui/calendar';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle, CalendarDays } from 'lucide-react';
