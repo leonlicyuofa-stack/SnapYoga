@@ -1,4 +1,3 @@
-
 "use client";
 
 import { AppShell } from '@/components/layout/app-shell';
@@ -10,6 +9,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 const challengeDetails = {
     name: 'Headstand (Sirsasana) Challenge',
@@ -19,7 +19,7 @@ const challengeDetails = {
     imageHint: 'headstand yoga silhouette',
     inviteLink: '/challenges/headstand/invite',
     totalParticipants: 152,
-    friendsInChallenge: 2,
+    friendsInChallengeCount: 2,
 };
 
 const tutorialVideos = [
@@ -27,6 +27,11 @@ const tutorialVideos = [
     { id: 'vid2', title: 'Week 2: Dolphin Pose & Tripod Foundation', embedUrl: 'https://www.youtube.com/embed/jK0arm2R2gU' },
     { id: 'vid3', title: 'Week 3: Safely Kicking Up', embedUrl: 'https://www.youtube.com/embed/44mgUselcDU' },
     { id: 'vid4', title: 'Week 4: Holding the Pose & Variations', embedUrl: 'https://www.youtube.com/embed/n3uQ227u1C8' },
+];
+
+const friendsInChallenge = [
+    { id: 'f1', name: 'Elena', avatarUrl: 'https://placehold.co/100x100.png', avatarHint: 'woman portrait' },
+    { id: 'f2', name: 'Marcus', avatarUrl: 'https://placehold.co/100x100.png', avatarHint: 'man portrait' },
 ];
 
 export default function HeadstandChallengePage() {
@@ -61,7 +66,7 @@ export default function HeadstandChallengePage() {
                                 </div>
                                 <div className="flex items-center gap-2 text-white/90">
                                     <Users className="h-5 w-5" />
-                                    <span className="font-medium">{challengeDetails.totalParticipants} participants ({challengeDetails.friendsInChallenge} {challengeDetails.friendsInChallenge === 1 ? 'friend' : 'friends'})</span>
+                                    <span className="font-medium">{challengeDetails.totalParticipants} participants ({challengeDetails.friendsInChallengeCount} {challengeDetails.friendsInChallengeCount === 1 ? 'friend' : 'friends'})</span>
                                 </div>
                              </div>
                          </div>
@@ -85,6 +90,32 @@ export default function HeadstandChallengePage() {
                         </div>
                     </CardContent>
                 </Card>
+
+                {/* Friends in Challenge Section */}
+                <div className="mt-12">
+                    <h2 className="text-3xl font-bold tracking-tight mb-6 text-center">Friends in this Challenge</h2>
+                    {friendsInChallenge.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                            {friendsInChallenge.map((friend) => (
+                                <Card key={friend.id} className="text-center p-4 shadow-lg hover:shadow-xl transition-shadow flex flex-col items-center justify-center">
+                                    <Avatar className="h-20 w-20 border-4 border-primary/20">
+                                        <AvatarImage src={friend.avatarUrl} alt={friend.name} data-ai-hint={friend.avatarHint} />
+                                        <AvatarFallback>{friend.name.charAt(0)}</AvatarFallback>
+                                    </Avatar>
+                                    <CardHeader className="p-2 pb-0">
+                                        <CardTitle className="text-lg">{friend.name}</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-2 pt-1">
+                                        <Badge variant="secondary">In Challenge</Badge>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-center text-muted-foreground">Invite friends to join you in this challenge!</p>
+                    )}
+                </div>
+
 
                 <div className="mt-12">
                     <h2 className="text-3xl font-bold tracking-tight mb-6 text-center">Challenge Guide: Video Tutorials</h2>
