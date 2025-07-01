@@ -136,17 +136,17 @@ export default function ChallengesPage() {
 
         {/* Friends Section */}
         <Card className="shadow-xl">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-2xl">
-              <Users className="h-7 w-7 text-primary" />
+          <CardHeader className="p-6 sm:p-8">
+            <CardTitle className="flex items-center gap-3 text-3xl">
+              <Users className="h-8 w-8 text-primary" />
               Challenge Friends
             </CardTitle>
-            <CardDescription>Add friends to join challenges and track progress together.</CardDescription>
+            <CardDescription className="text-base">Add friends to join challenges and track progress together.</CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col sm:flex-row items-center gap-6">
-            <div className="flex -space-x-4">
+          <CardContent className="p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-8">
+            <div className="flex -space-x-6">
               {friends.map(friend => (
-                <Avatar key={friend.id} className="border-2 border-background hover:z-10 transition-transform hover:scale-110">
+                <Avatar key={friend.id} className="h-16 w-16 border-4 border-background hover:z-10 transition-transform hover:scale-110">
                   <AvatarImage src={friend.avatarUrl} alt={friend.name} />
                   <AvatarFallback>{friend.name.charAt(0)}</AvatarFallback>
                 </Avatar>
@@ -154,8 +154,8 @@ export default function ChallengesPage() {
             </div>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" className="w-full sm:w-auto">
-                  <PlusCircle className="mr-2 h-4 w-4" />
+                <Button variant="outline" size="lg" className="w-full sm:w-auto text-base px-6 py-6">
+                  <PlusCircle className="mr-2 h-5 w-5" />
                   Add Friend
                 </Button>
               </DialogTrigger>
