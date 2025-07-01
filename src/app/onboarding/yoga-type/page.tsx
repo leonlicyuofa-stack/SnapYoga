@@ -9,38 +9,58 @@ import * as z from 'zod';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
-import { Loader2, Sparkles, ArrowRight, ArrowLeft } from 'lucide-react'; // Replaced Bone with Sparkles for a general feel
+import { Loader2, Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
 
-const yogaTypeSchema = z.object({
-  preferredYogaType: z.string().min(1, { message: "Please select your preferred yoga type" }),
+const interestedPosesSchema = z.object({
+  interestedPoses: z.array(z.string()).min(1, { message: "Please select at least one pose" }),
 });
 
-type YogaTypeFormValues = z.infer<typeof yogaTypeSchema>;
+type InterestedPosesFormValues = z.infer<typeof interestedPosesSchema>;
 
-const yogaTypeOptions = [
-  { value: "hatha", label: "Hatha Yoga" },
-  { value: "vinyasa", label: "Vinyasa Yoga" },
-  { value: "ashtanga", label: "Ashtanga Yoga" },
-  { value: "restorative", label: "Restorative Yoga" },
-  { value: "power", label: "Power Yoga" },
-  { value: "yin", label: "Yin Yoga" },
-  { value: "iyengar", label: "Iyengar Yoga" },
-  { value: "not-sure", label: "Not sure yet / Beginner" },
-  { value: "other", label: "Other" },
+const poseCategories = [
+  {
+    name: "Foundational Poses",
+    poses: [
+      { id: "downward-dog", label: "Downward-Facing Dog" },
+      { id: "mountain-pose", label: "Mountain Pose" },
+      { id: "warrior-2", label: "Warrior II" },
+      { id: "triangle-pose", label: "Triangle Pose" },
+    ],
+  },
+  {
+    name: "Balancing Poses",
+    poses: [
+      { id: "tree-pose", label: "Tree Pose" },
+      { id: "eagle-pose", label: "Eagle Pose" },
+      { id: "half-moon-pose", label: "Half Moon Pose" },
+    ],
+  },
+  {
+    name: "Seated & Floor Poses",
+    poses: [
+      { id: "lotus-pose", label: "Lotus Pose" },
+      { id: "pigeon-pose", label: "Pigeon Pose" },
+      { id: "childs-pose", label: "Child's Pose" },
+    ],
+  },
 ];
 
-export default function YogaTypePage() {
+
+export default function InterestedPosesPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { control, handleSubmit, formState: { errors } } = useForm<YogaTypeFormValues>({
-    resolver: zodResolver(yogaTypeSchema),
+  const { control, handleSubmit, formState: { errors } } = useForm<InterestedPosesFormValues>({
+    resolver: zodResolver(interestedPosesSchema),
+    defaultValues: {
+      interestedPoses: [],
+    }
   });
 
   if (authLoading) {
@@ -52,20 +72,20 @@ export default function YogaTypePage() {
     return <AppShell><div className="flex justify-center items-center min-h-screen"><p>Redirecting to sign in...</p></div></AppShell>;
   }
 
-  const onSubmit: SubmitHandler<YogaTypeFormValues> = async (data) => {
+  const onSubmit: SubmitHandler<InterestedPosesFormValues> = async (data) => {
     if (!user) {
       toast({ title: "Error", description: "No authenticated user found.", variant: "destructive" });
       return;
     }
     setIsSubmitting(true);
     try {
-      await createUserProfileDocument(user, { preferredYogaType: data.preferredYogaType });
+      await createUserProfileDocument(user, { interestedPoses: data.interestedPoses });
       router.push('/onboarding/current-body-shape');
     } catch (error) {
-      console.error("Error saving preferred yoga type:", error);
+      console.error("Error saving interested poses:", error);
       toast({
         title: "Save Failed",
-        description: "Could not save your preferred yoga type. Please try again.",
+        description: "Could not save your interested poses. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -79,33 +99,47 @@ export default function YogaTypePage() {
         <Card className="w-full max-w-lg shadow-xl">
           <CardHeader className="text-center">
             <Sparkles className="mx-auto h-12 w-12 text-primary mb-4" />
-            <CardTitle className="text-3xl font-bold">Preferred Yoga Type</CardTitle>
-            <CardDescription>What style of yoga are you most interested in?</CardDescription>
+            <CardTitle className="text-3xl font-bold">Interested Yoga Poses</CardTitle>
+            <CardDescription>Select some poses you're interested in learning or improving.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="preferredYogaType">Yoga Type</Label>
-                <Controller
-                  name="preferredYogaType"
-                  control={control}
-                  render={({ field }) => (
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <SelectTrigger id="preferredYogaType" className="w-full">
-                        <SelectValue placeholder="Select your preferred yoga type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {yogaTypeOptions.map(option => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                {errors.preferredYogaType && <p className="text-sm text-destructive">{errors.preferredYogaType.message}</p>}
+              <div className="space-y-4">
+                {poseCategories.map((category) => (
+                  <div key={category.name}>
+                    <h3 className="font-semibold text-lg mb-2 text-primary">{category.name}</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {category.poses.map((item) => (
+                        <Controller
+                          key={item.id}
+                          name="interestedPoses"
+                          control={control}
+                          render={({ field }) => (
+                            <div className="flex items-center space-x-2 p-3 border rounded-md hover:bg-muted/50 transition-colors">
+                              <Checkbox
+                                id={item.id}
+                                checked={field.value?.includes(item.id)}
+                                onCheckedChange={(checked) => {
+                                  const currentValue = field.value || [];
+                                  const updatedValue = checked
+                                    ? [...currentValue, item.id]
+                                    : currentValue.filter((value) => value !== item.id);
+                                  field.onChange(updatedValue);
+                                }}
+                              />
+                              <Label htmlFor={item.id} className="font-normal cursor-pointer flex-grow">
+                                {item.label}
+                              </Label>
+                            </div>
+                          )}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
+              {errors.interestedPoses && <p className="text-sm text-destructive text-center">{errors.interestedPoses.message}</p>}
+              
               <div className="flex flex-col sm:flex-row gap-2">
                 <Button type="button" variant="outline" onClick={() => router.back()} className="w-full sm:w-auto">
                     <ArrowLeft className="mr-2 h-5 w-5" />
@@ -133,5 +167,3 @@ export default function YogaTypePage() {
     </AppShell>
   );
 }
-
-    

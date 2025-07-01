@@ -23,7 +23,7 @@ interface UserProfile extends DocumentData {
   heightUnit?: 'cm' | 'in';
   weight?: number;
   weightUnit?: 'kg' | 'lbs';
-  preferredYogaType?: string;
+  interestedPoses?: string[];
   currentBodyShape?: string;
   desiredBodyShape?: string;
   focusBodyParts?: string[];
@@ -71,7 +71,10 @@ export default function ProfileSummaryPage() {
     }
     let displayValue = '';
     if (Array.isArray(value)) {
-      displayValue = value.map(v => v.charAt(0).toUpperCase() + v.slice(1)).join(', ');
+      // Format an array of strings like ["downward-dog", "warrior-2"] into "Downward Dog, Warrior 2"
+      displayValue = value.map(v => 
+        v.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+      ).join(', ');
     } else if (typeof value === 'number') {
       displayValue = `${value}${unit || ''}`;
     } else {
@@ -121,7 +124,7 @@ export default function ProfileSummaryPage() {
                 {renderDetailItem("Main Yoga Goal", profileData.mainGoal, undefined, '/onboarding/yoga-goal')}
                 {renderDetailItem("Height", profileData.height, profileData.heightUnit, '/onboarding/measurements')}
                 {renderDetailItem("Weight", profileData.weight, profileData.weightUnit, '/onboarding/measurements')}
-                {renderDetailItem("Preferred Yoga Type", profileData.preferredYogaType, undefined, '/onboarding/yoga-type')}
+                {renderDetailItem("Interested Poses", profileData.interestedPoses, undefined, '/onboarding/yoga-type')}
                 {renderDetailItem("Current Body Shape", profileData.currentBodyShape, undefined, '/onboarding/current-body-shape')}
                 {renderDetailItem("Desired Body Shape", profileData.desiredBodyShape, undefined, '/onboarding/desired-body-shape')}
                 {profileData.focusBodyParts && profileData.focusBodyParts.length > 0 && (
