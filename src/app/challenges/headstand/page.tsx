@@ -18,6 +18,8 @@ const challengeDetails = {
     imageUrl: '/images/headstand.png',
     imageHint: 'headstand yoga silhouette',
     inviteLink: '/challenges/headstand/invite',
+    totalParticipants: 152,
+    friendsInChallenge: 2,
 };
 
 const tutorialVideos = [
@@ -50,12 +52,16 @@ export default function HeadstandChallengePage() {
                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                          <div className="absolute bottom-0 left-0 p-6 md:p-8">
                              <h1 className="text-3xl md:text-4xl font-extrabold text-white">{challengeDetails.name}</h1>
-                             <div className="flex items-center gap-4 mt-2">
+                             <div className="flex items-center flex-wrap gap-x-4 gap-y-2 mt-2">
                                 <Badge variant="destructive">Active Challenge</Badge>
                                 <div className="flex items-center gap-1.5">
                                     {Array.from({ length: 5 }).map((_, i) => (
                                         <Star key={i} className={cn("h-5 w-5", i < challengeDetails.difficulty ? "text-yellow-400 fill-yellow-400" : "text-gray-400")} />
                                     ))}
+                                </div>
+                                <div className="flex items-center gap-2 text-white/90">
+                                    <Users className="h-5 w-5" />
+                                    <span className="font-medium">{challengeDetails.totalParticipants} participants ({challengeDetails.friendsInChallenge} {challengeDetails.friendsInChallenge === 1 ? 'friend' : 'friends'})</span>
                                 </div>
                              </div>
                          </div>
