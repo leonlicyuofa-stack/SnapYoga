@@ -76,15 +76,13 @@ export default function DashboardPage() {
         const data = await response.json();
         setQuote({ content: data.content, author: data.author });
       } catch (err: any) {
-        console.error("Error fetching quote:", err);
-        let detailedError = "Could not load daily inspiration. Please try again later.";
-        if (err.message && err.message.toLowerCase().includes("failed to fetch")) {
-          detailedError = "Network error: Could not connect to the quote service. Please check your internet connection and try again.";
-        } else if (err.message) {
-          detailedError = `Error: ${err.message}. Please try again later.`;
-        }
-        setQuoteError(detailedError);
-        setQuote(null);
+        console.error("Error fetching daily quote, providing a fallback:", err);
+        // Instead of showing an error, provide a graceful fallback quote.
+        setQuote({ 
+            content: "The body benefits from movement, and the mind benefits from stillness.", 
+            author: "Sakyong Mipham" 
+        });
+        setQuoteError(null); // Clear any previous errors
       } finally {
         setLoadingQuote(false);
       }
