@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowRight, Users, PlusCircle, Crown, CalendarCheck2, Star } from 'lucide-react';
+import { ArrowRight, Users, PlusCircle, Crown, Star, Scale, Zap, Spline, Anchor } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
@@ -35,6 +35,7 @@ interface Challenge {
   daysInChallenge?: number;
   totalDays?: number;
   difficulty: number;
+  category: 'Strength' | 'Balancing' | 'Flexibility' | 'Foundational';
 }
 
 const initialFriends: Friend[] = [
@@ -56,6 +57,7 @@ const challenges: Challenge[] = [
     daysInChallenge: 12,
     totalDays: 30,
     difficulty: 4,
+    category: 'Balancing',
   },
   {
     id: 'crow',
@@ -67,6 +69,7 @@ const challenges: Challenge[] = [
     inviteLink: '/challenges/crow/invite',
     status: 'upcoming',
     difficulty: 3,
+    category: 'Strength',
   },
   {
     id: 'warrior',
@@ -78,6 +81,7 @@ const challenges: Challenge[] = [
     inviteLink: '#',
     status: 'completed',
     difficulty: 3,
+    category: 'Balancing',
   },
   {
     id: 'lotus',
@@ -89,8 +93,63 @@ const challenges: Challenge[] = [
     inviteLink: '#',
     status: 'upcoming',
     difficulty: 2,
-  }
+    category: 'Foundational',
+  },
+  {
+    id: 'triangle',
+    name: 'Triangle Pose (Trikonasana)',
+    description: 'Improve your stability and stretch your hamstrings and spine with this classic standing pose.',
+    imageUrl: { src: 'https://placehold.co/600x400.png', width: 600, height: 400 },
+    imageHint: 'yoga triangle pose',
+    detailLink: '#',
+    inviteLink: '#',
+    status: 'upcoming',
+    difficulty: 2,
+    category: 'Foundational',
+  },
+  {
+    id: 'pigeon',
+    name: 'Pigeon Pose (Kapotasana)',
+    description: 'A deep hip opener that helps relieve tension and increase flexibility in the hip flexors.',
+    imageUrl: { src: 'https://placehold.co/600x400.png', width: 600, height: 400 },
+    imageHint: 'yoga pigeon pose',
+    detailLink: '#',
+    inviteLink: '#',
+    status: 'upcoming',
+    difficulty: 3,
+    category: 'Flexibility',
+  },
+  {
+    id: 'tree',
+    name: 'Tree Pose (Vrikshasana)',
+    description: 'Enhance your balance, focus, and concentration with this fundamental standing balance pose.',
+    imageUrl: { src: 'https://placehold.co/600x400.png', width: 600, height: 400 },
+    imageHint: 'yoga tree pose',
+    detailLink: '#',
+    inviteLink: '#',
+    status: 'upcoming',
+    difficulty: 2,
+    category: 'Balancing',
+  },
 ];
+
+const challengesByCategory = challenges.reduce((acc, challenge) => {
+  const { category } = challenge;
+  if (!acc[category]) {
+    acc[category] = [];
+  }
+  acc[category].push(challenge);
+  return acc;
+}, {} as Record<Challenge['category'], Challenge[]>);
+
+const categoryOrder: Challenge['category'][] = ['Balancing', 'Strength', 'Flexibility', 'Foundational'];
+
+const categoryIcons: Record<Challenge['category'], React.ElementType> = {
+  'Balancing': Scale,
+  'Strength': Zap,
+  'Flexibility': Spline,
+  'Foundational': Anchor,
+};
 
 export default function ChallengesPage() {
   const [friends, setFriends] = useState<Friend[]>(initialFriends);
@@ -100,7 +159,6 @@ export default function ChallengesPage() {
 
   const handleSendInvite = () => {
     if (!newFriendEmail) return;
-    // Mock functionality
     console.log(`Sending invite to ${newFriendEmail}`);
     toast({
       title: "Invite Sent!",
@@ -145,7 +203,6 @@ export default function ChallengesPage() {
           </p>
         </div>
 
-        {/* Friends Section */}
         <Card className="shadow-xl">
           <CardHeader className="p-6 sm:p-8">
             <CardTitle className="flex items-center gap-3 text-3xl">
@@ -200,70 +257,78 @@ export default function ChallengesPage() {
           </CardContent>
         </Card>
 
-        {/* Challenges List */}
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight mb-6 flex items-center gap-3">
-            <CalendarCheck2 className="h-8 w-8 text-accent" />
-            Available Challenges
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {challenges.map((challenge, index) => (
-              <Card key={challenge.id} className="overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group rounded-lg flex flex-col">
-                <div className="relative w-full h-64">
-                  <Image
-                    src={typeof challenge.imageUrl === 'string' ? challenge.imageUrl : challenge.imageUrl.src}
-                    alt={`${challenge.name} background`}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    priority={index < 2}
-                    data-ai-hint={challenge.imageHint}
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-between p-4">
-                    <div className="flex justify-between items-start">
-                        {getStatusBadge(challenge)}
-                        {challenge.status === 'active' && challenge.daysInChallenge && (
-                          <Badge variant="destructive">
-                            Day {challenge.daysInChallenge} / {challenge.totalDays}
-                          </Badge>
-                        )}
-                    </div>
-                    <h2 className="text-2xl font-bold text-white mb-1">{challenge.name}</h2>
-                  </div>
-                </div>
-                <CardContent className="p-6 bg-card flex-grow flex flex-col">
-                   <div className="flex justify-between items-center mb-4">
-                    <p className="text-muted-foreground text-sm">Difficulty:</p>
-                    <div className="flex items-center">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                          key={i}
-                          className={cn(
-                            "h-5 w-5",
-                            i < challenge.difficulty
-                              ? "text-yellow-400 fill-yellow-400"
-                              : "text-muted-foreground/50"
-                          )}
+        <div className="space-y-12">
+          {categoryOrder.map((category) => {
+            const challengesInCategory = challengesByCategory[category];
+            if (!challengesInCategory) return null;
+            const Icon = categoryIcons[category];
+            return (
+              <div key={category}>
+                <h2 className="text-3xl font-bold tracking-tight mb-6 flex items-center gap-3">
+                  <Icon className="h-8 w-8 text-accent" />
+                  {category} Challenges
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {challengesInCategory.map((challenge, index) => (
+                    <Card key={challenge.id} className="overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group rounded-lg flex flex-col">
+                      <div className="relative w-full h-64">
+                        <Image
+                          src={typeof challenge.imageUrl === 'string' ? challenge.imageUrl : challenge.imageUrl.src}
+                          alt={`${challenge.name} background`}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          priority={index < 2}
+                          data-ai-hint={challenge.imageHint}
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />
-                      ))}
-                    </div>
-                  </div>
-                  <p className="text-muted-foreground mb-6 flex-grow">{challenge.description}</p>
-                  <Link href={challenge.detailLink} passHref>
-                    <Button
-                      size="lg"
-                      className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md hover:shadow-lg transition-all transform hover:scale-105"
-                      aria-label={`Action for ${challenge.name}`}
-                      disabled={challenge.detailLink === '#'}
-                    >
-                      {getButtonText(challenge.status)}
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-between p-4">
+                          <div className="flex justify-between items-start">
+                              {getStatusBadge(challenge)}
+                              {challenge.status === 'active' && challenge.daysInChallenge && (
+                                <Badge variant="destructive">
+                                  Day {challenge.daysInChallenge} / {challenge.totalDays}
+                                </Badge>
+                              )}
+                          </div>
+                          <h2 className="text-2xl font-bold text-white mb-1">{challenge.name}</h2>
+                        </div>
+                      </div>
+                      <CardContent className="p-6 bg-card flex-grow flex flex-col">
+                        <div className="flex justify-between items-center mb-4">
+                          <p className="text-muted-foreground text-sm">Difficulty:</p>
+                          <div className="flex items-center">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <Star
+                                key={i}
+                                className={cn(
+                                  "h-5 w-5",
+                                  i < challenge.difficulty
+                                    ? "text-yellow-400 fill-yellow-400"
+                                    : "text-muted-foreground/50"
+                                )}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        <p className="text-muted-foreground mb-6 flex-grow">{challenge.description}</p>
+                        <Link href={challenge.detailLink} passHref>
+                          <Button
+                            size="lg"
+                            className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md hover:shadow-lg transition-all transform hover:scale-105"
+                            aria-label={`Action for ${challenge.name}`}
+                            disabled={challenge.detailLink === '#'}
+                          >
+                            {getButtonText(challenge.status)}
+                            <ArrowRight className="ml-2 h-5 w-5" />
+                          </Button>
+                        </Link>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </AppShell>
