@@ -1,8 +1,9 @@
+
 "use client";
 
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Video, Users, Star } from 'lucide-react';
 import Link from 'next/link';
@@ -23,10 +24,14 @@ const challengeDetails = {
 };
 
 const tutorialVideos = [
-    { id: 'vid1', title: 'Week 1: Core & Shoulder Prep', embedUrl: 'https://www.youtube.com/embed/tKAs69_N3aE' },
-    { id: 'vid2', title: 'Week 2: Dolphin Pose & Tripod Foundation', embedUrl: 'https://www.youtube.com/embed/jK0arm2R2gU' },
-    { id: 'vid3', title: 'Week 3: Safely Kicking Up', embedUrl: 'https://www.youtube.com/embed/44mgUselcDU' },
-    { id: 'vid4', title: 'Week 4: Holding the Pose & Variations', embedUrl: 'https://www.youtube.com/embed/n3uQ227u1C8' },
+    // Week 1
+    { day: 1, title: 'Foundation & Alignment', description: 'Learn the correct "tripod" hand and head placement, which is crucial for safety and stability. We will practice this without lifting our legs yet.', embedUrl: 'https://www.youtube.com/embed/tKAs69_N3aE' },
+    { day: 3, title: 'Core Strengthening', description: 'Engage your core with preparatory poses like Dolphin Pose and plank variations. A strong core is the key to lifting your legs with control.', embedUrl: 'https://www.youtube.com/embed/jK0arm2R2gU' },
+    { day: 5, title: 'Building Shoulder Strength', description: 'Focus on shoulder stability exercises to prepare them for bearing weight. This helps prevent injury and builds confidence.', embedUrl: 'https://www.youtube.com/embed/44mgUselcDU' },
+    // Week 2
+    { day: 8, title: 'Practice Tucking', description: 'Today we start lifting! Learn to bring your knees to your chest in a tuck position, practicing balance on your tripod base.', embedUrl: 'https://www.youtube.com/embed/n3uQ227u1C8' },
+    { day: 10, title: 'Extending One Leg', description: 'From the tuck, we will practice extending one leg at a time towards the ceiling. This builds control and balance.', embedUrl: 'https://www.youtube.com/embed/wg7-tV2fKAo' },
+    { day: 12, title: 'Wall-Assisted Kick-ups', description: 'Use the wall for support to safely practice kicking up into a full headstand. The wall helps you find the feeling of being inverted.', embedUrl: 'https://www.youtube.com/embed/4R2-j2hD-i4' },
 ];
 
 const friendsInChallenge = [
@@ -118,25 +123,31 @@ export default function HeadstandChallengePage() {
 
 
                 <div className="mt-12">
-                    <h2 className="text-3xl font-bold tracking-tight mb-6 text-center">Challenge Guide: Video Tutorials</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <h2 className="text-3xl font-bold tracking-tight mb-6 text-center">Challenge Guide: Daily Tutorials</h2>
+                    <div className="grid grid-cols-1 gap-8 max-w-4xl mx-auto">
                         {tutorialVideos.map((video) => (
-                            <Card key={video.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-                                <div className="aspect-video">
-                                    <iframe
-                                        width="100%"
-                                        height="100%"
-                                        src={video.embedUrl}
-                                        title={video.title}
-                                        frameBorder="0"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                        allowFullScreen
-                                        className="rounded-t-lg"
-                                    ></iframe>
-                                </div>
-                                <CardHeader>
-                                    <CardTitle>{video.title}</CardTitle>
-                                </CardHeader>
+                            <Card key={video.day} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow w-full">
+                               <div className="grid grid-cols-1 md:grid-cols-2 items-center">
+                                    <div className="aspect-video">
+                                        <iframe
+                                            width="100%"
+                                            height="100%"
+                                            src={video.embedUrl}
+                                            title={video.title}
+                                            frameBorder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                            className="md:rounded-l-lg"
+                                        ></iframe>
+                                    </div>
+                                    <div className="p-6">
+                                        <Badge variant="default" className="mb-2 bg-primary/80">Day {video.day}</Badge>
+                                        <CardTitle className="mb-2 text-xl">{video.title}</CardTitle>
+                                        <CardDescription className="text-base text-muted-foreground leading-relaxed">
+                                            {video.description}
+                                        </CardDescription>
+                                    </div>
+                               </div>
                             </Card>
                         ))}
                     </div>

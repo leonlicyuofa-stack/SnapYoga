@@ -1,8 +1,9 @@
+
 "use client";
 
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Video, Users, Star } from 'lucide-react';
 import Link from 'next/link';
@@ -23,10 +24,14 @@ const challengeDetails = {
 };
 
 const tutorialVideos = [
-    { id: 'v1', title: 'Part 1: Wrist Prep & Core Engagement', embedUrl: 'https://www.youtube.com/embed/wg7-tV2fKAo' },
-    { id: 'v2', title: 'Part 2: Finding Your Foundation - Hand Placement', embedUrl: 'https://www.youtube.com/embed/4R2-j2hD-i4' },
-    { id: 'v3', title: 'Part 3: Lifting Off - The Tuck and Lean', embedUrl: 'https://www.youtube.com/embed/kZUa_d_W6fA' },
-    { id: 'v4', title: 'Part 4: Holding Crow & Common Mistakes', embedUrl: 'https://www.youtube.com/embed/O-MvQ42I36I' },
+    // Week 1
+    { day: 1, title: 'Wrist & Hand Preparation', description: 'Crow pose puts a lot of pressure on the wrists. Today, we focus on warm-ups and correct hand placement to build a solid, safe foundation.', embedUrl: 'https://www.youtube.com/embed/wg7-tV2fKAo' },
+    { day: 3, title: 'Core & Hip Flexor Activation', description: 'Learn to engage your deep core muscles and hip flexors. This is the secret to getting your knees high up on your arms and feeling light.', embedUrl: 'https://www.youtube.com/embed/4R2-j2hD-i4' },
+    { day: 5, title: 'The "Shelf": Knee-to-Arm Connection', description: 'Practice creating a stable shelf with your upper arms for your knees. We will work on drills to find this connection without lifting off yet.', embedUrl: 'https://www.youtube.com/embed/kZUa_d_W6fA' },
+    // Week 2
+    { day: 8, title: 'Weight Shifting & The Lean', description: 'Confidence comes from learning to shift your weight forward. Using blocks for support, we will practice leaning into our hands safely.', embedUrl: 'https://www.youtube.com/embed/O-MvQ42I36I' },
+    { day: 10, title: 'Lifting One Foot at a Time', description: 'The moment of truth! From the leaned position, we will practice lifting one foot, then the other, getting used to the feeling of flying.', embedUrl: 'https://www.youtube.com/embed/tKAs69_N3aE' },
+    { day: 12, title: 'Holding Crow & Controlled Exit', description: 'Once you find your balance, holding the pose is the next step. We will also practice how to exit the pose gracefully and safely.', embedUrl: 'https://www.youtube.com/embed/jK0arm2R2gU' },
 ];
 
 const friendsInChallenge = [
@@ -117,30 +122,35 @@ export default function CrowPoseChallengePage() {
                 </div>
 
                 <div className="mt-12">
-                    <h2 className="text-3xl font-bold tracking-tight mb-6 text-center">Challenge Guide: Video Tutorials</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <h2 className="text-3xl font-bold tracking-tight mb-6 text-center">Challenge Guide: Daily Tutorials</h2>
+                    <div className="grid grid-cols-1 gap-8 max-w-4xl mx-auto">
                         {tutorialVideos.map((video) => (
-                            <Card key={video.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-                                <div className="aspect-video">
-                                    <iframe
-                                        width="100%"
-                                        height="100%"
-                                        src={video.embedUrl}
-                                        title={video.title}
-                                        frameBorder="0"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                        allowFullScreen
-                                        className="rounded-t-lg"
-                                    ></iframe>
-                                </div>
-                                <CardHeader>
-                                    <CardTitle>{video.title}</CardTitle>
-                                </CardHeader>
+                             <Card key={video.day} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow w-full">
+                               <div className="grid grid-cols-1 md:grid-cols-2 items-center">
+                                    <div className="aspect-video">
+                                        <iframe
+                                            width="100%"
+                                            height="100%"
+                                            src={video.embedUrl}
+                                            title={video.title}
+                                            frameBorder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                            className="md:rounded-l-lg"
+                                        ></iframe>
+                                    </div>
+                                    <div className="p-6">
+                                        <Badge variant="default" className="mb-2 bg-primary/80">Day {video.day}</Badge>
+                                        <CardTitle className="mb-2 text-xl">{video.title}</CardTitle>
+                                        <CardDescription className="text-base text-muted-foreground leading-relaxed">
+                                            {video.description}
+                                        </CardDescription>
+                                    </div>
+                               </div>
                             </Card>
                         ))}
                     </div>
                 </div>
-
             </div>
         </AppShell>
     );
