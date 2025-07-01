@@ -45,9 +45,9 @@ const formatAuthError = (error: AuthError): string => {
     case 'auth/user-disabled':
       return 'This user account has been disabled.';
     case 'auth/user-not-found':
-      return 'No user found with this email.';
     case 'auth/wrong-password':
-      return 'Incorrect password. Please try again.';
+    case 'auth/invalid-credential':
+      return 'Invalid email or password. Please check your credentials and try again.';
     case 'auth/email-already-in-use':
       return 'This email address is already in use.';
     case 'auth/weak-password':
