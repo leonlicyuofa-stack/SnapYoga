@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useRouter } from 'next/navigation';
@@ -7,7 +6,6 @@ import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc, type DocumentData } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
 import { cn } from '@/lib/utils';
 import { MoveUpRight, Loader2 } from 'lucide-react';
 import Image from 'next/image';
@@ -60,9 +58,6 @@ export default function WelcomePageAsRoot() {
         if (userProfile && userProfile.onboardingCompleted) {
           router.push('/dashboard');
         } else {
-          if (typeof window !== 'undefined') {
-            sessionStorage.setItem('snapYogaPebbleIncoming', 'true');
-          }
           router.push('/onboarding/gender-profile'); 
         }
       } else {
@@ -77,8 +72,9 @@ export default function WelcomePageAsRoot() {
     <div className="relative flex min-h-screen flex-col items-stretch justify-start overflow-hidden">
       {/* Background Image and Overlay */}
       <Image
-        src="https://i.imgur.com/kTwdOTn.jpeg" 
-        alt="Woman meditating in a framed sunset view"
+        src="https://i.imgur.com/kTwdOTn.jpeg"
+        alt="Silhouette of a woman meditating at sunset"
+        data-ai-hint="meditating silhouette"
         fill
         className="-z-10 object-cover"
         priority
@@ -94,12 +90,6 @@ export default function WelcomePageAsRoot() {
           <h1 className="text-5xl font-extrabold text-white leading-tight sm:text-6xl md:text-7xl">
             SnapYoga
           </h1>
-           <SmileyPebbleIcon
-            className={cn(
-              "h-10 w-10 text-white/80 ml-2 sm:ml-3 md:ml-4 drop-shadow-lg sm:h-12 sm:w-12 md:h-14 md:w-14",
-              isLoading ? "animate-pebble-hop" : "animate-pebble-pulse"
-            )}
-          />
         </div>
         <p className="text-lg text-stone-300 max-w-xs sm:max-w-sm md:max-w-md sm:text-xl md:text-2xl">
           Your AI companion<br />for perfecting yoga poses<br />and tracking progress.
