@@ -13,7 +13,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
-import { Loader2, HeartPulse, ArrowRight, ArrowLeft, Dumbbell, Spline, Anchor, HelpCircle, Mountain, Zap } from 'lucide-react';
+import { Loader2, HeartPulse, ArrowRight, ArrowLeft, Dumbbell, Spline, Anchor, HelpCircle, Mountain, Zap, Activity } from 'lucide-react';
 
 const desiredBodyShapeSchema = z.object({
   desiredBodyShape: z.string().min(1, { message: "Please select your desired body shape or goal" }),
@@ -25,6 +25,7 @@ const desiredShapeOptions = [
   { value: "leaner", label: "Leaner / Defined", icon: Mountain },
   { value: "toned", label: "More Toned", icon: Zap },
   { value: "stronger", label: "Stronger / Muscular", icon: Dumbbell },
+  { value: "athletic", label: "More Athletic", icon: Activity },
   { value: "flexible", label: "More Flexible", icon: Spline },
   { value: "maintain", label: "Maintain Current Shape", icon: Anchor },
   { value: "healthier", label: "Overall Healthier", icon: HeartPulse },
@@ -98,7 +99,7 @@ export default function DesiredBodyShapePage() {
                   <RadioGroup
                     onValueChange={field.onChange}
                     defaultValue={field.value}
-                    className="grid grid-cols-2 gap-4 md:grid-cols-3"
+                    className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4"
                   >
                     {desiredShapeOptions.map((option) => {
                       const Icon = option.icon;
