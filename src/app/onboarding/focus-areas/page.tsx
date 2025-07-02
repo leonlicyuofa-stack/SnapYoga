@@ -14,6 +14,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
 import { Loader2, Crosshair, ArrowRight, ArrowLeft } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
 
 const focusAreasSchema = z.object({
   focusBodyParts: z.array(z.string()).min(1, { message: "Please select at least one focus area" }),
@@ -21,17 +23,71 @@ const focusAreasSchema = z.object({
 
 type FocusAreasFormValues = z.infer<typeof focusAreasSchema>;
 
-const bodyPartOptions = [
-  { id: "arms", label: "Arms (Strength, Toning)" },
-  { id: "legs", label: "Legs (Strength, Flexibility)" },
-  { id: "core", label: "Core (Stability, Strength)" },
+const physicalBodyParts = [
+  { id: "shoulders", label: "Shoulders" },
+  { id: "arms", label: "Arms" },
+  { id: "core", label: "Core" },
+  { id: "hips", label: "Hips" },
+  { id: "legs", label: "Legs" },
+];
+
+const conceptualGoals = [
   { id: "back", label: "Back (Flexibility, Pain Relief)" },
-  { id: "shoulders", label: "Shoulders (Mobility, Opening)" },
-  { id: "hips", label: "Hips (Opening, Flexibility)" },
   { id: "full-body", label: "Full Body (Overall Fitness)" },
   { id: "balance", label: "Balance & Coordination" },
   { id: "mindfulness", label: "Mindfulness & Relaxation" },
 ];
+
+const allOptions = [...physicalBodyParts, ...conceptualGoals];
+
+
+// Interactive Body Figure Component
+const BodyFigure = ({ selectedParts, onPartToggle }: { selectedParts: string[]; onPartToggle: (partId: string) => void }) => {
+  const isSelected = (partId: string) => selectedParts.includes(partId);
+
+  const partClasses = (partId: string) => cn(
+    "cursor-pointer transition-all duration-200 ease-in-out",
+    "stroke-background stroke-2",
+    isSelected(partId)
+      ? "fill-accent hover:fill-accent/80"
+      : "fill-muted-foreground/20 hover:fill-accent/70"
+  );
+  
+  return (
+    <div className="flex justify-center items-center py-4">
+      <svg width="150" height="300" viewBox="0 0 150 300" xmlns="http://www.w3.org/2000/svg" aria-label="Interactive body figure for selecting focus areas">
+        {/* Head (non-interactive) */}
+        <circle cx="75" cy="40" r="20" fill="hsl(var(--muted))" />
+        {/* Neck (non-interactive) */}
+        <rect x="68" y="60" width="14" height="15" rx="4" fill="hsl(var(--muted))" />
+
+        {/* Shoulders */}
+        <path d="M45,75 h60 v15 h-60 z" rx="5" className={partClasses('shoulders')} onClick={() => onPartToggle('shoulders')}><title>Shoulders</title></path>
+        
+        {/* Arms */}
+        <g onClick={() => onPartToggle('arms')} className="cursor-pointer" aria-label="Arms">
+          <title>Arms</title>
+          <path d="M25,80 l-10,80 h25 l-5,-80 z" className={partClasses('arms')} />
+          <path d="M125,80 l10,80 h-25 l5,-80 z" className={partClasses('arms')} />
+        </g>
+        
+        {/* Core */}
+        <path d="M50,90 h50 v65 h-50 z" rx="5" className={partClasses('core')} onClick={() => onPartToggle('core')}><title>Core</title></path>
+
+        {/* Hips */}
+        <path d="M48,155 l-5,25 h64 l-5,-25 z" rx="5" className={partClasses('hips')} onClick={() => onPartToggle('hips')}><title>Hips</title></path>
+
+        {/* Legs */}
+        <g onClick={() => onPartToggle('legs')} className="cursor-pointer" aria-label="Legs">
+          <title>Legs</title>
+          <path d="M43,180 l-15,110 h32 l5,-110 z" className={partClasses('legs')} />
+          <path d="M107,180 l15,110 h-32 l-5,-110 z" className={partClasses('legs')} />
+        </g>
+      </svg>
+    </div>
+  );
+};
+
 
 export default function FocusAreasPage() {
   const { user, loading: authLoading } = useAuth();
@@ -47,7 +103,15 @@ export default function FocusAreasPage() {
     }
   });
 
-  const selectedParts = watch('focusBodyParts');
+  const selectedParts = watch('focusBodyParts', []);
+
+  const handlePartToggle = (partId: string) => {
+    const currentSelection = selectedParts || [];
+    const newSelection = currentSelection.includes(partId)
+      ? currentSelection.filter(p => p !== partId)
+      : [...currentSelection, partId];
+    setValue('focusBodyParts', newSelection, { shouldValidate: true });
+  };
 
   if (authLoading) {
     return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div></AppShell>;
@@ -89,45 +153,52 @@ export default function FocusAreasPage() {
   return (
     <AppShell>
       <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
-        <Card className="w-full max-w-lg shadow-xl">
+        <Card className="w-full max-w-2xl shadow-xl">
           <CardHeader className="text-center">
             <Crosshair className="mx-auto h-12 w-12 text-primary mb-4" />
-            <CardTitle className="text-3xl font-bold">Focus Body Parts/Areas</CardTitle>
-            <CardDescription>Which areas would you like to focus on? (Select all that apply)</CardDescription>
+            <CardTitle className="text-3xl font-bold">Focus Areas</CardTitle>
+            <CardDescription>Select body parts from the figure or choose a goal below.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {bodyPartOptions.map((item) => (
-                  <Controller
-                    key={item.id}
-                    name="focusBodyParts"
-                    control={control}
-                    render={({ field }) => {
-                      return (
-                        <div className="flex items-center space-x-2 p-3 border rounded-md hover:bg-muted/50 transition-colors">
-                          <Checkbox
-                            id={item.id}
-                            checked={field.value?.includes(item.id)}
-                            onCheckedChange={(checked) => {
-                              return checked
-                                ? field.onChange([...(field.value || []), item.id])
-                                : field.onChange(
-                                    (field.value || []).filter(
-                                      (value) => value !== item.id
-                                    )
-                                  );
-                            }}
-                          />
-                          <Label htmlFor={item.id} className="font-normal cursor-pointer flex-grow">
-                            {item.label}
-                          </Label>
-                        </div>
-                      );
-                    }}
-                  />
-                ))}
+              <BodyFigure selectedParts={selectedParts} onPartToggle={handlePartToggle} />
+              
+              <div className="space-y-2">
+                <Label>Other Goals</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {conceptualGoals.map((item) => (
+                      <div key={item.id} className="flex items-center space-x-2 p-3 border rounded-md hover:bg-muted/50 transition-colors">
+                        <Checkbox
+                          id={item.id}
+                          checked={selectedParts.includes(item.id)}
+                          onCheckedChange={(checked) => {
+                            const currentSelection = selectedParts || [];
+                            const newSelection = checked
+                              ? [...currentSelection, item.id]
+                              : currentSelection.filter((value) => value !== item.id);
+                            setValue('focusBodyParts', newSelection, { shouldValidate: true });
+                          }}
+                        />
+                        <Label htmlFor={item.id} className="font-normal cursor-pointer flex-grow">
+                          {item.label}
+                        </Label>
+                      </div>
+                    ))}
+                </div>
               </div>
+
+              {selectedParts.length > 0 && (
+                <div className="space-y-2">
+                    <Label>Your Selection</Label>
+                    <div className="flex flex-wrap gap-2 p-3 border rounded-md min-h-[40px]">
+                        {selectedParts.map(partId => {
+                            const option = allOptions.find(opt => opt.id === partId);
+                            return <Badge key={partId} variant="secondary">{option ? option.label.split(' (')[0] : partId}</Badge>
+                        })}
+                    </div>
+                </div>
+              )}
+
               {errors.focusBodyParts && <p className="text-sm text-destructive text-center">{errors.focusBodyParts.message}</p>}
               
               <div className="flex flex-col sm:flex-row gap-2">
@@ -135,7 +206,7 @@ export default function FocusAreasPage() {
                   type="button" 
                   variant="outline" 
                   onClick={handleBackNavigation} 
-                  className="w-full flex-grow"
+                  className="w-full"
                   isLoadingWithBar={isNavigatingBack}
                   loadingBarDirection="rtl"
                   disabled={isSubmitting || isNavigatingBack}
@@ -145,7 +216,7 @@ export default function FocusAreasPage() {
                 </Button>
                 <Button 
                   type="submit" 
-                  className="w-full flex-grow" 
+                  className="w-full" 
                   isLoadingWithBar={isSubmitting}
                   disabled={isSubmitting || authLoading || isNavigatingBack}
                 >
