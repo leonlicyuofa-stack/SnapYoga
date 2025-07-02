@@ -15,6 +15,8 @@ export default function SubscriptionPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isNavigatingBack, setIsNavigatingBack] = useState(false);
+  const [isNavigatingNext, setIsNavigatingNext] = useState(false);
 
   if (authLoading) {
     return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div></AppShell>;
@@ -47,8 +49,20 @@ export default function SubscriptionPage() {
   };
   
   const handleProceedToLuckyWheel = () => {
-      router.push('/onboarding/lucky-wheel');
+      setIsNavigatingNext(true);
+      setTimeout(() => {
+        router.push('/onboarding/lucky-wheel');
+      }, 500);
   }
+
+  const handleBackNavigation = () => {
+    setIsNavigatingBack(true);
+    setTimeout(() => {
+      router.back();
+    }, 500);
+  };
+
+  const anyLoading = isSubmitting || isNavigatingBack || isNavigatingNext;
 
   return (
     <AppShell>
@@ -76,18 +90,30 @@ export default function SubscriptionPage() {
               onClick={handleStartFreeTrial} 
               className="w-full text-lg py-6 bg-green-600 hover:bg-green-700 text-white"
               isLoadingWithBar={isSubmitting}
-              disabled={isSubmitting}
+              disabled={anyLoading}
             >
               <Star className="mr-2 h-5 w-5" />
               Start 7-Day Free Trial (Mock)
             </Button>
             
              <div className="flex flex-col sm:flex-row gap-2 mt-4">
-                <Button type="button" variant="outline" onClick={() => router.back()} className="w-full sm:w-auto">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={handleBackNavigation} 
+                  className="w-full sm:w-auto"
+                  isLoadingWithBar={isNavigatingBack}
+                  disabled={anyLoading}
+                >
                     <ArrowLeft className="mr-2 h-5 w-5" />
                     Back
                 </Button>
-                <Button onClick={handleProceedToLuckyWheel} className="w-full text-lg py-6 flex-grow bg-accent hover:bg-accent/90 text-accent-foreground" disabled={isSubmitting}>
+                <Button 
+                  onClick={handleProceedToLuckyWheel} 
+                  className="w-full text-lg py-6 flex-grow bg-accent hover:bg-accent/90 text-accent-foreground" 
+                  isLoadingWithBar={isNavigatingNext}
+                  disabled={anyLoading}
+                >
                    <ArrowRight className="mr-2 h-5 w-5" />
                     Next: Try the Lucky Wheel!
                 </Button>
@@ -103,5 +129,3 @@ export default function SubscriptionPage() {
     </AppShell>
   );
 }
-
-    

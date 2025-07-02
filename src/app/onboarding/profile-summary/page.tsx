@@ -34,6 +34,8 @@ export default function ProfileSummaryPage() {
   const router = useRouter();
   const [profileData, setProfileData] = useState<UserProfile | null>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [isNavigatingBack, setIsNavigatingBack] = useState(false);
+  const [isNavigatingNext, setIsNavigatingNext] = useState(false);
 
   useEffect(() => {
     if (authLoading) return;
@@ -58,7 +60,17 @@ export default function ProfileSummaryPage() {
   }, [user, authLoading, router]);
 
   const handleNext = () => {
-    router.push('/onboarding/subscription');
+    setIsNavigatingNext(true);
+    setTimeout(() => {
+        router.push('/onboarding/subscription');
+    }, 500);
+  };
+
+  const handleBackNavigation = () => {
+    setIsNavigatingBack(true);
+    setTimeout(() => {
+      router.back();
+    }, 500);
   };
 
   const handleEdit = (stepPath: string) => {
@@ -147,11 +159,23 @@ export default function ProfileSummaryPage() {
               <p className="text-muted-foreground text-center">Could not load profile data.</p>
             )}
              <div className="flex flex-col sm:flex-row gap-2 mt-8">
-                <Button type="button" variant="outline" onClick={() => router.back()} className="w-full sm:w-auto">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={handleBackNavigation} 
+                  className="w-full sm:w-auto"
+                  isLoadingWithBar={isNavigatingBack}
+                  disabled={isNavigatingBack || isNavigatingNext}
+                >
                     <ArrowLeft className="mr-2 h-5 w-5" />
                     Back
                 </Button>
-                <Button onClick={handleNext} className="w-full text-lg py-6 flex-grow">
+                <Button 
+                  onClick={handleNext} 
+                  className="w-full text-lg py-6 flex-grow"
+                  isLoadingWithBar={isNavigatingNext}
+                  disabled={isNavigatingBack || isNavigatingNext}
+                >
                     <ArrowRight className="mr-2 h-5 w-5" />
                     Next: Subscription Options
                 </Button>
@@ -167,5 +191,3 @@ export default function ProfileSummaryPage() {
     </AppShell>
   );
 }
-
-    

@@ -36,6 +36,7 @@ export default function MeasurementsPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isNavigatingBack, setIsNavigatingBack] = useState(false);
 
   const { control, register, handleSubmit, watch, setValue, formState: { errors } } = useForm<MeasurementsFormValues>({
     resolver: zodResolver(measurementsSchema),
@@ -82,6 +83,13 @@ export default function MeasurementsPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleBackNavigation = () => {
+    setIsNavigatingBack(true);
+    setTimeout(() => {
+      router.back();
+    }, 500); 
   };
 
   return (
@@ -145,7 +153,14 @@ export default function MeasurementsPage() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-2">
-                <Button type="button" variant="outline" onClick={() => router.back()} className="w-full sm:w-auto">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={handleBackNavigation} 
+                  className="w-full sm:w-auto"
+                  isLoadingWithBar={isNavigatingBack}
+                  disabled={isSubmitting || isNavigatingBack}
+                >
                     <ArrowLeft className="mr-2 h-5 w-5" />
                     Back
                 </Button>
@@ -153,7 +168,7 @@ export default function MeasurementsPage() {
                   type="submit" 
                   className="w-full text-lg py-6 flex-grow" 
                   isLoadingWithBar={isSubmitting}
-                  disabled={isSubmitting || authLoading}
+                  disabled={isSubmitting || authLoading || isNavigatingBack}
                 >
                     <ArrowRight className="mr-2 h-5 w-5" />
                     Next
@@ -171,5 +186,3 @@ export default function MeasurementsPage() {
     </AppShell>
   );
 }
-
-    

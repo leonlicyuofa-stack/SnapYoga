@@ -14,7 +14,8 @@ export default function OnboardingAppFeaturesPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false); // Though not strictly needed here
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isNavigatingBack, setIsNavigatingBack] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -27,8 +28,11 @@ export default function OnboardingAppFeaturesPage() {
       toast({ title: "Error", description: "No authenticated user found.", variant: "destructive" });
       return;
     }
-    // This step doesn't collect new data, just progresses.
-    router.push('/onboarding/profile-summary'); 
+    setIsSubmitting(true);
+    // This step doesn't collect new data, just progresses with a visual delay.
+    setTimeout(() => {
+        router.push('/onboarding/profile-summary');
+    }, 500); 
   };
   
   if (authLoading) {
@@ -37,6 +41,13 @@ export default function OnboardingAppFeaturesPage() {
   if (!user && !authLoading) {
      return <AppShell><div className="flex justify-center items-center min-h-screen"><p>Redirecting...</p></div></AppShell>;
   }
+
+  const handleBackNavigation = () => {
+    setIsNavigatingBack(true);
+    setTimeout(() => {
+      router.back();
+    }, 500); 
+  };
 
   return (
     <AppShell>
@@ -74,16 +85,24 @@ export default function OnboardingAppFeaturesPage() {
               </p>
             </div>
              <div className="flex flex-col sm:flex-row gap-2">
-                <Button type="button" variant="outline" onClick={() => router.back()} className="w-full sm:w-auto">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={handleBackNavigation} 
+                  className="w-full sm:w-auto"
+                  isLoadingWithBar={isNavigatingBack}
+                  disabled={isSubmitting || authLoading || isNavigatingBack}
+                >
                     <ArrowLeft className="mr-2 h-5 w-5" />
                     Back
                 </Button>
                 <Button 
                   onClick={handleNextStep} 
                   className="w-full text-lg py-6 bg-primary hover:bg-primary/90 text-primary-foreground flex-grow"
-                  disabled={isSubmitting || authLoading}
+                  isLoadingWithBar={isSubmitting}
+                  disabled={isSubmitting || authLoading || isNavigatingBack}
                 >
-                  {isSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <ArrowRight className="mr-2 h-5 w-5" /> }
+                  <ArrowRight className="mr-2 h-5 w-5" />
                   Next: View Profile Summary
                 </Button>
               </div>
@@ -98,5 +117,3 @@ export default function OnboardingAppFeaturesPage() {
     </AppShell>
   );
 }
-
-    
