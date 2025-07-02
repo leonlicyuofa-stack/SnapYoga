@@ -91,6 +91,7 @@ export default function OnboardingAppFeaturesPage() {
                   onClick={handleBackNavigation} 
                   className="w-full sm:w-auto"
                   isLoadingWithBar={isNavigatingBack}
+                  loadingBarDirection="rtl"
                   disabled={isSubmitting || authLoading || isNavigatingBack}
                 >
                     <ArrowLeft className="mr-2 h-5 w-5" />
