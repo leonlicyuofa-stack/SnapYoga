@@ -17,7 +17,6 @@ export default function VerifyEmailPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSending, setIsSending] = useState(false);
-  const [isChecking, setIsChecking] = useState(false);
 
   useEffect(() => {
     // If user is already verified and lands here (e.g. back button), redirect them.
@@ -51,41 +50,9 @@ export default function VerifyEmailPage() {
     }
   };
 
-  const handleContinue = async () => {
-    if (!user) {
-      toast({ title: "Error", description: "No user session found. Please sign in again.", variant: "destructive" });
-      router.push('/auth/signin');
-      return;
-    }
-
-    setIsChecking(true);
-    try {
-      await user.reload(); // Reload user data to get the latest emailVerified status
-      if (user.emailVerified) {
-        // Ensure Firestore profile is updated with verified status
-        await createUserProfileDocument(user, { emailVerified: true });
-        toast({
-          title: "Email Verified!",
-          description: "Thank you for verifying your email. Let's complete your profile.",
-        });
-        router.push('/onboarding/gender-profile');
-      } else {
-        toast({
-          title: "Email Not Verified",
-          description: "Your email is not yet verified. Please check your inbox for the verification link, or resend the email.",
-          variant: "destructive",
-        });
-      }
-    } catch (error: any) {
-      console.error("Error checking verification status:", error);
-      toast({
-        title: "Verification Check Failed",
-        description: error.message || "Could not check verification status. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsChecking(false);
-    }
+  const handleContinue = () => {
+    // Bypassing verification check and proceeding to the next step.
+    router.push('/onboarding/gender-profile');
   };
   
   const handleSignOutAndReturnToSignUp = async () => {
@@ -121,16 +88,16 @@ export default function VerifyEmailPage() {
             <Button
               onClick={handleContinue}
               className="w-full text-lg py-6 bg-primary hover:bg-primary/90 text-primary-foreground"
-              disabled={isChecking || isSending}
+              disabled={isSending}
             >
-              {isChecking ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Send className="mr-2 h-5 w-5" /> }
-              {isChecking ? 'Checking...' : 'I\'ve Verified / Continue'}
+              <Send className="mr-2 h-5 w-5" />
+              Continue
             </Button>
             <Button
               onClick={handleResendVerificationEmail}
               variant="outline"
               className="w-full text-lg py-6"
-              disabled={isSending || isChecking}
+              disabled={isSending}
             >
               {isSending ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <RotateCw className="mr-2 h-5 w-5" /> }
               {isSending ? 'Sending...' : 'Resend Verification Email'}
