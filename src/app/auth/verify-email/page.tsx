@@ -87,7 +87,7 @@ export default function VerifyEmailPage() {
           <CardContent className="space-y-6">
             <Button
               onClick={handleContinue}
-              className="w-full text-lg py-6 bg-primary hover:bg-primary/90 text-primary-foreground"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
               disabled={isSending}
             >
               <Send className="mr-2 h-5 w-5" />
@@ -96,7 +96,7 @@ export default function VerifyEmailPage() {
             <Button
               onClick={handleResendVerificationEmail}
               variant="outline"
-              className="w-full text-lg py-6"
+              className="w-full"
               disabled={isSending}
             >
               {isSending ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <RotateCw className="mr-2 h-5 w-5" /> }

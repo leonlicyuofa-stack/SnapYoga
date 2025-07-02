@@ -104,7 +104,7 @@ export default function DrawResultPage() {
             </p>
             <Button 
               onClick={handleCompleteOnboarding} 
-              className="w-full text-lg py-6 bg-primary hover:bg-primary/90"
+              className="w-full bg-primary hover:bg-primary/90"
               isLoadingWithBar={isFinalizing}
               disabled={isFinalizing}
             >

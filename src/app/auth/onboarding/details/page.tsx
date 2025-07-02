@@ -246,7 +246,7 @@ export default function OnboardingDetailsPage() {
                 {errors.weight && <p className="text-sm text-destructive">{errors.weight.message}</p>}
               </div>
 
-              <Button type="submit" className="w-full text-lg py-6" disabled={isSubmitting || authLoading}>
+              <Button type="submit" className="w-full" disabled={isSubmitting || authLoading}>
                 {isSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <TrendingUp className="mr-2 h-5 w-5"/>}
                 Save and Continue
               </Button>

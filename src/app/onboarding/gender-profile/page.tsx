@@ -123,7 +123,7 @@ export default function GenderProfilePage() {
               {errors.gender && <p className="text-sm text-destructive text-center">{errors.gender.message}</p>}
               <Button 
                 type="submit" 
-                className="w-full text-lg py-6" 
+                className="w-full" 
                 isLoadingWithBar={isSubmitting}
                 disabled={isSubmitting || authLoading}
               >

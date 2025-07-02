@@ -163,7 +163,7 @@ export default function ProfileSummaryPage() {
                   type="button" 
                   variant="outline" 
                   onClick={handleBackNavigation} 
-                  className="w-full flex-grow text-lg py-6"
+                  className="w-full flex-grow"
                   isLoadingWithBar={isNavigatingBack}
                   loadingBarDirection="rtl"
                   disabled={isNavigatingBack || isNavigatingNext}
@@ -173,7 +173,7 @@ export default function ProfileSummaryPage() {
                 </Button>
                 <Button 
                   onClick={handleNext} 
-                  className="w-full text-lg py-6 flex-grow"
+                  className="w-full flex-grow"
                   isLoadingWithBar={isNavigatingNext}
                   disabled={isNavigatingBack || isNavigatingNext}
                 >

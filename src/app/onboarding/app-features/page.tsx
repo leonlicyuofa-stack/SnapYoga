@@ -89,7 +89,7 @@ export default function OnboardingAppFeaturesPage() {
                   type="button" 
                   variant="outline" 
                   onClick={handleBackNavigation} 
-                  className="w-full flex-grow text-lg py-6"
+                  className="w-full flex-grow"
                   isLoadingWithBar={isNavigatingBack}
                   loadingBarDirection="rtl"
                   disabled={isSubmitting || authLoading || isNavigatingBack}
@@ -99,7 +99,7 @@ export default function OnboardingAppFeaturesPage() {
                 </Button>
                 <Button 
                   onClick={handleNextStep} 
-                  className="w-full text-lg py-6 bg-primary hover:bg-primary/90 text-primary-foreground flex-grow"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground flex-grow"
                   isLoadingWithBar={isSubmitting}
                   disabled={isSubmitting || authLoading || isNavigatingBack}
                 >

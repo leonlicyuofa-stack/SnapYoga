@@ -95,7 +95,7 @@ export default function OnboardingAppInfoPage() {
             
             <Button 
               onClick={handleCompleteSetup} 
-              className="w-full text-lg py-6 bg-primary hover:bg-primary/90 text-primary-foreground"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
               disabled={isSubmitting || authLoading}
             >
               {isSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <ArrowRight className="mr-2 h-5 w-5" /> }

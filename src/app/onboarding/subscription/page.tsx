@@ -88,7 +88,7 @@ export default function SubscriptionPage() {
 
             <Button 
               onClick={handleStartFreeTrial} 
-              className="w-full text-lg py-6 bg-green-600 hover:bg-green-700 text-white"
+              className="w-full bg-green-600 hover:bg-green-700 text-white"
               isLoadingWithBar={isSubmitting}
               disabled={anyLoading}
             >
@@ -101,7 +101,7 @@ export default function SubscriptionPage() {
                   type="button" 
                   variant="outline" 
                   onClick={handleBackNavigation} 
-                  className="w-full flex-grow text-lg py-6"
+                  className="w-full flex-grow"
                   isLoadingWithBar={isNavigatingBack}
                   loadingBarDirection="rtl"
                   disabled={anyLoading}
@@ -111,7 +111,7 @@ export default function SubscriptionPage() {
                 </Button>
                 <Button 
                   onClick={handleProceedToLuckyWheel} 
-                  className="w-full text-lg py-6 flex-grow bg-accent hover:bg-accent/90 text-accent-foreground" 
+                  className="w-full flex-grow bg-accent hover:bg-accent/90 text-accent-foreground" 
                   isLoadingWithBar={isNavigatingNext}
                   disabled={anyLoading}
                 >

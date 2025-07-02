@@ -117,7 +117,7 @@ export default function AgeGroupPage() {
                   type="button" 
                   variant="outline" 
                   onClick={handleBackNavigation} 
-                  className="w-full flex-grow text-lg py-6"
+                  className="w-full flex-grow"
                   isLoadingWithBar={isNavigatingBack}
                   loadingBarDirection="rtl"
                   disabled={isSubmitting || isNavigatingBack}
@@ -127,7 +127,7 @@ export default function AgeGroupPage() {
                 </Button>
                 <Button 
                   type="submit" 
-                  className="w-full text-lg py-6 flex-grow" 
+                  className="w-full flex-grow" 
                   isLoadingWithBar={isSubmitting}
                   disabled={isSubmitting || authLoading || isNavigatingBack}
                 >
