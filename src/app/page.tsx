@@ -72,9 +72,9 @@ export default function WelcomePageAsRoot() {
     <div className="relative flex min-h-screen flex-col items-stretch justify-start overflow-hidden">
       {/* Background Image and Overlay */}
       <Image
-        src="https://i.imgur.com/kTwdOTn.jpeg"
-        alt="Silhouette of a woman meditating at sunset"
-        data-ai-hint="meditating silhouette"
+        src="https://i.imgur.com/ncJiSEV.png"
+        alt="Woman doing yoga in a brightly lit room"
+        data-ai-hint="yoga pose room"
         fill
         className="-z-10 object-cover"
         priority
