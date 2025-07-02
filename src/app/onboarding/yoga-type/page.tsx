@@ -13,48 +13,40 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
-import { Loader2, Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Loader2, Sparkles, ArrowRight, ArrowLeft, CheckCircle } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const interestedPosesSchema = z.object({
-  interestedPoses: z.array(z.string()).min(1, { message: "Please select at least one pose" }),
+  interestedPoses: z.array(z.string()).min(1, { message: "Please select at least one category" }),
 });
 
 type InterestedPosesFormValues = z.infer<typeof interestedPosesSchema>;
 
-const poseCategories = [
+const poseCategoryOptions = [
   {
-    name: "Standing Poses",
-    poses: [
-      { id: "warrior-1", label: "Warrior I (Virabhadrasana I)" },
-      { id: "triangle-pose", label: "Triangle (Trikonasana)" },
-      { id: "tree-pose", label: "Tree Pose (Vrikshasana)" },
-    ],
+    id: "standing",
+    label: "Standing Poses",
+    description: "Build strength, stability, and balance; energize the body.",
+    examples: "E.g., Warrior I, Triangle, Tree Pose."
   },
   {
-    name: "Seated Poses",
-    poses: [
-      { id: "staff-pose", label: "Staff Pose (Dandasana)" },
-      { id: "seated-forward-bend", label: "Seated Forward Bend (Paschimottanasana)" },
-      { id: "easy-pose", label: "Easy Pose (Sukhasana)" },
-    ],
+    id: "seated",
+    label: "Seated Poses",
+    description: "Promote flexibility in hips and spine; encourage calm.",
+    examples: "E.g., Staff Pose, Seated Forward Bend."
   },
   {
-    name: "Backbends",
-    poses: [
-      { id: "cobra-pose", label: "Cobra (Bhujangasana)" },
-      { id: "bridge-pose", label: "Bridge (Setu Bandhasana)" },
-      { id: "wheel-pose", label: "Wheel (Urdhva Dhanurasana)" },
-    ],
+    id: "backbends",
+    label: "Backbends",
+    description: "Strengthen the back, open the chest and shoulders, boost energy.",
+    examples: "E.g., Cobra, Bridge, Wheel Pose."
   },
-    {
-    name: "Inversions and Balancing Poses",
-    poses: [
-      { id: "shoulder-stand", label: "Shoulder Stand (Sarvangasana)" },
-      { id: "headstand", label: "Headstand (Sirsasana)" },
-      { id: "crow-pose", label: "Crow Pose (Bakasana)" },
-      { id: "plank-pose", label: "Plank" },
-    ],
-  },
+  {
+    id: "inversions-balancing",
+    label: "Inversions & Balancing",
+    description: "Improve circulation, build core strength, enhance focus.",
+    examples: "E.g., Headstand, Crow Pose, Plank."
+  }
 ];
 
 
@@ -112,51 +104,64 @@ export default function InterestedPosesPage() {
   return (
     <AppShell>
       <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
-        <Card className="w-full max-w-lg shadow-xl">
+        <Card className="w-full max-w-2xl shadow-xl">
           <CardHeader className="text-center">
             <Sparkles className="mx-auto h-12 w-12 text-primary mb-4" />
             <CardTitle className="text-3xl font-bold">Interested Yoga Poses</CardTitle>
-            <CardDescription>Select some poses you're interested in learning or improving.</CardDescription>
+            <CardDescription>Select the categories of poses you're interested in learning or improving.</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div className="space-y-4">
-                {poseCategories.map((category) => (
-                  <div key={category.name}>
-                    <h3 className="font-semibold text-lg mb-2 text-primary">{category.name}</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {category.poses.map((item) => (
-                        <Controller
-                          key={item.id}
-                          name="interestedPoses"
-                          control={control}
-                          render={({ field }) => (
-                            <div className="flex items-center space-x-2 p-3 border rounded-md hover:bg-muted/50 transition-colors">
-                              <Checkbox
-                                id={item.id}
-                                checked={field.value?.includes(item.id)}
-                                onCheckedChange={(checked) => {
-                                  const currentValue = field.value || [];
-                                  const updatedValue = checked
-                                    ? [...currentValue, item.id]
-                                    : currentValue.filter((value) => value !== item.id);
-                                  field.onChange(updatedValue);
-                                }}
-                              />
-                              <Label htmlFor={item.id} className="font-normal cursor-pointer flex-grow">
-                                {item.label}
-                              </Label>
+              <Controller
+                name="interestedPoses"
+                control={control}
+                render={({ field }) => (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {poseCategoryOptions.map((item) => {
+                      const isChecked = field.value?.includes(item.id);
+                      return (
+                        <div key={item.id} className="relative">
+                          <Checkbox
+                            id={item.id}
+                            className="sr-only"
+                            checked={isChecked}
+                            onCheckedChange={(checked) => {
+                              const currentValue = field.value || [];
+                              const updatedValue = checked
+                                ? [...currentValue, item.id]
+                                : currentValue.filter((value) => value !== item.id);
+                              field.onChange(updatedValue);
+                            }}
+                          />
+                          <Label
+                            htmlFor={item.id}
+                            className={cn(
+                              "flex flex-col justify-between p-4 border-2 rounded-lg cursor-pointer transition-all h-full min-h-[160px]",
+                              "hover:border-primary/50",
+                              isChecked ? "border-primary bg-primary/5 shadow-md" : "border-muted bg-background"
+                            )}
+                          >
+                            <div>
+                               <h3 className="font-bold text-lg text-primary">{item.label}</h3>
+                               <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
                             </div>
-                          )}
-                        />
-                      ))}
-                    </div>
+                            <p className="text-xs text-foreground/60 mt-3">{item.examples}</p>
+                            {isChecked && (
+                                <div className="absolute top-3 right-3 h-6 w-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
+                                    <CheckCircle className="h-4 w-4" />
+                                </div>
+                            )}
+                          </Label>
+                        </div>
+                      );
+                    })}
                   </div>
-                ))}
-              </div>
+                )}
+              />
+
               {errors.interestedPoses && <p className="text-sm text-destructive text-center">{errors.interestedPoses.message}</p>}
               
-              <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex flex-col sm:flex-row gap-2 pt-4">
                 <Button 
                   type="button" 
                   variant="outline" 
