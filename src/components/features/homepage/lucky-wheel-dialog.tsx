@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -99,7 +98,7 @@ export function LuckyWheelDialog({ isOpen, onClose }: LuckyWheelDialogProps) {
         <div className="py-6 sm:py-8 px-4 sm:px-6 flex flex-col items-center justify-center space-y-6 sm:space-y-8">
           <div className="relative w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72">
             <div
-              className="w-full h-full rounded-full border-4 border-primary shadow-lg flex items-center justify-center transition-transform duration-[4000ms] ease-out"
+              className="w-full h-full rounded-full border-4 border-primary shadow-lg flex items-center justify-center transition-transform duration-4000 ease-out"
               style={{ 
                 transform: `rotate(${rotation}deg)`,
                 background: `conic-gradient(
@@ -160,4 +159,3 @@ export function LuckyWheelDialog({ isOpen, onClose }: LuckyWheelDialogProps) {
     </Dialog>
   );
 }
-
