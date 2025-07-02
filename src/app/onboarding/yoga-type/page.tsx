@@ -23,28 +23,36 @@ type InterestedPosesFormValues = z.infer<typeof interestedPosesSchema>;
 
 const poseCategories = [
   {
-    name: "Foundational Poses",
+    name: "Standing Poses",
     poses: [
-      { id: "downward-dog", label: "Downward-Facing Dog" },
-      { id: "mountain-pose", label: "Mountain Pose" },
-      { id: "warrior-2", label: "Warrior II" },
-      { id: "triangle-pose", label: "Triangle Pose" },
+      { id: "warrior-1", label: "Warrior I (Virabhadrasana I)" },
+      { id: "triangle-pose", label: "Triangle (Trikonasana)" },
+      { id: "tree-pose", label: "Tree Pose (Vrikshasana)" },
     ],
   },
   {
-    name: "Balancing Poses",
+    name: "Seated Poses",
     poses: [
-      { id: "tree-pose", label: "Tree Pose" },
-      { id: "eagle-pose", label: "Eagle Pose" },
-      { id: "half-moon-pose", label: "Half Moon Pose" },
+      { id: "staff-pose", label: "Staff Pose (Dandasana)" },
+      { id: "seated-forward-bend", label: "Seated Forward Bend (Paschimottanasana)" },
+      { id: "easy-pose", label: "Easy Pose (Sukhasana)" },
     ],
   },
   {
-    name: "Seated & Floor Poses",
+    name: "Backbends",
     poses: [
-      { id: "lotus-pose", label: "Lotus Pose" },
-      { id: "pigeon-pose", label: "Pigeon Pose" },
-      { id: "childs-pose", label: "Child's Pose" },
+      { id: "cobra-pose", label: "Cobra (Bhujangasana)" },
+      { id: "bridge-pose", label: "Bridge (Setu Bandhasana)" },
+      { id: "wheel-pose", label: "Wheel (Urdhva Dhanurasana)" },
+    ],
+  },
+    {
+    name: "Inversions and Balancing Poses",
+    poses: [
+      { id: "shoulder-stand", label: "Shoulder Stand (Sarvangasana)" },
+      { id: "headstand", label: "Headstand (Sirsasana)" },
+      { id: "crow-pose", label: "Crow Pose (Bakasana)" },
+      { id: "plank-pose", label: "Plank" },
     ],
   },
 ];
