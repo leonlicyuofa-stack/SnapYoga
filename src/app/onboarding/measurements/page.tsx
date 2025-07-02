@@ -157,7 +157,7 @@ export default function MeasurementsPage() {
                   type="button" 
                   variant="outline" 
                   onClick={handleBackNavigation} 
-                  className="w-full sm:w-auto"
+                  className="w-full flex-grow text-lg py-6"
                   isLoadingWithBar={isNavigatingBack}
                   loadingBarDirection="rtl"
                   disabled={isSubmitting || isNavigatingBack}
