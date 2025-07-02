@@ -38,12 +38,29 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   isLoadingWithBar?: boolean;
-  progressPercent?: number;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, isLoadingWithBar = false, progressPercent = 25, children, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, isLoadingWithBar = false, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
+    const [progress, setProgress] = React.useState(0);
+
+    React.useEffect(() => {
+      let timer: ReturnType<typeof setTimeout>;
+      if (isLoadingWithBar) {
+        // Start the progress animation by setting it to a high value over a long duration.
+        // This gives the illusion of loading.
+        setProgress(0); // Ensure it starts from 0
+        timer = setTimeout(() => setProgress(95), 100); // Start animation after a short delay
+      } else {
+        setProgress(0); // Reset on finish
+      }
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }, [isLoadingWithBar]);
+
 
     if (isLoadingWithBar) {
       return (
@@ -51,14 +68,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           className={cn(buttonVariants({ variant, size, className }), "relative overflow-hidden cursor-default")}
           ref={ref}
           disabled // isLoadingWithBar implies disabled
-          {...props} // Spread other props, children are effectively ignored
+          {...props}
         >
           {/* Progress bar track */}
           <div className="absolute inset-0 bg-muted/30 rounded-md"></div>
           {/* Progress bar fill */}
           <div
-            className="absolute inset-y-0 left-0 h-full bg-primary/70 transition-all duration-300 ease-linear"
-            style={{ width: `${props.disabled ? progressPercent : 0}%` }} // Example static fill
+            className="absolute inset-y-0 left-0 h-full bg-primary/70 transition-all duration-4000 ease-out"
+            style={{ width: `${progress}%` }}
           ></div>
           {/* Loading text overlay */}
           <span className="relative z-10 text-primary-foreground/90 text-sm flex items-center justify-center">
