@@ -12,9 +12,10 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowRight, Users, PlusCircle, Crown, Star, Scale, Zap, Spline, Anchor } from 'lucide-react';
+import { ArrowRight, Users, PlusCircle, Crown, Star, Scale, Zap, Spline, Anchor, Copy, Mail, Share2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Friend {
   id: string;
@@ -24,7 +25,7 @@ interface Friend {
 }
 
 interface Challenge {
-  id: string;
+  id:string;
   name: string;
   description: string;
   imageUrl: string | { src: string; width: number; height: number };
@@ -151,23 +152,106 @@ const categoryIcons: Record<Challenge['category'], React.ElementType> = {
   'Foundational': Anchor,
 };
 
-export default function ChallengesPage() {
-  const [friends, setFriends] = useState<Friend[]>(initialFriends);
-  const [newFriendEmail, setNewFriendEmail] = useState('');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+function InviteFriendDialog() {
   const { toast } = useToast();
+  const [inviteLink, setInviteLink] = useState('');
 
-  const handleSendInvite = () => {
-    if (!newFriendEmail) return;
-    console.log(`Sending invite to ${newFriendEmail}`);
-    toast({
-      title: "Invite Sent!",
-      description: `Your friend invite to ${newFriendEmail} has been sent.`,
-    });
-    setNewFriendEmail('');
-    setIsDialogOpen(false);
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // A generic invite link to the app's homepage/dashboard
+      setInviteLink(window.location.origin);
+    }
+  }, []);
+
+  const handleCopyLink = () => {
+    if (navigator.clipboard && inviteLink) {
+      navigator.clipboard.writeText(inviteLink).then(() => {
+        toast({
+          title: "Link Copied!",
+          description: "A shareable link has been copied to your clipboard.",
+        });
+      }).catch(err => {
+        console.error("Copy failed", err);
+        toast({ title: "Copy Failed", description: "Could not copy the link.", variant: "destructive" });
+      });
+    }
   };
 
+  const shareText = `Hey! I'm using SnapYoga to improve my practice. You should check it out: ${inviteLink}`;
+  const mailtoLink = `mailto:?subject=${encodeURIComponent("Join me on SnapYoga!")}&body=${encodeURIComponent(shareText)}`;
+  const whatsappLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+
+  const handleInstagramShare = () => {
+     if (navigator.clipboard && inviteLink) {
+      navigator.clipboard.writeText(inviteLink).then(() => {
+        toast({
+          title: "Link Copied!",
+          description: "Paste this link in your Instagram bio or stories to share.",
+          duration: 5000,
+        });
+      }).catch(err => {
+        console.error("Copy failed", err);
+        toast({ title: "Copy Failed", description: "Could not copy the link.", variant: "destructive" });
+      });
+    }
+  };
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="lg" className="w-full sm:w-auto text-base px-6 py-6">
+          <PlusCircle className="mr-2 h-5 w-5" />
+          Add Friend
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Invite a Friend</DialogTitle>
+          <DialogDescription>
+            Share your love for yoga! Invite friends to join you on SnapYoga using any of the options below.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="invite-link">Copy your invite link</Label>
+            <div className="flex space-x-2">
+              <Input
+                id="invite-link"
+                value={inviteLink}
+                readOnly
+              />
+              <Button type="button" size="icon" onClick={handleCopyLink}>
+                <Copy className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+             <Button variant="outline" asChild>
+              <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                <Share2 className="mr-2 h-4 w-4" /> WhatsApp
+              </a>
+            </Button>
+             <Button variant="outline" asChild>
+              <a href={mailtoLink} target="_blank" rel="noopener noreferrer">
+                <Mail className="mr-2 h-4 w-4" /> Email
+              </a>
+            </Button>
+             <Button variant="outline" onClick={handleInstagramShare}>
+              <Share2 className="mr-2 h-4 w-4" /> Instagram
+            </Button>
+          </div>
+        </div>
+        <DialogFooter>
+          <p className="text-xs text-muted-foreground text-center w-full">Sharing is caring! Grow your yoga community.</p>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export default function ChallengesPage() {
+  const [friends] = useState<Friend[]>(initialFriends);
+  
   const getStatusBadge = (challenge: Challenge) => {
     switch (challenge.status) {
       case 'active':
@@ -215,45 +299,12 @@ export default function ChallengesPage() {
             <div className="flex -space-x-6">
               {friends.map(friend => (
                 <Avatar key={friend.id} className="h-16 w-16 border-4 border-background hover:z-10 transition-transform hover:scale-110">
-                  <AvatarImage src={friend.avatarUrl} alt={friend.name} />
+                  <AvatarImage src={friend.avatarUrl} alt={friend.name} data-ai-hint={friend.avatarHint} />
                   <AvatarFallback>{friend.name.charAt(0)}</AvatarFallback>
                 </Avatar>
               ))}
             </div>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="lg" className="w-full sm:w-auto text-base px-6 py-6">
-                  <PlusCircle className="mr-2 h-5 w-5" />
-                  Add Friend
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Invite a Friend</DialogTitle>
-                  <DialogDescription>
-                    Enter your friend's email address to send them an invitation to join you on SnapYoga.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="email" className="text-right">
-                      Email
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={newFriendEmail}
-                      onChange={(e) => setNewFriendEmail(e.target.value)}
-                      className="col-span-3"
-                      placeholder="friend@example.com"
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button type="submit" onClick={handleSendInvite}>Send Invite</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            <InviteFriendDialog />
           </CardContent>
         </Card>
 
