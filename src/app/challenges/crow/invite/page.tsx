@@ -137,7 +137,7 @@ export default function CrowPoseInvitePage() {
     
     // Simulate sending invitations - In a real app, this is where you'd write to Firestore
     console.log("Attempting to send invitations to:", selectedFriends.map(f => f.displayName || f.email));
-    const challengeId = pathname.split('/')[2] || 'crow'; // e.g. 'crow'
+    const challengeId = pathname.split('/')[2] || 'crow'; // e.g., 'crow'
 
     // Placeholder: create invitation documents in Firestore
     // This part is for demonstration and would need more robust error handling and user feedback.
@@ -320,7 +320,7 @@ export default function CrowPoseInvitePage() {
                     ))}
                   </div>
                 )}
-                {!isSearching && searchResults.length === 0 && friendSearchQuery && !isSearching && ( // Condition to show only after search and no results
+                {!isSearching && searchResults.length === 0 && friendSearchQuery && (
                    <div className="p-4 border border-dashed rounded-md bg-muted/50 min-h-[80px] flex items-center justify-center">
                     <p className="text-sm text-muted-foreground">
                       No users found for &quot;{friendSearchQuery}&quot;.
