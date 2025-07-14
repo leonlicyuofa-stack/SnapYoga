@@ -303,7 +303,7 @@ export default function DashboardPage() {
       )}
       <div className="flex flex-col items-center w-full">
         {user && !authLoading && (
-          <div className="w-full bg-red-500/5 p-4 md:p-6 rounded-lg shadow-md border border-red-500/20 mb-8 md:mb-12">
+          <div className="w-full bg-card p-4 md:p-6 rounded-lg shadow-md border border-border mb-8 md:mb-12">
             {loadingUserProfile && !userProfile ? (
               <div className="text-center py-8">
                 <Skeleton className="h-10 w-3/4 mb-4 mx-auto" />
@@ -590,5 +590,3 @@ export default function DashboardPage() {
     </AppShell>
   );
 }
-
-    
