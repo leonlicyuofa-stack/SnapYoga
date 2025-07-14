@@ -13,9 +13,10 @@ import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon'; // Import AppleIcon
-import { Mail, KeyRound, Loader2 } from 'lucide-react';
+import { Mail, KeyRound } from 'lucide-react';
 import { useState } from 'react';
 import { AppShell } from '@/components/layout/app-shell';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 const signInSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -79,8 +80,7 @@ export default function SignInPage() {
                 {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
               </div>
               <Button type="submit" className="w-full text-lg py-6" disabled={isLoading}>
-                {isLoading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
-                Sign In
+                {isLoading ? <SmileyRockLoader /> : 'Sign In'}
               </Button>
             </form>
             
@@ -94,13 +94,11 @@ export default function SignInPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" onClick={signInWithGoogle} disabled={isLoading} className="py-6 text-base">
-                {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <GoogleIcon className="mr-2 h-5 w-5" />}
-                Google
+              <Button variant="outline" onClick={signInWithGoogle} disabled={isLoading} className="py-6 text-base h-auto">
+                {isLoading ? <SmileyRockLoader /> : <><GoogleIcon className="mr-2 h-5 w-5" /> Google</>}
               </Button>
-              <Button variant="outline" onClick={signInWithApple} disabled={isLoading} className="py-6 text-base"> {/* Changed to Apple */}
-                 {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <AppleIcon className="mr-2 h-5 w-5" />} {/* Changed to AppleIcon */}
-                Apple
+              <Button variant="outline" onClick={signInWithApple} disabled={isLoading} className="py-6 text-base h-auto">
+                 {isLoading ? <SmileyRockLoader /> : <><AppleIcon className="mr-2 h-5 w-5" /> Apple</>}
               </Button>
             </div>
           </CardContent>

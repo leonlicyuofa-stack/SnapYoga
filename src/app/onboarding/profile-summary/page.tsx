@@ -8,10 +8,10 @@ import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc, type DocumentData } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
 import { AppShell } from '@/components/layout/app-shell';
-import { Loader2, UserCheck, ArrowRight, ArrowLeft, Edit3 } from 'lucide-react';
+import { UserCheck, ArrowRight, ArrowLeft, Edit3 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 interface UserProfile extends DocumentData {
   displayName?: string;
@@ -110,7 +110,13 @@ export default function ProfileSummaryPage() {
 
 
   if (authLoading || isLoadingProfile) {
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div></AppShell>;
+    return (
+        <AppShell>
+            <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
+                <SmileyRockLoader text="Loading your profile..." />
+            </div>
+        </AppShell>
+    );
   }
   if (!user && !authLoading) {
      return <AppShell><div className="flex justify-center items-center min-h-screen"><p>Redirecting...</p></div></AppShell>;
@@ -163,7 +169,7 @@ export default function ProfileSummaryPage() {
                   type="button" 
                   variant="outline" 
                   onClick={handleBackNavigation} 
-                  className="w-full flex-grow"
+                  className="w-full"
                   isLoadingWithBar={isNavigatingBack}
                   loadingBarDirection="rtl"
                   disabled={isNavigatingBack || isNavigatingNext}
@@ -173,7 +179,7 @@ export default function ProfileSummaryPage() {
                 </Button>
                 <Button 
                   onClick={handleNext} 
-                  className="w-full flex-grow"
+                  className="w-full"
                   isLoadingWithBar={isNavigatingNext}
                   disabled={isNavigatingBack || isNavigatingNext}
                 >

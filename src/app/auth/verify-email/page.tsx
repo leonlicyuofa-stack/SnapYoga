@@ -7,10 +7,11 @@ import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext'; // 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, MailCheck, Send, RotateCw } from 'lucide-react';
+import { MailCheck, Send, RotateCw } from 'lucide-react';
 import { AppShell } from '@/components/layout/app-shell';
 import { auth } from '@/lib/firebase/clientApp'; // direct import for sendEmailVerification
 import { sendEmailVerification as firebaseSendEmailVerification } from 'firebase/auth';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 export default function VerifyEmailPage() {
   const { user, loading: authLoading, signOutUser } = useAuth();
@@ -62,7 +63,13 @@ export default function VerifyEmailPage() {
 
 
   if (authLoading) {
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div></AppShell>;
+    return (
+        <AppShell>
+            <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
+                <SmileyRockLoader text="Checking authentication..." />
+            </div>
+        </AppShell>
+    );
   }
   
   // If user is somehow not logged in but on this page, or becomes unlogged in.
@@ -99,8 +106,7 @@ export default function VerifyEmailPage() {
               className="w-full"
               disabled={isSending}
             >
-              {isSending ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <RotateCw className="mr-2 h-5 w-5" /> }
-              {isSending ? 'Sending...' : 'Resend Verification Email'}
+              {isSending ? <SmileyRockLoader /> : <><RotateCw className="mr-2 h-5 w-5" /> Resend Verification Email</>}
             </Button>
              <p className="text-xs text-muted-foreground text-center">
               Didn&apos;t receive the email? Check your spam folder or try resending.

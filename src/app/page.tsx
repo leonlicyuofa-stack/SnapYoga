@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useRouter } from 'next/navigation';
@@ -7,8 +8,9 @@ import { doc, getDoc, type DocumentData } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { MoveUpRight, Loader2 } from 'lucide-react';
+import { MoveUpRight } from 'lucide-react';
 import Image from 'next/image';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 interface UserProfileData extends DocumentData {
   uid?: string;
@@ -96,11 +98,11 @@ export default function WelcomePageAsRoot() {
         </p>
         <Button
           onClick={handleGetStarted}
-          className="mt-6 rounded-full w-14 h-14 bg-white/90 hover:bg-white text-primary p-0 shadow-lg sm:mt-8 sm:w-16 sm:h-16"
+          className="mt-6 rounded-full w-14 h-14 bg-white/90 hover:bg-white text-primary p-0 shadow-lg sm:mt-8 sm:w-16 sm:h-16 flex items-center justify-center"
           aria-label="Get Started"
           disabled={isLoading}
         >
-          {isLoading ? <Loader2 className="h-6 w-6 animate-spin sm:h-7 sm:w-7" /> : <MoveUpRight className="h-6 w-6 sm:h-7 sm:w-7" />}
+          {isLoading ? <SmileyRockLoader /> : <MoveUpRight className="h-6 w-6 sm:h-7 sm:w-7" />}
         </Button>
       </div>
     </div>

@@ -6,9 +6,10 @@ import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { CheckCircle, Sparkles, Users, ArrowRight, Loader2, ArrowLeft } from 'lucide-react';
+import { CheckCircle, Sparkles, Users, ArrowRight, ArrowLeft } from 'lucide-react';
 import { AppShell } from '@/components/layout/app-shell';
 import { useState, useEffect } from 'react';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 export default function OnboardingAppFeaturesPage() {
   const { user, loading: authLoading } = useAuth();
@@ -36,7 +37,13 @@ export default function OnboardingAppFeaturesPage() {
   };
   
   if (authLoading) {
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div></AppShell>;
+    return (
+        <AppShell>
+            <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
+                <SmileyRockLoader text="Loading..." />
+            </div>
+        </AppShell>
+    );
   }
   if (!user && !authLoading) {
      return <AppShell><div className="flex justify-center items-center min-h-screen"><p>Redirecting...</p></div></AppShell>;
@@ -89,7 +96,7 @@ export default function OnboardingAppFeaturesPage() {
                   type="button" 
                   variant="outline" 
                   onClick={handleBackNavigation} 
-                  className="w-full flex-grow"
+                  className="w-full"
                   isLoadingWithBar={isNavigatingBack}
                   loadingBarDirection="rtl"
                   disabled={isSubmitting || authLoading || isNavigatingBack}
@@ -99,7 +106,7 @@ export default function OnboardingAppFeaturesPage() {
                 </Button>
                 <Button 
                   onClick={handleNextStep} 
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground flex-grow"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
                   isLoadingWithBar={isSubmitting}
                   disabled={isSubmitting || authLoading || isNavigatingBack}
                 >
