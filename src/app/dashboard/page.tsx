@@ -19,6 +19,7 @@ import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { LuckyWheelDialog } from '@/components/features/homepage/lucky-wheel-dialog'; 
+import { RockCollectionCard, type Rock } from '@/components/features/dashboard/rock-collection-card';
 
 interface StoredAnalysis {
   id: string;
@@ -44,6 +45,16 @@ interface DailyQuote {
   content: string;
   author: string;
 }
+
+// Mock rock collection data
+const allRocks: Rock[] = [
+    { id: 'first-analysis', name: 'First Analysis Rock', description: 'Analyze your first yoga pose.', collected: true, color: 'hsl(var(--primary))' },
+    { id: 'join-challenge', name: 'Challenge Starter Rock', description: 'Join your first challenge.', collected: true, color: 'hsl(var(--accent))' },
+    { id: 'give-feedback', name: 'Feedback Friend Rock', description: 'Provide feedback on an analysis.', collected: false, color: 'hsl(var(--secondary))' },
+    { id: 'perfect-score', name: 'Perfectionist Pebble', description: 'Achieve a perfect score of 100 on any pose.', collected: false, color: 'hsl(var(--secondary))' },
+    { id: 'five-analyses', name: 'Consistent Yogi Stone', description: 'Complete 5 pose analyses.', collected: false, color: 'hsl(var(--secondary))' },
+];
+
 
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth();
@@ -311,7 +322,10 @@ export default function DashboardPage() {
                 <h2 className="text-2xl md:text-3xl font-semibold text-primary mb-4 md:mb-6 text-center">
                   Welcome to Your Dashboard, {userProfile?.displayName || user.displayName || user.email?.split('@')[0] || 'User'}!
                 </h2>
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+                
+                <RockCollectionCard rocks={allRocks} />
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mt-6">
                   <Card className="shadow-lg lg:col-span-2">
                     <CardHeader>
                       <CardTitle className="flex items-center text-xl md:text-2xl">
