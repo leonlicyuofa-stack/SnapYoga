@@ -1,15 +1,19 @@
+
 'use server';
 
 /**
- * @fileOverview Analyzes a video of a user performing a yoga pose and provides feedback, including a score.
+ * @fileOverview Analyzes a video of a user performing a yoga pose by uploading it to storage
+ * and calling a custom Python analysis service.
  *
  * - analyzeYogaPose - A function that handles the yoga pose analysis process.
  * - AnalyzeYogaPoseInput - The input type for the analyzeYogaPose function.
  * - AnalyzeYogaPoseOutput - The return type for the analyzeYogaPose function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
+import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
+import { v4 as uuidv4 } from 'uuid';
 
 const AnalyzeYogaPoseInputSchema = z.object({
   videoDataUri: z
@@ -17,6 +21,7 @@ const AnalyzeYogaPoseInputSchema = z.object({
     .describe(
       "A video of the user performing a yoga pose, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
+  userId: z.string().describe("The UID of the user uploading the video."),
 });
 export type AnalyzeYogaPoseInput = z.infer<typeof AnalyzeYogaPoseInputSchema>;
 
@@ -24,24 +29,35 @@ const AnalyzeYogaPoseOutputSchema = z.object({
   feedback: z.string().describe('Feedback on the user\'s yoga pose, including areas for improvement.'),
   score: z.number().min(0).max(100).describe('A score from 0 to 100 representing the quality of the yoga pose.'),
   identifiedPose: z.string().describe('The name of the identified yoga pose.'),
+  videoUrl: z.string().describe('The public URL of the video stored in Cloud Storage.')
 });
 export type AnalyzeYogaPoseOutput = z.infer<typeof AnalyzeYogaPoseOutputSchema>;
+
+
+// This is a new helper function to upload the video to Firebase Storage
+async function uploadVideoToStorage(videoDataUri: string, userId: string): Promise<string> {
+    const storage = getStorage();
+    const videoId = uuidv4();
+    // Assumes the data URI is in the format 'data:video/mp4;base64,....'
+    // We extract the mime type for the storage metadata.
+    const mimeType = videoDataUri.match(/data:(.*);base64,/)?.[1] || 'video/mp4';
+    const storageRef = ref(storage, `user-videos/${userId}/${videoId}.${mimeType.split('/')[1]}`);
+    
+    // Upload the base64 string directly.
+    await uploadString(storageRef, videoDataUri, 'data_url', {
+        contentType: mimeType,
+    });
+
+    // Get the public URL for the uploaded file.
+    const downloadUrl = await getDownloadURL(storageRef);
+    return downloadUrl;
+}
+
 
 export async function analyzeYogaPose(input: AnalyzeYogaPoseInput): Promise<AnalyzeYogaPoseOutput> {
   return analyzeYogaPoseFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'analyzeYogaPosePrompt',
-  input: {schema: AnalyzeYogaPoseInputSchema},
-  output: {schema: AnalyzeYogaPoseOutputSchema},
-  prompt: `You are an expert yoga instructor. Analyze the user's yoga pose in the provided video. First, identify the yoga pose being performed.
-Provide feedback on their form, including specific areas for improvement.
-Also, provide a score from 0 to 100 representing the quality of the yoga pose, where 100 is a perfect pose.
-Include the identified pose name in the feedback summary.
-
-Video: {{media url=videoDataUri}}`, // Use url for data URI
-});
 
 const analyzeYogaPoseFlow = ai.defineFlow(
   {
@@ -49,25 +65,36 @@ const analyzeYogaPoseFlow = ai.defineFlow(
     inputSchema: AnalyzeYogaPoseInputSchema,
     outputSchema: AnalyzeYogaPoseOutputSchema,
   },
-  async input => {
-    const {output} = await prompt(input);
-    if (!output) {
-      // Handle cases where the AI might not return the expected output structure
-      // or if there's an error in the generation process.
-      // Returning a default/error structure.
-      console.error("AI did not return the expected output structure for analyzeYogaPoseFlow");
-      return {
-        feedback: "Analysis could not be completed. The AI did not return structured output.",
-        score: 0, // Default score
-        identifiedPose: "Unknown Pose", // Default identified pose
-      };
+  async (input) => {
+    // Step 1: Upload video to Firebase Storage
+    const videoUrl = await uploadVideoToStorage(input.videoDataUri, input.userId);
+
+    // Step 2: Call the external Python service on Cloud Run
+    const analysisServiceUrl = process.env.ANALYSIS_SERVICE_URL;
+    if (!analysisServiceUrl) {
+      throw new Error("ANALYSIS_SERVICE_URL environment variable is not set.");
     }
-    // Ensure score is within range, although Zod schema should handle this at output validation
-    if (typeof output.score !== 'number' || output.score < 0 || output.score > 100) {
-        console.warn(`AI returned an invalid score: ${output.score}. Clamping to 0-100 range.`);
-        output.score = Math.max(0, Math.min(100, Number(output.score) || 0));
+    
+    console.log(`Calling analysis service at: ${analysisServiceUrl} for video: ${videoUrl}`);
+
+    const response = await fetch(analysisServiceUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ videoUrl: videoUrl }),
+    });
+
+    if (!response.ok) {
+        const errorBody = await response.text();
+        console.error("Error from analysis service:", errorBody);
+        throw new Error(`Analysis service failed with status ${response.status}: ${errorBody}`);
     }
 
-    return output;
+    const analysisResult = await response.json();
+    
+    // Step 3: Return the combined result
+    return {
+        ...analysisResult,
+        videoUrl: videoUrl, // Add the video URL to the final output
+    };
   }
 );

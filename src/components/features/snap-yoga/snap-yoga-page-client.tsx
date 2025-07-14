@@ -32,6 +32,15 @@ export function SnapYogaPageClient() {
   const { toast } = useToast();
 
   const handleVideoUpload = async (dataUri: string, fileName: string) => {
+    if (!currentUser) {
+        toast({
+            title: "Authentication Required",
+            description: "You must be logged in to analyze a pose.",
+            variant: "destructive",
+        });
+        return;
+    }
+
     setVideoDataUri(dataUri);
     setVideoFileName(fileName);
     setAnalysisResult(null); 
@@ -42,7 +51,10 @@ export function SnapYogaPageClient() {
     setIsLoadingRecommendations(true); // Start loading recommendations immediately
 
     try {
-      const input: AnalyzeYogaPoseInput = { videoDataUri: dataUri };
+      const input: AnalyzeYogaPoseInput = { 
+          videoDataUri: dataUri,
+          userId: currentUser.uid,
+      };
       const result = await analyzeYogaPose(input);
       setAnalysisResult(result);
       toast({
@@ -51,59 +63,38 @@ export function SnapYogaPageClient() {
       });
 
       if (currentUser && result) {
-        console.log("Attempting to save analysis. User ID:", currentUser.uid, "Result exists:", !!result);
-        if (!currentUser.uid) {
-            console.error("Cannot save analysis: Current user UID is missing.");
+          try {
+            // Now we also save the public URL of the video
+            const analysisDataToSave = {
+              videoFileName: fileName,
+              feedback: result.feedback,
+              score: result.score,
+              identifiedPose: result.identifiedPose,
+              videoUrl: result.videoUrl, // Save the video URL for review
+              createdAt: serverTimestamp(),
+            };
+            const userAnalysesCollectionRef = collection(firestore, 'users', currentUser.uid, 'poseAnalyses');
+            await addDoc(userAnalysesCollectionRef, analysisDataToSave);
+            console.log("Analysis metadata saved successfully to Firestore.");
             toast({
-                title: "Save Error",
-                description: "User authentication data is incomplete. Cannot save analysis.",
-                variant: "destructive",
+              title: "Analysis Saved",
+              description: "Your pose analysis results have been saved to your profile.",
             });
-        } else {
-            try {
-              const analysisDataToSave = {
-                videoFileName: fileName,
-                feedback: result.feedback,
-                score: result.score,
-                identifiedPose: result.identifiedPose,
-                createdAt: serverTimestamp(),
-              };
-              console.log("Saving data to Firestore in path:", `users/${currentUser.uid}/poseAnalyses`, "Data:", analysisDataToSave);
-              const userAnalysesCollectionRef = collection(firestore, 'users', currentUser.uid, 'poseAnalyses');
-              await addDoc(userAnalysesCollectionRef, analysisDataToSave);
-              console.log("Analysis metadata saved successfully to Firestore.");
-              toast({
-                title: "Analysis Saved",
-                description: "Your pose analysis results (excluding video data) have been saved.",
-              });
-            } catch (saveError: any) {
-              console.error("Error saving analysis to Firestore:", saveError);
-              let description = "Could not save your analysis results. Please try again.";
-              if (saveError.message) {
-                description += ` Error: ${saveError.message}`;
-              }
-              if (saveError.code) {
-                description += ` Code: ${saveError.code}`;
-              }
-              toast({
-                title: "Firestore Save Error",
-                description: description,
-                variant: "destructive",
-              });
-            }
-        }
-      } else {
-        console.log("Skipping save analysis. currentUser is falsy or result is falsy.", "currentUser:", currentUser, "result:", result);
+          } catch (saveError: any) {
+            console.error("Error saving analysis to Firestore:", saveError);
+            toast({
+              title: "Firestore Save Error",
+              description: "Could not save your analysis results.",
+              variant: "destructive",
+            });
+          }
       }
 
       // Simulate fetching recommended videos
-      // Forcing recommendation fetch for visibility during dev
       setTimeout(() => {
           setRecommendedVideos([
             { id: 'vid1', title: 'Improve Your Warrior Pose Alignment', embedUrl: 'https://www.youtube.com/embed/tKAs69_N3aE' },
             { id: 'vid2', title: '5 Tips for a Better Downward Dog', embedUrl: 'https://www.youtube.com/embed/jK0arm2R2gU' },
-            { id: 'vid3', title: 'Core Strengthening for Yoga Stability', embedUrl: 'https://www.youtube.com/embed/44mgUselcDU' },
-            { id: 'vid4', title: 'Shoulder Opening Yoga Poses', embedUrl: 'https://www.youtube.com/embed/n3uQ227u1C8' },
           ]);
           setIsLoadingRecommendations(false);
       }, 1500);
@@ -117,7 +108,7 @@ export function SnapYogaPageClient() {
         description: `${errorMessage}${e.code ? ` (Code: ${e.code})` : ''}`,
         variant: "destructive",
       });
-      setAnalysisResult({ feedback: "Analysis failed. Please try again.", score: 0, identifiedPose: "Unknown" });
+      setAnalysisResult({ feedback: "Analysis failed. Please try again.", score: 0, identifiedPose: "Unknown", videoUrl: "" });
       setIsLoadingRecommendations(false); // Also stop loading recommendations on error
     } finally {
       setIsLoadingAnalysis(false);
@@ -182,7 +173,6 @@ export function SnapYogaPageClient() {
         />
       )}
 
-      {/* Render RecommendedVideosCard if analysisResult exists, it will handle its own loading/empty state */}
       {analysisResult && (
         <>
           <Separator className="my-8" />

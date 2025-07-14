@@ -2,7 +2,7 @@
 import { initializeApp, getApps, type FirebaseApp, type FirebaseOptions } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore'; // Import Firestore
-// import { getStorage } from 'firebase/storage';
+import { getStorage, type FirebaseStorage } from 'firebase/storage';
 // import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfigClient: FirebaseOptions = {
@@ -19,29 +19,32 @@ if (process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID) {
   firebaseConfigClient.measurementId = process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID;
 }
 
-let app: FirebaseApp;
-let auth: Auth;
-let firestore: Firestore; // Declare Firestore
-// let storage: Storage;
+let app: FirebaseApp | undefined;
+let auth: Auth | undefined;
+let firestore: Firestore | undefined;
+let storage: FirebaseStorage | undefined;
 // let analytics: Analytics;
 
-if (getApps().length === 0) {
-  app = initializeApp(firebaseConfigClient);
-  auth = getAuth(app);
-  firestore = getFirestore(app); // Initialize Firestore
-  // storage = getStorage(app);
-  // if (typeof window !== 'undefined' && firebaseConfigClient.measurementId) {
-  //   analytics = getAnalytics(app);
-  // }
+// Check if required config values are present before initializing
+if (firebaseConfigClient.apiKey && firebaseConfigClient.projectId) {
+  if (getApps().length === 0) {
+    try {
+      app = initializeApp(firebaseConfigClient);
+      auth = getAuth(app);
+      firestore = getFirestore(app);
+      storage = getStorage(app);
+    } catch (e) {
+      console.error("Failed to initialize Firebase", e);
+    }
+  } else {
+    app = getApps()[0];
+    auth = getAuth(app);
+    firestore = getFirestore(app);
+    storage = getStorage(app);
+  }
 } else {
-  app = getApps()[0];
-  auth = getAuth(app);
-  firestore = getFirestore(app); // Initialize Firestore for existing app instance
-  // storage = getFirestore(app); // This was a typo, should be getStorage
-  // storage = getStorage(app);
-  // if (typeof window !== 'undefined' && firebaseConfigClient.measurementId) {
-  //   analytics = getAnalytics(app);
-  // }
+    console.warn("Firebase environment variables are not set. Firebase features will be disabled.");
 }
 
-export { app, auth, firestore /*, storage, analytics */ };
+
+export { app, auth, firestore, storage };

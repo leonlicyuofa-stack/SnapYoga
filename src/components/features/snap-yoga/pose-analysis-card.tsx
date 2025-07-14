@@ -2,16 +2,16 @@
 "use client";
 
 import Image from 'next/image';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"; // Keep the original import
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import type { AnalyzeYogaPoseOutput } from '@/ai/flows/analyze-yoga-pose';
-import { Button } from "@/components/ui/button"; // Import Button
+import { Button } from "@/components/ui/button";
 import { Activity, MessageSquareText, VideoOff, Award } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from "@/components/ui/progress";
 
 
 interface PoseAnalysisCardProps {
-  videoDataUri: string | null;
+  videoDataUri: string | null; // Can be a data URI or a public URL from storage
   videoFileName: string | null;
   analysis: AnalyzeYogaPoseOutput | null;
   isLoading: boolean;
@@ -21,6 +21,11 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
   const score = analysis?.score ?? null;
   const identifiedPose = analysis?.identifiedPose ?? null;
 
+  // Determine if the video source is a data URI or a URL
+  // A simple check for "data:video" vs "https:"
+  const isDataUri = videoDataUri?.startsWith('data:video');
+  const videoSrc = videoDataUri;
+
   return (
     <Card className="w-full shadow-lg">
       <CardHeader>
@@ -29,20 +34,20 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
           Pose Analysis
         </CardTitle>
         <CardDescription>
-          {videoDataUri ? `Showing analysis for ${videoFileName || 'your video'}.` : "Upload a video to see your pose analysis here."}
+          {videoSrc ? `Showing analysis for ${videoFileName || 'your video'}.` : "Upload a video to see your pose analysis here."}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="aspect-video w-full bg-muted rounded-md overflow-hidden flex items-center justify-center border border-dashed">
-          {isLoading && !videoDataUri && (
+          {isLoading && !videoSrc && (
             <div className="flex flex-col items-center text-muted-foreground p-4">
               <Skeleton className="h-12 w-12 rounded-full bg-gray-300 mb-2" />
               <Skeleton className="h-4 w-3/4 bg-gray-300 mb-1" />
               <Skeleton className="h-4 w-1/2 bg-gray-300" />
             </div>
           )}
-          {!isLoading && videoDataUri ? (
-            <video src={videoDataUri} controls className="w-full h-full object-contain" aria-label={videoFileName || "Uploaded yoga pose video"} />
+          {!isLoading && videoSrc ? (
+            <video key={videoSrc} src={videoSrc} controls className="w-full h-full object-contain" aria-label={videoFileName || "Uploaded yoga pose video"} />
           ) : !isLoading && (
             <div className="flex flex-col items-center text-muted-foreground p-8 text-center">
               <VideoOff className="h-16 w-16 mb-4 text-muted-foreground" />
@@ -127,7 +132,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
           </>
         )}
 
-        {!isLoading && !analysis && videoDataUri && (
+        {!isLoading && !analysis && videoSrc && (
            <div className="text-center text-muted-foreground p-4">
             <p>Analysis in progress or failed to retrieve full details. Waiting for feedback display.</p>
           </div>

@@ -19,7 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 
-// Redefined here for simplicity. Ideally, this would be in a shared types file.
+
 interface StoredAnalysisData {
   id: string;
   videoFileName?: string;
@@ -27,6 +27,7 @@ interface StoredAnalysisData {
   score: number;
   identifiedPose: string;
   createdAt: Timestamp;
+  videoUrl?: string; // Add the videoUrl field
 }
 
 export default function PastAnalysisPage() {
@@ -46,12 +47,11 @@ export default function PastAnalysisPage() {
 
 
   useEffect(() => {
-    if (authLoading) return; // Wait for auth state to resolve
+    if (authLoading) return;
 
     if (!currentUser) {
       setError("You must be logged in to view analysis details.");
       setLoadingData(false);
-      // Optionally redirect: router.push('/auth/signin');
       return;
     }
 
@@ -65,13 +65,14 @@ export default function PastAnalysisPage() {
           if (docSnap.exists()) {
             const data = { id: docSnap.id, ...docSnap.data() } as StoredAnalysisData;
             setAnalysisDetail(data);
+            // The card now expects videoUrl. We'll pass it if it exists.
             setAnalysisForCard({
               feedback: data.feedback,
               score: data.score,
               identifiedPose: data.identifiedPose,
+              videoUrl: data.videoUrl || "", // Pass the stored URL
             });
-            // Simulate fetching recommended videos
-            // In a real app, you might fetch this based on data.identifiedPose
+            
             setLoadingRecommendations(true);
             setTimeout(() => {
               setRecommendedVideos([
@@ -126,7 +127,7 @@ export default function PastAnalysisPage() {
     return (
       <AppShell>
         <div className="container mx-auto px-4 py-12">
-          <Skeleton className="h-10 w-1/4 mb-8" /> {/* Back button skeleton */}
+          <Skeleton className="h-10 w-1/4 mb-8" />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <Card>
                 <CardHeader><Skeleton className="h-8 w-3/4" /><Skeleton className="h-4 w-1/2 mt-2" /></CardHeader>
@@ -208,12 +209,12 @@ export default function PastAnalysisPage() {
         </Card>
 
         <div className="grid grid-cols-1 gap-8 items-start">
-          {/* We pass null for videoDataUri as we are not replaying the video */}
+          {/* We now pass the stored videoUrl instead of the data URI */}
           <PoseAnalysisCard
-            videoDataUri={null}
+            videoDataUri={analysisDetail.videoUrl || null}
             videoFileName={analysisDetail.videoFileName || "Stored Analysis"}
             analysis={analysisForCard}
-            isLoading={false} // Data is already loaded or not applicable
+            isLoading={false}
           />
         </div>
         
