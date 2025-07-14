@@ -71,7 +71,7 @@ const formatAuthError = (error: AuthError): string => {
 };
 
 export const createUserProfileDocument = async (user: User, additionalData: DocumentData = {}) => {
-  if (!user) return;
+  if (!user || !firestore) return;
 
   const userRef = doc(firestore, `users/${user.uid}`);
   try {
@@ -113,7 +113,7 @@ export const createUserProfileDocument = async (user: User, additionalData: Docu
 
 
 const recordDailyLogin = async (userId: string) => {
-  if (!userId) return;
+  if (!userId || !firestore) return;
   const todayStr = format(new Date(), 'yyyy-MM-dd');
   const loginDocRef = doc(firestore, `users/${userId}/dailyLogins/${todayStr}`);
   try {
@@ -132,6 +132,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
 
   React.useEffect(() => {
+    // Only subscribe if auth is initialized
+    if (!auth) {
+        setLoading(false);
+        return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       try {
         setUser(currentUser);
@@ -159,6 +165,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const socialSignIn = async (provider: FirebaseAuthProvider, providerName: string) => {
+    if (!auth || !firestore) {
+      handleAuthError({}, "Firebase is not configured. Please add your credentials.");
+      return;
+    }
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, provider);
@@ -196,6 +206,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signUpWithEmail = async (email: string, pass: string) => {
+    if (!auth) {
+      handleAuthError({}, "Firebase is not configured. Please add your credentials.");
+      return;
+    }
     setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
@@ -214,6 +228,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signInWithEmail = async (email: string, pass: string) => {
+    if (!auth || !firestore) {
+      handleAuthError({}, "Firebase is not configured. Please add your credentials.");
+      return;
+    }
     setLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, pass);
@@ -254,6 +272,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOutUser = async () => {
+    if (!auth) {
+      handleAuthError({}, "Firebase is not configured. Please add your credentials.");
+      return;
+    }
     setLoading(true);
     try {
       await signOut(auth);
@@ -268,8 +290,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateUserPassword = async (currentPassword: string, newPassword: string): Promise<boolean> => {
-    if (!user || !user.email) {
-      toast({ title: "Error", description: "No authenticated user found or email is missing.", variant: "destructive" });
+    if (!user || !user.email || !auth) {
+      toast({ title: "Error", description: "No authenticated user found or Firebase is not configured.", variant: "destructive" });
       return false;
     }
     setLoading(true);
