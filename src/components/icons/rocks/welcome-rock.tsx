@@ -14,5 +14,3 @@ export function WelcomeRock(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
-    
