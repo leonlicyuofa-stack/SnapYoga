@@ -5,7 +5,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Video, Users, Star } from 'lucide-react';
+import { ArrowLeft, Video, Users, Star, CalendarClock } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
@@ -46,8 +46,8 @@ const weeklyTutorials = [
 
 
 const friendsInChallenge = [
-    { id: 'f1', name: 'Elena', avatarUrl: 'https://placehold.co/100x100.png', avatarHint: 'woman portrait' },
-    { id: 'f2', name: 'Marcus', avatarUrl: 'https://placehold.co/100x100.png', avatarHint: 'man portrait' },
+    { id: 'f1', name: 'Elena', avatarUrl: 'https://placehold.co/100x100.png', avatarHint: 'woman portrait', daysIn: 12 },
+    { id: 'f2', name: 'Marcus', avatarUrl: 'https://placehold.co/100x100.png', avatarHint: 'man portrait', daysIn: 8 },
 ];
 
 export default function HeadstandChallengePage() {
@@ -121,8 +121,12 @@ export default function HeadstandChallengePage() {
                                     <CardHeader className="p-2 pb-0">
                                         <CardTitle className="text-lg">{friend.name}</CardTitle>
                                     </CardHeader>
-                                    <CardContent className="p-2 pt-1">
+                                    <CardContent className="p-2 pt-1 flex flex-col items-center gap-2">
                                         <Badge variant="secondary">In Challenge</Badge>
+                                        <div className="flex items-center text-xs text-muted-foreground">
+                                            <CalendarClock className="mr-1.5 h-3.5 w-3.5" />
+                                            Day {friend.daysIn}
+                                        </div>
                                     </CardContent>
                                 </Card>
                             ))}
@@ -178,3 +182,5 @@ export default function HeadstandChallengePage() {
         </AppShell>
     );
 }
+
+    
