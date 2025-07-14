@@ -48,6 +48,12 @@ export default function DrawResultPage() {
         description: "You're all set to start your yoga journey. Let's explore your dashboard!",
         duration: 5000,
       });
+
+      // Set a flag to trigger the reward dialog on the dashboard
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('justCompletedOnboarding', 'true');
+      }
+
       router.push('/dashboard');
     } catch (e) {
       console.error("Error finalizing onboarding:", e);

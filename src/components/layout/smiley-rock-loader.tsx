@@ -1,5 +1,5 @@
 
-import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
+import { WelcomeRock } from '@/components/icons/rocks/welcome-rock';
 import { cn } from '@/lib/utils';
 
 interface SmileyRockLoaderProps {
@@ -11,15 +11,15 @@ export function SmileyRockLoader({ className, text }: SmileyRockLoaderProps) {
   return (
     <div className={cn("flex flex-col items-center justify-center gap-4", className)}>
       <div className="flex items-end justify-center gap-2 h-12">
-        <SmileyPebbleIcon
+        <WelcomeRock
           className="h-8 w-8 text-primary animate-rock-jump"
           style={{ animationDelay: '0s' }}
         />
-        <SmileyPebbleIcon
+        <WelcomeRock
           className="h-8 w-8 text-primary animate-rock-jump"
           style={{ animationDelay: '0.2s' }}
         />
-        <SmileyPebbleIcon
+        <WelcomeRock
           className="h-8 w-8 text-primary animate-rock-jump"
           style={{ animationDelay: '0.4s' }}
         />
@@ -28,3 +28,5 @@ export function SmileyRockLoader({ className, text }: SmileyRockLoaderProps) {
     </div>
   );
 }
+
+    

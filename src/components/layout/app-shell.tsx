@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from 'next/navigation'; 
+import { cn } from '@/lib/utils';
 
 
 interface AppShellProps {
@@ -51,9 +52,6 @@ export function AppShell({ children }: AppShellProps) {
       pathname === path ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground"
     );
 
-  // Determine the correct "Home" link based on auth and onboarding status
-  // The logo always links to `/dashboard` for logged-in users, or `/` (welcome) for guests.
-  // The "Home" button in nav is more contextual.
   const homeLinkPath = user ? "/dashboard" : "/";
 
   return (
@@ -159,4 +157,4 @@ export function AppShell({ children }: AppShellProps) {
   );
 }
 
-import { cn } from '@/lib/utils';
+    

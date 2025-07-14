@@ -5,96 +5,96 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%; /* Off-white */
-    --foreground: 240 10% 3.9%; /* Charcoal Black */
-    
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    
-    --primary: 0 84.2% 60.2%;
-    --primary-foreground: 0 0% 100%;
+    --background: 0 0% 100%; /* White */
+    --foreground: 224 71.4% 4.1%; /* Dark Blue */
 
-    --secondary: 0 0% 94%; /* Light Grey */
-    --secondary-foreground: 240 5.9% 10%; /* Dark Grey */
-    
-    --muted: 0 0% 90%; /* Muted Grey */
-    --muted-foreground: 240 3.8% 46.1%;
-    
-    --accent: 0 0% 96.1%; /* Very Light Grey for accents */
-    --accent-foreground: 240 5.9% 10%; /* Dark Grey for accent text */
-    
-    --destructive: 0 84.2% 60.2%; /* Same as primary red */
-    --destructive-foreground: 0 0% 100%;
-    
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 84.2% 60.2%; /* Red for rings */
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+
+    --primary: 0 84.2% 60.2%; /* Lilo's Red */
+    --primary-foreground: 355.7 100% 97.3%;
+
+    --secondary: 214.3 31.8% 91.4%; /* Light Sandy Beige */
+    --secondary-foreground: 224 71.4% 4.1%;
+
+    --muted: 214.3 31.8% 91.4%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 210 40% 96.1%; /* Stitch Blue */
+    --accent-foreground: 224 71.4% 4.1%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 355.7 100% 97.3%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 224 71.4% 4.1%;
     
     --chart-1: 0 84% 60%;
-    --chart-2: 0 0% 60%;
-    --chart-3: 0 70% 70%;
-    --chart-4: 0 0% 75%;
-    --chart-5: 0 50% 80%;
+    --chart-2: 210 40% 50%;
+    --chart-3: 40 90% 60%;
+    --chart-4: 140 70% 40%;
+    --chart-5: 300 80% 60%;
     --radius: 0.75rem;
 
     /* Sidebar variables */
-    --sidebar-background: 240 10% 10%; /* Dark Charcoal */
-    --sidebar-foreground: 0 0% 95%; /* Light Grey */
-    --sidebar-primary: 0 84.2% 60.2%; /* Red */
-    --sidebar-primary-foreground: 0 0% 100%; /* White */
-    --sidebar-accent: 0 84.2% 55%; /* Slightly darker red for accent */
-    --sidebar-accent-foreground: 0 0% 100%; /* White */
-    --sidebar-border: 240 10% 20%;
+    --sidebar-background: 222.2 84% 4.9%; /* Dark Blue */
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 0 84.2% 60.2%; /* Lilo's Red */
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96.1%; /* Stitch Blue */
+    --sidebar-accent-foreground: 224 71.4% 4.1%;
+    --sidebar-border: 214.3 31.8% 15.1%;
     --sidebar-ring: 0 84.2% 60.2%;
   }
 
   .dark {
-    --background: 240 10% 3.9%; /* Charcoal Black */
-    --foreground: 0 0% 98%; /* Off-white */
-    
-    --card: 240 10% 8%; /* Darker card background */
-    --card-foreground: 0 0% 98%;
-    
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --background: 222.2 84% 4.9%; /* Dark Blue */
+    --foreground: 210 40% 98%;
 
-    --primary: 0 75% 65%; /* Brighter Red for dark mode */
-    --primary-foreground: 0 0% 98%; /* Off-white text */
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
 
-    --secondary: 240 3.7% 15.9%; /* Darker grey */
-    --secondary-foreground: 0 0% 98%; 
-    
-    --muted: 240 3.7% 20%;
-    --muted-foreground: 240 5% 64.9%;
-    
-    --accent: 240 3.7% 15.9%; /* Dark grey for accent */
-    --accent-foreground: 0 0% 98%; /* White text on accent */
-    
-    --destructive: 0 70% 50%; 
-    --destructive-foreground: 0 0% 98%;
-    
-    --border: 240 3.7% 15.9%; 
-    --input: 240 3.7% 15.9%;
-    --ring: 0 75% 65%; /* Brighter Red */
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
 
-    --chart-1: 0 75% 65%;
-    --chart-2: 0 0% 70%;
-    --chart-3: 0 70% 75%;
-    --chart-4: 0 0% 80%;
-    --chart-5: 0 50% 85%;
+    --primary: 0 72.2% 50.6%; /* Brighter Red */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    
+    --chart-1: 0 72% 51%;
+    --chart-2: 210 40% 50%;
+    --chart-3: 40 90% 60%;
+    --chart-4: 140 70% 40%;
+    --chart-5: 300 80% 60%;
 
     /* Sidebar variables for dark mode */
-    --sidebar-background: 240 10% 8%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 0 75% 65%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 0 75% 60%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 10% 15%;
-    --sidebar-ring: 0 75% 65%;
+    --sidebar-background: 222.2 84% 4.9%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 0 72.2% 50.6%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 217.2 32.6% 17.5%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217.2 32.6% 17.5%;
+    --sidebar-ring: 212.7 26.8% 83.9%;
   }
 }
 
@@ -145,3 +145,5 @@
     transform: translateY(-20px);
   }
 }
+
+    

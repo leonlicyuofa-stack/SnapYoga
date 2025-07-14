@@ -6,7 +6,6 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Sparkles, ArrowRight, Users, ListChecks, CalendarDays, Trophy, Eye, Copy, MessageSquare, Share2, PlayCircle, UserPlus, BarChart3, Activity, ChevronRight, AlertCircle } from 'lucide-react';
-import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
 import type { Timestamp, DocumentData } from 'firebase/firestore';
@@ -20,6 +19,9 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { LuckyWheelDialog } from '@/components/features/homepage/lucky-wheel-dialog'; 
 import { RockCollectionCard, type Rock } from '@/components/features/dashboard/rock-collection-card';
+import { RewardDialog } from '@/components/features/dashboard/reward-dialog';
+import { allRocks } from '@/components/features/dashboard/rock-data';
+import { WelcomeRock } from '@/components/icons/rocks/welcome-rock';
 
 interface StoredAnalysis {
   id: string;
@@ -46,16 +48,6 @@ interface DailyQuote {
   author: string;
 }
 
-// Mock rock collection data
-const allRocks: Rock[] = [
-    { id: 'first-analysis', name: 'First Analysis Rock', description: 'Analyze your first yoga pose.', collected: true, color: 'hsl(var(--primary))' },
-    { id: 'join-challenge', name: 'Challenge Starter Rock', description: 'Join your first challenge.', collected: true, color: 'hsl(var(--accent))' },
-    { id: 'give-feedback', name: 'Feedback Friend Rock', description: 'Provide feedback on an analysis.', collected: false, color: 'hsl(var(--secondary))' },
-    { id: 'perfect-score', name: 'Perfectionist Pebble', description: 'Achieve a perfect score of 100 on any pose.', collected: false, color: 'hsl(var(--secondary))' },
-    { id: 'five-analyses', name: 'Consistent Yogi Stone', description: 'Complete 5 pose analyses.', collected: false, color: 'hsl(var(--secondary))' },
-];
-
-
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth();
   const [analyses, setAnalyses] = useState<StoredAnalysis[]>([]);
@@ -72,6 +64,8 @@ export default function DashboardPage() {
   const [quote, setQuote] = useState<DailyQuote | null>(null);
   const [loadingQuote, setLoadingQuote] = useState(true);
   const [showLuckyWheelDialog, setShowLuckyWheelDialog] = useState(false);
+  const [showRewardDialog, setShowRewardDialog] = useState(false);
+  const [rewardedRock, setRewardedRock] = useState<Rock | null>(null);
 
 
   useEffect(() => {
@@ -80,13 +74,11 @@ export default function DashboardPage() {
       try {
         const response = await fetch('https://api.quotable.io/random?tags=wisdom|inspiration|life|philosophy&maxLength=150');
         if (!response.ok) {
-          // If API fails, we'll throw and the catch block will handle it
           throw new Error('Quotable API failed');
         }
         const data = await response.json();
         setQuote({ content: data.content, author: data.author });
       } catch (err) {
-        // Gracefully fallback to a default quote without logging an error
         setQuote({ 
             content: "The body benefits from movement, and the mind benefits from stillness.", 
             author: "Sakyong Mipham" 
@@ -107,6 +99,16 @@ export default function DashboardPage() {
       if (!authLoading && !hasSeenWheel) { 
         setShowLuckyWheelDialog(true);
         sessionStorage.setItem('seenLuckyWheelSnapYoga', 'true');
+      }
+
+      // Check if the user just completed onboarding to show the reward
+      if (sessionStorage.getItem('justCompletedOnboarding') === 'true') {
+        const welcomeRock = allRocks.find(r => r.id === 'welcome');
+        if (welcomeRock) {
+            setRewardedRock(welcomeRock);
+            setShowRewardDialog(true);
+        }
+        sessionStorage.removeItem('justCompletedOnboarding');
       }
     }
 
@@ -292,9 +294,16 @@ export default function DashboardPage() {
   return (
     <AppShell>
       <LuckyWheelDialog isOpen={showLuckyWheelDialog} onClose={() => setShowLuckyWheelDialog(false)} />
+      {rewardedRock && (
+        <RewardDialog 
+          isOpen={showRewardDialog} 
+          onClose={() => setShowRewardDialog(false)} 
+          rock={rewardedRock} 
+        />
+      )}
       <div className="flex flex-col items-center w-full">
         {user && !authLoading && (
-          <div className="w-full bg-primary/5 p-4 md:p-6 rounded-lg shadow-md border border-primary/20 mb-8 md:mb-12">
+          <div className="w-full bg-red-500/5 p-4 md:p-6 rounded-lg shadow-md border border-red-500/20 mb-8 md:mb-12">
             {loadingUserProfile && !userProfile ? (
               <div className="text-center py-8">
                 <Skeleton className="h-10 w-3/4 mb-4 mx-auto" />
@@ -501,7 +510,7 @@ export default function DashboardPage() {
             <Card className="w-full shadow-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-background to-secondary/10 border-primary/20 mb-8 md:mb-12">
               <CardHeader className="text-center p-6 md:p-8">
                   <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-primary flex items-center justify-center">
-                    <SmileyPebbleIcon className="mr-3 h-10 w-10 md:h-12 md:w-12" />
+                    <WelcomeRock className="mr-3 h-10 w-10 md:h-12 md:w-12" />
                     SnapYoga
                   </h1>
                   <p className="mt-3 text-lg text-muted-foreground max-w-xl mx-auto">
@@ -581,3 +590,5 @@ export default function DashboardPage() {
     </AppShell>
   );
 }
+
+    

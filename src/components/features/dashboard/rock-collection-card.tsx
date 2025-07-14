@@ -3,22 +3,17 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { SmileyPebbleIcon } from "@/components/icons/smiley-pebble-icon";
 import { Gem } from 'lucide-react';
-
-export interface Rock {
-  id: string;
-  name: string;
-  description: string;
-  collected: boolean;
-  color: string;
-}
+import type { Rock } from './rock-data';
 
 interface RockCollectionCardProps {
   rocks: Rock[];
 }
 
 export function RockCollectionCard({ rocks }: RockCollectionCardProps) {
+  // Simulate which rocks are collected for demo purposes
+  const collectedRockIds = ['welcome', 'first-analysis', 'join-challenge'];
+
   return (
     <Card className="shadow-lg mb-6">
       <CardHeader>
@@ -33,32 +28,37 @@ export function RockCollectionCard({ rocks }: RockCollectionCardProps) {
       <CardContent>
         <TooltipProvider>
           <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-            {rocks.map(rock => (
-              <Tooltip key={rock.id}>
-                <TooltipTrigger asChild>
-                  <div className="flex flex-col items-center gap-1 w-24">
-                    <div
-                      className="p-2 rounded-full transition-all duration-300"
-                      style={{
-                        backgroundColor: rock.collected ? `${rock.color}1A` : 'hsl(var(--muted))',
-                        border: `2px solid ${rock.collected ? rock.color : 'hsl(var(--border))'}`
-                      }}
-                    >
-                      <SmileyPebbleIcon
-                        className="h-12 w-12"
-                        style={{ color: rock.collected ? rock.color : 'hsl(var(--muted-foreground))', opacity: rock.collected ? 1 : 0.5 }}
-                      />
+            {rocks.map(rock => {
+              const isCollected = collectedRockIds.includes(rock.id);
+              const RockIcon = rock.icon;
+              return (
+                <Tooltip key={rock.id}>
+                  <TooltipTrigger asChild>
+                    <div className="flex flex-col items-center gap-1 w-24">
+                      <div
+                        className="p-2 rounded-full transition-all duration-300"
+                        style={{
+                          backgroundColor: isCollected ? `${rock.color}33` : 'hsl(var(--muted))', // Using hex alpha for broader compatibility
+                          border: `2px solid ${isCollected ? rock.color : 'hsl(var(--border))'}`
+                        }}
+                      >
+                        <RockIcon
+                          className="h-12 w-12"
+                          style={{ opacity: isCollected ? 1 : 0.4 }}
+                        />
+                      </div>
+                      <p className={`text-xs text-center truncate w-full ${isCollected ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>
+                        {rock.name}
+                      </p>
                     </div>
-                    <p className={`text-xs text-center truncate w-full ${rock.collected ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>
-                      {rock.name}
-                    </p>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="font-semibold">{rock.name}</p>
-                  <p className="text-sm text-muted-foreground">{rock.description}</p>
-                </TooltipContent>
-              </Tooltip>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="font-semibold">{rock.name}</p>
+                    <p className="text-sm text-muted-foreground">{rock.description}</p>
+                    {!isCollected && <p className="text-xs text-primary/80 italic mt-1">Keep exploring to unlock!</p>}
+                  </TooltipContent>
+                </Tooltip>
+              </div>
             ))}
           </div>
         </TooltipProvider>
@@ -66,3 +66,5 @@ export function RockCollectionCard({ rocks }: RockCollectionCardProps) {
     </Card>
   );
 }
+
+    
