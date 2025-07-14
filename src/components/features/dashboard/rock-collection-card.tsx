@@ -28,7 +28,7 @@ export function RockCollectionCard({ rocks }: RockCollectionCardProps) {
       <CardContent>
         <TooltipProvider>
           <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-            {rocks.map(rock => {
+            {rocks.map((rock) => {
               const isCollected = collectedRockIds.includes(rock.id);
               const RockIcon = rock.icon;
               return (
@@ -38,7 +38,7 @@ export function RockCollectionCard({ rocks }: RockCollectionCardProps) {
                       <div
                         className="p-2 rounded-full transition-all duration-300"
                         style={{
-                          backgroundColor: isCollected ? `${rock.color}33` : 'hsl(var(--muted))', // Using hex alpha for broader compatibility
+                          backgroundColor: isCollected ? `${rock.color}33` : 'hsl(var(--muted))',
                           border: `2px solid ${isCollected ? rock.color : 'hsl(var(--border))'}`
                         }}
                       >
@@ -58,13 +58,11 @@ export function RockCollectionCard({ rocks }: RockCollectionCardProps) {
                     {!isCollected && <p className="text-xs text-primary/80 italic mt-1">Keep exploring to unlock!</p>}
                   </TooltipContent>
                 </Tooltip>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </TooltipProvider>
       </CardContent>
     </Card>
   );
 }
-
-    
