@@ -1,4 +1,3 @@
-
 import { WelcomeRock } from "./rocks/welcome-rock";
 
 export function SnapYogaLogo() {
@@ -9,5 +8,3 @@ export function SnapYogaLogo() {
     </div>
   );
 }
-
-    
