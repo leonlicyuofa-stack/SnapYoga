@@ -6,7 +6,7 @@ import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogIn, LogOut, UserCircle, Loader2, Home, Settings, CalendarDays, Trophy } from 'lucide-react';
+import { LogIn, LogOut, UserCircle, Loader2, Home, Settings, CalendarDays, Trophy, Languages } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +18,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from 'next/navigation'; 
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 
 interface AppShellProps {
@@ -27,6 +28,7 @@ interface AppShellProps {
 export function AppShell({ children }: AppShellProps) {
   const { user, signOutUser, loading } = useAuth();
   const pathname = usePathname(); 
+  const { toast } = useToast();
 
   const getInitials = (email?: string | null, displayName?: string | null) => {
     if (displayName) {
@@ -53,6 +55,13 @@ export function AppShell({ children }: AppShellProps) {
     );
 
   const homeLinkPath = user ? "/dashboard" : "/";
+  
+  const handleLanguageSwitch = () => {
+    toast({
+        title: "Language Switched (Simulated)",
+        description: "App language has been set to Bahasa Indonesia. Full translation coming soon!",
+    });
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-background selection:bg-primary/20 selection:text-primary">
@@ -86,6 +95,9 @@ export function AppShell({ children }: AppShellProps) {
               </>
             )}
             <div className="flex-grow sm:hidden"></div> 
+             <Button variant="outline" size="icon" onClick={handleLanguageSwitch} className="h-9 w-9" aria-label="Switch to Bahasa Indonesia">
+               🇮🇩
+            </Button>
             
             {loading ? (
               <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -116,6 +128,12 @@ export function AppShell({ children }: AppShellProps) {
                       <Settings className="mr-2 h-4 w-4" />
                       <span>Profile</span>
                     </Link>
+                  </DropdownMenuItem>
+                   <DropdownMenuItem asChild className="cursor-pointer">
+                     <a onClick={handleLanguageSwitch}>
+                       <Languages className="mr-2 h-4 w-4" />
+                       <span>Bahasa Indonesia</span>
+                    </a>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={signOutUser} className="cursor-pointer">
@@ -156,5 +174,3 @@ export function AppShell({ children }: AppShellProps) {
     </div>
   );
 }
-
-    

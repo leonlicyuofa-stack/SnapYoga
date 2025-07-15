@@ -1,6 +1,7 @@
 
 "use client";
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
@@ -11,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { MoveUpRight } from 'lucide-react';
 import Image from 'next/image';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { WelcomeRock } from '@/components/icons/rocks/welcome-rock';
 
 interface UserProfileData extends DocumentData {
   uid?: string;
@@ -55,12 +57,17 @@ export default function WelcomePageAsRoot() {
 
     setIsProcessingClick(true);
     
+    // Set a flag that can be used by the destination page for animations
+    if (typeof window !== 'undefined') {
+        sessionStorage.setItem('snapYogaPebbleIncoming', 'true');
+    }
+
     setTimeout(() => {
       if (user) {
         if (userProfile && userProfile.onboardingCompleted) {
           router.push('/dashboard');
         } else {
-          router.push('/onboarding/gender-profile'); 
+          router.push('/welcome'); 
         }
       } else {
         router.push('/auth/signup');
@@ -71,40 +78,51 @@ export default function WelcomePageAsRoot() {
   const isLoading = authLoading || loadingProfile || isProcessingClick;
 
   return (
-    <div className="relative flex min-h-screen flex-col items-stretch justify-start overflow-hidden">
+    <div className="relative flex min-h-screen flex-col items-stretch justify-between overflow-hidden">
       {/* Background Image and Overlay */}
-      <Image
+      <div className="absolute inset-0 bg-gradient-to-br from-teal-500/20 via-orange-500/20 to-green-500/20 opacity-30"></div>
+       <Image
         src="https://i.imgur.com/ncJiSEV.png"
-        alt="Woman doing yoga in a brightly lit room"
-        data-ai-hint="yoga pose room"
+        alt="Woman doing yoga in a brightly lit room with tropical plants"
+        data-ai-hint="yoga pose room plants"
         fill
-        className="-z-10 object-cover"
+        className="-z-10 object-cover opacity-80"
         priority
       />
-      <div className="absolute inset-0 bg-black/40 -z-10" />
+      <div className="absolute inset-0 bg-background/50 -z-10" />
 
       {/* Top Left Content */}
-      <div className="relative z-10 p-8 sm:p-10 md:p-12 text-left">
-        <p className="text-2xl text-stone-200 uppercase tracking-wider font-medium sm:text-3xl md:text-4xl">
-          Welcome to
-        </p>
-        <div className="flex items-center my-1 sm:my-2">
-          <h1 className="text-5xl font-extrabold text-white leading-tight sm:text-6xl md:text-7xl">
-            SnapYoga
-          </h1>
+      <header className="relative z-10 p-6 sm:p-10 flex justify-between items-center">
+        <div className="flex items-center gap-2">
+            <WelcomeRock className="h-10 w-10 text-primary" />
+            <h1 className="text-3xl font-extrabold text-foreground leading-tight">
+                SnapYoga
+            </h1>
         </div>
-        <p className="text-lg text-stone-300 max-w-xs sm:max-w-sm md:max-w-md sm:text-xl md:text-2xl">
-          Your AI companion<br />for perfecting yoga poses<br />and tracking progress.
+        <Button variant="ghost" asChild>
+            <Link href="/auth/signin">
+                Sign In
+            </Link>
+        </Button>
+      </header>
+
+      {/* Bottom Left Content */}
+      <main className="relative z-10 p-6 sm:p-10">
+        <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground max-w-lg leading-tight">
+          Find Your Flow,<br />Perfect Your Form.
+        </h2>
+        <p className="mt-4 text-lg text-foreground/80 max-w-md sm:text-xl">
+          Your AI companion for personalized yoga feedback, progress tracking, and mindful practice.
         </p>
         <Button
           onClick={handleGetStarted}
-          className="mt-6 rounded-full w-14 h-14 bg-white/90 hover:bg-white text-primary p-0 shadow-lg sm:mt-8 sm:w-16 sm:h-16 flex items-center justify-center"
+          className="mt-8 rounded-full h-16 w-auto px-8 bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-semibold shadow-lg transition-transform hover:scale-105"
           aria-label="Get Started"
           disabled={isLoading}
         >
-          {isLoading ? <SmileyRockLoader /> : <MoveUpRight className="h-6 w-6 sm:h-7 sm:w-7" />}
+          {isLoading ? <SmileyRockLoader /> : <><span>Get Started</span><MoveUpRight className="h-5 w-5 ml-2" /></>}
         </Button>
-      </div>
+      </main>
     </div>
   );
 }

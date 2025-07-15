@@ -12,7 +12,7 @@ export default function WelcomePage() {
   const router = useRouter();
 
   const handleGetStarted = () => {
-    router.push('/auth/onboarding/details');
+    router.push('/onboarding/gender-profile');
   };
 
   return (
@@ -33,9 +33,7 @@ export default function WelcomePage() {
           </CardHeader>
           <CardContent className="p-6 md:p-8 space-y-6">
             <p className="text-foreground/80 leading-relaxed">
-              We're thrilled to have you join our community! SnapYoga uses AI to help you
-              analyze your yoga poses, track your progress, and achieve your wellness goals.
-              Let's get you set up.
+              We're thrilled to have you join our community! To get started, we'll ask a few quick questions to personalize your experience.
             </p>
             <Button
               onClick={handleGetStarted}

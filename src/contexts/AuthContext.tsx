@@ -17,7 +17,7 @@ import {
   EmailAuthProvider,
   reauthenticateWithCredential,
   updatePassword,
-  sendEmailVerification, // Added
+  sendEmailVerification,
 } from 'firebase/auth';
 import { auth, firestore } from '@/lib/firebase/clientApp';
 import { doc, setDoc, getDoc, serverTimestamp, type DocumentData } from 'firebase/firestore';
@@ -177,12 +177,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const result = await signInWithPopup(auth, provider);
       await recordDailyLogin(result.user.uid);
-      // Social sign-ins usually have verified emails.
       await createUserProfileDocument(result.user, { 
         displayName: result.user.displayName, 
         email: result.user.email, 
         photoURL: result.user.photoURL,
-        emailVerified: result.user.emailVerified // Reflect provider's verification status
+        emailVerified: result.user.emailVerified
       });
 
       const userDocRef = doc(firestore, 'users', result.user.uid);
@@ -193,7 +192,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         router.push('/dashboard');
       } else {
         toast({ title: 'Success', description: `${providerName} sign-in successful. Let's get you set up.` });
-        router.push('/onboarding/gender-profile');
+        router.push('/welcome');
       }
     } catch (error) {
       handleAuthError(error, `Failed to sign in with ${providerName}.`);
@@ -211,9 +210,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signUpWithEmail = async (email: string, pass: string) => {
     if (!auth) {
-      toast({
+       toast({
         title: "Firebase Not Configured",
-        description: "Please add your Firebase credentials to the .env file to sign up.",
+        description: "Please add your credentials to use authentication features.",
         variant: "destructive",
       });
       return;
@@ -223,7 +222,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
       await sendEmailVerification(userCredential.user);
       await recordDailyLogin(userCredential.user.uid);
-      // Create profile with emailVerified: false (default from userCredential.user)
       await createUserProfileDocument(userCredential.user, { email }); 
       
       toast({ title: 'Account Created!', description: 'A verification email has been sent. Please check your inbox.' });
@@ -254,17 +252,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           description: 'Please verify your email before signing in. Check your inbox for the verification link or resend it.',
           variant: 'destructive' 
         });
-        // Optionally send another verification email
-        // await sendEmailVerification(userCredential.user); 
-        // It might be better to redirect to /auth/verify-email page where they can resend.
         router.push('/auth/verify-email');
-        // Keep user signed in so /auth/verify-email can access currentUser for resend
-        // await signOut(auth); // Don't sign out, let verify page handle it
         return; 
       }
       
       await recordDailyLogin(userCredential.user.uid);
-      await createUserProfileDocument(userCredential.user); // Ensure profile reflects verified status
+      await createUserProfileDocument(userCredential.user);
 
       const userDocRef = doc(firestore, 'users', userCredential.user.uid);
       const userSnap = await getDoc(userDocRef);
@@ -274,7 +267,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
          router.push('/dashboard');
       } else {
         toast({ title: 'Success', description: 'Signed in successfully. Let\'s complete your profile.' });
-        router.push('/onboarding/gender-profile');
+        router.push('/welcome');
       }
     } catch (error) {
       handleAuthError(error, 'Failed to sign in.');

@@ -12,11 +12,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
-import { AppleIcon } from '@/components/icons/AppleIcon'; // Import AppleIcon
-import { Mail, KeyRound } from 'lucide-react';
+import { AppleIcon } from '@/components/icons/AppleIcon';
+import { Mail, KeyRound, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import { AppShell } from '@/components/layout/app-shell';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { WelcomeRock } from '@/components/icons/rocks/welcome-rock';
 
 const signInSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -26,7 +27,7 @@ const signInSchema = z.object({
 type SignInFormValues = z.infer<typeof signInSchema>;
 
 export default function SignInPage() {
-  const { signInWithEmail, signInWithGoogle, signInWithApple, loading: authLoading } = useAuth(); // Added signInWithApple
+  const { signInWithEmail, signInWithGoogle, signInWithApple, loading: authLoading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<SignInFormValues>({
@@ -44,12 +45,29 @@ export default function SignInPage() {
   return (
     <AppShell>
       <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
-        <Card className="w-full max-w-md shadow-xl">
-          <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-bold">Sign In</CardTitle>
-            <CardDescription>Access your SnapYoga account</CardDescription>
+        <Card className="w-full max-w-md shadow-xl border-border/60">
+           <CardHeader className="text-center">
+            <WelcomeRock className="mx-auto h-16 w-16 text-primary mb-4" />
+            <CardTitle className="text-3xl font-bold">Welcome Back</CardTitle>
+            <CardDescription>Sign in to continue your yoga journey.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+             <div className="grid grid-cols-2 gap-4">
+              <Button variant="outline" onClick={signInWithGoogle} disabled={isLoading} className="py-6 text-base h-auto">
+                {isLoading ? <SmileyRockLoader /> : <><GoogleIcon className="mr-2 h-5 w-5" /> Google</>}
+              </Button>
+              <Button variant="outline" onClick={signInWithApple} disabled={isLoading} className="py-6 text-base h-auto">
+                 {isLoading ? <SmileyRockLoader /> : <><AppleIcon className="mr-2 h-5 w-5" /> Apple</>}
+              </Button>
+            </div>
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <Separator />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-card px-2 text-muted-foreground">Or continue with email</span>
+              </div>
+            </div>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -83,24 +101,6 @@ export default function SignInPage() {
                 {isLoading ? <SmileyRockLoader /> : 'Sign In'}
               </Button>
             </form>
-            
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <Separator />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" onClick={signInWithGoogle} disabled={isLoading} className="py-6 text-base h-auto">
-                {isLoading ? <SmileyRockLoader /> : <><GoogleIcon className="mr-2 h-5 w-5" /> Google</>}
-              </Button>
-              <Button variant="outline" onClick={signInWithApple} disabled={isLoading} className="py-6 text-base h-auto">
-                 {isLoading ? <SmileyRockLoader /> : <><AppleIcon className="mr-2 h-5 w-5" /> Apple</>}
-              </Button>
-            </div>
           </CardContent>
           <CardFooter className="justify-center">
             <p className="text-sm text-muted-foreground">
