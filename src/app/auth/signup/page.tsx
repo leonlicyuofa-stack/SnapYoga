@@ -13,7 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon';
-import { Mail, KeyRound, UserPlus, Check, Sparkles, BarChart, HeartPulse, PartyPopper, Users } from 'lucide-react';
+import { Mail, KeyRound, UserPlus, Check, Sparkles, BarChart, HeartPulse, Users } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
@@ -43,11 +43,8 @@ function FeaturesDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChang
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="text-center">
-            <PartyPopper className="h-10 w-10 mx-auto text-primary"/>
+            <Sparkles className="h-10 w-10 mx-auto text-primary"/>
             <DialogTitle className="text-2xl font-bold">Here's what you'll unlock:</DialogTitle>
-            <DialogDescription>
-                Start your journey to a more mindful practice.
-            </DialogDescription>
         </DialogHeader>
         <div className="py-4">
              <div className="grid grid-cols-2 gap-x-4 gap-y-8">
