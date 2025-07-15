@@ -166,7 +166,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const socialSignIn = async (provider: FirebaseAuthProvider, providerName: string) => {
     if (!auth || !firestore) {
-      handleAuthError({}, "Firebase is not configured. Please add your credentials.");
+      toast({
+        title: "Firebase Not Configured",
+        description: "Please add your Firebase credentials to the .env file to enable authentication.",
+        variant: "destructive",
+      });
       return;
     }
     setLoading(true);
@@ -207,7 +211,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signUpWithEmail = async (email: string, pass: string) => {
     if (!auth) {
-      handleAuthError({}, "Firebase is not configured. Please add your credentials.");
+      toast({
+        title: "Firebase Not Configured",
+        description: "Please add your Firebase credentials to the .env file to sign up.",
+        variant: "destructive",
+      });
       return;
     }
     setLoading(true);
@@ -229,7 +237,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signInWithEmail = async (email: string, pass: string) => {
     if (!auth || !firestore) {
-      handleAuthError({}, "Firebase is not configured. Please add your credentials.");
+      toast({
+        title: "Firebase Not Configured",
+        description: "Please add your Firebase credentials to the .env file to sign in.",
+        variant: "destructive",
+      });
       return;
     }
     setLoading(true);
@@ -273,7 +285,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOutUser = async () => {
     if (!auth) {
-      handleAuthError({}, "Firebase is not configured. Please add your credentials.");
+      toast({
+        title: "Firebase Not Configured",
+        description: "Please add your Firebase credentials to the .env file.",
+        variant: "destructive",
+      });
       return;
     }
     setLoading(true);
