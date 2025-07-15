@@ -43,7 +43,6 @@ function FeaturesDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChang
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="text-center">
-            <Sparkles className="h-10 w-10 mx-auto text-primary"/>
             <DialogTitle className="text-2xl font-bold">Here's what you'll unlock:</DialogTitle>
         </DialogHeader>
         <div className="py-4">
