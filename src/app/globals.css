@@ -154,3 +154,81 @@
   50% { opacity: 1; }
   100% { transform: translate(0, 0) scale(1); opacity: 1; }
 }
+
+
+/* New Pebble Stacking Animations */
+.pebble-stack-loader {
+  --duration: 4s;
+  --stagger: 0.5s;
+  --bounce-height: -8px;
+}
+
+@keyframes float-in-bottom {
+  0% { transform: translate(-50px, 80px) rotate(-15deg); opacity: 0; }
+  100% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+}
+
+@keyframes float-in-middle {
+  0% { transform: translate(60px, -80px) rotate(20deg); opacity: 0; }
+  100% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+}
+
+@keyframes float-in-top {
+  0% { transform: translate(-60px, -80px) rotate(-20deg); opacity: 0; }
+  100% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+}
+
+@keyframes land-wobble {
+  0%, 100% { transform: translateY(0) scale(1); }
+  10% { transform: translateY(0) scale(1.1, 0.9); }
+  30% { transform: translateY(var(--bounce-height)) scale(0.9, 1.1); }
+  50% { transform: translateY(0) scale(1.05, 0.95); }
+  70% { transform: translateY(calc(var(--bounce-height) / 2)); }
+  90% { transform: translateY(0) scale(1.02, 0.98); }
+}
+
+@keyframes face-reveal {
+  0%, 50% { opacity: 0; transform: scale(0.5); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes wave {
+  0%, 100% { transform-origin: bottom center; transform: rotate(0deg); }
+  25% { transform-origin: bottom center; transform: rotate(-15deg); }
+  75% { transform-origin: bottom center; transform: rotate(10deg); }
+}
+
+@keyframes gentle-breath {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.pebble-stack-loader #pebble-bottom {
+  animation: float-in-bottom calc(var(--duration) / 4) cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards,
+             land-wobble calc(var(--duration) / 4) cubic-bezier(0.68, -0.55, 0.27, 1.55) calc(var(--duration) / 4) forwards;
+}
+
+.pebble-stack-loader #pebble-middle {
+  opacity: 0;
+  animation: float-in-middle calc(var(--duration) / 4) cubic-bezier(0.68, -0.55, 0.27, 1.55) var(--stagger) forwards,
+             land-wobble calc(var(--duration) / 4) cubic-bezier(0.68, -0.55, 0.27, 1.55) calc(var(--stagger) + (var(--duration) / 4)) forwards;
+}
+
+.pebble-stack-loader #pebble-top {
+  opacity: 0;
+  animation: float-in-top calc(var(--duration) / 4) cubic-bezier(0.68, -0.55, 0.27, 1.55) calc(var(--stagger) * 2) forwards,
+             land-wobble calc(var(--duration) / 4) cubic-bezier(0.68, -0.55, 0.27, 1.55) calc(var(--stagger) * 2 + (var(--duration) / 4)) forwards;
+}
+
+.pebble-stack-loader #smiley-face {
+  opacity: 0;
+  animation: face-reveal 0.5s ease-out calc(var(--duration) - 1.5s) forwards;
+}
+
+.pebble-stack-loader.finished #pebble-top {
+  animation: wave 0.8s ease-in-out 0.2s 2;
+}
+
+.pebble-stack-loader.finished #stack {
+    animation: gentle-breath 3s ease-in-out infinite;
+}
