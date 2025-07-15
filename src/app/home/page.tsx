@@ -88,18 +88,7 @@ export default function WelcomePageAsRoot() {
     <div className="flex min-h-screen flex-row items-stretch bg-background overflow-hidden">
       {/* Left Pane (60%) */}
       <div className="w-[60%] bg-gradient-to-br from-background via-primary/5 to-accent/5 flex flex-col justify-between p-6 sm:p-10">
-        <header className="relative z-10 flex justify-end items-center">
-            <div className="flex items-center gap-2">
-                <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3" aria-label="Switch Language">
-                <span className="mr-2">🇮🇩</span> 
-                </Button>
-                <Button variant="ghost" asChild>
-                    <Link href="/auth/signin">
-                        {t('signIn')}
-                    </Link>
-                </Button>
-            </div>
-        </header>
+        <div></div> {/* Top spacer */}
 
         <main className="relative z-10">
             <h1 className="text-2xl font-bold tracking-tight text-primary mb-2">SnapYoga</h1>
@@ -118,12 +107,24 @@ export default function WelcomePageAsRoot() {
             </Button>
         </main>
 
-        {/* This empty div helps with the flex layout for vertical positioning */}
-        <div></div>
+        <div></div> {/* Bottom spacer */}
       </div>
       
       {/* Right Pane (40%) with masked frame */}
       <div className="w-[40%] h-screen relative">
+         <header className="absolute top-0 right-0 z-10 flex justify-end items-center p-6 sm:p-10">
+            <div className="flex items-center gap-2">
+                <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3 bg-background/50 backdrop-blur-sm hover:bg-background/80" aria-label="Switch Language">
+                  <span className="mr-2">🇮🇩</span>
+                </Button>
+                <Button variant="ghost" asChild className="text-white hover:text-white hover:bg-white/20 bg-black/20 backdrop-blur-sm">
+                    <Link href="/auth/signin">
+                        {t('signIn')}
+                    </Link>
+                </Button>
+            </div>
+        </header>
+
         <div className="absolute inset-0"
              style={{ 
                 maskImage: 'linear-gradient(to right, transparent 0%, black 25%)',
