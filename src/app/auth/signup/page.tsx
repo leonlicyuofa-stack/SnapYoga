@@ -184,7 +184,7 @@ export default function SignUpPage() {
                         <div className="space-y-1 animate-form-item" style={{ animationDelay: '600ms' }}>
                             <Label htmlFor="password">{t('authPasswordLabel')}</Label>
                             <div className="relative">
-                                <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                {!passwordValue && <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />}
                                 <Input
                                     id="password"
                                     type="password"
@@ -198,7 +198,7 @@ export default function SignUpPage() {
                         <div className="space-y-1 animate-form-item" style={{ animationDelay: '700ms' }}>
                             <Label htmlFor="confirmPassword">{t('authConfirmPasswordLabel')}</Label>
                             <div className="relative">
-                                <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                {!confirmPasswordValue && <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />}
                                 <Input
                                     id="confirmPassword"
                                     type="password"
