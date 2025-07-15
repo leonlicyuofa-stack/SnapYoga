@@ -31,9 +31,12 @@ export default function SignInPage() {
   const { t } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<SignInFormValues>({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<SignInFormValues>({
     resolver: zodResolver(signInSchema),
   });
+
+  const emailValue = watch('email');
+  const passwordValue = watch('password');
 
   const onSubmit: SubmitHandler<SignInFormValues> = async (data) => {
     setIsSubmitting(true);
@@ -78,7 +81,7 @@ export default function SignInPage() {
               <div className="space-y-2">
                 <Label htmlFor="email">{t('authEmailLabel')}</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  {!emailValue && <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />}
                   <Input 
                     id="email" 
                     type="email" 
@@ -92,7 +95,7 @@ export default function SignInPage() {
               <div className="space-y-2">
                 <Label htmlFor="password">{t('authPasswordLabel')}</Label>
                  <div className="relative">
-                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  {!passwordValue && <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />}
                   <Input 
                     id="password" 
                     type="password" 
