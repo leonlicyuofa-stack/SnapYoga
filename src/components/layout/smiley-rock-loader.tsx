@@ -11,7 +11,6 @@ interface SmileyRockLoaderProps {
 
 export function SmileyRockLoader({ className, text }: SmileyRockLoaderProps) {
   const [isFinished, setIsFinished] = useState(false);
-  const [showText, setShowText] = useState(false);
 
   useEffect(() => {
     const animationDuration = 4000; 
@@ -19,13 +18,8 @@ export function SmileyRockLoader({ className, text }: SmileyRockLoaderProps) {
       setIsFinished(true);
     }, animationDuration - 1000); 
 
-    const textTimer = setTimeout(() => {
-        setShowText(true);
-    }, animationDuration - 500);
-
     return () => {
         clearTimeout(finishTimer);
-        clearTimeout(textTimer);
     };
   }, []);
 
@@ -61,7 +55,7 @@ export function SmileyRockLoader({ className, text }: SmileyRockLoaderProps) {
             </g>
           </g>
            <g id="waving-arm-group">
-                <path id="waving-arm" d="M55,45 C 65,40 75,50 70,55" fill="#F8BBD0" />
+                <path id="waving-arm" d="M55,45 C 63,42 70,48 68,55" fill="#F8BBD0" stroke="#4E342E" strokeWidth="1.5" strokeLinecap="round" />
             </g>
         </g>
       </svg>
