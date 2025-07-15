@@ -62,8 +62,15 @@ export function AppShell({ children }: AppShellProps) {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background selection:bg-primary/20 selection:text-primary">
-      <header className="sticky top-0 z-50 w-full border-b bg-card shadow-sm">
+    <div className="relative flex flex-col min-h-screen bg-background selection:bg-primary/20 selection:text-primary">
+       {/* Animated Background */}
+       <div className="absolute inset-0 z-[-1] bg-gradient-to-br from-primary/10 via-background to-accent/10 animate-breathing-bg">
+            <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/20 rounded-full animate-pebble-float-1"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-24 h-24 bg-accent/20 rounded-full animate-pebble-float-2"></div>
+            <div className="absolute bottom-1/2 right-1/3 w-16 h-16 bg-secondary/30 rounded-full animate-pebble-float-3"></div>
+        </div>
+
+      <header className="sticky top-0 z-50 w-full border-b bg-card/80 backdrop-blur-sm shadow-sm">
         <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href={user ? "/dashboard" : "/home"} className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm">
             <SnapYogaLogo />
@@ -162,7 +169,7 @@ export function AppShell({ children }: AppShellProps) {
       <main className="flex-grow container mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {children}
       </main>
-      <footer className="py-8 border-t bg-card">
+      <footer className="py-8 border-t bg-card/80 backdrop-blur-sm">
         <div className="container mx-auto flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
           <p className="text-sm text-muted-foreground">
             {t('footerText')}

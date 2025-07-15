@@ -296,14 +296,6 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <div
-        className="absolute inset-0 z-[-1] bg-cover bg-center opacity-10 dark:opacity-20"
-        style={{
-          backgroundImage: "url('https://images.unsplash.com/photo-1554147090-e1221a04a025?q=80&w=2070&auto=format&fit=crop')",
-        }}
-        data-ai-hint="abstract texture"
-      ></div>
-      <div className="relative">
         <LuckyWheelDialog isOpen={showLuckyWheelDialog} onClose={() => setShowLuckyWheelDialog(false)} />
         {rewardedRock && (
           <RewardDialog 
@@ -598,7 +590,6 @@ export default function DashboardPage() {
               </Card>
           </div>
         </div>
-      </div>
     </AppShell>
   );
 }
