@@ -16,7 +16,7 @@ import { AppleIcon } from '@/components/icons/AppleIcon';
 import { Mail, KeyRound } from 'lucide-react';
 import { useState } from 'react';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
-import { WelcomeRock } from '@/components/icons/rocks/welcome-rock';
+import { ZenRock } from '@/components/icons/rocks/zen-rock';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const signInSchema = z.object({
@@ -53,7 +53,7 @@ export default function SignInPage() {
         </div>
         <Card className="relative z-10 w-full max-w-md shadow-xl border-border/60 bg-card/80 backdrop-blur-sm">
            <CardHeader className="text-center">
-            <WelcomeRock className="mx-auto h-16 w-16 text-primary mb-4" />
+            <ZenRock progress={0} isSuccess={false} className="mx-auto h-24 w-24 text-primary mb-2" />
             <CardTitle className="text-3xl font-bold">{t('authWelcomeBack')}</CardTitle>
             <CardDescription>{t('authWelcomeBackDesc')}</CardDescription>
           </CardHeader>
