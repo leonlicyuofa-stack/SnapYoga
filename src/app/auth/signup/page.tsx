@@ -136,11 +136,6 @@ export default function SignUpPage() {
                 <p className="text-lg text-muted-foreground mt-2">
                     Create an account to start your mindful movement.
                 </p>
-                <div className="mt-8 text-center md:text-left">
-                    <p className="font-semibold text-foreground animate-pulse-gentle">
-                       “You’re one breath away from a complete yoga journey”
-                    </p>
-                </div>
             </div>
 
             {/* Right Side: Signup Form */}
