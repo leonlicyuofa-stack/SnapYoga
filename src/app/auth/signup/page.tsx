@@ -130,9 +130,6 @@ export default function SignUpPage() {
                 <h1 className="text-3xl md:text-4xl font-bold text-primary mt-4">
                     Begin Your Yoga Journey
                 </h1>
-                <p className="text-lg text-muted-foreground mt-2">
-                    Create an account and start practice with us.
-                </p>
             </div>
 
             {/* Right Side: Signup Form */}
