@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { MailCheck, Send, RotateCw } from 'lucide-react';
-import { AppShell } from '@/components/layout/app-shell';
 import { auth } from '@/lib/firebase/clientApp'; // direct import for sendEmailVerification
 import { sendEmailVerification as firebaseSendEmailVerification } from 'firebase/auth';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
@@ -64,25 +63,29 @@ export default function VerifyEmailPage() {
 
   if (authLoading) {
     return (
-        <AppShell>
-            <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
-                <SmileyRockLoader text="Checking authentication..." />
-            </div>
-        </AppShell>
+        <div className="flex justify-center items-center min-h-screen bg-background">
+            <SmileyRockLoader text="Checking authentication..." />
+        </div>
     );
   }
   
   // If user is somehow not logged in but on this page, or becomes unlogged in.
   if (!user && !authLoading) {
     router.replace('/auth/signup'); // Or signin, depending on desired flow
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><p>Redirecting...</p></div></AppShell>;
+    return <div className="flex justify-center items-center min-h-screen bg-background"><p>Redirecting...</p></div>;
   }
 
 
   return (
-    <AppShell>
-      <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
-        <Card className="w-full max-w-lg shadow-xl">
+    <div className="relative flex min-h-screen items-center justify-center py-12 bg-background overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-background to-accent/10 animate-breathing-bg">
+            <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/20 rounded-full animate-pebble-float-1"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-24 h-24 bg-accent/20 rounded-full animate-pebble-float-2"></div>
+            <div className="absolute bottom-1/2 right-1/3 w-16 h-16 bg-secondary/30 rounded-full animate-pebble-float-3"></div>
+        </div>
+
+        <Card className="relative z-10 w-full max-w-lg shadow-xl border-border/60 bg-card/80 backdrop-blur-sm">
           <CardHeader className="text-center">
             <MailCheck className="mx-auto h-12 w-12 text-primary mb-4" />
             <CardTitle className="text-3xl font-bold">Verify Your Email</CardTitle>
@@ -122,6 +125,5 @@ export default function VerifyEmailPage() {
           </CardFooter>
         </Card>
       </div>
-    </AppShell>
   );
 }
