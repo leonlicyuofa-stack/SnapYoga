@@ -7,10 +7,11 @@ import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext'; // 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { MailCheck, Send, RotateCw } from 'lucide-react';
+import { Send, RotateCw } from 'lucide-react';
 import { auth } from '@/lib/firebase/clientApp'; // direct import for sendEmailVerification
 import { sendEmailVerification as firebaseSendEmailVerification } from 'firebase/auth';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { WelcomeRock } from '@/components/icons/rocks/welcome-rock';
 
 export default function VerifyEmailPage() {
   const { user, loading: authLoading, signOutUser } = useAuth();
@@ -87,7 +88,7 @@ export default function VerifyEmailPage() {
 
         <Card className="relative z-10 w-full max-w-lg shadow-xl border-border/60 bg-card/80 backdrop-blur-sm">
           <CardHeader className="text-center">
-            <MailCheck className="mx-auto h-12 w-12 text-primary mb-4" />
+            <WelcomeRock className="mx-auto h-16 w-16 text-primary mb-4" />
             <CardTitle className="text-3xl font-bold">Verify Your Email</CardTitle>
             <CardDescription>
               A verification email has been sent to <span className="font-semibold text-primary">{user?.email}</span>.
