@@ -87,8 +87,8 @@ export default function WelcomePageAsRoot() {
   return (
     <div className="flex min-h-screen flex-row items-stretch bg-background overflow-hidden">
       {/* Left Pane (70%) */}
-      <div className="w-[70%] bg-gradient-to-br from-background via-primary/5 to-accent/5 flex flex-col justify-between">
-        <header className="relative z-10 p-6 sm:p-10 flex justify-between items-center">
+      <div className="w-[70%] bg-gradient-to-br from-background via-primary/5 to-accent/5 flex flex-col justify-between p-6 sm:p-10">
+        <header className="relative z-10 flex justify-between items-center">
             <div className="flex items-center gap-2">
                 <SmileyRockLoader />
             </div>
@@ -104,7 +104,7 @@ export default function WelcomePageAsRoot() {
             </div>
         </header>
 
-        <main className="relative z-10 p-6 sm:p-10">
+        <main className="relative z-10">
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground max-w-lg leading-tight" dangerouslySetInnerHTML={{ __html: t('landingTitle') }}>
             </h2>
             <p className="mt-4 text-lg text-foreground/80 max-w-md sm:text-xl">
@@ -124,9 +124,14 @@ export default function WelcomePageAsRoot() {
         <div></div>
       </div>
       
-      {/* Right Pane (30%) with creative shape */}
-      <div className="w-[30%] h-screen relative" style={{ clipPath: 'polygon(25% 0, 100% 0, 100% 100%, 0% 100%)' }}>
-        <div className="absolute inset-0">
+      {/* Right Pane (30%) with masked frame */}
+      <div className="w-[30%] h-screen relative">
+        <div className="absolute inset-0"
+             style={{ 
+                maskImage: 'linear-gradient(to right, transparent 0%, black 25%)',
+                WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 25%)',
+             }}
+        >
           <Image
             src="/images/headstand.png"
             alt="Person doing yoga in a serene landscape"
