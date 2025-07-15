@@ -192,10 +192,35 @@
   100% { opacity: 1; transform: scale(1); }
 }
 
-@keyframes wave {
-  0%, 100% { transform-origin: bottom center; transform: rotate(0deg); }
-  25% { transform-origin: bottom center; transform: rotate(-15deg); }
-  75% { transform-origin: bottom center; transform: rotate(10deg); }
+@keyframes arm-wave-and-text-reveal {
+  0% {
+    transform: rotate(0deg) translateX(0);
+    opacity: 0;
+  }
+  20% {
+    transform: rotate(-20deg) translateX(-5px);
+    opacity: 1;
+  }
+  40% {
+    transform: rotate(15deg) translateX(5px);
+  }
+  60%, 100% {
+    transform: rotate(0deg) translateX(0);
+  }
+}
+
+@keyframes text-pop-out {
+  0%, 50% {
+    opacity: 0;
+    transform: scale(0) translateX(-20px);
+  }
+  80% {
+    transform: scale(1.1) translateX(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+  }
 }
 
 @keyframes gentle-breath {
@@ -225,10 +250,21 @@
   animation: face-reveal 0.5s ease-out calc(var(--duration) - 1.5s) forwards;
 }
 
-.pebble-stack-loader.finished #pebble-top {
-  animation: wave 0.8s ease-in-out 0.2s 2;
+/* Initially hide the arm and text */
+.pebble-stack-loader #waving-arm-group,
+.pebble-stack-loader #wave-text {
+  opacity: 0;
+}
+
+.pebble-stack-loader.finished #waving-arm-group {
+    opacity: 1;
+    animation: arm-wave-and-text-reveal 1s ease-in-out forwards;
+}
+
+.pebble-stack-loader.finished #wave-text {
+    animation: text-pop-out 1s ease-in-out 0.2s forwards;
 }
 
 .pebble-stack-loader.finished #stack {
-    animation: gentle-breath 3s ease-in-out infinite;
+    animation: gentle-breath 3s ease-in-out 1s infinite;
 }
