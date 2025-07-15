@@ -13,11 +13,12 @@ import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon';
-import { Mail, KeyRound, UserPlus, Check, Sparkles, Wind, BarChart, HeartPulse } from 'lucide-react';
+import { Mail, KeyRound, UserPlus, Check, Sparkles, Wind, BarChart, HeartPulse, PartyPopper } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import { ZenRock } from '@/components/icons/rocks/zen-rock';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 
 const signUpSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -37,12 +38,48 @@ const featureItems = [
     { text: "Mindful Breathing", icon: Wind },
 ];
 
+function FeaturesDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: (open: boolean) => void }) {
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader className="text-center">
+            <PartyPopper className="h-10 w-10 mx-auto text-primary"/>
+            <DialogTitle className="text-2xl font-bold">Here's what you'll unlock:</DialogTitle>
+            <DialogDescription>
+                Start your journey to a more mindful practice.
+            </DialogDescription>
+        </DialogHeader>
+        <div className="py-4">
+             <div className="flex justify-around items-center">
+                {featureItems.map((item, index) => {
+                    const Icon = item.icon;
+                    return (
+                        <div key={item.text} className="flex flex-col items-center gap-1.5 text-center w-24">
+                            <div className="p-3 bg-primary/10 rounded-full">
+                                <Icon className="h-6 w-6 text-primary"/>
+                            </div>
+                            <p className="text-sm text-muted-foreground">{item.text}</p>
+                        </div>
+                    )
+                })}
+            </div>
+        </div>
+        <DialogFooter>
+            <Button onClick={() => onOpenChange(false)} className="w-full">Continue</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+
 export default function SignUpPage() {
   const { signUpWithEmail, signInWithGoogle, signInWithApple, loading: authLoading } = useAuth();
   const { t } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [formProgress, setFormProgress] = useState(0);
+  const [showFeaturesDialog, setShowFeaturesDialog] = useState(false);
 
   const { register, handleSubmit, watch, formState: { errors, touchedFields, isValid } } = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -57,6 +94,14 @@ export default function SignUpPage() {
     const filledCount = [emailValue, passwordValue, confirmPasswordValue].filter(Boolean).length;
     setFormProgress((filledCount / 3) * 100);
   }, [emailValue, passwordValue, confirmPasswordValue]);
+
+  useEffect(() => {
+    // Show the features dialog a bit after the page loads
+    const timer = setTimeout(() => {
+        setShowFeaturesDialog(true);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
 
   const onSubmit: SubmitHandler<SignUpFormValues> = async (data) => {
@@ -78,6 +123,8 @@ export default function SignUpPage() {
             <div className="absolute bottom-1/4 right-1/4 w-24 h-24 bg-accent/20 rounded-full animate-pebble-float-2"></div>
             <div className="absolute bottom-1/2 right-1/3 w-16 h-16 bg-secondary/30 rounded-full animate-pebble-float-3"></div>
         </div>
+        
+        <FeaturesDialog isOpen={showFeaturesDialog} onOpenChange={setShowFeaturesDialog} />
         
         <main className="relative z-10 w-full max-w-5xl flex flex-col md:flex-row items-center justify-center gap-8">
             {/* Left Side: Welcome Text & Mascot */}
@@ -199,32 +246,6 @@ export default function SignUpPage() {
             </Card>
 
         </main>
-
-        {/* Slide up summary */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 animate-slide-up-summary">
-            <Card className="max-w-md mx-auto bg-card/80 backdrop-blur-sm border-border/20 shadow-lg">
-                <CardHeader className="p-3 text-center">
-                    <CardTitle className="text-md font-semibold">Here&apos;s what you&apos;ll unlock:</CardTitle>
-                </CardHeader>
-                <CardContent className="p-3 pt-0">
-                    <div className="flex justify-around items-center">
-                        {featureItems.map((item, index) => {
-                           const Icon = item.icon;
-                           return (
-                                <div key={item.text} className="flex flex-col items-center gap-1 animate-feature-item" style={{animationDelay: `${1000 + index * 150}ms`}}>
-                                    <div className="p-2 bg-primary/10 rounded-full">
-                                        <Icon className="h-5 w-5 text-primary"/>
-                                    </div>
-                                    <p className="text-xs text-muted-foreground">{item.text}</p>
-                                </div>
-                           )
-                        })}
-                    </div>
-                </CardContent>
-            </Card>
-        </div>
     </div>
   );
 }
-
-    
