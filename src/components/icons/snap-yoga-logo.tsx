@@ -1,6 +1,9 @@
+
 import * as React from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export function SnapYogaLogo() {
+  const { t } = useLanguage();
   return (
     <div className="flex items-center space-x-3" aria-label="SnapYoga Home">
       <svg
@@ -28,7 +31,7 @@ export function SnapYogaLogo() {
           fill="hsl(var(--secondary))"
         />
       </svg>
-      <span className="text-2xl font-bold tracking-tight text-primary">SnapYoga</span>
+      <span className="text-2xl font-bold tracking-tight text-primary">{t('snapYogaTitle')}</span>
     </div>
   );
 }

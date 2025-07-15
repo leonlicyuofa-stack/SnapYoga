@@ -18,7 +18,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from 'next/navigation'; 
 import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 
 interface AppShellProps {
@@ -28,7 +28,7 @@ interface AppShellProps {
 export function AppShell({ children }: AppShellProps) {
   const { user, signOutUser, loading } = useAuth();
   const pathname = usePathname(); 
-  const { toast } = useToast();
+  const { language, setLanguage, t } = useLanguage();
 
   const getInitials = (email?: string | null, displayName?: string | null) => {
     if (displayName) {
@@ -57,10 +57,8 @@ export function AppShell({ children }: AppShellProps) {
   const homeLinkPath = user ? "/dashboard" : "/";
   
   const handleLanguageSwitch = () => {
-    toast({
-        title: "Language Switched (Simulated)",
-        description: "App language has been set to Bahasa Indonesia. Full translation coming soon!",
-    });
+    const newLang = language === 'en' ? 'id' : 'en';
+    setLanguage(newLang);
   };
 
   return (
@@ -75,7 +73,7 @@ export function AppShell({ children }: AppShellProps) {
             <Button variant="ghost" asChild className={navLinkClasses(homeLinkPath)}>
               <Link href={homeLinkPath}>
                 <Home className="mr-0 sm:mr-2 h-5 w-5" />
-                <span className="hidden sm:inline">Home</span>
+                <span className="hidden sm:inline">{t('navHome')}</span>
               </Link>
             </Button>
             {user && ( 
@@ -83,20 +81,20 @@ export function AppShell({ children }: AppShellProps) {
                 <Button variant="ghost" asChild className={navLinkClasses("/practice-calendar")}>
                   <Link href="/practice-calendar">
                     <CalendarDays className="mr-0 sm:mr-2 h-5 w-5" />
-                    <span className="hidden sm:inline">Calendar</span>
+                    <span className="hidden sm:inline">{t('navCalendar')}</span>
                   </Link>
                 </Button>
                 <Button variant="ghost" asChild className={navLinkClasses("/challenges")}>
                   <Link href="/challenges">
                     <Trophy className="mr-0 sm:mr-2 h-5 w-5" />
-                    <span className="hidden sm:inline">Challenges</span>
+                    <span className="hidden sm:inline">{t('navChallenges')}</span>
                   </Link>
                 </Button>
               </>
             )}
             <div className="flex-grow sm:hidden"></div> 
-             <Button variant="outline" size="icon" onClick={handleLanguageSwitch} className="h-9 w-9" aria-label="Switch to Bahasa Indonesia">
-               🇮🇩
+             <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3" aria-label="Switch Language">
+               <span className="mr-2">🇮🇩</span> Bahasa
             </Button>
             
             {loading ? (
@@ -115,7 +113,7 @@ export function AppShell({ children }: AppShellProps) {
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">
-                        {user.displayName || 'Welcome'}
+                        {user.displayName || t('welcome')}
                       </p>
                       <p className="text-xs leading-none text-muted-foreground">
                         {user.email}
@@ -126,7 +124,7 @@ export function AppShell({ children }: AppShellProps) {
                   <DropdownMenuItem asChild className="cursor-pointer">
                     <Link href="/profile">
                       <Settings className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
+                      <span>{t('profile')}</span>
                     </Link>
                   </DropdownMenuItem>
                    <DropdownMenuItem asChild className="cursor-pointer">
@@ -138,7 +136,7 @@ export function AppShell({ children }: AppShellProps) {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={signOutUser} className="cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sign Out</span>
+                    <span>{t('signOut')}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -147,13 +145,13 @@ export function AppShell({ children }: AppShellProps) {
                 <Button variant="ghost" asChild>
                   <Link href="/auth/signin">
                     <LogIn className="mr-2 h-5 w-5" />
-                    Sign In
+                    {t('signIn')}
                   </Link>
                 </Button>
                 <Button asChild>
                   <Link href="/auth/signup">
                     <UserCircle className="mr-2 h-5 w-5" />
-                    Sign Up
+                    {t('signUp')}
                   </Link>
                 </Button>
               </>
@@ -167,7 +165,7 @@ export function AppShell({ children }: AppShellProps) {
       <footer className="py-8 border-t bg-card">
         <div className="container mx-auto flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} SnapYoga. Improve your practice, one pose at a time.
+            {t('footerText')}
           </p>
         </div>
       </footer>

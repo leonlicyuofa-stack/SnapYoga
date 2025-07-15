@@ -22,6 +22,7 @@ import { RockCollectionCard, type Rock } from '@/components/features/dashboard/r
 import { RewardDialog } from '@/components/features/dashboard/reward-dialog';
 import { allRocks } from '@/components/features/dashboard/rock-data';
 import { WelcomeRock } from '@/components/icons/rocks/welcome-rock';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface StoredAnalysis {
   id: string;
@@ -50,6 +51,7 @@ interface DailyQuote {
 
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth();
+  const { t } = useLanguage();
   const [analyses, setAnalyses] = useState<StoredAnalysis[]>([]);
   const [loadingAnalyses, setLoadingAnalyses] = useState(true);
   const [inviteLink, setInviteLink] = useState('');
@@ -101,7 +103,6 @@ export default function DashboardPage() {
         sessionStorage.setItem('seenLuckyWheelSnapYoga', 'true');
       }
 
-      // Check if the user just completed onboarding to show the reward
       if (sessionStorage.getItem('justCompletedOnboarding') === 'true') {
         const welcomeRock = allRocks.find(r => r.id === 'welcome');
         if (welcomeRock) {
@@ -289,6 +290,8 @@ export default function DashboardPage() {
 
   const needsOnboarding = user && !authLoading && (loadingUserProfile || !userProfile || !userProfile.onboardingCompleted);
   const showStatsDashboard = user && !authLoading && !loadingUserProfile && userProfile && userProfile.onboardingCompleted;
+  
+  const welcomeName = userProfile?.displayName || user?.displayName || user?.email?.split('@')[0] || 'User';
 
 
   return (
@@ -314,7 +317,7 @@ export default function DashboardPage() {
               <div className="text-center py-8">
                 <UserPlus className="mx-auto h-12 w-12 text-primary mb-4" />
                 <h2 className="text-2xl md:text-3xl font-semibold text-primary mb-3">
-                  Welcome to SnapYoga, {userProfile?.displayName || user.displayName || user.email?.split('@')[0] || 'Yogi'}!
+                  Welcome to SnapYoga, {welcomeName}!
                 </h2>
                 <p className="text-lg text-muted-foreground mb-6 max-w-md mx-auto">
                   Complete your profile to personalize your experience and unlock all features.
@@ -329,7 +332,7 @@ export default function DashboardPage() {
             ) : showStatsDashboard ? (
               <>
                 <h2 className="text-2xl md:text-3xl font-semibold text-primary mb-4 md:mb-6 text-center">
-                  Welcome to Your Dashboard, {userProfile?.displayName || user.displayName || user.email?.split('@')[0] || 'User'}!
+                  {t('dashboardWelcome').replace('{name}', welcomeName)}
                 </h2>
                 
                 <RockCollectionCard rocks={allRocks} />
@@ -339,9 +342,9 @@ export default function DashboardPage() {
                     <CardHeader>
                       <CardTitle className="flex items-center text-xl md:text-2xl">
                         <ListChecks className="mr-3 h-7 w-7 text-primary" />
-                        Recent Pose Analyses
+                        {t('recentAnalysesTitle')}
                       </CardTitle>
-                      <CardDescription>Your last few analyzed poses. Click to view details.</CardDescription>
+                      <CardDescription>{t('recentAnalysesDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       {loadingAnalyses ? (
@@ -391,7 +394,7 @@ export default function DashboardPage() {
                       <CardHeader>
                         <CardTitle className="flex items-center text-xl md:text-2xl">
                           <BarChart3 className="mr-3 h-7 w-7 text-primary" />
-                          App Usage (Past 30 Days)
+                          {t('appUsageTitle')}
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="flex flex-row justify-around items-center text-center space-x-2 md:space-x-4">
@@ -399,13 +402,13 @@ export default function DashboardPage() {
                            <div className="text-3xl md:text-4xl font-bold text-accent">
                             {loadingAppUsageStats ? <Skeleton className="h-9 w-12 md:h-10 md:w-16 inline-block" /> : activeLoginDays ?? '-'}
                           </div>
-                          <p className="text-xs md:text-sm text-muted-foreground flex items-center justify-center gap-1"><CalendarDays className="h-3 w-3 md:h-4 md:w-4"/>Active Days</p>
+                          <p className="text-xs md:text-sm text-muted-foreground flex items-center justify-center gap-1"><CalendarDays className="h-3 w-3 md:h-4 md:w-4"/>{t('activeDays')}</p>
                         </div>
                         <div className="flex-1">
                            <div className="text-3xl md:text-4xl font-bold text-accent">
                             {loadingAppUsageStats ? <Skeleton className="h-9 w-12 md:h-10 md:w-16 inline-block" /> : posesAnalyzedPast30Days ?? '-'}
                           </div>
-                          <p className="text-xs md:text-sm text-muted-foreground flex items-center justify-center gap-1"><Activity className="h-3 w-3 md:h-4 md:w-4"/>Poses Done</p>
+                          <p className="text-xs md:text-sm text-muted-foreground flex items-center justify-center gap-1"><Activity className="h-3 w-3 md:h-4 md:w-4"/>{t('posesDone')}</p>
                         </div>
                       </CardContent>
                       { (!loadingAppUsageStats && ((activeLoginDays ?? 0) > 0 || (posesAnalyzedPast30Days ?? 0) > 0)) &&
@@ -419,7 +422,7 @@ export default function DashboardPage() {
                       <CardHeader>
                         <CardTitle className="flex items-center text-xl md:text-2xl">
                           <Trophy className="mr-3 h-7 w-7 text-primary" />
-                          Friend Challenges
+                          {t('friendChallengesTitle')}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
@@ -434,7 +437,7 @@ export default function DashboardPage() {
                         </div>
                         <Button variant="outline" size="sm" className="mt-4 w-full" asChild>
                           <Link href="/challenges">
-                            View All Challenges
+                            {t('viewAllChallenges')}
                             <ArrowRight className="ml-2 h-4 w-4" />
                           </Link>
                         </Button>
@@ -451,15 +454,15 @@ export default function DashboardPage() {
                 <CardHeader>
                   <CardTitle className="text-2xl font-semibold flex items-center justify-center gap-2 text-primary">
                     <Share2 className="h-7 w-7" />
-                    Invite Friends to SnapYoga
+                    {t('inviteFriendsTitle')}
                   </CardTitle>
                   <CardDescription className="text-center mt-1">
-                    Share your love for yoga and help friends improve their practice!
+                    {t('inviteFriendsDesc')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <p className="text-sm font-medium mb-1">Your unique invite link:</p>
+                    <p className="text-sm font-medium mb-1">{t('yourInviteLink')}</p>
                     <div className="flex items-center space-x-2">
                       <Input
                         type="text"
@@ -482,7 +485,7 @@ export default function DashboardPage() {
                     >
                       <a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer">
                         <MessageSquare className="mr-2 h-5 w-5" />
-                        Share on WhatsApp
+                        {t('shareOnWhatsapp')}
                       </a>
                     </Button>
                     <Button
@@ -492,13 +495,13 @@ export default function DashboardPage() {
                       disabled={!inviteLink}
                     >
                       <Share2 className="mr-2 h-5 w-5" />
-                      Share on Instagram
+                      {t('shareOnInstagram')}
                     </Button>
                   </div>
                 </CardContent>
                 <CardFooter>
                   <p className="text-xs text-muted-foreground text-center w-full">
-                    Sharing the link helps others discover SnapYoga.
+                    {t('inviteLinkHelp')}
                   </p>
                 </CardFooter>
               </Card>
@@ -511,10 +514,10 @@ export default function DashboardPage() {
               <CardHeader className="text-center p-6 md:p-8">
                   <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-primary flex items-center justify-center">
                     <WelcomeRock className="mr-3 h-10 w-10 md:h-12 md:w-12" />
-                    SnapYoga
+                    {t('snapYogaTitle')}
                   </h1>
                   <p className="mt-3 text-lg text-muted-foreground max-w-xl mx-auto">
-                    Yoga for Everyone. Your mat, your pace.
+                    {t('snapYogaSubtitle')}
                   </p>
               </CardHeader>
               <CardContent className="p-6 md:p-8 pt-0 min-h-[150px] md:min-h-[200px] flex flex-col items-center justify-center text-center">
@@ -543,15 +546,15 @@ export default function DashboardPage() {
               <CardHeader className="text-center pt-8">
                 <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
                   <Sparkles className="h-8 w-8 text-primary" />
-                  Analyze Your Pose
+                  {t('analyzeYourPoseTitle')}
                 </CardTitle>
                 <CardDescription className="text-lg text-muted-foreground mt-2 max-w-md mx-auto">
-                  Get AI-powered feedback on your yoga poses. Upload a video, and let our smart assistant help you improve your alignment and form.
+                  {t('analyzeYourPoseDesc')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col items-center space-y-6 p-8">
                 <p className="text-center text-foreground/80">
-                  Ready to take your yoga journey to the next level? Click below to start analyzing your poses and unlock personalized insights.
+                  {t('analyzeYourPoseHelp')}
                 </p>
                 <Link href="/snap-yoga" passHref>
                   <Button
@@ -559,7 +562,7 @@ export default function DashboardPage() {
                     className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-7 px-8 rounded-lg shadow-lg transition-transform transform hover:scale-105"
                     aria-label="Go to SnapYoga Analysis Page"
                   >
-                    Start Analyzing Your Pose
+                    {t('startAnalyzing')}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
@@ -570,16 +573,16 @@ export default function DashboardPage() {
               <CardHeader className="text-center pt-8">
                 <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
                   <Users className="h-8 w-8 text-primary" />
-                  Challenges with Friends
+                  {t('challengesWithFriendsTitle')}
                 </CardTitle>
                 <CardDescription className="text-lg text-muted-foreground mt-2 max-w-md mx-auto">
-                  Explore and join monthly yoga pose challenges. Invite friends and grow your practice together!
+                  {t('challengesWithFriendsDesc')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col items-center space-y-6 p-8">
                 <Link href="/challenges" passHref>
                   <Button size="lg" variant="outline" className="text-lg py-7 px-8 rounded-lg shadow-md hover:shadow-lg transition-transform transform hover:scale-105">
-                    Explore Challenges
+                    {t('exploreChallenges')}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>

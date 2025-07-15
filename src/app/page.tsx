@@ -13,6 +13,7 @@ import { MoveUpRight } from 'lucide-react';
 import Image from 'next/image';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { WelcomeRock } from '@/components/icons/rocks/welcome-rock';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface UserProfileData extends DocumentData {
   uid?: string;
@@ -25,6 +26,7 @@ interface UserProfileData extends DocumentData {
 export default function WelcomePageAsRoot() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
+  const { t } = useLanguage();
   const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [isProcessingClick, setIsProcessingClick] = useState(false);
@@ -57,7 +59,6 @@ export default function WelcomePageAsRoot() {
 
     setIsProcessingClick(true);
     
-    // Set a flag that can be used by the destination page for animations
     if (typeof window !== 'undefined') {
         sessionStorage.setItem('snapYogaPebbleIncoming', 'true');
     }
@@ -79,7 +80,6 @@ export default function WelcomePageAsRoot() {
 
   return (
     <div className="relative flex min-h-screen flex-col items-stretch justify-between overflow-hidden">
-      {/* Background Image and Overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-teal-500/20 via-orange-500/20 to-green-500/20 opacity-30"></div>
        <Image
         src="https://i.imgur.com/ncJiSEV.png"
@@ -91,7 +91,6 @@ export default function WelcomePageAsRoot() {
       />
       <div className="absolute inset-0 bg-background/50 -z-10" />
 
-      {/* Top Left Content */}
       <header className="relative z-10 p-6 sm:p-10 flex justify-between items-center">
         <div className="flex items-center gap-2">
             <WelcomeRock className="h-10 w-10 text-primary" />
@@ -101,26 +100,24 @@ export default function WelcomePageAsRoot() {
         </div>
         <Button variant="ghost" asChild>
             <Link href="/auth/signin">
-                Sign In
+                {t('signIn')}
             </Link>
         </Button>
       </header>
 
-      {/* Bottom Left Content */}
       <main className="relative z-10 p-6 sm:p-10">
-        <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground max-w-lg leading-tight">
-          Find Your Flow,<br />Perfect Your Form.
+        <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground max-w-lg leading-tight" dangerouslySetInnerHTML={{ __html: t('landingTitle') }}>
         </h2>
         <p className="mt-4 text-lg text-foreground/80 max-w-md sm:text-xl">
-          Your AI companion for personalized yoga feedback, progress tracking, and mindful practice.
+          {t('landingSubtitle')}
         </p>
         <Button
           onClick={handleGetStarted}
           className="mt-8 rounded-full h-16 w-auto px-8 bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-semibold shadow-lg transition-transform hover:scale-105"
-          aria-label="Get Started"
+          aria-label={t('getStarted')}
           disabled={isLoading}
         >
-          {isLoading ? <SmileyRockLoader /> : <><span>Get Started</span><MoveUpRight className="h-5 w-5 ml-2" /></>}
+          {isLoading ? <SmileyRockLoader /> : <><span>{t('getStarted')}</span><MoveUpRight className="h-5 w-5 ml-2" /></>}
         </Button>
       </main>
     </div>
