@@ -50,11 +50,11 @@ function FeaturesDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChang
             </DialogDescription>
         </DialogHeader>
         <div className="py-4">
-             <div className="flex justify-around items-center">
+             <div className="grid grid-cols-2 gap-x-4 gap-y-8">
                 {featureItems.map((item, index) => {
                     const Icon = item.icon;
                     return (
-                        <div key={item.text} className="flex flex-col items-center gap-1.5 text-center w-24">
+                        <div key={item.text} className="flex flex-col items-center gap-1.5 text-center">
                             <div className="p-3 bg-primary/10 rounded-full">
                                 <Icon className="h-6 w-6 text-primary"/>
                             </div>
