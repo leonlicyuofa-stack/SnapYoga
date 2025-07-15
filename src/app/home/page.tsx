@@ -133,7 +133,7 @@ export default function WelcomePageAsRoot() {
              }}
         >
           <Image
-            src="/images/headstand.png"
+            src="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx5b2dhfGVufDB8fHx8MTc1MjU5Mzc5NXww&ixlib=rb-4.1.0&q=80&w=1080"
             alt="Person doing yoga in a serene landscape"
             fill
             className="object-cover"
