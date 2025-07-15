@@ -299,9 +299,9 @@ export default function DashboardPage() {
       <div
         className="absolute inset-0 z-[-1] bg-cover bg-center opacity-10 dark:opacity-20"
         style={{
-          backgroundImage: "url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2120&auto=format&fit=crop')",
+          backgroundImage: "url('https://images.unsplash.com/photo-1554147090-e1221a04a025?q=80&w=2070&auto=format&fit=crop')",
         }}
-        data-ai-hint="yoga background"
+        data-ai-hint="abstract texture"
       ></div>
       <div className="relative">
         <LuckyWheelDialog isOpen={showLuckyWheelDialog} onClose={() => setShowLuckyWheelDialog(false)} />
@@ -331,7 +331,7 @@ export default function DashboardPage() {
                     Complete your profile to personalize your experience and unlock all features.
                   </p>
                   <Button size="lg" asChild className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-7 px-8 rounded-lg shadow-lg transition-transform transform hover:scale-105">
-                    <Link href="/auth/onboarding/details">
+                    <Link href="/onboarding/gender-profile">
                       <ArrowRight className="mr-2 h-5 w-5" />
                       Complete Your Profile
                     </Link>
