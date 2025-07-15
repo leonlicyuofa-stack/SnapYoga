@@ -54,7 +54,7 @@ export function AppShell({ children }: AppShellProps) {
       pathname === path ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground"
     );
 
-  const homeLinkPath = user ? "/dashboard" : "/";
+  const homeLinkPath = user ? "/dashboard" : "/home";
   
   const handleLanguageSwitch = () => {
     const newLang = language === 'en' ? 'id' : 'en';
@@ -65,7 +65,7 @@ export function AppShell({ children }: AppShellProps) {
     <div className="flex flex-col min-h-screen bg-background selection:bg-primary/20 selection:text-primary">
       <header className="sticky top-0 z-50 w-full border-b bg-card shadow-sm">
         <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href={user ? "/dashboard" : "/"} className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm">
+          <Link href={user ? "/dashboard" : "/home"} className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm">
             <SnapYogaLogo />
           </Link>
           
