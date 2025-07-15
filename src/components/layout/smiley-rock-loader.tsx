@@ -26,13 +26,13 @@ export function SmileyRockLoader({ className, text }: SmileyRockLoaderProps) {
   return (
     <div className={cn("flex flex-col items-center justify-center gap-2", className)}>
       <svg
-        width="100"
-        height="100"
-        viewBox="0 0 100 120"
+        width="150"
+        height="120"
+        viewBox="0 0 150 120"
         className={cn("pebble-stack-loader", isFinished && "finished")}
       >
         <title>Pebble Stacking Animation</title>
-        <g id="stack" transform="translate(10, 10)">
+        <g id="stack" transform="translate(40, 10)">
           <path 
             id="pebble-bottom" 
             d="M 10,95 C -10,80 10,65 40,65 C 70,65 90,80 70,95 Z" 
@@ -43,8 +43,9 @@ export function SmileyRockLoader({ className, text }: SmileyRockLoaderProps) {
             d="M 18,70 C 8,60 20,45 40,45 C 60,45 72,60 62,70 Z" 
             fill="#FFCCBC"
           />
-          <g id="pebble-top">
+          <g id="pebble-top-group">
             <path 
+              id="pebble-top"
               d="M 25,50 C 18,42 28,30 40,30 C 52,30 62,42 55,50 Z" 
               fill="#F8BBD0"
             />
@@ -56,6 +57,7 @@ export function SmileyRockLoader({ className, text }: SmileyRockLoaderProps) {
           </g>
            <g id="waving-arm-group">
                 <path id="waving-arm" d="M55,45 C 63,42 70,48 68,55" fill="#F8BBD0" stroke="#4E342E" strokeWidth="1.5" strokeLinecap="round" />
+                <text id="logo-text" x="75" y="55" fontFamily="Manrope, sans-serif" fontSize="10" fontWeight="bold" fill="hsl(var(--primary))" textAnchor="start">SnapYoga</text>
             </g>
         </g>
       </svg>
