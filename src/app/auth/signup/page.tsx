@@ -13,7 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon';
-import { Mail, KeyRound, UserPlus, Check, Sparkles, Wind, BarChart, HeartPulse, PartyPopper } from 'lucide-react';
+import { Mail, KeyRound, UserPlus, Check, Sparkles, BarChart, HeartPulse, PartyPopper, Users } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
@@ -35,7 +35,7 @@ const featureItems = [
     { text: "AI Pose Analysis", icon: Sparkles },
     { text: "Personalized Feedback", icon: HeartPulse },
     { text: "Progress Tracking", icon: BarChart },
-    { text: "Mindful Breathing", icon: Wind },
+    { text: "Friends Challenge", icon: Users },
 ];
 
 function FeaturesDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: (open: boolean) => void }) {
