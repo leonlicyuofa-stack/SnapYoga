@@ -134,7 +134,7 @@ export default function SignUpPage() {
                     Begin Your Journey
                 </h1>
                 <p className="text-lg text-muted-foreground mt-2">
-                    Create an account to start your mindful movement.
+                    Create an account and start practice with us.
                 </p>
             </div>
 
