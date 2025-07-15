@@ -88,10 +88,7 @@ export default function WelcomePageAsRoot() {
     <div className="flex min-h-screen flex-row items-stretch bg-background overflow-hidden">
       {/* Left Pane (60%) */}
       <div className="w-[60%] bg-gradient-to-br from-background via-primary/5 to-accent/5 flex flex-col justify-between p-6 sm:p-10">
-        <header className="relative z-10 flex justify-between items-center">
-            <div className="flex items-center gap-2">
-                 <h1 className="text-2xl font-bold tracking-tight text-primary">SnapYoga</h1>
-            </div>
+        <header className="relative z-10 flex justify-end items-center">
             <div className="flex items-center gap-2">
                 <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3" aria-label="Switch Language">
                 <span className="mr-2">🇮🇩</span> Bahasa
@@ -105,6 +102,7 @@ export default function WelcomePageAsRoot() {
         </header>
 
         <main className="relative z-10">
+            <h1 className="text-2xl font-bold tracking-tight text-primary mb-2">SnapYoga</h1>
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground max-w-lg leading-tight" dangerouslySetInnerHTML={{ __html: t('landingTitle') }}>
             </h2>
             <p className="mt-4 text-lg text-foreground/80 max-w-md sm:text-xl">
