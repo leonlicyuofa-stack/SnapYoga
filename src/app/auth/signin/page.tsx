@@ -31,12 +31,9 @@ export default function SignInPage() {
   const { t } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<SignInFormValues>({
+  const { register, handleSubmit, formState: { errors } } = useForm<SignInFormValues>({
     resolver: zodResolver(signInSchema),
   });
-
-  const emailValue = watch('email');
-  const passwordValue = watch('password');
 
   const onSubmit: SubmitHandler<SignInFormValues> = async (data) => {
     setIsSubmitting(true);
