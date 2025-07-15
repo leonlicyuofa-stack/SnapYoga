@@ -26,7 +26,7 @@ interface UserProfileData extends DocumentData {
 export default function WelcomePageAsRoot() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [isProcessingClick, setIsProcessingClick] = useState(false);
@@ -76,11 +76,17 @@ export default function WelcomePageAsRoot() {
     }, 150); 
   };
 
+  const handleLanguageSwitch = () => {
+    const newLang = language === 'en' ? 'id' : 'en';
+    setLanguage(newLang);
+  };
+
+
   const isLoading = authLoading || loadingProfile || isProcessingClick;
 
   return (
     <div className="relative flex min-h-screen flex-col items-stretch justify-between overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-teal-500/20 via-orange-500/20 to-green-500/20 opacity-30"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-yellow-100/30 via-rose-100/30 to-sky-100/30 opacity-50"></div>
        <Image
         src="https://i.imgur.com/ncJiSEV.png"
         alt="Woman doing yoga in a brightly lit room with tropical plants"
@@ -93,16 +99,21 @@ export default function WelcomePageAsRoot() {
 
       <header className="relative z-10 p-6 sm:p-10 flex justify-between items-center">
         <div className="flex items-center gap-2">
-            <WelcomeRock className="h-10 w-10 text-primary" />
+            <SmileyRockLoader />
             <h1 className="text-3xl font-extrabold text-foreground leading-tight">
                 SnapYoga
             </h1>
         </div>
-        <Button variant="ghost" asChild>
-            <Link href="/auth/signin">
-                {t('signIn')}
-            </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3" aria-label="Switch Language">
+               <span className="mr-2">🇮🇩</span> Bahasa
+            </Button>
+            <Button variant="ghost" asChild>
+                <Link href="/auth/signin">
+                    {t('signIn')}
+                </Link>
+            </Button>
+        </div>
       </header>
 
       <main className="relative z-10 p-6 sm:p-10">
