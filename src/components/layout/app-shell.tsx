@@ -142,13 +142,13 @@ export function AppShell({ children }: AppShellProps) {
               </DropdownMenu>
             ) : (
               <>
-                <Button variant="ghost" asChild>
+                <Button variant="ghost" asChild className="h-9 px-4 py-2">
                   <Link href="/auth/signin">
                     <LogIn className="mr-2 h-5 w-5" />
                     {t('signIn')}
                   </Link>
                 </Button>
-                <Button asChild>
+                <Button asChild className="h-9 px-4 py-2">
                   <Link href="/auth/signup">
                     <UserCircle className="mr-2 h-5 w-5" />
                     {t('signUp')}
