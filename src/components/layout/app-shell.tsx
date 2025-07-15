@@ -94,7 +94,7 @@ export function AppShell({ children }: AppShellProps) {
             )}
             <div className="flex-grow sm:hidden"></div> 
              <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3" aria-label="Switch Language">
-               <span className="mr-2">🇮🇩</span> Bahasa
+               <span className="mr-2">🇮🇩</span> 
             </Button>
             
             {loading ? (

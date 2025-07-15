@@ -91,7 +91,7 @@ export default function WelcomePageAsRoot() {
         <header className="relative z-10 flex justify-end items-center">
             <div className="flex items-center gap-2">
                 <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3" aria-label="Switch Language">
-                <span className="mr-2">🇮🇩</span> Bahasa
+                <span className="mr-2">🇮🇩</span> 
                 </Button>
                 <Button variant="ghost" asChild>
                     <Link href="/auth/signin">
