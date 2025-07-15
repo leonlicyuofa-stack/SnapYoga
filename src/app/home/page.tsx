@@ -85,24 +85,10 @@ export default function WelcomePageAsRoot() {
   const isLoading = authLoading || loadingProfile || isProcessingClick;
 
   return (
-    <div className="relative flex min-h-screen flex-col items-stretch justify-between overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-yellow-100/30 via-rose-100/30 to-sky-100/30 opacity-50"></div>
-       <Image
-        src="https://i.imgur.com/ncJiSEV.png"
-        alt="Woman doing yoga in a brightly lit room with tropical plants"
-        data-ai-hint="yoga pose room plants"
-        fill
-        className="-z-10 object-cover opacity-80"
-        priority
-      />
-      <div className="absolute inset-0 bg-background/50 -z-10" />
-
+    <div className="relative flex min-h-screen flex-col items-stretch justify-between overflow-hidden bg-gradient-to-br from-background via-primary/10 to-accent/10">
       <header className="relative z-10 p-6 sm:p-10 flex justify-between items-center">
         <div className="flex items-center gap-2">
             <SmileyRockLoader />
-            <h1 className="text-3xl font-extrabold text-foreground leading-tight">
-                SnapYoga
-            </h1>
         </div>
         <div className="flex items-center gap-2">
             <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3" aria-label="Switch Language">
