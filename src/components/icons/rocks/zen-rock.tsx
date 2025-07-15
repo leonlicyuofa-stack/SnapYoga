@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { SVGProps } from 'react';
@@ -10,7 +9,7 @@ interface ZenRockProps extends SVGProps<SVGSVGElement> {
 }
 
 export function ZenRock({ progress, isSuccess, className, ...props }: ZenRockProps) {
-  const isAwake = progress >= 100 || isSuccess;
+  const isAwake = progress >= 100;
 
   return (
     <svg 
@@ -49,5 +48,3 @@ export function ZenRock({ progress, isSuccess, className, ...props }: ZenRockPro
     </svg>
   );
 }
-
-    
