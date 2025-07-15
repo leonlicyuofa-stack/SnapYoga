@@ -128,7 +128,7 @@ export default function SignUpPage() {
             <div className="w-full md:w-1/2 text-center md:text-left animate-fade-in-up">
                 <ZenRock progress={formProgress} isSuccess={isSuccess} />
                 <h1 className="text-3xl md:text-4xl font-bold text-primary mt-4">
-                    Begin Your Yoga Journey
+                    Join SnapYoga to begin your journey.
                 </h1>
             </div>
 
@@ -143,7 +143,6 @@ export default function SignUpPage() {
                         ></div>
                     </div>
                     <CardTitle className="text-2xl font-bold">{t('authCreateAccount')}</CardTitle>
-                    <CardDescription>{t('authCreateAccountDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent className="p-4 space-y-4">
                     <div className="grid grid-cols-2 gap-4 animate-form-item" style={{ animationDelay: '300ms' }}>
