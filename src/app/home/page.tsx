@@ -85,38 +85,59 @@ export default function WelcomePageAsRoot() {
   const isLoading = authLoading || loadingProfile || isProcessingClick;
 
   return (
-    <div className="relative flex min-h-screen flex-col items-stretch justify-between overflow-hidden bg-gradient-to-br from-background via-primary/10 to-accent/10">
-      <header className="relative z-10 p-6 sm:p-10 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-            <SmileyRockLoader />
-        </div>
-        <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3" aria-label="Switch Language">
-               <span className="mr-2">🇮🇩</span> Bahasa
-            </Button>
-            <Button variant="ghost" asChild>
-                <Link href="/auth/signin">
-                    {t('signIn')}
-                </Link>
-            </Button>
-        </div>
-      </header>
+    <div className="flex min-h-screen flex-row items-stretch bg-background overflow-hidden">
+      {/* Left Pane (70%) */}
+      <div className="w-[70%] bg-gradient-to-br from-background via-primary/5 to-accent/5 flex flex-col justify-between">
+        <header className="relative z-10 p-6 sm:p-10 flex justify-between items-center">
+            <div className="flex items-center gap-2">
+                <SmileyRockLoader />
+            </div>
+            <div className="flex items-center gap-2">
+                <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3" aria-label="Switch Language">
+                <span className="mr-2">🇮🇩</span> Bahasa
+                </Button>
+                <Button variant="ghost" asChild>
+                    <Link href="/auth/signin">
+                        {t('signIn')}
+                    </Link>
+                </Button>
+            </div>
+        </header>
 
-      <main className="relative z-10 p-6 sm:p-10">
-        <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground max-w-lg leading-tight" dangerouslySetInnerHTML={{ __html: t('landingTitle') }}>
-        </h2>
-        <p className="mt-4 text-lg text-foreground/80 max-w-md sm:text-xl">
-          {t('landingSubtitle')}
-        </p>
-        <Button
-          onClick={handleGetStarted}
-          className="mt-8 rounded-full h-16 w-auto px-8 bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-semibold shadow-lg transition-transform hover:scale-105"
-          aria-label={t('getStarted')}
-          disabled={isLoading}
-        >
-          {isLoading ? <SmileyRockLoader /> : <><span>{t('getStarted')}</span><MoveUpRight className="h-5 w-5 ml-2" /></>}
-        </Button>
-      </main>
+        <main className="relative z-10 p-6 sm:p-10">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground max-w-lg leading-tight" dangerouslySetInnerHTML={{ __html: t('landingTitle') }}>
+            </h2>
+            <p className="mt-4 text-lg text-foreground/80 max-w-md sm:text-xl">
+            {t('landingSubtitle')}
+            </p>
+            <Button
+            onClick={handleGetStarted}
+            className="mt-8 rounded-full h-16 w-auto px-8 bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-semibold shadow-lg transition-transform hover:scale-105"
+            aria-label={t('getStarted')}
+            disabled={isLoading}
+            >
+            {isLoading ? <SmileyRockLoader /> : <><span>{t('getStarted')}</span><MoveUpRight className="h-5 w-5 ml-2" /></>}
+            </Button>
+        </main>
+
+        {/* This empty div helps with the flex layout for vertical positioning */}
+        <div></div>
+      </div>
+      
+      {/* Right Pane (30%) with creative shape */}
+      <div className="w-[30%] h-screen relative" style={{ clipPath: 'polygon(25% 0, 100% 0, 100% 100%, 0% 100%)' }}>
+        <div className="absolute inset-0">
+          <Image
+            src="/images/headstand.png"
+            alt="Person doing yoga in a serene landscape"
+            fill
+            className="object-cover"
+            priority
+            data-ai-hint="yoga serene landscape"
+          />
+        </div>
+      </div>
+
     </div>
   );
 }
