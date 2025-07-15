@@ -86,11 +86,11 @@ export default function WelcomePageAsRoot() {
 
   return (
     <div className="flex min-h-screen flex-row items-stretch bg-background overflow-hidden">
-      {/* Left Pane (70%) */}
-      <div className="w-[70%] bg-gradient-to-br from-background via-primary/5 to-accent/5 flex flex-col justify-between p-6 sm:p-10">
+      {/* Left Pane (60%) */}
+      <div className="w-[60%] bg-gradient-to-br from-background via-primary/5 to-accent/5 flex flex-col justify-between p-6 sm:p-10">
         <header className="relative z-10 flex justify-between items-center">
             <div className="flex items-center gap-2">
-                <SmileyRockLoader />
+                 <h1 className="text-2xl font-bold tracking-tight text-primary">SnapYoga</h1>
             </div>
             <div className="flex items-center gap-2">
                 <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3" aria-label="Switch Language">
@@ -124,8 +124,8 @@ export default function WelcomePageAsRoot() {
         <div></div>
       </div>
       
-      {/* Right Pane (30%) with masked frame */}
-      <div className="w-[30%] h-screen relative">
+      {/* Right Pane (40%) with masked frame */}
+      <div className="w-[40%] h-screen relative">
         <div className="absolute inset-0"
              style={{ 
                 maskImage: 'linear-gradient(to right, transparent 0%, black 25%)',
