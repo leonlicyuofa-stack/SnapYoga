@@ -91,8 +91,8 @@ export default function WelcomePageAsRoot() {
         <div></div> {/* Top spacer */}
 
         <main className="relative z-10">
-            <h1 className="text-7xl font-bold tracking-tight text-primary mb-2">SnapYoga</h1>
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground max-w-lg leading-tight" dangerouslySetInnerHTML={{ __html: t('landingTitle') }}>
+            <h1 className="text-6xl font-bold tracking-tight text-primary mb-2">SnapYoga</h1>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground max-w-lg leading-tight" dangerouslySetInnerHTML={{ __html: t('landingTitle') }}>
             </h2>
             <p className="mt-4 text-lg text-foreground/80 max-w-md sm:text-xl">
             {t('landingSubtitle')}
