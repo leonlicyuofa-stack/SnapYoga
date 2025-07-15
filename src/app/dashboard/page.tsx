@@ -296,299 +296,308 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <LuckyWheelDialog isOpen={showLuckyWheelDialog} onClose={() => setShowLuckyWheelDialog(false)} />
-      {rewardedRock && (
-        <RewardDialog 
-          isOpen={showRewardDialog} 
-          onClose={() => setShowRewardDialog(false)} 
-          rock={rewardedRock} 
-        />
-      )}
-      <div className="flex flex-col items-center w-full">
-        {user && !authLoading && (
-          <div className="w-full bg-card p-4 md:p-6 rounded-lg shadow-md border border-border mb-8 md:mb-12">
-            {loadingUserProfile && !userProfile ? (
-              <div className="text-center py-8">
-                <Skeleton className="h-10 w-3/4 mb-4 mx-auto" />
-                <Skeleton className="h-6 w-1/2 mb-6 mx-auto" />
-                <Skeleton className="h-12 w-1/3 mx-auto" />
-              </div>
-            ) : needsOnboarding ? (
-              <div className="text-center py-8">
-                <UserPlus className="mx-auto h-12 w-12 text-primary mb-4" />
-                <h2 className="text-2xl md:text-3xl font-semibold text-primary mb-3">
-                  Welcome to SnapYoga, {welcomeName}!
-                </h2>
-                <p className="text-lg text-muted-foreground mb-6 max-w-md mx-auto">
-                  Complete your profile to personalize your experience and unlock all features.
-                </p>
-                <Button size="lg" asChild className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-7 px-8 rounded-lg shadow-lg transition-transform transform hover:scale-105">
-                  <Link href="/auth/onboarding/details">
-                    <ArrowRight className="mr-2 h-5 w-5" />
-                    Complete Your Profile
-                  </Link>
-                </Button>
-              </div>
-            ) : showStatsDashboard ? (
-              <>
-                <h2 className="text-2xl md:text-3xl font-semibold text-primary mb-4 md:mb-6 text-center">
-                  {t('dashboardWelcome').replace('{name}', welcomeName)}
-                </h2>
-                
-                <RockCollectionCard rocks={allRocks} />
+      <div
+        className="absolute inset-0 z-[-1] bg-cover bg-center opacity-10 dark:opacity-20"
+        style={{
+          backgroundImage: "url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2120&auto=format&fit=crop')",
+        }}
+        data-ai-hint="yoga background"
+      ></div>
+      <div className="relative">
+        <LuckyWheelDialog isOpen={showLuckyWheelDialog} onClose={() => setShowLuckyWheelDialog(false)} />
+        {rewardedRock && (
+          <RewardDialog 
+            isOpen={showRewardDialog} 
+            onClose={() => setShowRewardDialog(false)} 
+            rock={rewardedRock} 
+          />
+        )}
+        <div className="flex flex-col items-center w-full">
+          {user && !authLoading && (
+            <div className="w-full bg-card/80 backdrop-blur-sm p-4 md:p-6 rounded-lg shadow-md border border-border mb-8 md:mb-12">
+              {loadingUserProfile && !userProfile ? (
+                <div className="text-center py-8">
+                  <Skeleton className="h-10 w-3/4 mb-4 mx-auto" />
+                  <Skeleton className="h-6 w-1/2 mb-6 mx-auto" />
+                  <Skeleton className="h-12 w-1/3 mx-auto" />
+                </div>
+              ) : needsOnboarding ? (
+                <div className="text-center py-8">
+                  <UserPlus className="mx-auto h-12 w-12 text-primary mb-4" />
+                  <h2 className="text-2xl md:text-3xl font-semibold text-primary mb-3">
+                    Welcome to SnapYoga, {welcomeName}!
+                  </h2>
+                  <p className="text-lg text-muted-foreground mb-6 max-w-md mx-auto">
+                    Complete your profile to personalize your experience and unlock all features.
+                  </p>
+                  <Button size="lg" asChild className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-7 px-8 rounded-lg shadow-lg transition-transform transform hover:scale-105">
+                    <Link href="/auth/onboarding/details">
+                      <ArrowRight className="mr-2 h-5 w-5" />
+                      Complete Your Profile
+                    </Link>
+                  </Button>
+                </div>
+              ) : showStatsDashboard ? (
+                <>
+                  <h2 className="text-2xl md:text-3xl font-semibold text-primary mb-4 md:mb-6 text-center">
+                    {t('dashboardWelcome').replace('{name}', welcomeName)}
+                  </h2>
+                  
+                  <RockCollectionCard rocks={allRocks} />
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mt-6">
-                  <Card className="shadow-lg lg:col-span-2">
-                    <CardHeader>
-                      <CardTitle className="flex items-center text-xl md:text-2xl">
-                        <ListChecks className="mr-3 h-7 w-7 text-primary" />
-                        {t('recentAnalysesTitle')}
-                      </CardTitle>
-                      <CardDescription>{t('recentAnalysesDesc')}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      {loadingAnalyses ? (
-                        <div className="space-y-3">
-                          {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 w-full rounded-md" />)}
-                        </div>
-                      ) : analyses.length > 0 ? (
-                        <ul className="space-y-3">
-                          {analyses.map((analysis) => (
-                            <li key={analysis.id}>
-                              <Link href={`/analysis/${analysis.id}`} className="block p-3 bg-card rounded-md border hover:shadow-md hover:bg-muted/50 transition-all group">
-                                <div className="flex justify-between items-start mb-1">
-                                  <span className="font-semibold text-lg text-foreground group-hover:text-primary">{analysis.identifiedPose}</span>
-                                  <Badge variant={getScoreBadgeVariant(analysis.score)} className="text-sm px-3 py-1">
-                                    {analysis.score}/100
-                                  </Badge>
-                                </div>
-                                <p className="text-xs text-muted-foreground">
-                                  {analysis.createdAt ? format(analysis.createdAt.toDate(), 'PPP p') : 'Date unknown'}
-                                </p>
-                                <p className="text-sm text-foreground/80 mt-1 truncate" title={analysis.feedback}>
-                                  Feedback: {analysis.feedback.substring(0, 70)}{analysis.feedback.length > 70 ? "..." : ""}
-                                </p>
-                                <div className="flex justify-end items-center mt-2">
-                                    <span className="text-xs text-primary group-hover:underline">View Details</span>
-                                    <ChevronRight className="h-4 w-4 text-primary ml-1 transform transition-transform group-hover:translate-x-1" />
-                                </div>
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="text-muted-foreground text-center py-4">No pose analyses found. Analyze a pose to see your progress!</p>
-                      )}
-                    </CardContent>
-                     {analyses.length > 0 && (
-                        <CardFooter>
-                            <Button variant="outline" className="w-full" asChild>
-                                <Link href="/snap-yoga">Analyze Another Pose <ArrowRight className="ml-2 h-4 w-4" /></Link>
-                            </Button>
-                        </CardFooter>
-                    )}
-                  </Card>
-
-                  <div className="space-y-4 md:space-y-6">
-                    <Card className="shadow-lg">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mt-6">
+                    <Card className="shadow-lg lg:col-span-2 bg-card/90 backdrop-blur-sm">
                       <CardHeader>
                         <CardTitle className="flex items-center text-xl md:text-2xl">
-                          <BarChart3 className="mr-3 h-7 w-7 text-primary" />
-                          {t('appUsageTitle')}
+                          <ListChecks className="mr-3 h-7 w-7 text-primary" />
+                          {t('recentAnalysesTitle')}
                         </CardTitle>
-                      </CardHeader>
-                      <CardContent className="flex flex-row justify-around items-center text-center space-x-2 md:space-x-4">
-                        <div className="flex-1">
-                           <div className="text-3xl md:text-4xl font-bold text-accent">
-                            {loadingAppUsageStats ? <Skeleton className="h-9 w-12 md:h-10 md:w-16 inline-block" /> : activeLoginDays ?? '-'}
-                          </div>
-                          <p className="text-xs md:text-sm text-muted-foreground flex items-center justify-center gap-1"><CalendarDays className="h-3 w-3 md:h-4 md:w-4"/>{t('activeDays')}</p>
-                        </div>
-                        <div className="flex-1">
-                           <div className="text-3xl md:text-4xl font-bold text-accent">
-                            {loadingAppUsageStats ? <Skeleton className="h-9 w-12 md:h-10 md:w-16 inline-block" /> : posesAnalyzedPast30Days ?? '-'}
-                          </div>
-                          <p className="text-xs md:text-sm text-muted-foreground flex items-center justify-center gap-1"><Activity className="h-3 w-3 md:h-4 md:w-4"/>{t('posesDone')}</p>
-                        </div>
-                      </CardContent>
-                      { (!loadingAppUsageStats && ((activeLoginDays ?? 0) > 0 || (posesAnalyzedPast30Days ?? 0) > 0)) &&
-                        <CardFooter className="pt-3 pb-4">
-                             <p className="text-xs text-foreground/80 text-center w-full">Keep up the great work!</p>
-                        </CardFooter>
-                      }
-                    </Card>
-
-                    <Card className="shadow-lg">
-                      <CardHeader>
-                        <CardTitle className="flex items-center text-xl md:text-2xl">
-                          <Trophy className="mr-3 h-7 w-7 text-primary" />
-                          {t('friendChallengesTitle')}
-                        </CardTitle>
+                        <CardDescription>{t('recentAnalysesDesc')}</CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-muted-foreground mb-1 text-sm">Headstand Challenge:</p>
-                        <div className="mb-2">
-                          <div className="flex justify-between text-xs text-foreground/80 mb-0.5"><span>You</span><span>75%</span></div>
-                          <Progress value={75} className="h-2.5" />
-                        </div>
-                        <div>
-                          <div className="flex justify-between text-xs text-muted-foreground mb-0.5"><span>Alex</span><span>60%</span></div>
-                          <Progress value={60} className="h-2.5 bg-secondary/70" />
-                        </div>
-                        <Button variant="outline" size="sm" className="mt-4 w-full" asChild>
-                          <Link href="/challenges">
-                            {t('viewAllChallenges')}
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                          </Link>
-                        </Button>
+                        {loadingAnalyses ? (
+                          <div className="space-y-3">
+                            {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 w-full rounded-md" />)}
+                          </div>
+                        ) : analyses.length > 0 ? (
+                          <ul className="space-y-3">
+                            {analyses.map((analysis) => (
+                              <li key={analysis.id}>
+                                <Link href={`/analysis/${analysis.id}`} className="block p-3 bg-card rounded-md border hover:shadow-md hover:bg-muted/50 transition-all group">
+                                  <div className="flex justify-between items-start mb-1">
+                                    <span className="font-semibold text-lg text-foreground group-hover:text-primary">{analysis.identifiedPose}</span>
+                                    <Badge variant={getScoreBadgeVariant(analysis.score)} className="text-sm px-3 py-1">
+                                      {analysis.score}/100
+                                    </Badge>
+                                  </div>
+                                  <p className="text-xs text-muted-foreground">
+                                    {analysis.createdAt ? format(analysis.createdAt.toDate(), 'PPP p') : 'Date unknown'}
+                                  </p>
+                                  <p className="text-sm text-foreground/80 mt-1 truncate" title={analysis.feedback}>
+                                    Feedback: {analysis.feedback.substring(0, 70)}{analysis.feedback.length > 70 ? "..." : ""}
+                                  </p>
+                                  <div className="flex justify-end items-center mt-2">
+                                      <span className="text-xs text-primary group-hover:underline">View Details</span>
+                                      <ChevronRight className="h-4 w-4 text-primary ml-1 transform transition-transform group-hover:translate-x-1" />
+                                  </div>
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="text-muted-foreground text-center py-4">No pose analyses found. Analyze a pose to see your progress!</p>
+                        )}
                       </CardContent>
+                      {analyses.length > 0 && (
+                          <CardFooter>
+                              <Button variant="outline" className="w-full" asChild>
+                                  <Link href="/snap-yoga">Analyze Another Pose <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                              </Button>
+                          </CardFooter>
+                      )}
                     </Card>
-                  </div>
-                </div>
-              </>
-            ) : null
-            }
 
-            {showStatsDashboard && (
-              <Card className="w-full max-w-2xl shadow-lg mt-8 mx-auto">
-                <CardHeader>
-                  <CardTitle className="text-2xl font-semibold flex items-center justify-center gap-2 text-primary">
-                    <Share2 className="h-7 w-7" />
-                    {t('inviteFriendsTitle')}
-                  </CardTitle>
-                  <CardDescription className="text-center mt-1">
-                    {t('inviteFriendsDesc')}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <p className="text-sm font-medium mb-1">{t('yourInviteLink')}</p>
-                    <div className="flex items-center space-x-2">
-                      <Input
-                        type="text"
-                        value={inviteLink}
-                        readOnly
-                        className="text-sm text-muted-foreground"
-                        aria-label="Invite Link"
-                      />
-                      <Button variant="outline" size="icon" onClick={handleCopyInviteLink} title="Copy Link">
-                        <Copy className="h-5 w-5" />
-                      </Button>
+                    <div className="space-y-4 md:space-y-6">
+                      <Card className="shadow-lg bg-card/90 backdrop-blur-sm">
+                        <CardHeader>
+                          <CardTitle className="flex items-center text-xl md:text-2xl">
+                            <BarChart3 className="mr-3 h-7 w-7 text-primary" />
+                            {t('appUsageTitle')}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex flex-row justify-around items-center text-center space-x-2 md:space-x-4">
+                          <div className="flex-1">
+                            <div className="text-3xl md:text-4xl font-bold text-accent">
+                              {loadingAppUsageStats ? <Skeleton className="h-9 w-12 md:h-10 md:w-16 inline-block" /> : activeLoginDays ?? '-'}
+                            </div>
+                            <p className="text-xs md:text-sm text-muted-foreground flex items-center justify-center gap-1"><CalendarDays className="h-3 w-3 md:h-4 md:w-4"/>{t('activeDays')}</p>
+                          </div>
+                          <div className="flex-1">
+                            <div className="text-3xl md:text-4xl font-bold text-accent">
+                              {loadingAppUsageStats ? <Skeleton className="h-9 w-12 md:h-10 md:w-16 inline-block" /> : posesAnalyzedPast30Days ?? '-'}
+                            </div>
+                            <p className="text-xs md:text-sm text-muted-foreground flex items-center justify-center gap-1"><Activity className="h-3 w-3 md:h-4 md:w-4"/>{t('posesDone')}</p>
+                          </div>
+                        </CardContent>
+                        { (!loadingAppUsageStats && ((activeLoginDays ?? 0) > 0 || (posesAnalyzedPast30Days ?? 0) > 0)) &&
+                          <CardFooter className="pt-3 pb-4">
+                              <p className="text-xs text-foreground/80 text-center w-full">Keep up the great work!</p>
+                          </CardFooter>
+                        }
+                      </Card>
+
+                      <Card className="shadow-lg bg-card/90 backdrop-blur-sm">
+                        <CardHeader>
+                          <CardTitle className="flex items-center text-xl md:text-2xl">
+                            <Trophy className="mr-3 h-7 w-7 text-primary" />
+                            {t('friendChallengesTitle')}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-muted-foreground mb-1 text-sm">Headstand Challenge:</p>
+                          <div className="mb-2">
+                            <div className="flex justify-between text-xs text-foreground/80 mb-0.5"><span>You</span><span>75%</span></div>
+                            <Progress value={75} className="h-2.5" />
+                          </div>
+                          <div>
+                            <div className="flex justify-between text-xs text-muted-foreground mb-0.5"><span>Alex</span><span>60%</span></div>
+                            <Progress value={60} className="h-2.5 bg-secondary/70" />
+                          </div>
+                          <Button variant="outline" size="sm" className="mt-4 w-full" asChild>
+                            <Link href="/challenges">
+                              {t('viewAllChallenges')}
+                              <ArrowRight className="ml-2 h-4 w-4" />
+                            </Link>
+                          </Button>
+                        </CardContent>
+                      </Card>
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <Button
-                      variant="outline"
-                      className="w-full"
-                      asChild={!!inviteLink}
-                      disabled={!inviteLink}
-                    >
-                      <a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer">
-                        <MessageSquare className="mr-2 h-5 w-5" />
-                        {t('shareOnWhatsapp')}
-                      </a>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="w-full"
-                      onClick={handleInstagramShare}
-                      disabled={!inviteLink}
-                    >
-                      <Share2 className="mr-2 h-5 w-5" />
-                      {t('shareOnInstagram')}
-                    </Button>
-                  </div>
+                </>
+              ) : null
+              }
+
+              {showStatsDashboard && (
+                <Card className="w-full max-w-2xl shadow-lg mt-8 mx-auto bg-card/80 backdrop-blur-sm">
+                  <CardHeader>
+                    <CardTitle className="text-2xl font-semibold flex items-center justify-center gap-2 text-primary">
+                      <Share2 className="h-7 w-7" />
+                      {t('inviteFriendsTitle')}
+                    </CardTitle>
+                    <CardDescription className="text-center mt-1">
+                      {t('inviteFriendsDesc')}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <p className="text-sm font-medium mb-1">{t('yourInviteLink')}</p>
+                      <div className="flex items-center space-x-2">
+                        <Input
+                          type="text"
+                          value={inviteLink}
+                          readOnly
+                          className="text-sm text-muted-foreground"
+                          aria-label="Invite Link"
+                        />
+                        <Button variant="outline" size="icon" onClick={handleCopyInviteLink} title="Copy Link">
+                          <Copy className="h-5 w-5" />
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <Button
+                        variant="outline"
+                        className="w-full"
+                        asChild={!!inviteLink}
+                        disabled={!inviteLink}
+                      >
+                        <a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer">
+                          <MessageSquare className="mr-2 h-5 w-5" />
+                          {t('shareOnWhatsapp')}
+                        </a>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="w-full"
+                        onClick={handleInstagramShare}
+                        disabled={!inviteLink}
+                      >
+                        <Share2 className="mr-2 h-5 w-5" />
+                        {t('shareOnInstagram')}
+                      </Button>
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <p className="text-xs text-muted-foreground text-center w-full">
+                      {t('inviteLinkHelp')}
+                    </p>
+                  </CardFooter>
+                </Card>
+              )}
+            </div>
+          )}
+
+          <div className="w-full max-w-2xl flex flex-col items-center justify-center py-8 md:py-6">
+              <Card className="w-full shadow-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-background/80 to-secondary/10 border-primary/20 backdrop-blur-sm mb-8 md:mb-12">
+                <CardHeader className="text-center p-6 md:p-8">
+                    <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-primary flex items-center justify-center">
+                      <WelcomeRock className="mr-3 h-10 w-10 md:h-12 md:w-12" />
+                      {t('snapYogaTitle')}
+                    </h1>
+                    <p className="mt-3 text-lg text-muted-foreground max-w-xl mx-auto">
+                      {t('snapYogaSubtitle')}
+                    </p>
+                </CardHeader>
+                <CardContent className="p-6 md:p-8 pt-0 min-h-[150px] md:min-h-[200px] flex flex-col items-center justify-center text-center">
+                  {loadingQuote ? (
+                    <>
+                      <Skeleton className="h-6 w-3/4 mb-3" />
+                      <Skeleton className="h-5 w-1/2 mb-4" />
+                      <Skeleton className="h-4 w-1/4" />
+                    </>
+                  ) : quote ? (
+                    <>
+                      <blockquote className="text-xl md:text-2xl font-medium text-foreground/90 italic leading-relaxed">
+                        &ldquo;{quote.content}&rdquo;
+                      </blockquote>
+                      <cite className="mt-4 block text-sm md:text-base text-muted-foreground not-italic">
+                        &ndash; {quote.author}
+                      </cite>
+                    </>
+                  ) : (
+                    <p className="text-muted-foreground">Loading daily inspiration...</p>
+                  )}
                 </CardContent>
-                <CardFooter>
-                  <p className="text-xs text-muted-foreground text-center w-full">
-                    {t('inviteLinkHelp')}
-                  </p>
-                </CardFooter>
               </Card>
-            )}
-          </div>
-        )}
-
-         <div className="w-full max-w-2xl flex flex-col items-center justify-center py-8 md:py-6">
-            <Card className="w-full shadow-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-background to-secondary/10 border-primary/20 mb-8 md:mb-12">
-              <CardHeader className="text-center p-6 md:p-8">
-                  <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-primary flex items-center justify-center">
-                    <WelcomeRock className="mr-3 h-10 w-10 md:h-12 md:w-12" />
-                    {t('snapYogaTitle')}
-                  </h1>
-                  <p className="mt-3 text-lg text-muted-foreground max-w-xl mx-auto">
-                    {t('snapYogaSubtitle')}
+              
+              <Card className="w-full shadow-2xl overflow-hidden bg-card/80 backdrop-blur-sm">
+                <CardHeader className="text-center pt-8">
+                  <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
+                    <Sparkles className="h-8 w-8 text-primary" />
+                    {t('analyzeYourPoseTitle')}
+                  </CardTitle>
+                  <CardDescription className="text-lg text-muted-foreground mt-2 max-w-md mx-auto">
+                    {t('analyzeYourPoseDesc')}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center space-y-6 p-8">
+                  <p className="text-center text-foreground/80">
+                    {t('analyzeYourPoseHelp')}
                   </p>
-              </CardHeader>
-              <CardContent className="p-6 md:p-8 pt-0 min-h-[150px] md:min-h-[200px] flex flex-col items-center justify-center text-center">
-                {loadingQuote ? (
-                  <>
-                    <Skeleton className="h-6 w-3/4 mb-3" />
-                    <Skeleton className="h-5 w-1/2 mb-4" />
-                    <Skeleton className="h-4 w-1/4" />
-                  </>
-                ) : quote ? (
-                  <>
-                    <blockquote className="text-xl md:text-2xl font-medium text-foreground/90 italic leading-relaxed">
-                      &ldquo;{quote.content}&rdquo;
-                    </blockquote>
-                    <cite className="mt-4 block text-sm md:text-base text-muted-foreground not-italic">
-                      &ndash; {quote.author}
-                    </cite>
-                  </>
-                ) : (
-                  <p className="text-muted-foreground">Loading daily inspiration...</p>
-                )}
-              </CardContent>
-            </Card>
-            
-            <Card className="w-full shadow-2xl overflow-hidden">
-              <CardHeader className="text-center pt-8">
-                <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
-                  <Sparkles className="h-8 w-8 text-primary" />
-                  {t('analyzeYourPoseTitle')}
-                </CardTitle>
-                <CardDescription className="text-lg text-muted-foreground mt-2 max-w-md mx-auto">
-                  {t('analyzeYourPoseDesc')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex flex-col items-center space-y-6 p-8">
-                <p className="text-center text-foreground/80">
-                  {t('analyzeYourPoseHelp')}
-                </p>
-                <Link href="/snap-yoga" passHref>
-                  <Button
-                    size="lg"
-                    className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-7 px-8 rounded-lg shadow-lg transition-transform transform hover:scale-105"
-                    aria-label="Go to SnapYoga Analysis Page"
-                  >
-                    {t('startAnalyzing')}
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+                  <Link href="/snap-yoga" passHref>
+                    <Button
+                      size="lg"
+                      className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-7 px-8 rounded-lg shadow-lg transition-transform transform hover:scale-105"
+                      aria-label="Go to SnapYoga Analysis Page"
+                    >
+                      {t('startAnalyzing')}
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
 
-            <Card className="w-full shadow-2xl overflow-hidden mt-12">
-              <CardHeader className="text-center pt-8">
-                <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
-                  <Users className="h-8 w-8 text-primary" />
-                  {t('challengesWithFriendsTitle')}
-                </CardTitle>
-                <CardDescription className="text-lg text-muted-foreground mt-2 max-w-md mx-auto">
-                  {t('challengesWithFriendsDesc')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex flex-col items-center space-y-6 p-8">
-                <Link href="/challenges" passHref>
-                  <Button size="lg" variant="outline" className="text-lg py-7 px-8 rounded-lg shadow-md hover:shadow-lg transition-transform transform hover:scale-105">
-                    {t('exploreChallenges')}
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-         </div>
+              <Card className="w-full shadow-2xl overflow-hidden mt-12 bg-card/80 backdrop-blur-sm">
+                <CardHeader className="text-center pt-8">
+                  <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
+                    <Users className="h-8 w-8 text-primary" />
+                    {t('challengesWithFriendsTitle')}
+                  </CardTitle>
+                  <CardDescription className="text-lg text-muted-foreground mt-2 max-w-md mx-auto">
+                    {t('challengesWithFriendsDesc')}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center space-y-6 p-8">
+                  <Link href="/challenges" passHref>
+                    <Button size="lg" variant="outline" className="text-lg py-7 px-8 rounded-lg shadow-md hover:shadow-lg transition-transform transform hover:scale-105">
+                      {t('exploreChallenges')}
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+          </div>
+        </div>
       </div>
     </AppShell>
   );
