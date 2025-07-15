@@ -127,23 +127,27 @@ export default function SignUpPage() {
             {/* Left Side: Welcome Text & Mascot */}
             <div className="w-full md:w-1/2 text-center md:text-left animate-fade-in-up">
                 <ZenRock progress={formProgress} isSuccess={isSuccess} />
-                <h1 className="text-3xl md:text-4xl font-bold text-primary mt-4 relative inline-block">
-                    Join SnapYoga to begin your journey.
-                     <svg
-                        className="absolute -bottom-1 -left-2 -right-2 h-[120%] w-[110%] text-accent/70 -z-10"
-                        viewBox="0 0 450 60"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        preserveAspectRatio="none"
-                    >
-                        <path
-                            d="M3.5 31.9731C51.6667 12.3065 240 -15.0269 440.5 24.9731C329.5 35.4731 156.667 52.8065 83 58.9731C58.2 62.2731 11.5 54.9731 3.5 49.4731"
-                            stroke="currentColor"
-                            strokeWidth="8"
-                            strokeLinecap="round"
-                            className="animate-brush-stroke"
-                        />
-                    </svg>
+                <h1 className="text-3xl md:text-4xl font-bold text-primary mt-4">
+                    Join{' '}
+                    <span className="relative inline-block">
+                        SnapYoga
+                        <svg
+                            className="absolute -bottom-1 -left-2 -right-2 h-[120%] w-[110%] text-accent/70 -z-10"
+                            viewBox="0 0 200 60"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            preserveAspectRatio="none"
+                        >
+                            <path
+                                d="M3.5 31.9731C51.6667 12.3065 120 -15.0269 190.5 24.9731C159.5 35.4731 106.667 52.8065 83 58.9731C58.2 62.2731 11.5 54.9731 3.5 49.4731"
+                                stroke="currentColor"
+                                strokeWidth="8"
+                                strokeLinecap="round"
+                                className="animate-brush-stroke"
+                            />
+                        </svg>
+                    </span>
+                    {' '}to begin your journey.
                 </h1>
             </div>
 
