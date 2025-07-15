@@ -81,7 +81,7 @@ export default function SignInPage() {
               <div className="space-y-2">
                 <Label htmlFor="email">{t('authEmailLabel')}</Label>
                 <div className="relative">
-                  {!emailValue && <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />}
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input 
                     id="email" 
                     type="email" 
@@ -95,7 +95,7 @@ export default function SignInPage() {
               <div className="space-y-2">
                 <Label htmlFor="password">{t('authPasswordLabel')}</Label>
                  <div className="relative">
-                  {!passwordValue && <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />}
+                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input 
                     id="password" 
                     type="password" 
