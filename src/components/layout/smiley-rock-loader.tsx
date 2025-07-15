@@ -62,7 +62,6 @@ export function SmileyRockLoader({ className, text }: SmileyRockLoaderProps) {
           </g>
            <g id="waving-arm-group">
                 <path id="waving-arm" d="M55,45 C 65,40 75,50 70,55" fill="#F8BBD0" />
-                <text id="wave-text" x="80" y="45" textAnchor="start" fill="#4E342E" fontSize="12" fontWeight="bold">SnapYoga</text>
             </g>
         </g>
       </svg>

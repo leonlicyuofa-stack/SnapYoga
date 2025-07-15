@@ -250,19 +250,14 @@
   animation: face-reveal 0.5s ease-out calc(var(--duration) - 1.5s) forwards;
 }
 
-/* Initially hide the arm and text */
-.pebble-stack-loader #waving-arm-group,
-.pebble-stack-loader #wave-text {
+/* Initially hide the arm */
+.pebble-stack-loader #waving-arm-group {
   opacity: 0;
 }
 
 .pebble-stack-loader.finished #waving-arm-group {
     opacity: 1;
     animation: arm-wave-and-text-reveal 1s ease-in-out forwards;
-}
-
-.pebble-stack-loader.finished #wave-text {
-    animation: text-pop-out 1s ease-in-out 0.2s forwards;
 }
 
 .pebble-stack-loader.finished #stack {
