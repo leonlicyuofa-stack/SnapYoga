@@ -190,8 +190,9 @@ export default function SignUpPage() {
                                     type="email"
                                     placeholder="you@example.com"
                                     {...register("email")}
-                                    className={cn("pl-10 transition-all focus:scale-[1.02]", errors.email ? "border-destructive focus:ring-destructive" : touchedFields.email && "border-green-500 focus:ring-green-500" )}
+                                    className={cn("pl-10 pr-10 transition-all focus:scale-[1.02]", errors.email ? "border-destructive focus:ring-destructive" : touchedFields.email && "border-green-500 focus:ring-green-500" )}
                                 />
+                                <Check className={cn("absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500 transition-opacity duration-300", !errors.email && touchedFields.email ? "opacity-100" : "opacity-0")} />
                             </div>
                             {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
                         </div>
@@ -204,8 +205,9 @@ export default function SignUpPage() {
                                     type="password"
                                     placeholder="••••••••"
                                     {...register("password")}
-                                    className={cn("pl-10 transition-all focus:scale-[1.02]", errors.password ? "border-destructive focus:ring-destructive" : touchedFields.password && "border-green-500 focus:ring-green-500")}
+                                    className={cn("pl-10 pr-10 transition-all focus:scale-[1.02]", errors.password ? "border-destructive focus:ring-destructive" : touchedFields.password && "border-green-500 focus:ring-green-500")}
                                 />
+                                <Check className={cn("absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500 transition-opacity duration-300", !errors.password && touchedFields.password ? "opacity-100" : "opacity-0")} />
                             </div>
                             {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
                         </div>
@@ -218,8 +220,9 @@ export default function SignUpPage() {
                                     type="password"
                                     placeholder="••••••••"
                                     {...register("confirmPassword")}
-                                    className={cn("pl-10 transition-all focus:scale-[1.02]", errors.confirmPassword ? "border-destructive focus:ring-destructive" : touchedFields.confirmPassword && !errors.confirmPassword && "border-green-500 focus:ring-green-500" )}
+                                    className={cn("pl-10 pr-10 transition-all focus:scale-[1.02]", errors.confirmPassword ? "border-destructive focus:ring-destructive" : touchedFields.confirmPassword && !errors.confirmPassword && "border-green-500 focus:ring-green-500" )}
                                 />
+                                <Check className={cn("absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500 transition-opacity duration-300", !errors.confirmPassword && touchedFields.confirmPassword ? "opacity-100" : "opacity-0")} />
                             </div>
                             {errors.confirmPassword && <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>}
                         </div>
@@ -258,5 +261,3 @@ export default function SignUpPage() {
     </div>
   );
 }
-
-    
