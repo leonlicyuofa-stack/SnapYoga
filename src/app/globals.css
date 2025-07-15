@@ -170,7 +170,20 @@
   .animate-eye-sparkle {
       animation: eye-sparkle 3s ease-in-out infinite;
   }
+  .animate-brush-stroke {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: brush-stroke 1.5s 0.5s ease-out forwards;
+  }
+}
 
+@keyframes brush-stroke {
+  from {
+    stroke-dashoffset: 1000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 @keyframes breathing-bg {

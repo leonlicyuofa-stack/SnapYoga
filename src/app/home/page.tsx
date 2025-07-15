@@ -91,7 +91,24 @@ export default function WelcomePageAsRoot() {
         <div></div> {/* Top spacer */}
 
         <main className="relative z-10">
-            <h1 className="text-5xl font-bold tracking-tight text-primary mb-2">SnapYoga</h1>
+            <h1 className="text-5xl font-bold tracking-tight text-primary mb-2 relative inline-block">
+                SnapYoga
+                <svg
+                    className="absolute -bottom-2 -left-2 -right-2 h-[120%] w-[110%] text-accent/70 -z-10"
+                    viewBox="0 0 300 70"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    preserveAspectRatio="none"
+                    >
+                    <path
+                        d="M3.5 31.9731C51.6667 12.3065 168 -15.0269 294.5 24.9731C229.5 35.4731 106.667 52.8065 53 58.9731C28.2 62.2731 11.5 54.9731 3.5 49.4731"
+                        stroke="currentColor"
+                        strokeWidth="8"
+                        strokeLinecap="round"
+                        className="animate-brush-stroke"
+                    />
+                </svg>
+            </h1>
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground max-w-lg leading-tight" dangerouslySetInnerHTML={{ __html: t('landingTitle') }}>
             </h2>
             <p className="mt-4 text-lg text-foreground/80 max-w-md sm:text-xl">
