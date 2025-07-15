@@ -91,7 +91,7 @@ export default function WelcomePageAsRoot() {
         <div></div> {/* Top spacer */}
 
         <main className="relative z-10">
-            <h1 className="text-2xl font-bold tracking-tight text-primary mb-2">SnapYoga</h1>
+            <h1 className="text-7xl font-bold tracking-tight text-primary mb-2">SnapYoga</h1>
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground max-w-lg leading-tight" dangerouslySetInnerHTML={{ __html: t('landingTitle') }}>
             </h2>
             <p className="mt-4 text-lg text-foreground/80 max-w-md sm:text-xl">
@@ -99,7 +99,7 @@ export default function WelcomePageAsRoot() {
             </p>
             <Button
             onClick={handleGetStarted}
-            className="mt-8 rounded-full h-16 w-auto px-8 bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-semibold shadow-lg transition-transform hover:scale-105"
+            className="mt-8 rounded-full h-14 w-auto px-7 bg-primary hover:bg-primary/90 text-primary-foreground text-base font-semibold shadow-lg transition-transform hover:scale-105"
             aria-label={t('getStarted')}
             disabled={isLoading}
             >
@@ -115,7 +115,7 @@ export default function WelcomePageAsRoot() {
          <header className="absolute top-0 right-0 z-10 flex justify-end items-center p-6 sm:p-10">
             <div className="flex items-center gap-2">
                 <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3 bg-background/50 backdrop-blur-sm hover:bg-background/80" aria-label="Switch Language">
-                  <span className="mr-2">🇮🇩</span>
+                  <span className="mr-2">🇮🇩</span> Bahasa
                 </Button>
                 <Button variant="ghost" asChild className="text-white hover:text-white hover:bg-white/20 bg-black/20 backdrop-blur-sm">
                     <Link href="/auth/signin">
