@@ -13,7 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon';
-import { Mail, KeyRound, UserPlus, Check, Sparkles, BarChart, HeartPulse, Users } from 'lucide-react';
+import { Mail, KeyRound, UserPlus, Check, Sparkles, BarChart, HeartPulse, Users, Flame } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
@@ -43,7 +43,10 @@ function FeaturesDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChang
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="text-center">
-            <DialogTitle className="text-2xl font-bold">Here's what you'll unlock:</DialogTitle>
+            <DialogTitle className="text-2xl font-bold flex items-center justify-center gap-2">
+                <Flame className="h-6 w-6 text-accent" />
+                Here's what you'll unlock:
+            </DialogTitle>
         </DialogHeader>
         <div className="py-4">
              <div className="grid grid-cols-2 gap-x-4 gap-y-8">
@@ -195,7 +198,7 @@ export default function SignUpPage() {
                         <div className="space-y-1 animate-form-item" style={{ animationDelay: '600ms' }}>
                             <Label htmlFor="password">{t('authPasswordLabel')}</Label>
                             <div className="relative">
-                                {!passwordValue && <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />}
+                                <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                                 <Input
                                     id="password"
                                     type="password"
@@ -209,7 +212,7 @@ export default function SignUpPage() {
                         <div className="space-y-1 animate-form-item" style={{ animationDelay: '700ms' }}>
                             <Label htmlFor="confirmPassword">{t('authConfirmPasswordLabel')}</Label>
                             <div className="relative">
-                                {!confirmPasswordValue && <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />}
+                                <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                                 <Input
                                     id="confirmPassword"
                                     type="password"
@@ -255,3 +258,5 @@ export default function SignUpPage() {
     </div>
   );
 }
+
+    
