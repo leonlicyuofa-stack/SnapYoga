@@ -13,13 +13,11 @@ import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon';
-import { Mail, KeyRound, UserPlus } from 'lucide-react';
-import { useState } from 'react';
-import { AppShell } from '@/components/layout/app-shell';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
-import { WelcomeRock } from '@/components/icons/rocks/welcome-rock';
+import { Mail, KeyRound, UserPlus, Check, Sparkles, Wind, BarChart, HeartPulse } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-
+import { cn } from '@/lib/utils';
+import { ZenRock } from '@/components/icons/rocks/zen-rock';
 
 const signUpSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -32,107 +30,201 @@ const signUpSchema = z.object({
 
 type SignUpFormValues = z.infer<typeof signUpSchema>;
 
+const featureItems = [
+    { text: "AI Pose Analysis", icon: Sparkles },
+    { text: "Personalized Feedback", icon: HeartPulse },
+    { text: "Progress Tracking", icon: BarChart },
+    { text: "Mindful Breathing", icon: Wind },
+];
+
 export default function SignUpPage() {
   const { signUpWithEmail, signInWithGoogle, signInWithApple, loading: authLoading } = useAuth();
   const { t } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [formProgress, setFormProgress] = useState(0);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<SignUpFormValues>({
+  const { register, handleSubmit, watch, formState: { errors, touchedFields, isValid } } = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
+    mode: 'onChange',
   });
+
+  const emailValue = watch('email');
+  const passwordValue = watch('password');
+  const confirmPasswordValue = watch('confirmPassword');
+
+  useEffect(() => {
+    const filledCount = [emailValue, passwordValue, confirmPasswordValue].filter(Boolean).length;
+    setFormProgress((filledCount / 3) * 100);
+  }, [emailValue, passwordValue, confirmPasswordValue]);
+
 
   const onSubmit: SubmitHandler<SignUpFormValues> = async (data) => {
     setIsSubmitting(true);
+    // Simulate network delay for animation
+    await new Promise(resolve => setTimeout(resolve, 1000));
     await signUpWithEmail(data.email, data.password);
-    setIsSubmitting(false);
+    setIsSuccess(true);
+    // Don't reset isSubmitting to keep success state
   };
 
   const isLoading = authLoading || isSubmitting;
 
   return (
-    <AppShell>
-      <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
-        <Card className="w-full max-w-md shadow-xl border-border/60">
-          <CardHeader className="text-center">
-             <WelcomeRock className="mx-auto h-16 w-16 text-primary mb-4" />
-            <CardTitle className="text-3xl font-bold">{t('authCreateAccount')}</CardTitle>
-            <CardDescription>{t('authCreateAccountDesc')}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" onClick={signInWithGoogle} disabled={isLoading} className="py-6 text-base h-auto">
-                {isLoading ? <SmileyRockLoader /> : <><GoogleIcon className="mr-2 h-5 w-5" /> {t('authGoogle')}</>}
-              </Button>
-              <Button variant="outline" onClick={signInWithApple} disabled={isLoading} className="py-6 text-base h-auto">
-                {isLoading ? <SmileyRockLoader /> : <><AppleIcon className="mr-2 h-5 w-5" /> {t('authApple')}</>}
-              </Button>
+    <div className="relative min-h-screen w-full overflow-hidden bg-background flex items-center justify-center p-4">
+        {/* Animated Background */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-background to-accent/10 animate-breathing-bg">
+            <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/20 rounded-full animate-pebble-float-1"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-24 h-24 bg-accent/20 rounded-full animate-pebble-float-2"></div>
+            <div className="absolute bottom-1/2 right-1/3 w-16 h-16 bg-secondary/30 rounded-full animate-pebble-float-3"></div>
+        </div>
+        
+        <main className="relative z-10 w-full max-w-5xl flex flex-col md:flex-row items-center justify-center gap-8">
+            {/* Left Side: Welcome Text & Mascot */}
+            <div className="w-full md:w-1/2 text-center md:text-left animate-fade-in-up">
+                <ZenRock progress={formProgress} isSuccess={isSuccess} />
+                <h1 className="text-4xl md:text-5xl font-bold text-primary mt-4">
+                    Begin Your Journey
+                </h1>
+                <p className="text-lg text-muted-foreground mt-2">
+                    Create an account to start your mindful movement.
+                </p>
+                <div className="mt-8 text-center md:text-left">
+                    <p className="font-semibold text-foreground animate-pulse-gentle">
+                       “You’re one breath away from a complete yoga journey”
+                    </p>
+                </div>
             </div>
-             <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <Separator />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">{t('authOrSignUpWithEmail')}</span>
-              </div>
-            </div>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">{t('authEmailLabel')}</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="you@example.com" 
-                    {...register("email")}
-                    className="pl-10"
-                  />
-                </div>
-                {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">{t('authPasswordLabel')}</Label>
-                <div className="relative">
-                  <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                  <Input 
-                    id="password" 
-                    type="password" 
-                    placeholder="••••••••" 
-                    {...register("password")} 
-                    className="pl-10"
-                  />
-                </div>
-                {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">{t('authConfirmPasswordLabel')}</Label>
-                 <div className="relative">
-                    <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input
-                      id="confirmPassword"
-                      type="password"
-                      placeholder="••••••••"
-                      {...register("confirmPassword")}
-                      className="pl-10"
-                    />
-                </div>
-                {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
-              </div>
-              <Button type="submit" className="w-full text-lg py-6" disabled={isLoading}>
-                {isLoading ? <SmileyRockLoader /> : <><UserPlus className="mr-2 h-5 w-5" /> {t('authCreateAccount')}</>}
-              </Button>
-            </form>
-          </CardContent>
-          <CardFooter className="justify-center">
-            <p className="text-sm text-muted-foreground">
-              {t('authAlreadyHaveAccount')}{' '}
-              <Link href="/auth/signin" className="font-medium text-primary hover:underline">
-                {t('signIn')}
-              </Link>
-            </p>
-          </CardFooter>
-        </Card>
-      </div>
-    </AppShell>
+
+            {/* Right Side: Signup Form */}
+            <Card className="w-full max-w-md shadow-2xl bg-card/80 backdrop-blur-sm border-border/20 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+                <CardHeader className="text-center p-4">
+                     {/* Progress Bar */}
+                    <div className="w-full bg-muted rounded-full h-1.5 mb-4">
+                        <div
+                        className="bg-primary h-1.5 rounded-full transition-all duration-500"
+                        style={{ width: `${formProgress}%` }}
+                        ></div>
+                    </div>
+                    <CardTitle className="text-2xl font-bold">{t('authCreateAccount')}</CardTitle>
+                    <CardDescription>{t('authCreateAccountDesc')}</CardDescription>
+                </CardHeader>
+                <CardContent className="p-4 space-y-4">
+                    <div className="grid grid-cols-2 gap-4 animate-form-item" style={{ animationDelay: '300ms' }}>
+                        <Button variant="outline" onClick={signInWithGoogle} disabled={isLoading} className="py-3 h-auto">
+                            <GoogleIcon className="mr-2 h-5 w-5" /> {t('authGoogle')}
+                        </Button>
+                        <Button variant="outline" onClick={signInWithApple} disabled={isLoading} className="py-3 h-auto">
+                            <AppleIcon className="mr-2 h-5 w-5" /> {t('authApple')}
+                        </Button>
+                    </div>
+                    <div className="relative animate-form-item" style={{ animationDelay: '400ms' }}>
+                        <div className="absolute inset-0 flex items-center"><Separator /></div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-card px-2 text-muted-foreground">{t('authOrSignUpWithEmail')}</span>
+                        </div>
+                    </div>
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+                        <div className="space-y-1 animate-form-item" style={{ animationDelay: '500ms' }}>
+                            <Label htmlFor="email">{t('authEmailLabel')}</Label>
+                            <div className="relative">
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="you@example.com"
+                                    {...register("email")}
+                                    className={cn("pl-10 transition-all focus:scale-[1.02]", errors.email ? "border-destructive focus:ring-destructive" : touchedFields.email && "border-green-500 focus:ring-green-500" )}
+                                />
+                            </div>
+                            {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+                        </div>
+                        <div className="space-y-1 animate-form-item" style={{ animationDelay: '600ms' }}>
+                            <Label htmlFor="password">{t('authPasswordLabel')}</Label>
+                            <div className="relative">
+                                <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    placeholder="••••••••"
+                                    {...register("password")}
+                                    className={cn("pl-10 transition-all focus:scale-[1.02]", errors.password ? "border-destructive focus:ring-destructive" : touchedFields.password && "border-green-500 focus:ring-green-500")}
+                                />
+                            </div>
+                            {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
+                        </div>
+                        <div className="space-y-1 animate-form-item" style={{ animationDelay: '700ms' }}>
+                            <Label htmlFor="confirmPassword">{t('authConfirmPasswordLabel')}</Label>
+                            <div className="relative">
+                                <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                <Input
+                                    id="confirmPassword"
+                                    type="password"
+                                    placeholder="••••••••"
+                                    {...register("confirmPassword")}
+                                    className={cn("pl-10 transition-all focus:scale-[1.02]", errors.confirmPassword ? "border-destructive focus:ring-destructive" : touchedFields.confirmPassword && !errors.confirmPassword && "border-green-500 focus:ring-green-500" )}
+                                />
+                            </div>
+                            {errors.confirmPassword && <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>}
+                        </div>
+                        <div className="pt-2 animate-form-item" style={{ animationDelay: '800ms' }}>
+                            <Button
+                                type="submit"
+                                className={cn(
+                                    "w-full text-lg py-5 transition-all duration-300 transform active:scale-95",
+                                    isSuccess ? "bg-green-500 hover:bg-green-600" : "bg-primary hover:bg-primary/90"
+                                )}
+                                disabled={isLoading || !isValid}
+                            >
+                                <div className={cn("transition-transform duration-300", isLoading && "animate-button-press")}>
+                                {isSuccess ? (
+                                    <Check className="mr-2 h-5 w-5 animate-scale-in" />
+                                ) : (
+                                    <UserPlus className="mr-2 h-5 w-5" />
+                                )}
+                                </div>
+                                {isSuccess ? 'Success!' : isLoading ? 'Creating...' : t('authCreateAccount')}
+                            </Button>
+                        </div>
+                    </form>
+                </CardContent>
+                <CardFooter className="justify-center p-4">
+                    <p className="text-sm text-muted-foreground">
+                        {t('authAlreadyHaveAccount')}{' '}
+                        <Link href="/auth/signin" className="font-medium text-primary hover:underline">
+                            {t('signIn')}
+                        </Link>
+                    </p>
+                </CardFooter>
+            </Card>
+
+        </main>
+
+        {/* Slide up summary */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 animate-slide-up-summary">
+            <Card className="max-w-md mx-auto bg-card/80 backdrop-blur-sm border-border/20 shadow-lg">
+                <CardHeader className="p-3 text-center">
+                    <CardTitle className="text-md font-semibold">Here&apos;s what you&apos;ll unlock:</CardTitle>
+                </CardHeader>
+                <CardContent className="p-3 pt-0">
+                    <div className="flex justify-around items-center">
+                        {featureItems.map((item, index) => {
+                           const Icon = item.icon;
+                           return (
+                                <div key={item.text} className="flex flex-col items-center gap-1 animate-feature-item" style={{animationDelay: `${1000 + index * 150}ms`}}>
+                                    <div className="p-2 bg-primary/10 rounded-full">
+                                        <Icon className="h-5 w-5 text-primary"/>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">{item.text}</p>
+                                </div>
+                           )
+                        })}
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    </div>
   );
 }
+
+    

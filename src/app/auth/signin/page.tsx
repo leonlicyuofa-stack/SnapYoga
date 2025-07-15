@@ -13,9 +13,8 @@ import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon';
-import { Mail, KeyRound, ArrowRight } from 'lucide-react';
+import { Mail, KeyRound } from 'lucide-react';
 import { useState } from 'react';
-import { AppShell } from '@/components/layout/app-shell';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { WelcomeRock } from '@/components/icons/rocks/welcome-rock';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -45,9 +44,8 @@ export default function SignInPage() {
   const isLoading = authLoading || isSubmitting;
 
   return (
-    <AppShell>
-      <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
-        <Card className="w-full max-w-md shadow-xl border-border/60">
+    <div className="flex min-h-screen items-center justify-center py-12 bg-background">
+        <Card className="w-full max-w-md shadow-xl border-border/60 bg-card/80 backdrop-blur-sm">
            <CardHeader className="text-center">
             <WelcomeRock className="mx-auto h-16 w-16 text-primary mb-4" />
             <CardTitle className="text-3xl font-bold">{t('authWelcomeBack')}</CardTitle>
@@ -114,6 +112,7 @@ export default function SignInPage() {
           </CardFooter>
         </Card>
       </div>
-    </AppShell>
   );
 }
+
+    
