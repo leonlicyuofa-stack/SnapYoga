@@ -132,8 +132,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
 
   React.useEffect(() => {
-    // Only subscribe if auth is initialized
+    // Check if auth is available. If not, it means Firebase init failed.
     if (!auth) {
+        console.error("Firebase Auth is not initialized. Authentication features will be disabled.");
         setLoading(false);
         return;
     }
@@ -142,7 +143,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         setUser(currentUser);
         if (currentUser) {
-          // Ensure profile document reflects current user state, especially emailVerified
           await createUserProfileDocument(currentUser); 
         }
       } catch (error) {
@@ -153,6 +153,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
     return () => unsubscribe();
   }, []);
+  
+  const checkFirebaseConfig = () => {
+    if (!auth || !firestore) {
+      toast({
+        title: "Firebase Not Configured",
+        description: "Please ensure all Firebase credentials in your .env file are correct.",
+        variant: "destructive",
+      });
+      return false;
+    }
+    return true;
+  };
 
   const handleAuthError = (error: any, defaultMessage: string) => {
     console.error(defaultMessage, error);
@@ -165,14 +177,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const socialSignIn = async (provider: FirebaseAuthProvider, providerName: string) => {
-    if (!auth || !firestore) {
-      toast({
-        title: "Firebase Not Configured",
-        description: "Please add your Firebase credentials to the .env file to enable authentication.",
-        variant: "destructive",
-      });
-      return;
-    }
+    if (!checkFirebaseConfig()) return;
+    
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, provider);
@@ -209,14 +215,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signUpWithEmail = async (email: string, pass: string) => {
-    if (!auth) {
-       toast({
-        title: "Firebase Not Configured",
-        description: "Please add your credentials to use authentication features.",
-        variant: "destructive",
-      });
-      return;
-    }
+    if (!checkFirebaseConfig()) return;
+
     setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
@@ -234,14 +234,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signInWithEmail = async (email: string, pass: string) => {
-    if (!auth || !firestore) {
-      toast({
-        title: "Firebase Not Configured",
-        description: "Please add your Firebase credentials to the .env file to sign in.",
-        variant: "destructive",
-      });
-      return;
-    }
+    if (!checkFirebaseConfig()) return;
+
     setLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, pass);
@@ -277,14 +271,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOutUser = async () => {
-    if (!auth) {
-      toast({
-        title: "Firebase Not Configured",
-        description: "Please add your Firebase credentials to the .env file.",
-        variant: "destructive",
-      });
-      return;
-    }
+    if (!checkFirebaseConfig()) return;
+
     setLoading(true);
     try {
       await signOut(auth);
@@ -299,8 +287,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateUserPassword = async (currentPassword: string, newPassword: string): Promise<boolean> => {
-    if (!user || !user.email || !auth) {
-      toast({ title: "Error", description: "No authenticated user found or Firebase is not configured.", variant: "destructive" });
+    if (!checkFirebaseConfig() || !user?.email) {
+       if (user) toast({ title: "Error", description: "No authenticated user found.", variant: "destructive" });
       return false;
     }
     setLoading(true);
