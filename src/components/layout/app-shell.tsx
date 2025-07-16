@@ -19,7 +19,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from 'next/navigation'; 
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { SmileyPebbleIcon } from '../icons/smiley-pebble-icon';
 
 
 interface AppShellProps {
@@ -66,15 +65,9 @@ export function AppShell({ children }: AppShellProps) {
     <div className="relative flex flex-col min-h-screen bg-background selection:bg-primary/20 selection:text-primary">
        {/* Animated Background */}
        <div className="absolute inset-0 z-[-1] bg-gradient-to-br from-primary/10 via-background to-accent/10 animate-breathing-bg">
-            <div className="absolute top-1/4 left-1/4 w-32 h-32 animate-pebble-float-1">
-                <SmileyPebbleIcon className="w-full h-full text-primary/20" />
-            </div>
-            <div className="absolute bottom-1/4 right-1/4 w-24 h-24 animate-pebble-float-2">
-                <SmileyPebbleIcon className="w-full h-full text-accent/20" />
-            </div>
-            <div className="absolute bottom-1/2 right-1/3 w-16 h-16 animate-pebble-float-3">
-                <SmileyPebbleIcon className="w-full h-full text-secondary/30" />
-            </div>
+            <div className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full animate-pebble-float-1" />
+            <div className="absolute bottom-1/4 right-1/4 w-24 h-24 rounded-full animate-pebble-float-2" />
+            <div className="absolute bottom-1/2 right-1/3 w-16 h-16 rounded-full animate-pebble-float-3" />
         </div>
 
       <header className="sticky top-0 z-50 w-full border-b bg-card/80 backdrop-blur-sm shadow-sm">

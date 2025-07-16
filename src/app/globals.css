@@ -127,14 +127,17 @@
   }
   .animate-pebble-float-1 {
     animation: pebble-float 20s ease-in-out infinite;
+    background-color: hsl(var(--primary) / 0.15);
   }
   .animate-pebble-float-2 {
      animation: pebble-float 25s ease-in-out infinite reverse;
      animation-delay: -5s;
+     background-color: hsl(var(--accent) / 0.15);
   }
    .animate-pebble-float-3 {
      animation: pebble-float 18s ease-in-out infinite;
      animation-delay: -10s;
+     background-color: hsl(var(--secondary) / 0.2);
   }
   .animate-fade-in-up {
       animation: fade-in-up 0.8s ease-out forwards;

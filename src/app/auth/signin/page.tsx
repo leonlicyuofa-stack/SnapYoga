@@ -18,7 +18,6 @@ import { useState } from 'react';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { ZenRock } from '@/components/icons/rocks/zen-rock';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
 
 const signInSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -48,15 +47,9 @@ export default function SignInPage() {
     <div className="relative flex min-h-screen items-center justify-center py-12 bg-background overflow-hidden">
         {/* Animated Background */}
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-background to-accent/10 animate-breathing-bg">
-            <div className="absolute top-1/4 left-1/4 w-32 h-32 animate-pebble-float-1">
-                <SmileyPebbleIcon className="w-full h-full text-primary/20" />
-            </div>
-            <div className="absolute bottom-1/4 right-1/4 w-24 h-24 animate-pebble-float-2">
-                <SmileyPebbleIcon className="w-full h-full text-accent/20" />
-            </div>
-            <div className="absolute bottom-1/2 right-1/3 w-16 h-16 animate-pebble-float-3">
-                <SmileyPebbleIcon className="w-full h-full text-secondary/30" />
-            </div>
+            <div className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full animate-pebble-float-1" />
+            <div className="absolute bottom-1/4 right-1/4 w-24 h-24 rounded-full animate-pebble-float-2" />
+            <div className="absolute bottom-1/2 right-1/3 w-16 h-16 rounded-full animate-pebble-float-3" />
         </div>
         <Card className="relative z-10 w-full max-w-md shadow-xl border-border/60 bg-card/80 backdrop-blur-sm">
            <CardHeader className="text-center">
