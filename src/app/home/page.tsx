@@ -133,8 +133,8 @@ export default function WelcomePageAsRoot() {
                     />
                 </svg>
              </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-splash-foreground font-serif">{t('snapYogaTitle')}</h2>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-splash-foreground/90 mb-2 font-serif" dangerouslySetInnerHTML={{ __html: t('landingTitle').replace('Flow', '<b>Flow</b>').replace('Anytime', '<b>Anytime</b>') }}></h1>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-splash-foreground/90 mb-2 font-serif">{t('snapYogaTitle')}</h2>
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-splash-foreground font-serif" dangerouslySetInnerHTML={{ __html: t('landingTitle').replace('Flow', '<b>Flow</b>').replace('Anytime', '<b>Anytime</b>') }}></h1>
             <p className="mt-4 text-lg text-splash-foreground/80 max-w-md sm:text-xl">
             {t('landingSubtitle')}
             </p>
