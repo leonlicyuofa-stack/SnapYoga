@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -114,16 +115,10 @@ export default function WelcomePageAsRoot() {
             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0">
                 {/* Big foreground cat */}
                 <path d="M -5,105 C 50,105 50,40 105,40 L 105,105 Z" fill="hsl(var(--splash-cat-blue-light))" />
-                {/* Ears for big cat */}
-                <path d="M 65,45 C 75,42 80,30 80,30 C 80,30 85,42 95,45 Z" fill="hsl(var(--splash-cat-blue-light))" />
 
                 {/* Smaller background cat */}
                 <path d="M 20,105 C 40,105 40,65 65,65 L 65,105 Z" fill="hsl(var(--splash-cat-blue-dark))" />
-                {/* Ears for small cat */}
-                <path d="M 35,70 C 40,68 42,60 42,60 C 42,60 45,68 50,70 Z" fill="hsl(var(--splash-cat-blue-dark))" />
 
-                {/* Moon */}
-                <circle cx="85" cy="20" r="5" fill="hsl(var(--splash-cat-moon))" />
             </svg>
         </div>
         
