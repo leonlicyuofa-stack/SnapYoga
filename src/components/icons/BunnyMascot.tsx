@@ -8,14 +8,14 @@ export function BunnyMascot(props: SVGProps<SVGSVGElement>) {
         <title>Bunny Mascot</title>
 
         {/* Body */}
-        <path d="M 65,120 C 35,125 20,90 40,70 C 60,50 90,50 110,70 C 130,90 115,125 85,120 Z" fill="#6B8E23" stroke="currentColor" strokeWidth="0.5" />
+        <path d="M 65,120 C 35,125 20,90 40,70 C 60,50 90,50 110,70 C 130,90 115,125 85,120 Z" fill="#C8BAD3" stroke="currentColor" strokeWidth="0.5" />
 
         {/* Head */}
-        <path d="M 75,40 C 50,40 45,60 55,80 C 65,100 85,100 95,80 C 105,60 100,40 75,40 Z" fill="#6B8E23" stroke="currentColor" strokeWidth="0.5" />
+        <path d="M 75,40 C 50,40 45,60 55,80 C 65,100 85,100 95,80 C 105,60 100,40 75,40 Z" fill="#C8BAD3" stroke="currentColor" strokeWidth="0.5" />
         
         {/* Ears */}
-        <path d="M 65,20 C 55,0 70,-5 75,20 C 80,45 75,40 65,20 Z" fill="#6B8E23" stroke="currentColor" strokeWidth="0.5" />
-        <path d="M 85,20 C 95,0 80,-5 75,20 C 70,45 75,40 85,20 Z" fill="#6B8E23" stroke="currentColor" strokeWidth="0.5" />
+        <path d="M 65,20 C 55,0 70,-5 75,20 C 80,45 75,40 65,20 Z" fill="#C8BAD3" stroke="currentColor" strokeWidth="0.5" />
+        <path d="M 85,20 C 95,0 80,-5 75,20 C 70,45 75,40 85,20 Z" fill="#C8BAD3" stroke="currentColor" strokeWidth="0.5" />
         <path d="M 68,25 C 65,15 70,12 73,25 C 76,38 72,35 68,25 Z" fill="#FFD1DC" />
 
         {/* Face */}
@@ -28,8 +28,8 @@ export function BunnyMascot(props: SVGProps<SVGSVGElement>) {
         <circle cx="87" cy="78" r="4" fill="#FFC0CB" opacity="0.7" />
         
         {/* Paws/Arms */}
-        <path d="M 50,90 C 40,95 40,105 50,105 Z" fill="#6B8E23" stroke="currentColor" strokeWidth="0.5" />
-        <path d="M 100,90 C 110,95 110,105 100,105 Z" fill="#6B8E23" stroke="currentColor" strokeWidth="0.5" />
+        <path d="M 50,90 C 40,95 40,105 50,105 Z" fill="#C8BAD3" stroke="currentColor" strokeWidth="0.5" />
+        <path d="M 100,90 C 110,95 110,105 100,105 Z" fill="#C8BAD3" stroke="currentColor" strokeWidth="0.5" />
 
       </g>
     </svg>
