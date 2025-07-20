@@ -7,12 +7,12 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 
 const inter = Inter({
-  variable: '--font-sans',
+  variable: '--font-inter',
   subsets: ['latin'],
 });
 
 const shadowsIntoLight = ShadowsIntoLight({
-  variable: '--font-script',
+  variable: '--font-shadows-into-light',
   subsets: ['latin'],
   weight: '400',
 });

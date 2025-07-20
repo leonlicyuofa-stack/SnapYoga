@@ -52,10 +52,9 @@ export default {
   			},
             'splash-background': 'hsl(var(--splash-background))',
             'splash-foreground': 'hsl(var(--splash-foreground))',
-            'splash-cat-pink': 'hsl(var(--splash-cat-pink))',
-            'splash-cat-blue-light': 'hsl(var(--splash-cat-blue-light))',
-            'splash-cat-green': 'hsl(var(--splash-cat-green))',
-            'splash-cat-grey': 'hsl(var(--splash-cat-grey))',
+            'splash-blob-1': 'hsl(var(--splash-blob-1))',
+            'splash-blob-2': 'hsl(var(--splash-blob-2))',
+            'splash-blob-3': 'hsl(var(--splash-blob-3))',
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
   				foreground: 'hsl(var(--sidebar-foreground))',
@@ -68,8 +67,8 @@ export default {
   			}
   		},
         fontFamily: {
-            sans: ['var(--font-sans)'],
-            script: ['var(--font-script)'],
+            sans: ['var(--font-inter)'],
+            script: ['var(--font-shadows-into-light)'],
         },
   		borderRadius: {
   			lg: 'var(--radius)',
