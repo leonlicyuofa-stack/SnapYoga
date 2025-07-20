@@ -4,19 +4,13 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Inter, Lavishly_Yours as LavishlyYours } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import { Sun, Smile } from 'lucide-react';
 import { PebbleStackLoader } from '@/components/icons/pebble-stack-loader';
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
-});
-
-const lavishlyYours = LavishlyYours({
-  subsets: ['latin'],
-  weight: ['400'],
-  variable: '--font-lavishly-yours',
 });
 
 
@@ -35,7 +29,6 @@ export default function MatrixLifeSplashPage() {
     <div className={cn(
         "flex flex-col min-h-screen items-center justify-between p-8 bg-splash-background font-sans overflow-hidden",
         inter.variable,
-        lavishlyYours.variable
     )}>
         {/* Paper Cut Effect Divs */}
         <div className="absolute bottom-0 left-0 w-full h-full pointer-events-none">
@@ -52,20 +45,6 @@ export default function MatrixLifeSplashPage() {
         </div>
 
         <div className="relative z-10 flex flex-col items-center justify-center flex-grow animate-in fade-in zoom-in-95 duration-1000 delay-700">
-            <svg viewBox="0 0 400 100" className="w-auto h-24 font-script -mb-4">
-              <text 
-                x="50%" 
-                y="50%" 
-                dy=".35em"
-                textAnchor="middle"
-                className="animate-handwriting text-8xl"
-                fill="none"
-                stroke="hsl(var(--splash-foreground))"
-                strokeWidth="2"
-              >
-                Welcome
-              </text>
-            </svg>
             <h1 className="text-4xl font-bold text-splash-foreground font-serif leading-tight">
                 SnapYoga
             </h1>
