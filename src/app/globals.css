@@ -146,6 +146,9 @@
   .font-sans {
       font-family: var(--font-inter), sans-serif;
   }
+  .font-script {
+    font-family: var(--font-lavishly-yours), cursive;
+  }
 }
 
 @layer utilities {
