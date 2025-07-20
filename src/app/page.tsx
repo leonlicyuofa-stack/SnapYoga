@@ -4,8 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Inter } from 'next/font/google';
-import { Sun, Smile } from 'lucide-react';
-import { PebbleStackLoader } from '@/components/icons/pebble-stack-loader';
+import { PebbleStackMascot } from '@/components/icons/PebbleStackMascot';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -36,10 +35,15 @@ export default function MatrixLifeSplashPage() {
             <div className="paper-cut-layer paper-cut-layer-3 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-300"></div>
         </div>
 
-        <div className="relative z-10 flex flex-col items-center justify-center flex-grow animate-in fade-in zoom-in-95 duration-1000 delay-700">
-            <h1 className="text-4xl font-bold text-splash-foreground font-serif leading-tight">
-                SnapYoga
-            </h1>
+        <div className="relative z-10 animate-snapshot-in">
+          <div className="bg-white p-4 pt-4 pb-16 md:p-8 md:pt-8 md:pb-20 shadow-2xl rounded-lg transform -rotate-3">
+              <div className="animate-snapshot-content-appear">
+                  <h1 className="text-5xl md:text-6xl font-bold text-splash-foreground font-serif leading-tight text-center">
+                      SnapYoga
+                  </h1>
+                  <PebbleStackMascot className="w-40 h-40 mx-auto mt-4" />
+              </div>
+          </div>
         </div>
         
     </div>
