@@ -277,7 +277,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await signOut(auth);
       toast({ title: 'Signed Out', description: 'You have been signed out successfully.' });
-      router.push('/home');
+      router.push('/');
       setUser(null);
     } catch (error) {
       handleAuthError(error, 'Failed to sign out.');
