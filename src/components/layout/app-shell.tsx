@@ -19,6 +19,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from 'next/navigation'; 
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { PenguinIcon } from '@/components/icons/penguin-icon';
+import { LadybirdIcon } from '@/components/icons/ladybird-icon';
+import { AvocadoIcon } from '@/components/icons/avocado-icon';
+import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
 
 
 interface AppShellProps {
@@ -65,9 +69,10 @@ export function AppShell({ children }: AppShellProps) {
     <div className="relative flex flex-col min-h-screen bg-background selection:bg-primary/20 selection:text-primary">
        {/* Animated Background */}
        <div className="absolute inset-0 z-[-1] bg-gradient-to-br from-primary/10 via-background to-accent/10 animate-breathing-bg">
-            <div className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full animate-pebble-float-1" />
-            <div className="absolute bottom-1/4 right-1/4 w-24 h-24 rounded-full animate-pebble-float-2" />
-            <div className="absolute bottom-1/2 right-1/3 w-16 h-16 rounded-full animate-pebble-float-3" />
+            <PenguinIcon className="absolute top-1/4 left-1/4 w-32 h-32 text-foreground/10 animate-float-1" />
+            <LadybirdIcon className="absolute bottom-1/4 right-1/4 w-24 h-24 text-destructive/20 animate-float-2" />
+            <AvocadoIcon className="absolute bottom-1/2 right-1/3 w-28 h-28 text-primary/10 animate-float-3" />
+            <SmileyPebbleIcon className="absolute top-1/3 left-1/2 w-20 h-20 text-accent/20 animate-float-4" />
         </div>
 
       <header className="sticky top-0 z-50 w-full border-b bg-card/80 backdrop-blur-sm shadow-sm">
