@@ -46,8 +46,8 @@
     
     --splash-cat-pink: 345 53% 92%; /* #EADADE - Pastel Pink */
     --splash-cat-blue-light: 212 55% 80%; /* #AFC8E6 - Light Blue */
-    --splash-cat-blue-dark: 220 30% 60%; /* #8696B0 - Darker Muted Blue */
-    --splash-cat-moon: 257 10% 55%; /* #8A8191 - Muted Purple/Grey */
+    --splash-cat-green: 145 63% 90%; /* #D9F2E6 - Pastel Green */
+    --splash-cat-grey: 210 20% 90%; /* #DDE5ED - Pastel Grey */
 
 
     /* Sidebar variables */
@@ -102,8 +102,8 @@
 
     --splash-cat-pink: 345 20% 30%; 
     --splash-cat-blue-light: 212 30% 35%;
-    --splash-cat-blue-dark: 220 20% 25%;
-    --splash-cat-moon: 257 10% 75%;
+    --splash-cat-green: 145 30% 35%; /* Dark Pastel Green */
+    --splash-cat-grey: 210 10% 35%; /* Dark Pastel Grey */
 
 
     /* Sidebar variables for dark mode */
@@ -273,17 +273,6 @@
     animation: snapshot-content-appear 1s ease-out 1.5s forwards;
     opacity: 0;
   }
-  .animate-mascot-head {
-      animation: head-turn-and-face-reveal 3s ease-in-out 1s forwards;
-  }
-  .animate-mascot-arm {
-      animation: arm-extend-and-wave 3s ease-in-out 1s forwards;
-      transform-origin: 80% 90%;
-  }
-  .animate-speech-bubble {
-      animation: text-reveal-from-arm 3s ease-out 1s forwards;
-      transform-origin: bottom left;
-  }
 
 }
 
@@ -430,52 +419,6 @@
   100% { transform: translate(0, 0) scale(1); opacity: 1; }
 }
 
-
-@keyframes head-turn-and-face-reveal {
-  0%, 40% { 
-    transform: rotateY(180deg);
-    opacity: 0;
-  }
-  70% {
-     transform: rotateY(0deg);
-     opacity: 1;
-  }
-  100% {
-    transform: rotateY(0deg);
-    opacity: 1;
-  }
-}
-
-@keyframes arm-extend-and-wave {
-  0%, 60% {
-    opacity: 0;
-    transform: scale(0.5) rotate(0deg);
-  }
-  70% {
-    opacity: 1;
-    transform: scale(1) rotate(10deg);
-  }
-  80% {
-    transform: rotate(-15deg);
-  }
-  90% {
-    transform: rotate(15deg);
-  }
-  100% {
-    transform: rotate(10deg);
-  }
-}
-
-@keyframes text-reveal-from-arm {
-    0%, 75% {
-        opacity: 0;
-        transform: translate(0px, 5px) scale(0);
-    }
-    100% {
-        opacity: 1;
-        transform: translate(0px, 0px) scale(1);
-    }
-}
 
 @keyframes cartoon-float {
     0% { transform: translateY(0px) rotate(0deg); }
