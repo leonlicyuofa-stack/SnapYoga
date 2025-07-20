@@ -15,15 +15,9 @@ export function PebbleStackMascot(props: SVGProps<SVGSVGElement>) {
 
         {/* Middle Pebble */}
         <path d="M 25,68 C 18,63 20,50 30,45 C 40,40 70,42 80,50 C 90,58 88,68 75,72 C 62,76 32,73 25,68 Z" fill="#B2CEDE" stroke="currentColor" strokeWidth="1.5" />
-        <ellipse cx="48" cy="58" rx="3" ry="4" fill="#2C3E50" />
-        <ellipse cx="62" cy="58" rx="3" ry="4" fill="#2C3E50" />
-        <path d="M 52,64 Q 55,68 58,64" stroke="#2C3E50" fill="none" strokeWidth="1.5" strokeLinecap="round" />
-
+        
         {/* Top Pebble */}
         <path d="M 35,48 C 30,45 32,35 40,32 C 48,29 62,32 68,38 C 74,44 70,50 60,51 C 50,52 40,51 35,48 Z" fill="#93B7BE" stroke="currentColor" strokeWidth="1.5" />
-        <ellipse cx="48" cy="42" rx="2.5" ry="3" fill="#2C3E50" />
-        <ellipse cx="58" cy="42" rx="2.5" ry="3" fill="#2C3E50" />
-        <path d="M 51,46 Q 53,49 55,46" stroke="#2C3E50" fill="none" strokeWidth="1.5" strokeLinecap="round" />
         
         {/* Blush */}
         <circle cx="35" cy="88" r="5" fill="#FFC0CB" opacity="0.6" />
@@ -32,5 +26,3 @@ export function PebbleStackMascot(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
-    
