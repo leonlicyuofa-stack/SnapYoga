@@ -11,18 +11,19 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { MoveUpRight, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Inter, Playfair_Display as PlayfairDisplay } from 'next/font/google';
+import { Inter, Lavishly_Yours as LavishlyYours } from 'next/font/google';
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
 });
 
-const playfair = PlayfairDisplay({
+const lavishlyYours = LavishlyYours({
   subsets: ['latin'],
-  style: ['normal', 'italic'],
-  variable: '--font-playfair',
+  weight: ['400'],
+  variable: '--font-lavishly-yours',
 });
+
 
 interface UserProfileData extends DocumentData {
   uid?: string;
@@ -96,7 +97,7 @@ export default function WelcomePageAsRoot() {
     <div className={cn(
         "flex flex-col min-h-screen items-center justify-center p-8 bg-splash-background font-sans overflow-hidden",
         inter.variable,
-        playfair.variable
+        lavishlyYours.variable
     )}>
         
         <header className="navbar w-full absolute top-0 left-0">
@@ -115,7 +116,7 @@ export default function WelcomePageAsRoot() {
             </div>
         </header>
 
-        <main className="relative z-10 flex flex-col items-center justify-end flex-grow text-center px-4 animate-in fade-in-0 slide-in-from-top-10 duration-1000 delay-200 pb-40">
+        <main className="relative z-10 flex flex-col items-center justify-center flex-grow text-center px-4 animate-in fade-in-0 slide-in-from-top-10 duration-1000 delay-200 pb-32">
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-splash-foreground/90 mb-2 font-serif">{t('snapYogaTitle')}</h2>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-splash-foreground font-serif" dangerouslySetInnerHTML={{ __html: t('landingTitle').replace('Flow', '<b>Flow</b>').replace('Anytime', '<b>Anytime</b>') }}></h1>
             <p className="mt-4 text-lg text-splash-foreground/80 max-w-md sm:text-xl">
