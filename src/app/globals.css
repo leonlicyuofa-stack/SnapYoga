@@ -5,49 +5,47 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 210 10% 23%;
+    --background: 30 100% 99%;
+    --foreground: 240 10% 3.9%;
 
-    --card: 210 40% 98%;
-    --card-foreground: 210 10% 23%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
 
-    --popover: 210 40% 98%;
-    --popover-foreground: 210 10% 23%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
 
-    --primary: 150 55% 65%;
-    --primary-foreground: 150 25% 10%;
+    --primary: 180 82% 35%;
+    --primary-foreground: 180 25% 95%;
 
-    --secondary: 210 20% 92%;
-    --secondary-foreground: 210 10% 23%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
 
-    --muted: 210 20% 92%;
-    --muted-foreground: 210 10% 45%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 25 90% 75%;
-    --accent-foreground: 25 25% 15%;
+    --accent: 24 93% 69%;
+    --accent-foreground: 24 5.9% 10%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 210 20% 88%;
-    --input: 210 20% 88%;
-    --ring: 150 55% 65%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 180 82% 35%;
     
-    --chart-1: 150 55% 65%;
-    --chart-2: 25 90% 75%;
+    --chart-1: 180 82% 35%;
+    --chart-2: 24 93% 69%;
     --chart-3: 45 90% 80%;
     --chart-4: 28 80% 75%;
     --chart-5: 220 50% 70%;
     --radius: 0.75rem;
 
     /* Splash Screen colors - From reference image */
-    --splash-background: 0 0% 100%; /* White/Off-white from image */
+    --splash-background: 0 0% 98%; /* Off-white from image */
     --splash-foreground: 233 16% 23%; /* Dark blue/grey for text */
-    
-    --splash-cat-pink: 345 53% 92%; /* #EADADE - Pastel Pink */
-    --splash-cat-blue-light: 212 55% 80%; /* #AFC8E6 - Light Blue */
-    --splash-cat-green: 145 63% 90%; /* #D9F2E6 - Pastel Green */
-    --splash-cat-grey: 210 20% 90%; /* #DDE5ED - Pastel Grey */
+    --splash-blob-1: 345 53% 92%; /* #EADADE - Pastel Pink */
+    --splash-blob-2: 257 26% 78%; /* #C8BAD3 - Light Lavender */
+    --splash-blob-3: 258 17% 62%; /* #A695B7 - Muted Purple */
 
 
     /* Sidebar variables */
@@ -62,36 +60,36 @@
   }
 
   .dark {
-    --background: 210 10% 15%; 
-    --foreground: 210 20% 95%; 
+    --background: 240 10% 3.9%; 
+    --foreground: 0 0% 98%; 
 
-    --card: 210 10% 15%;
-    --card-foreground: 210 20% 95%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 210 10% 15%;
-    --popover-foreground: 210 20% 95%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 150 55% 65%;
-    --primary-foreground: 150 25% 10%;
+    --primary: 180 82% 45%; 
+    --primary-foreground: 180 25% 95%;
 
-    --secondary: 210 10% 23%;
-    --secondary-foreground: 210 20% 95%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 210 10% 23%;
-    --muted-foreground: 210 10% 65%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
 
-    --accent: 25 90% 75%;
-    --accent-foreground: 25 25% 15%;
+    --accent: 24 93% 69%; 
+    --accent-foreground: 24 5.9% 10%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 210 10% 23%;
-    --input: 210 10% 23%;
-    --ring: 150 55% 65%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 180 82% 45%;
     
-    --chart-1: 150 55% 65%;
-    --chart-2: 25 90% 75%;
+    --chart-1: 180 82% 45%;
+    --chart-2: 24 93% 69%;
     --chart-3: 45 90% 80%;
     --chart-4: 28 80% 75%;
     --chart-5: 220 50% 70%;
@@ -99,11 +97,9 @@
     /* Splash Screen colors - Dark mode adaptation of reference */
     --splash-background: 233 16% 15%; /* Dark blue/grey background */
     --splash-foreground: 0 0% 95%; /* Off-white text */
-
-    --splash-cat-pink: 345 20% 30%; 
-    --splash-cat-blue-light: 212 30% 35%;
-    --splash-cat-green: 145 30% 35%; /* Dark Pastel Green */
-    --splash-cat-grey: 210 10% 35%; /* Dark Pastel Grey */
+    --splash-blob-1: 345 33% 32%; /* Dark Pastel Pink */
+    --splash-blob-2: 257 16% 38%; /* Dark Light Lavender */
+    --splash-blob-3: 258 17% 62%; /* Muted Purple (can stay brighter) */
 
 
     /* Sidebar variables for dark mode */
@@ -419,6 +415,52 @@
   100% { transform: translate(0, 0) scale(1); opacity: 1; }
 }
 
+
+@keyframes head-turn-and-face-reveal {
+  0%, 40% { 
+    transform: rotateY(180deg);
+    opacity: 0;
+  }
+  70% {
+     transform: rotateY(0deg);
+     opacity: 1;
+  }
+  100% {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes arm-extend-and-wave {
+  0%, 60% {
+    opacity: 0;
+    transform: scale(0.5) rotate(0deg);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1) rotate(10deg);
+  }
+  80% {
+    transform: rotate(-15deg);
+  }
+  90% {
+    transform: rotate(15deg);
+  }
+  100% {
+    transform: rotate(10deg);
+  }
+}
+
+@keyframes text-reveal-from-arm {
+    0%, 75% {
+        opacity: 0;
+        transform: translate(0px, 5px) scale(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(0px, 0px) scale(1);
+    }
+}
 
 @keyframes cartoon-float {
     0% { transform: translateY(0px) rotate(0deg); }
