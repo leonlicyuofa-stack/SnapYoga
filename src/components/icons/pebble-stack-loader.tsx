@@ -3,13 +3,12 @@
 
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { Playfair_Display as PlayfairDisplay } from 'next/font/google';
+import { Lavishly_Yours as LavishlyYours } from 'next/font/google';
 
-const playfair = PlayfairDisplay({
+const lavishlyYours = LavishlyYours({
   subsets: ['latin'],
-  weight: ['400', '700'],
-  style: ['normal', 'italic'],
-  variable: '--font-playfair',
+  weight: ['400'],
+  variable: '--font-lavishly-yours',
 });
 
 export function PebbleStackLoader() {
@@ -27,7 +26,7 @@ export function PebbleStackLoader() {
   return (
     <svg 
       viewBox="0 0 200 120"
-      className={cn("w-auto h-full pebble-stack-loader", isFinished && "finished")}
+      className={cn("w-auto h-full pebble-stack-loader", isFinished && "finished", lavishlyYours.variable)}
     >
       <title>Pebble Stack Mascot</title>
       <g id="stack" transform="translate(80, 20)">
@@ -76,7 +75,8 @@ export function PebbleStackLoader() {
         id="logo-text"
         x="125" 
         y="35"
-        className={cn("font-serif text-lg fill-current text-splash-foreground")}
+        className={cn("text-2xl fill-current text-splash-foreground")}
+        style={{ fontFamily: 'var(--font-lavishly-yours)' }}
         textAnchor="start"
       >
         Welcome!
