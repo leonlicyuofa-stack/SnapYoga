@@ -108,22 +108,20 @@ export default function WelcomePageAsRoot() {
         {/* Animated Clouds */}
         <div className="absolute top-10 w-[200%] h-48 opacity-70 animate-clouds" style={{ animationDuration: '80s' }}>
             <svg width="100%" height="100%" viewBox="0 0 1000 200" preserveAspectRatio="none">
-                <circle cx="100" cy="100" r="50" fill="white" />
-                <circle cx="200" cy="80" r="70" fill="white" />
-                <circle cx="350" cy="120" r="80" fill="white" />
-                <circle cx="550" cy="90" r="60" fill="white" />
-                <circle cx="700" cy="110" r="75" fill="white" />
-                <circle cx="850" cy="80" r="50" fill="white" />
+                <path d="M 50 100 C 50 70, 80 70, 100 80 C 130 70, 150 70, 150 100 C 170 100, 170 130, 150 130 L 50 130 C 30 130, 30 100, 50 100 Z" fill="white" />
+                <path d="M 250 80 C 250 50, 280 50, 300 60 C 330 50, 350 50, 350 80 C 370 80, 370 110, 350 110 L 250 110 C 230 110, 230 80, 250 80 Z" fill="white" transform="scale(1.2)" />
+                <path d="M 450 120 C 450 90, 480 90, 500 100 C 530 90, 550 90, 550 120 C 570 120, 570 150, 550 150 L 450 150 C 430 150, 430 120, 450 120 Z" fill="white" transform="scale(0.9)" />
+                <path d="M 650 90 C 650 60, 680 60, 700 70 C 730 60, 750 60, 750 90 C 770 90, 770 120, 750 120 L 650 120 C 630 120, 630 90, 650 90 Z" fill="white" />
+                <path d="M 850 110 C 850 80, 880 80, 900 90 C 930 80, 950 80, 950 110 C 970 110, 970 140, 950 140 L 850 140 C 830 140, 830 110, 850 110 Z" fill="white" transform="scale(1.1)" />
             </svg>
         </div>
          <div className="absolute top-24 w-[200%] h-48 opacity-50 animate-clouds" style={{ animationDuration: '120s', animationDirection: 'reverse' }}>
             <svg width="100%" height="100%" viewBox="0 0 1000 200" preserveAspectRatio="none">
-                <circle cx="50" cy="130" r="40" fill="white" />
-                <circle cx="250" cy="110" r="60" fill="white" />
-                <circle cx="450" cy="140" r="70" fill="white" />
-                <circle cx="650" cy="100" r="50" fill="white" />
-                <circle cx="800" cy="130" r="80" fill="white" />
-                <circle cx="950" cy="110" r="40" fill="white" />
+                <path d="M 50 130 C 50 100, 80 100, 100 110 C 130 100, 150 100, 150 130 C 170 130, 170 160, 150 160 L 50 160 C 30 160, 30 130, 50 130 Z" fill="white" transform="scale(0.8)" />
+                <path d="M 250 110 C 250 80, 280 80, 300 90 C 330 80, 350 80, 350 110 C 370 110, 370 140, 350 140 L 250 140 C 230 140, 230 110, 250 110 Z" fill="white" />
+                <path d="M 450 140 C 450 110, 480 110, 500 120 C 530 110, 550 110, 550 140 C 570 140, 570 170, 550 170 L 450 170 C 430 170, 430 140, 450 140 Z" fill="white" transform="scale(1.3)" />
+                <path d="M 650 100 C 650 70, 680 70, 700 80 C 730 70, 750 70, 750 100 C 770 100, 770 130, 750 130 L 650 130 C 630 130, 630 100, 650 100 Z" fill="white" transform="scale(0.9)" />
+                <path d="M 850 130 C 850 100, 880 100, 900 110 C 930 100, 950 100, 950 130 C 970 130, 970 160, 950 160 L 850 160 C 830 160, 830 130, 850 130 Z" fill="white" />
             </svg>
         </div>
 
