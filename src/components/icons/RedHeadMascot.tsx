@@ -8,8 +8,8 @@ export function RedHeadMascot(props: SVGProps<SVGSVGElement>) {
         <title>Red-haired Snowman Mascot</title>
 
         {/* Snowman Body */}
-        <circle cx="70" cy="115" r="45" fill="#F0F8FF" stroke="currentColor" strokeWidth="1.5" />
-        <circle cx="70" cy="55" r="35" fill="#F0F8FF" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="70" cy="115" r="45" fill="#F0F8FF" stroke="currentColor" strokeWidth="0.5" />
+        <circle cx="70" cy="55" r="35" fill="black" stroke="currentColor" strokeWidth="0.5" />
 
         {/* Head */}
         <circle cx="70" cy="55" r="35" fill="transparent" /> 
@@ -22,9 +22,9 @@ export function RedHeadMascot(props: SVGProps<SVGSVGElement>) {
         </g>
         
         {/* Face */}
-        <ellipse cx="60" cy="50" rx="4" ry="5" fill="#2C3E50" />
-        <ellipse cx="80" cy="50" rx="4" ry="5" fill="#2C3E50" />
-        <path d="M 68,60 Q 70,63 72,60" stroke="#2C3E50" fill="none" strokeWidth="1.5" strokeLinecap="round" />
+        <ellipse cx="60" cy="50" rx="4" ry="5" fill="white" />
+        <ellipse cx="80" cy="50" rx="4" ry="5" fill="white" />
+        <path d="M 68,60 Q 70,63 72,60" stroke="white" fill="none" strokeWidth="1.5" strokeLinecap="round" />
         
         {/* Blush */}
         <circle cx="50" cy="57" r="5" fill="#FFC0CB" opacity="0.6" />
