@@ -11,17 +11,17 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { MoveUpRight, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Inter, Lavishly_Yours as LavishlyYours } from 'next/font/google';
+import { Inter, Great_Vibes as GreatVibes } from 'next/font/google';
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
 });
 
-const lavishlyYours = LavishlyYours({
+const greatVibes = GreatVibes({
   subsets: ['latin'],
   weight: ['400'],
-  variable: '--font-lavishly-yours',
+  variable: '--font-great-vibes',
 });
 
 
@@ -97,7 +97,7 @@ export default function WelcomePageAsRoot() {
     <div className={cn(
         "flex flex-col min-h-screen items-center justify-center p-8 bg-splash-background font-sans overflow-hidden",
         inter.variable,
-        lavishlyYours.variable
+        greatVibes.variable
     )}>
         
         <header className="navbar w-full absolute top-0 left-0">
@@ -117,14 +117,14 @@ export default function WelcomePageAsRoot() {
         </header>
 
         <main className="relative z-10 flex flex-col items-center justify-center flex-grow text-center px-4 animate-in fade-in-0 slide-in-from-top-10 duration-1000 delay-200 pb-32">
-            <svg viewBox="0 0 400 100" className="w-auto h-24 font-script mb-2 drop-shadow-sm">
+            <svg viewBox="0 0 400 100" className="w-auto h-24 mb-4 drop-shadow-sm">
               <text 
                 x="50%" 
                 y="50%" 
                 dy=".35em"
                 textAnchor="middle"
                 className="animate-handwriting text-8xl"
-                fill="hsl(var(--splash-foreground))"
+                style={{ fontFamily: 'var(--font-great-vibes), cursive' }}
               >
                 Welcome
               </text>
