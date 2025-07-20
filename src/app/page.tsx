@@ -5,6 +5,8 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Inter, Playfair_Display as PlayfairDisplay } from 'next/font/google';
+import { Sun, Smile } from 'lucide-react';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -40,8 +42,12 @@ export default function MatrixLifeSplashPage() {
         <div className="absolute bottom-0 right-0 w-[80%] h-[30%] bg-splash-blob-1 rounded-tl-[100%] rounded-tr-[20%] translate-x-1/4 translate-y-1/4 opacity-80 animate-in fade-in-0 duration-1000 delay-300"></div>
         <div className="absolute bottom-0 right-0 w-[50%] h-[20%] bg-splash-blob-3 rounded-tl-[100%] translate-x-1/4 translate-y-1/4 opacity-70 animate-in fade-in-0 duration-1000 delay-500"></div>
 
-        <div className="relative z-10 w-full animate-in fade-in slide-in-from-top-5 duration-1000 delay-500">
-            <p className="text-2xl text-splash-foreground/80 font-serif italic">Welcome!</p>
+        <div className="relative z-10 w-full flex justify-between items-center animate-in fade-in slide-in-from-top-5 duration-1000 delay-500">
+            <div className="flex items-center gap-2">
+                <Smile className="h-6 w-6 text-splash-foreground/80" />
+                <p className="text-2xl text-splash-foreground/80 font-serif italic">Welcome!</p>
+            </div>
+            <Sun className="h-8 w-8 text-yellow-400 animate-pulse-gentle" />
         </div>
 
         <div className="relative z-10 flex flex-col items-center justify-center flex-grow animate-in fade-in zoom-in-95 duration-1000 delay-700">
@@ -51,7 +57,7 @@ export default function MatrixLifeSplashPage() {
         </div>
         
         <div className="relative z-10 w-full animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-500">
-            <p className="text-lg text-splash-foreground font-sans">LOADING...</p>
+            <SmileyRockLoader text="LOADING..." className="justify-center" />
         </div>
     </div>
   );
