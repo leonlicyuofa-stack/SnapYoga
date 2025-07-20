@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -113,15 +112,8 @@ export default function HomePage() {
                 <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-cat-pink))" />
                 <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
                 
-                {/* Random Brush Strokes */}
-                <g opacity="0.5">
-                    <path d="M -10,10 C 30,50 70,0 110,40" stroke="hsl(var(--splash-cat-green))" strokeWidth="8" fill="none" strokeLinecap="round" />
-                    <path d="M -10,80 C 40,30 60,110 110,70" stroke="hsl(var(--splash-cat-blue-light))" strokeWidth="10" fill="none" strokeLinecap="round" />
-                    <path d="M 20,110 C 70,80 50,30 90,-10" stroke="hsl(var(--splash-cat-grey))" strokeWidth="6" fill="none" strokeLinecap="round" />
-                </g>
-
                 {/* Light Blue Cat with Bean Eyes and Blush */}
-                <g transform="translate(15, -35) scale(1.1)">
+                <g transform="translate(15, -60) scale(1.1)">
                     <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-cat-blue-light))" />
                     {/* Airbrushed Blush */}
                     <ellipse cx="38" cy="78" rx="10" ry="7" fill="url(#blushGradient)" />
@@ -136,12 +128,12 @@ export default function HomePage() {
                 </g>
                 
                 {/* Pastel Green Cat */}
-                 <g transform="translate(18, -45) scale(0.9)">
+                 <g transform="translate(18, -65) scale(0.9)">
                     <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-cat-green))" />
                 </g>
 
                 {/* Pastel Grey Cat */}
-                <g transform="translate(21, -50) scale(0.7)">
+                <g transform="translate(21, -70) scale(0.7)">
                     <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-cat-grey))" />
                 </g>
             </svg>
