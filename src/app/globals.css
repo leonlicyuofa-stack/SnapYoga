@@ -40,15 +40,15 @@
     --chart-5: 220 50% 70%;
     --radius: 0.75rem;
 
-    /* Splash Screen colors - Neutral Pastels & Beiges */
-    --splash-background: 35 68% 96%; /* Soft beige */
-    --splash-foreground: 25 35% 25%; /* Dark brown */
-    --splash-blob-1: 15 54% 60%; /* Terracotta */
-    --splash-blob-2: 95 25% 45%; /* Muted Green */
-    --splash-blob-3: 35 70% 80%; /* Light Apricot */
-    --splash-blob-4: 25 35% 35%; /* Darker brown/grey for paper cut */
-    --splash-blob-5: 95 15% 65%; /* Lighter Muted Green */
-    --splash-blob-6: 15 40% 70%; /* Lighter Terracotta */
+    /* Splash Screen colors - From reference image */
+    --splash-background: 0 0% 98%; /* Off-white from image */
+    --splash-foreground: 233 16% 23%; /* Dark blue/grey for text */
+    --splash-blob-1: 345 53% 92%; /* #EADADE - Pastel Pink */
+    --splash-blob-2: 257 26% 78%; /* #C8BAD3 - Light Lavender */
+    --splash-blob-3: 258 17% 62%; /* #A695B7 - Muted Purple */
+    --splash-blob-4: 162 38% 77%; /* #B2D6CD - Mint Green */
+    --splash-blob-5: 226 28% 59%; /* #7A87B8 - Muted Blue */
+    --splash-blob-6: 257 26% 85%; /* Lighter version of blob-2 for layering */
 
 
     /* Sidebar variables */
@@ -97,15 +97,15 @@
     --chart-4: 28 80% 75%;
     --chart-5: 220 50% 70%;
 
-    /* Splash Screen colors - Neutral Pastels & Beiges */
-    --splash-background: 25 35% 15%; /* Dark Brown */
-    --splash-foreground: 35 68% 96%; /* Soft beige */
-    --splash-blob-1: 15 54% 60%; /* Terracotta */
-    --splash-blob-2: 95 25% 55%; /* Muted Green */
-    --splash-blob-3: 35 70% 80%; /* Light Apricot */
-    --splash-blob-4: 25 35% 35%; /* Darker brown/grey for paper cut */
-    --splash-blob-5: 95 15% 75%; /* Lighter Muted Green */
-    --splash-blob-6: 15 40% 80%; /* Lighter Terracotta */
+    /* Splash Screen colors - Dark mode adaptation of reference */
+    --splash-background: 233 16% 15%; /* Dark blue/grey background */
+    --splash-foreground: 0 0% 95%; /* Off-white text */
+    --splash-blob-1: 345 33% 32%; /* Dark Pastel Pink */
+    --splash-blob-2: 257 16% 38%; /* Dark Light Lavender */
+    --splash-blob-3: 258 17% 62%; /* Muted Purple (can stay brighter) */
+    --splash-blob-4: 162 28% 37%; /* Dark Mint Green */
+    --splash-blob-5: 226 28% 59%; /* Muted Blue (can stay brighter) */
+    --splash-blob-6: 257 16% 30%; /* Darker version of blob-2 */
 
 
     /* Sidebar variables for dark mode */
@@ -250,43 +250,43 @@
   }
   .paper-cut-layer-1 {
     height: 60%;
-    background-color: hsl(var(--splash-blob-1)); /* Terracotta */
-    clip-path: ellipse(80% 60% at 10% 100%);
+    background-color: hsl(var(--splash-blob-1)); /* Pastel Pink */
+    clip-path: polygon(0 45%, 100% 20%, 100% 100%, 0% 100%);
     animation-delay: 0s;
     z-index: 6;
   }
   .paper-cut-layer-2 {
     height: 55%;
-    background-color: hsl(var(--splash-blob-6)); /* Lighter Terracotta */
-    clip-path: ellipse(90% 60% at 90% 100%);
+    background-color: hsl(var(--splash-blob-6)); /* Lighter Lavender */
+    clip-path: polygon(0 20%, 100% 40%, 100% 100%, 0% 100%);
     animation-delay: -2s;
     z-index: 5;
   }
   .paper-cut-layer-3 {
     height: 50%;
-    background-color: hsl(var(--splash-blob-4)); /* Darker brown/grey */
-    clip-path: ellipse(70% 55% at 20% 100%);
+    background-color: hsl(var(--splash-blob-2)); /* Light Lavender */
+    clip-path: polygon(0 50%, 100% 30%, 100% 100%, 0% 100%);
     animation-delay: -4s;
     z-index: 4;
   }
   .paper-cut-layer-4 {
     height: 45%;
-    background-color: hsl(var(--splash-blob-2)); /* Muted Green */
-    clip-path: ellipse(100% 55% at 80% 100%);
+    background-color: hsl(var(--splash-blob-5)); /* Muted Blue */
+    clip-path: polygon(0 35%, 100% 55%, 100% 100%, 0% 100%);
     animation-delay: -6s;
     z-index: 3;
   }
   .paper-cut-layer-5 {
     height: 40%;
-    background-color: hsl(var(--splash-blob-5)); /* Lighter Muted Green */
-    clip-path: ellipse(80% 50% at 15% 100%);
+    background-color: hsl(var(--splash-blob-3)); /* Muted Purple */
+    clip-path: polygon(0 60%, 100% 45%, 100% 100%, 0% 100%);
     animation-delay: -8s;
     z-index: 2;
   }
   .paper-cut-layer-6 {
     height: 35%;
-    background-color: hsl(var(--splash-blob-3)); /* Light Apricot */
-    clip-path: ellipse(90% 50% at 95% 100%);
+    background-color: hsl(var(--splash-blob-4)); /* Mint Green */
+    clip-path: polygon(0 40%, 100% 65%, 100% 100%, 0% 100%);
     animation-delay: -10s;
     z-index: 1;
   }
@@ -329,8 +329,8 @@
 }
 
 @keyframes topographic-breath {
-  0%, 100% { transform: scale(1, 1); }
-  50% { transform: scale(1.02, 1.05); }
+  0%, 100% { transform: scale(1, 1) rotate(0deg); }
+  50% { transform: scale(1.02, 1.05) rotate(0.5deg); }
 }
 
 @keyframes brush-stroke {
