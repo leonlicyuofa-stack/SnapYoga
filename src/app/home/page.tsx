@@ -132,12 +132,12 @@ export default function WelcomePageAsRoot() {
                 </g>
                 
                 {/* Pastel Green Cat */}
-                 <g transform="translate(15, -25) scale(0.7)">
+                 <g transform="translate(16, -25) scale(0.7)">
                     <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-cat-green))" />
                 </g>
 
                 {/* Pastel Grey Cat */}
-                <g transform="translate(30, -30) scale(0.5)">
+                <g transform="translate(31, -30) scale(0.5)">
                     <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-cat-grey))" />
                 </g>
             </svg>
