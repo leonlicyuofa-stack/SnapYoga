@@ -7,14 +7,14 @@ export function BunnyMascot(props: SVGProps<SVGSVGElement>) {
         <title>Bunny Mascot</title>
         
         {/* Bunny Body */}
-        <path d="M 75,120 C 50,125 40,100 50,80 C 60,60 90,60 100,80 C 110,100 100,125 75,120 Z" fill="#C8BAD3" stroke="currentColor" strokeWidth="0.5" />
+        <path d="M 75,120 C 50,125 40,100 50,80 C 60,60 90,60 100,80 C 110,100 100,125 75,120 Z" fill="#fdfd96" stroke="currentColor" strokeWidth="0.5" />
 
         {/* Head */}
-        <circle cx="75" cy="55" r="35" fill="#C8BAD3" stroke="currentColor" strokeWidth="0.5" />
+        <circle cx="75" cy="55" r="35" fill="#fffacd" stroke="currentColor" strokeWidth="0.5" />
         
         {/* Ears */}
-        <path d="M 65,20 C 55,0 70,-5 75,20 C 80,45 75,40 65,20 Z" fill="#C8BAD3" stroke="currentColor" strokeWidth="0.5" />
-        <path d="M 85,20 C 95,0 80,-5 75,20 C 70,45 75,40 85,20 Z" fill="#C8BAD3" stroke="currentColor" strokeWidth="0.5" />
+        <path d="M 65,20 C 55,0 70,-5 75,20 C 80,45 75,40 65,20 Z" fill="#fffacd" stroke="currentColor" strokeWidth="0.5" />
+        <path d="M 85,20 C 95,0 80,-5 75,20 C 70,45 75,40 85,20 Z" fill="#fffacd" stroke="currentColor" strokeWidth="0.5" />
         <path d="M 68,25 C 65,15 70,12 73,25 C 76,38 72,35 68,25 Z" fill="#EADADE" />
         
         {/* Face */}

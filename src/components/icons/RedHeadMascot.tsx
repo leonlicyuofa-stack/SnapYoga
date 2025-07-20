@@ -8,14 +8,14 @@ export function RedHeadMascot(props: SVGProps<SVGSVGElement>) {
         <title>Red-haired Snowman Mascot</title>
 
         {/* Snowman Body */}
-        <circle cx="70" cy="115" r="45" fill="#F0F8FF" stroke="currentColor" strokeWidth="0.5" />
-        <circle cx="70" cy="55" r="35" fill="#A695B7" stroke="currentColor" strokeWidth="0.5" />
+        <circle cx="70" cy="115" r="45" fill="#ffcc99" stroke="currentColor" strokeWidth="0.5" />
+        <circle cx="70" cy="55" r="35" fill="#ffddb3" stroke="currentColor" strokeWidth="0.5" />
 
         {/* Head */}
         <circle cx="70" cy="55" r="35" fill="transparent" /> 
 
         {/* Hair */}
-        <g fill="#EADADE">
+        <g fill="#ff8c69">
             <circle cx="48" cy="30" r="15"/>
             <circle cx="70" cy="25" r="18"/>
             <circle cx="92" cy="30" r="15"/>
