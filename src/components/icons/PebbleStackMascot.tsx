@@ -1,4 +1,3 @@
-
 import type { SVGProps } from 'react';
 
 export function PebbleStackMascot(props: SVGProps<SVGSVGElement>) {
@@ -11,7 +10,7 @@ export function PebbleStackMascot(props: SVGProps<SVGSVGElement>) {
         <path d="M 15,100 C 5,90 5,70 20,65 C 35,60 75,60 90,70 C 105,80 105,95 85,105 C 65,115 25,110 15,100 Z" fill="#D1E8E2" stroke="currentColor" strokeWidth="0.5" />
         <ellipse cx="45" cy="85" rx="4" ry="5" fill="#2C3E50" />
         <ellipse cx="65" cy="85" rx="4" ry="5" fill="#2C3E50" />
-        <path d="M 50,92 Q 55,98 60,92" stroke="#2C3E50" fill="none" strokeWidth="0.5" strokeLinecap="round" />
+        <path d="M 50,92 Q 55,98 60,92" stroke="#2C3E50" fill="none" strokeWidth="1.5" strokeLinecap="round" />
 
         {/* Middle Pebble */}
         <path d="M 25,68 C 18,63 20,50 30,45 C 40,40 70,42 80,50 C 90,58 88,68 75,72 C 62,76 32,73 25,68 Z" fill="#B2CEDE" stroke="currentColor" strokeWidth="0.5" />
