@@ -5,33 +5,33 @@
 
 @layer base {
   :root {
-    --background: 30 100% 97%; /* Very light peach */
-    --foreground: 340 30% 25%; /* Dark, muted pink/brown */
+    --background: 24 50% 98%;
+    --foreground: 240 10% 3.9%;
 
-    --card: 30 100% 99%;
-    --card-foreground: 340 30% 25%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
 
-    --popover: 30 100% 99%;
-    --popover-foreground: 340 30% 25%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
 
-    --primary: 340 85% 70%; /* Soft vibrant pink */
+    --primary: 340 85% 70%;
     --primary-foreground: 340 30% 15%;
 
-    --secondary: 45 90% 92%; /* Pale yellow */
+    --secondary: 45 90% 92%;
     --secondary-foreground: 45 30% 25%;
 
-    --muted: 45 90% 95%;
-    --muted-foreground: 45 30% 45%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 280 70% 75%; /* Soft purple */
+    --accent: 280 70% 75%;
     --accent-foreground: 280 30% 15%;
 
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 30 50% 92%;
-    --input: 30 50% 94%;
-    --ring: 340 85% 70%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
     
     --chart-1: 340 85% 70%;
     --chart-2: 280 70% 75%;
@@ -39,6 +39,14 @@
     --chart-4: 190 50% 70%;
     --chart-5: 28 80% 75%;
     --radius: 0.75rem;
+
+    /* Splash Screen colors */
+    --splash-background: 30 100% 97%;
+    --splash-foreground: 246 33% 25%;
+    --splash-blob-1: 315 28% 44%;
+    --splash-blob-2: 246 33% 25%;
+    --splash-blob-3: 28 100% 82%;
+
 
     /* Sidebar variables */
     --sidebar-background: 30 100% 98%;
@@ -52,14 +60,14 @@
   }
 
   .dark {
-    --background: 340 10% 10%; 
-    --foreground: 30 100% 97%; 
+    --background: 240 10% 3.9%; 
+    --foreground: 0 0% 98%; 
 
-    --card: 340 10% 12%;
-    --card-foreground: 30 100% 97%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 340 10% 10%;
-    --popover-foreground: 30 100% 97%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
 
     --primary: 340 85% 70%; 
     --primary-foreground: 340 30% 15%;
@@ -67,24 +75,31 @@
     --secondary: 45 20% 18%;
     --secondary-foreground: 45 90% 92%;
 
-    --muted: 30 15% 18%;
-    --muted-foreground: 30 100% 85%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
 
     --accent: 280 70% 75%; 
     --accent-foreground: 280 30% 15%;
 
-    --destructive: 0 63% 40%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 30 15% 20%;
-    --input: 30 15% 22%;
-    --ring: 340 85% 70%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
     
     --chart-1: 340 85% 70%;
     --chart-2: 280 70% 75%;
     --chart-3: 45 90% 80%;
     --chart-4: 190 50% 70%;
     --chart-5: 28 80% 75%;
+
+    /* Splash Screen colors */
+    --splash-background: 240 10% 3.9%;
+    --splash-foreground: 30 100% 97%;
+    --splash-blob-1: 315 28% 44%;
+    --splash-blob-2: 246 33% 35%;
+    --splash-blob-3: 28 100% 72%;
 
     /* Sidebar variables for dark mode */
     --sidebar-background: 340 10% 10%;
@@ -106,17 +121,21 @@
     @apply bg-background text-foreground;
   }
   .main-container {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 20%, #fecfef 40%, #ffc3a0 60%, #ffafbd 80%, #c471f5 100%),
-                radial-gradient(circle at 20% 80%, rgba(255, 154, 158, 0.4) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 175, 189, 0.3) 0%, transparent 50%);
-    position: relative;
+      min-height: 100vh;
+      background: linear-gradient(135deg, hsl(var(--primary)/0.6) 0%, hsl(var(--secondary)/0.6) 100%);
+      position: relative;
   }
 
   .navbar {
       padding: 20px 0;
       position: relative;
       z-index: 100;
+  }
+  .font-serif {
+      font-family: var(--font-playfair), serif;
+  }
+  .font-sans {
+      font-family: var(--font-inter), sans-serif;
   }
 }
 
@@ -137,6 +156,7 @@
   /* Signup Page Animations */
   .animate-breathing-bg {
     animation: breathing-bg 15s ease-in-out infinite;
+    background-size: 200% 200%;
   }
   
   .animate-float-1 {

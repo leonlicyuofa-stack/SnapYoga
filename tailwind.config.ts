@@ -50,6 +50,11 @@ export default {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			},
+            'splash-background': 'hsl(var(--splash-background))',
+            'splash-foreground': 'hsl(var(--splash-foreground))',
+            'splash-blob-1': 'hsl(var(--splash-blob-1))',
+            'splash-blob-2': 'hsl(var(--splash-blob-2))',
+            'splash-blob-3': 'hsl(var(--splash-blob-3))',
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
   				foreground: 'hsl(var(--sidebar-foreground))',
@@ -61,6 +66,10 @@ export default {
   				ring: 'hsl(var(--sidebar-ring))'
   			}
   		},
+        fontFamily: {
+            sans: ['var(--font-inter)'],
+            serif: ['var(--font-playfair)'],
+        },
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
