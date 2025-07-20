@@ -104,6 +104,7 @@ export default function WelcomePageAsRoot() {
       </header>
 
       <main className="relative z-10 flex flex-col items-center text-center px-4">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white/90 mb-2">SnapYoga</h2>
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white" dangerouslySetInnerHTML={{ __html: t('landingTitle').replace('Flow', '<b>Flow</b>').replace('Anytime', '<b>Anytime</b>') }}></h1>
         <p className="mt-4 text-lg text-pink-100/90 max-w-md sm:text-xl">
           {t('landingSubtitle')}
