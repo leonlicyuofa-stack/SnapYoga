@@ -113,8 +113,8 @@ export default function HomePage() {
                 <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-cat-pink))" />
                 <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
                 
-                {/* Light Blue Cat with Bean Eyes and Blush */}
-                <g transform="translate(-10, 25) scale(1.1)">
+                {/* Blue Cat */}
+                <g transform="translate(-10, -65) scale(1.1)">
                     <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-cat-blue-light))" />
                     {/* Airbrushed Blush */}
                     <ellipse cx="38" cy="78" rx="10" ry="7" fill="url(#blushGradient)" />
@@ -128,13 +128,13 @@ export default function HomePage() {
                     <path d="M 48,80 Q 52,85 56,80" stroke="#2C3E50" fill="none" strokeWidth="1.5" strokeLinecap="round" />
                 </g>
                 
-                {/* Pastel Green Cat */}
-                 <g transform="translate(-1, 15) scale(0.9)">
+                {/* Green Cat */}
+                 <g transform="translate(-1, -75) scale(0.9)">
                     <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-cat-green))" />
                 </g>
 
-                {/* Pastel Grey Cat */}
-                <g transform="translate(6, 8) scale(0.7)">
+                {/* Grey Cat */}
+                <g transform="translate(6, -82) scale(0.7)">
                     <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-cat-grey))" />
                 </g>
             </svg>
