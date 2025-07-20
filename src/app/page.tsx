@@ -42,7 +42,6 @@ export default function MatrixLifeSplashPage() {
             <div className="paper-cut-layer paper-cut-layer-1 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-500"></div>
             <div className="paper-cut-layer paper-cut-layer-2 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-400"></div>
             <div className="paper-cut-layer paper-cut-layer-3 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-300"></div>
-            <div className="paper-cut-layer paper-cut-layer-4 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-200"></div>
         </div>
 
         <div className="relative z-10 w-full flex justify-between items-center animate-in fade-in slide-in-from-top-5 duration-1000 delay-500">

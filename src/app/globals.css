@@ -46,7 +46,6 @@
     --splash-blob-1: 345 53% 92%; /* #EADADE - Pastel Pink */
     --splash-blob-2: 257 26% 78%; /* #C8BAD3 - Light Lavender */
     --splash-blob-3: 258 17% 62%; /* #A695B7 - Muted Purple */
-    --splash-blob-4: 162 38% 77%; /* #B2D6CD - Mint Green */
 
 
     /* Sidebar variables */
@@ -101,7 +100,6 @@
     --splash-blob-1: 345 33% 32%; /* Dark Pastel Pink */
     --splash-blob-2: 257 16% 38%; /* Dark Light Lavender */
     --splash-blob-3: 258 17% 62%; /* Muted Purple (can stay brighter) */
-    --splash-blob-4: 162 28% 37%; /* Dark Mint Green */
 
 
     /* Sidebar variables for dark mode */
@@ -267,13 +265,6 @@
     clip-path: polygon(0 100%, 100% 100%, 100% 55%, 90% 50%, 80% 58%, 70% 52%, 60% 60%, 50% 53%, 40% 62%, 30% 55%, 20% 63%, 10% 58%, 0% 65%);
     animation-delay: -4s;
     z-index: 2;
-  }
-  .paper-cut-layer-4 {
-    height: 45%;
-    background-color: hsl(var(--splash-blob-4)); /* Mint Green */
-    clip-path: polygon(0 100%, 100% 100%, 100% 48%, 92% 43%, 82% 50%, 72% 45%, 62% 52%, 52% 46%, 42% 55%, 32% 48%, 22% 55%, 12% 50%, 0 58%);
-    animation-delay: -6s;
-    z-index: 1;
   }
 
 
