@@ -25,7 +25,8 @@ export function SnapYogaLogo() {
         {/* Top Pebble */}
         <path d="M69.9,51.3c-2.5,2.4-11,4-20,4s-17.5-1.6-20-4c-2.5-2.4,0.4-7.5,9.2-8.7s18.4-0.6,24.1,2.1C68.8,46.5,72.4,48.9,69.9,51.3z" fill="#e9ecef"/>
       </svg>
-      <span className="text-2xl font-bold tracking-tight text-primary">{t('snapYogaTitle')}{' '}🌿</span>
+      <span className="text-2xl font-bold tracking-tight text-primary font-script">{t('snapYogaTitle')}</span>
+      <span className="text-2xl">🌿</span>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 
 import type {Metadata} from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Shadows_Into_Light as ShadowsIntoLight } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/contexts/AuthContext'; 
@@ -9,6 +9,12 @@ import { LanguageProvider } from '@/contexts/LanguageContext';
 const inter = Inter({
   variable: '--font-sans',
   subsets: ['latin'],
+});
+
+const shadowsIntoLight = ShadowsIntoLight({
+  variable: '--font-script',
+  subsets: ['latin'],
+  weight: '400',
 });
 
 export const metadata: Metadata = {
@@ -23,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} antialiased`}>
+      <body className={`${inter.variable} ${shadowsIntoLight.variable} antialiased`}>
         <AuthProvider>
           <LanguageProvider>
             {children}

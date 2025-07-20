@@ -11,20 +11,6 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { MoveUpRight, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Inter, Great_Vibes as GreatVibes } from 'next/font/google';
-
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-});
-
-const greatVibes = GreatVibes({
-  subsets: ['latin'],
-  weight: ['400'],
-  variable: '--font-great-vibes',
-});
-
 
 interface UserProfileData extends DocumentData {
   uid?: string;
@@ -96,9 +82,7 @@ export default function HomePage() {
 
   return (
     <div className={cn(
-        "relative flex flex-col min-h-screen items-center justify-center p-4 bg-splash-background font-sans overflow-hidden",
-        inter.variable,
-        greatVibes.variable
+        "relative flex flex-col min-h-screen items-center justify-center p-4 bg-splash-background font-sans overflow-hidden"
     )}>
         {/* Full-screen background illustration */}
         <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
@@ -112,7 +96,7 @@ export default function HomePage() {
                 <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
                 
                 {/* Blue Cat */}
-                <g transform="translate(-80, -220) scale(1.1)">
+                <g transform="translate(-80, 20) scale(1.1)">
                     <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-blob-2))" />
                     <ellipse cx="38" cy="78" rx="10" ry="7" fill="url(#blushGradient)" />
                     <ellipse cx="62" cy="78" rx="10" ry="7" fill="url(#blushGradient)" />
@@ -122,18 +106,18 @@ export default function HomePage() {
                 </g>
                 
                 {/* Green Cat */}
-                 <g transform="translate(-70, -250) scale(0.9)">
+                 <g transform="translate(-70, -10) scale(0.9)">
                     <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-blob-3))" />
                 </g>
 
                 {/* Grey Cat */}
-                <g transform="translate(-60, -270) scale(0.7)">
+                <g transform="translate(-60, -30) scale(0.7)">
                     <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-blob-3))" />
                 </g>
             </svg>
         
          <div className="relative z-10 flex flex-col items-center justify-center text-center">
-            <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3">{t('snapYogaTitle')}</h2>
+            <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3 font-script">{t('snapYogaTitle')}</h2>
             <p className="mt-2 text-sm text-splash-foreground/80 max-w-xs sm:text-base">
                 {t('landingSubtitle')}
             </p>
