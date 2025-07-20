@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect } from 'react';
@@ -27,7 +26,7 @@ export default function MatrixLifeSplashPage() {
 
   return (
     <div className={cn(
-        "flex flex-col min-h-screen items-center justify-between p-8 bg-splash-background font-sans overflow-hidden",
+        "flex flex-col min-h-screen items-center justify-center p-8 bg-splash-background font-sans overflow-hidden",
         inter.variable,
     )}>
         {/* Paper Cut Effect Divs */}
@@ -37,22 +36,12 @@ export default function MatrixLifeSplashPage() {
             <div className="paper-cut-layer paper-cut-layer-3 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-300"></div>
         </div>
 
-        <div className="relative z-10 w-full flex justify-between items-center animate-in fade-in slide-in-from-top-5 duration-1000 delay-500">
-            <div className="flex items-center gap-2">
-                <Smile className="h-6 w-6 text-splash-foreground/80" />
-            </div>
-            <Sun className="h-8 w-8 text-yellow-400 animate-pulse-gentle" />
-        </div>
-
         <div className="relative z-10 flex flex-col items-center justify-center flex-grow animate-in fade-in zoom-in-95 duration-1000 delay-700">
             <h1 className="text-4xl font-bold text-splash-foreground font-serif leading-tight">
                 SnapYoga
             </h1>
         </div>
         
-        <div className="relative z-10 w-full h-24 flex justify-center items-center">
-            <PebbleStackLoader />
-        </div>
     </div>
   );
 }
