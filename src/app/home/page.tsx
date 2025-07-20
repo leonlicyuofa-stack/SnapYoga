@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -105,7 +104,7 @@ export default function WelcomePageAsRoot() {
         
         {/* Decorative Mascots */}
         <PebbleStackMascot className="absolute bottom-1/4 left-4 sm:left-12 md:left-24 w-28 h-28 sm:w-32 sm:h-32 text-splash-foreground/80 animate-cartoon-float-1 z-10" />
-        <BunnyMascot className="absolute top-1/2 right-4 sm:right-12 md:right-24 transform -translate-y-1/2 w-40 h-40 sm:w-48 sm:h-48 text-splash-foreground/80 animate-character-hike z-10" />
+        <BunnyMascot className="absolute top-1/2 right-4 sm:right-12 md:right-24 transform -translate-y-1/2 w-40 h-40 sm:w-48 sm:h-48 text-splash-foreground/80 animate-cartoon-float-2 z-10" />
         <RedHeadMascot className="absolute bottom-0 left-1/2 -translate-x-1/2 w-36 h-36 sm:w-40 sm:h-40 text-splash-foreground/80 animate-cartoon-float-3 z-10" />
 
         <header className="navbar w-full absolute top-0 left-0">
@@ -161,5 +160,3 @@ export default function WelcomePageAsRoot() {
     </div>
   );
 }
-
-    
