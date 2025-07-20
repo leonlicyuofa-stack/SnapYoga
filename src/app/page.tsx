@@ -41,7 +41,7 @@ export default function MatrixLifeSplashPage() {
         <div className="absolute bottom-0 right-0 w-[50%] h-[20%] bg-splash-blob-3 rounded-tl-[100%] translate-x-1/4 translate-y-1/4 opacity-70 animate-in fade-in-0 duration-1000 delay-500"></div>
 
         <div className="relative z-10 w-full animate-in fade-in slide-in-from-top-5 duration-1000 delay-500">
-            <p className="text-2xl text-white font-serif italic">Welcome!</p>
+            <p className="text-2xl text-splash-foreground/80 font-serif italic">Welcome!</p>
         </div>
 
         <div className="relative z-10 flex flex-col items-center justify-center flex-grow animate-in fade-in zoom-in-95 duration-1000 delay-700">

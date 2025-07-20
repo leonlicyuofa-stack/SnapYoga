@@ -40,12 +40,12 @@
     --chart-5: 28 80% 75%;
     --radius: 0.75rem;
 
-    /* Splash Screen colors */
-    --splash-background: 30 100% 97%;
-    --splash-foreground: 246 33% 25%;
-    --splash-blob-1: 315 28% 44%;
-    --splash-blob-2: 246 33% 25%;
-    --splash-blob-3: 28 100% 82%;
+    /* Splash Screen colors - Earthy Greens & Terracotta */
+    --splash-background: 35 68% 96%; /* Soft beige */
+    --splash-foreground: 25 35% 25%; /* Dark brown */
+    --splash-blob-1: 15 54% 60%; /* Terracotta */
+    --splash-blob-2: 95 25% 45%; /* Muted Green */
+    --splash-blob-3: 35 70% 80%; /* Light Apricot */
 
 
     /* Sidebar variables */
@@ -94,12 +94,12 @@
     --chart-4: 190 50% 70%;
     --chart-5: 28 80% 75%;
 
-    /* Splash Screen colors */
-    --splash-background: 240 10% 3.9%;
-    --splash-foreground: 30 100% 97%;
-    --splash-blob-1: 315 28% 44%;
-    --splash-blob-2: 246 33% 35%;
-    --splash-blob-3: 28 100% 72%;
+    /* Splash Screen colors - Earthy Greens & Terracotta */
+    --splash-background: 25 35% 15%; /* Dark Brown */
+    --splash-foreground: 35 68% 96%; /* Soft beige */
+    --splash-blob-1: 15 54% 60%; /* Terracotta */
+    --splash-blob-2: 95 25% 55%; /* Muted Green */
+    --splash-blob-3: 35 70% 80%; /* Light Apricot */
 
     /* Sidebar variables for dark mode */
     --sidebar-background: 340 10% 10%;
@@ -122,7 +122,7 @@
   }
   .main-container {
       min-height: 100vh;
-      background: linear-gradient(135deg, hsl(var(--primary)/0.6) 0%, hsl(var(--secondary)/0.6) 100%);
+      background: hsl(var(--splash-background));
       position: relative;
   }
 
@@ -223,6 +223,14 @@
       animation: character-wave 2.5s ease-in-out infinite;
       transform-origin: bottom center;
   }
+  .animate-handwriting {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: handwriting 2.5s ease-out 0.5s forwards;
+  }
+  .animate-blob-breath {
+    animation: blob-breath 12s ease-in-out infinite;
+  }
 
   /* New Character Card Styles */
   .character-card {
@@ -275,6 +283,19 @@
   to {
     stroke-dashoffset: 0;
   }
+}
+@keyframes handwriting {
+  from {
+    stroke-dashoffset: 1000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes blob-breath {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.05) rotate(3deg); }
 }
 
 @keyframes breathing-bg {
