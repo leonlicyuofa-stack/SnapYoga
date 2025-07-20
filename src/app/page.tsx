@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Inter, Playfair_Display as PlayfairDisplay } from 'next/font/google';
 import { Sun, Smile } from 'lucide-react';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { PebbleStackLoader } from '@/components/icons/pebble-stack-loader';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -26,7 +26,7 @@ export default function MatrixLifeSplashPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.replace('/home');
-    }, 3500); // 3.5 second delay
+    }, 4500); // Increased delay to allow animation to finish
 
     return () => clearTimeout(timer);
   }, [router]);
@@ -56,8 +56,8 @@ export default function MatrixLifeSplashPage() {
             </h1>
         </div>
         
-        <div className="relative z-10 w-full animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-500">
-            <SmileyRockLoader text="LOADING..." className="justify-center" />
+        <div className="relative z-10 w-full h-24 flex justify-center items-center">
+            <PebbleStackLoader />
         </div>
     </div>
   );

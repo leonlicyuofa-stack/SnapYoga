@@ -291,6 +291,41 @@
     z-index: 1;
   }
 
+  /* New Pebble Stacking Animations */
+  .pebble-stack-loader {
+    --duration: 2s;
+    --stagger: 0.25s;
+    --bounce-height: -8px;
+  }
+}
+
+@keyframes float-in-bottom {
+  0% { transform: translate(-50px, 80px) rotate(-15deg); opacity: 0; }
+  100% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+}
+
+@keyframes float-in-middle {
+  0% { transform: translate(60px, -80px) rotate(20deg); opacity: 0; }
+  100% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+}
+
+@keyframes float-in-top {
+  0% { transform: translate(-60px, -80px) rotate(-20deg); opacity: 0; }
+  100% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+}
+
+@keyframes land-wobble {
+  0%, 100% { transform: translateY(0) scale(1); }
+  10% { transform: translateY(0) scale(1.1, 0.9); }
+  30% { transform: translateY(var(--bounce-height)) scale(0.9, 1.1); }
+  50% { transform: translateY(0) scale(1.05, 0.95); }
+  70% { transform: translateY(calc(var(--bounce-height) / 2)); }
+  90% { transform: translateY(0) scale(1.02, 0.98); }
+}
+
+@keyframes gentle-breath {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
 }
 
 @keyframes topographic-breath {
@@ -408,37 +443,6 @@
 }
 
 
-/* New Pebble Stacking Animations */
-.pebble-stack-loader {
-  --duration: 4s;
-  --stagger: 0.5s;
-  --bounce-height: -8px;
-}
-
-@keyframes float-in-bottom {
-  0% { transform: translate(-50px, 80px) rotate(-15deg); opacity: 0; }
-  100% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-}
-
-@keyframes float-in-middle {
-  0% { transform: translate(60px, -80px) rotate(20deg); opacity: 0; }
-  100% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-}
-
-@keyframes float-in-top {
-  0% { transform: translate(-60px, -80px) rotate(-20deg); opacity: 0; }
-  100% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-}
-
-@keyframes land-wobble {
-  0%, 100% { transform: translateY(0) scale(1); }
-  10% { transform: translateY(0) scale(1.1, 0.9); }
-  30% { transform: translateY(var(--bounce-height)) scale(0.9, 1.1); }
-  50% { transform: translateY(0) scale(1.05, 0.95); }
-  70% { transform: translateY(calc(var(--bounce-height) / 2)); }
-  90% { transform: translateY(0) scale(1.02, 0.98); }
-}
-
 @keyframes head-turn-and-face-reveal {
   0%, 40% { 
     transform: rotateY(180deg);
@@ -486,11 +490,6 @@
 }
 
 
-@keyframes gentle-breath {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-}
-
 .pebble-stack-loader #pebble-bottom {
   animation: float-in-bottom calc(var(--duration) / 4) cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards,
              land-wobble calc(var(--duration) / 4) cubic-bezier(0.68, -0.55, 0.27, 1.55) calc(var(--duration) / 4) forwards;
@@ -502,40 +501,14 @@
              land-wobble calc(var(--duration) / 4) cubic-bezier(0.68, -0.55, 0.27, 1.55) calc(var(--stagger) + (var(--duration) / 4)) forwards;
 }
 
-.pebble-stack-loader #pebble-top-group {
+.pebble-stack-loader #pebble-top {
   opacity: 0;
-  transform-origin: 40px 40px;
   animation: float-in-top calc(var(--duration) / 4) cubic-bezier(0.68, -0.55, 0.27, 1.55) calc(var(--stagger) * 2) forwards,
-             land-wobble calc(var(--duration) / 4) cubic-bezier(0.68, -0.55, 0.27, 1.55) calc(var(--stagger) * 2 + (var(--duration) / 4)) forwards,
-             head-turn-and-face-reveal 1.5s ease-out calc(var(--duration) - 1.8s) forwards;
-}
-
-.pebble-stack-loader #smiley-face {
-  opacity: 0; /* Face reveal is handled by the parent group's animation now */
-}
-
-/* Initially hide the arm and text */
-.pebble-stack-loader #waving-arm-group {
-  opacity: 0;
-  transform-origin: 55px 50px; /* Set rotation origin for the arm */
-}
-
-.pebble-stack-loader #logo-text {
-    opacity: 0;
-    transform-origin: left center;
-}
-
-.pebble-stack-loader.finished #waving-arm-group {
-    opacity: 1;
-    animation: arm-extend-and-wave 1.5s ease-in-out forwards;
-}
-
-.pebble-stack-loader.finished #logo-text {
-    animation: text-reveal-from-arm 1s ease-out 0.5s forwards;
+             land-wobble calc(var(--duration) / 4) cubic-bezier(0.68, -0.55, 0.27, 1.55) calc(var(--stagger) * 2 + (var(--duration) / 4)) forwards;
 }
 
 .pebble-stack-loader.finished #stack {
-    animation: gentle-breath 3s ease-in-out 1.5s infinite;
+    animation: gentle-breath 3s ease-in-out calc(var(--duration)) infinite;
 }
 
 @keyframes character-appear {
@@ -553,5 +526,3 @@
   25% { transform: rotate(-8deg); }
   75% { transform: rotate(8deg); }
 }
-
-    
