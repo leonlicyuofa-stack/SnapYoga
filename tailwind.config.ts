@@ -54,8 +54,8 @@ export default {
             'splash-foreground': 'hsl(var(--splash-foreground))',
             'splash-cat-pink': 'hsl(var(--splash-cat-pink))',
             'splash-cat-blue-light': 'hsl(var(--splash-cat-blue-light))',
-            'splash-cat-blue-dark': 'hsl(var(--splash-cat-blue-dark))',
-            'splash-cat-moon': 'hsl(var(--splash-cat-moon))',
+            'splash-cat-green': 'hsl(var(--splash-cat-green))',
+            'splash-cat-grey': 'hsl(var(--splash-cat-grey))',
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
   				foreground: 'hsl(var(--sidebar-foreground))',
