@@ -32,6 +32,7 @@ export default function WelcomePageAsRoot() {
   const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [isProcessingClick, setIsProcessingClick] = useState(false);
+  const [activeCard, setActiveCard] = useState<string | null>('pebble');
 
   useEffect(() => {
     if (user && !authLoading) {
@@ -82,6 +83,10 @@ export default function WelcomePageAsRoot() {
     const newLang = language === 'en' ? 'id' : 'en';
     setLanguage(newLang);
   };
+  
+  const handleCardClick = (cardName: string) => {
+    setActiveCard(cardName);
+  };
 
 
   const isLoading = authLoading || loadingProfile || isProcessingClick;
@@ -122,15 +127,27 @@ export default function WelcomePageAsRoot() {
       {/* Character Containers */}
       <div className="w-full relative pb-8 px-4">
         <div className="container mx-auto grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-8">
-            <Card className="bg-white/30 backdrop-blur-sm border-white/50 h-48 md:h-56 flex items-center justify-center animate-character-appear">
-                <SmileyPebbleIcon className="w-24 h-24 sm:w-32 sm:h-32 text-gray-600 animate-pebble-pulse" />
-            </Card>
-            <Card className="bg-white/30 backdrop-blur-sm border-white/50 h-48 md:h-56 flex items-center justify-center animate-character-appear" style={{animationDelay: '200ms'}}>
-                <PenguinIcon className="w-24 h-24 sm:w-32 sm:h-32 text-pink-300 animate-character-wave" />
-            </Card>
-             <Card className="bg-white/30 backdrop-blur-sm border-white/50 h-48 md:h-56 flex items-center justify-center animate-character-appear" style={{animationDelay: '400ms'}}>
-                <AvocadoIcon className="w-24 h-24 sm:w-32 sm:h-32 animate-character-wave" style={{ animationDelay: '1s' }} />
-            </Card>
+            <div 
+              className={cn("character-card", {'active': activeCard === 'pebble'})}
+              onClick={() => handleCardClick('pebble')}
+            >
+              <div className="character-emoji pebble-emoji"><SmileyPebbleIcon className="w-24 h-24 sm:w-32 sm:h-32 text-gray-600" /></div>
+              <div className="character-name">Zen Master</div>
+            </div>
+            <div 
+              className={cn("character-card", {'active': activeCard === 'penguin'})}
+              onClick={() => handleCardClick('penguin')}
+            >
+              <div className="character-emoji penguin-emoji"><PenguinIcon className="w-24 h-24 sm:w-32 sm:h-32 text-pink-300" /></div>
+              <div className="character-name">Pose Perfector</div>
+            </div>
+            <div 
+              className={cn("character-card", {'active': activeCard === 'avocado'})}
+              onClick={() => handleCardClick('avocado')}
+            >
+              <div className="character-emoji avocado-emoji"><AvocadoIcon className="w-24 h-24 sm:w-32 sm:h-32" /></div>
+              <div className="character-name">Tree Pose Master</div>
+            </div>
         </div>
       </div>
     </div>

@@ -203,6 +203,49 @@
       animation: character-wave 2.5s ease-in-out infinite;
       transform-origin: bottom center;
   }
+
+  /* New Character Card Styles */
+  .character-card {
+    @apply relative h-48 md:h-56 flex flex-col items-center justify-end p-4 rounded-xl cursor-pointer transition-all duration-300 ease-in-out;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    transform: scale(1) rotate(0deg);
+  }
+
+  .character-card.active {
+    @apply shadow-2xl;
+    background: rgba(255, 255, 255, 0.05);
+    transform: scale(1.15) rotate(10deg);
+  }
+  .character-card:nth-child(2).active {
+    transform: scale(1.15) rotate(0deg);
+  }
+  .character-card:nth-child(3).active {
+    transform: scale(1.15) rotate(-10deg);
+  }
+
+  .character-emoji {
+    @apply absolute -top-10 transition-transform duration-500 ease-in-out;
+    animation: character-wave 3s ease-in-out infinite;
+  }
+
+  .character-card.active .character-emoji {
+    transform: translateY(-10px) scale(1.1);
+    animation: pebble-pulse 2.5s infinite ease-in-out;
+  }
+  
+  .character-name {
+    @apply text-white font-bold text-lg opacity-0 transition-opacity duration-300;
+  }
+
+  .character-card.active .character-name {
+    opacity: 1;
+  }
+
+  .pebble-emoji { animation-delay: 0s; }
+  .penguin-emoji { animation-delay: 0.5s; }
+  .avocado-emoji { animation-delay: 1s; }
 }
 
 @keyframes brush-stroke {
