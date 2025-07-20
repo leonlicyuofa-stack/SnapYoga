@@ -278,6 +278,18 @@
     --stagger: 0.25s;
     --bounce-height: -8px;
   }
+  
+  .animate-cartoon-float-1 {
+    animation: cartoon-float 18s ease-in-out infinite;
+  }
+  .animate-cartoon-float-2 {
+     animation: cartoon-float 22s ease-in-out infinite reverse;
+     animation-delay: -6s;
+  }
+   .animate-cartoon-float-3 {
+     animation: cartoon-float 20s ease-in-out infinite;
+     animation-delay: -12s;
+  }
 }
 
 @keyframes float-in-bottom {
@@ -470,6 +482,14 @@
     }
 }
 
+@keyframes cartoon-float {
+    0% { transform: translateY(0px) rotate(0deg); }
+    25% { transform: translateY(-10px) rotate(3deg); }
+    50% { transform: translateY(0px) rotate(0deg); }
+    75% { transform: translateY(10px) rotate(-3deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+}
+
 
 .pebble-stack-loader #pebble-bottom {
   animation: float-in-bottom calc(var(--duration) / 4) cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards,
@@ -507,3 +527,5 @@
   25% { transform: rotate(-8deg); }
   75% { transform: rotate(8deg); }
 }
+
+    

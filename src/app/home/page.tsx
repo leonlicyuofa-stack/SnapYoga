@@ -12,6 +12,9 @@ import { cn } from '@/lib/utils';
 import { MoveUpRight, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Inter, Great_Vibes as GreatVibes } from 'next/font/google';
+import { PebbleStackMascot } from '@/components/icons/PebbleStackMascot';
+import { BunnyMascot } from '@/components/icons/BunnyMascot';
+import { RedHeadMascot } from '@/components/icons/RedHeadMascot';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -100,6 +103,11 @@ export default function WelcomePageAsRoot() {
         greatVibes.variable
     )}>
         
+        {/* Decorative Mascots */}
+        <PebbleStackMascot className="absolute bottom-1/4 left-4 sm:left-12 md:left-24 w-28 h-28 sm:w-32 sm:h-32 text-splash-foreground/80 animate-cartoon-float-1 z-10" />
+        <BunnyMascot className="absolute top-1/2 right-4 sm:right-12 md:right-24 transform -translate-y-1/2 w-40 h-40 sm:w-48 sm:h-48 text-splash-foreground/80 animate-cartoon-float-2 z-10" />
+        <RedHeadMascot className="absolute bottom-0 left-1/2 -translate-x-1/2 w-36 h-36 sm:w-40 sm:h-40 text-splash-foreground/80 animate-cartoon-float-3 z-10" />
+
         <header className="navbar w-full absolute top-0 left-0">
             <div className="container mx-auto flex justify-between items-center px-4 sm:px-8">
             <div></div>
@@ -153,3 +161,5 @@ export default function WelcomePageAsRoot() {
     </div>
   );
 }
+
+    
