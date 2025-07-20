@@ -46,6 +46,7 @@
     --splash-blob-1: 15 54% 60%; /* Terracotta */
     --splash-blob-2: 95 25% 45%; /* Muted Green */
     --splash-blob-3: 35 70% 80%; /* Light Apricot */
+    --splash-blob-4: 25 35% 35%; /* Darker brown/grey for paper cut */
 
 
     /* Sidebar variables */
@@ -100,6 +101,8 @@
     --splash-blob-1: 15 54% 60%; /* Terracotta */
     --splash-blob-2: 95 25% 55%; /* Muted Green */
     --splash-blob-3: 35 70% 80%; /* Light Apricot */
+    --splash-blob-4: 25 35% 35%; /* Darker brown/grey for paper cut */
+
 
     /* Sidebar variables for dark mode */
     --sidebar-background: 340 10% 10%;
@@ -232,48 +235,44 @@
     animation: blob-breath 12s ease-in-out infinite;
   }
 
-  /* New Character Card Styles */
-  .character-card {
-    @apply relative h-48 md:h-56 flex flex-col items-center justify-end p-4 rounded-xl cursor-pointer transition-all duration-300 ease-in-out;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(5px);
-    transform: scale(1) rotate(0deg);
+  /* Paper Cut Effect */
+  .paper-cut-layer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    transition: all 0.5s ease-out;
+  }
+  .paper-cut-layer-1 {
+    height: 45%;
+    background-color: hsl(var(--splash-blob-1)); /* Terracotta */
+    border-top-left-radius: 100%;
+    border-top-right-radius: 0%;
+    z-index: 4;
+  }
+  .paper-cut-layer-2 {
+    height: 40%;
+    background-color: hsl(var(--splash-blob-3)); /* Light Apricot */
+    border-top-left-radius: 90%;
+    bottom: -5%;
+    opacity: 0.8;
+    z-index: 3;
+  }
+  .paper-cut-layer-3 {
+    height: 50%;
+    background-color: hsl(var(--splash-blob-4)); /* Darker brown/grey */
+    border-top-left-radius: 120%;
+    bottom: -15%;
+    z-index: 2;
+  }
+  .paper-cut-layer-4 {
+    height: 60%;
+    background-color: hsl(var(--splash-blob-2)); /* Muted Green */
+    border-top-left-radius: 140%;
+    bottom: -20%;
+    z-index: 1;
   }
 
-  .character-card.active {
-    @apply shadow-2xl;
-    background: rgba(255, 255, 255, 0.05);
-    transform: scale(1.15) rotate(10deg);
-  }
-  .character-card:nth-child(2).active {
-    transform: scale(1.15) rotate(0deg);
-  }
-  .character-card:nth-child(3).active {
-    transform: scale(1.15) rotate(-10deg);
-  }
-
-  .character-emoji {
-    @apply absolute -top-10 transition-transform duration-500 ease-in-out;
-    animation: character-wave 3s ease-in-out infinite;
-  }
-
-  .character-card.active .character-emoji {
-    transform: translateY(-10px) scale(1.1);
-    animation: pebble-pulse 2.5s infinite ease-in-out;
-  }
-  
-  .character-name {
-    @apply text-white font-bold text-lg opacity-0 transition-opacity duration-300;
-  }
-
-  .character-card.active .character-name {
-    opacity: 1;
-  }
-
-  .pebble-emoji { animation-delay: 0s; }
-  .penguin-emoji { animation-delay: 0.5s; }
-  .avocado-emoji { animation-delay: 1s; }
 }
 
 @keyframes brush-stroke {
@@ -531,3 +530,5 @@
   25% { transform: rotate(-8deg); }
   75% { transform: rotate(8deg); }
 }
+
+    

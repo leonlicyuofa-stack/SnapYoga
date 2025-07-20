@@ -12,8 +12,6 @@ import { cn } from '@/lib/utils';
 import { MoveUpRight, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Inter, Playfair_Display as PlayfairDisplay } from 'next/font/google';
-import { PebbleStackLoader } from '@/components/icons/pebble-stack-loader';
-
 
 const inter = Inter({
   subsets: ['latin'],
@@ -96,15 +94,10 @@ export default function WelcomePageAsRoot() {
 
   return (
     <div className={cn(
-        "flex flex-col min-h-screen items-center justify-between p-8 bg-splash-background font-sans overflow-hidden",
+        "flex flex-col min-h-screen items-start justify-between p-8 bg-splash-background font-sans overflow-hidden",
         inter.variable,
         playfair.variable
     )}>
-        {/* Animated Background Blobs */}
-        <div className="absolute top-0 left-0 w-[110%] h-[55%] bg-splash-blob-1 rounded-bl-[100%] rounded-br-[40%] -translate-x-1/4 -translate-y-1/4 opacity-90 animate-blob-breath" style={{animationDuration: '15s'}}></div>
-        <div className="absolute top-0 left-0 w-[90%] h-[45%] bg-splash-blob-2 rounded-br-[100%] rounded-bl-[30%] translate-x-1/4 -translate-y-1/4 opacity-90 animate-blob-breath" style={{animationDuration: '12s', animationDelay: '2s'}}></div>
-        <div className="absolute bottom-0 right-0 w-[80%] h-[30%] bg-splash-blob-1 rounded-tl-[100%] rounded-tr-[20%] translate-x-1/4 translate-y-1/4 opacity-80 animate-blob-breath" style={{animationDuration: '18s'}}></div>
-        <div className="absolute bottom-0 right-0 w-[50%] h-[20%] bg-splash-blob-3 rounded-tl-[100%] translate-x-1/4 translate-y-1/4 opacity-70 animate-blob-breath" style={{animationDuration: '10s', animationDelay: '3s'}}></div>
         
         <header className="navbar w-full">
             <div className="container mx-auto flex justify-end items-center px-0 sm:px-4">
@@ -121,12 +114,9 @@ export default function WelcomePageAsRoot() {
             </div>
         </header>
 
-        <main className="relative z-10 flex flex-col items-center justify-center flex-grow text-center px-4 animate-in fade-in-0 slide-in-from-top-10 duration-1000 delay-200">
-             <div className="relative w-full h-28 mb-4 flex items-center justify-center">
-                 <PebbleStackLoader />
-             </div>
+        <main className="relative z-10 flex flex-col items-start justify-center flex-grow text-left px-4 animate-in fade-in-0 slide-in-from-top-10 duration-1000 delay-200">
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-splash-foreground/90 mb-2 font-serif">{t('snapYogaTitle')}</h2>
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-splash-foreground font-serif" dangerouslySetInnerHTML={{ __html: t('landingTitle').replace('Flow', '<b>Flow</b>').replace('Anytime', '<b>Anytime</b>') }}></h1>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-splash-foreground font-serif" dangerouslySetInnerHTML={{ __html: t('landingTitle').replace('Flow', '<b>Flow</b>').replace('Anytime', '<b>Anytime</b>') }}></h1>
             <p className="mt-4 text-lg text-splash-foreground/80 max-w-md sm:text-xl">
             {t('landingSubtitle')}
             </p>
@@ -140,10 +130,15 @@ export default function WelcomePageAsRoot() {
             </Button>
         </main>
         
-        <footer className="h-20">
-            {/* Footer can be empty to provide spacing */}
-        </footer>
-
+        {/* Paper Cut Effect Divs */}
+        <div className="absolute bottom-0 left-0 w-full h-3/4 pointer-events-none">
+            <div className="paper-cut-layer paper-cut-layer-1 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-500"></div>
+            <div className="paper-cut-layer paper-cut-layer-2 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-400"></div>
+            <div className="paper-cut-layer paper-cut-layer-3 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-200"></div>
+            <div className="paper-cut-layer paper-cut-layer-4 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-100"></div>
+        </div>
     </div>
   );
 }
+
+    
