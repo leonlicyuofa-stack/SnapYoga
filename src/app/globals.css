@@ -269,8 +269,17 @@
     animation: snapshot-content-appear 1s ease-out 1.5s forwards;
     opacity: 0;
   }
+  .animate-clouds {
+    animation: clouds 60s linear infinite;
+  }
 
 }
+
+@keyframes clouds {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
 
 @keyframes float-in-bottom {
   0% { transform: translate(-50px, 80px) rotate(-15deg); opacity: 0; }
