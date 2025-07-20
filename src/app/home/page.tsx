@@ -113,7 +113,7 @@ export default function HomePage() {
                 <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
 
                 {/* Light Blue Cat with Smiley Face and Blush */}
-                <g transform="translate(-10, 50) scale(1.1)">
+                <g transform="translate(15, 35) scale(1.1)">
                     <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-cat-blue-light))" />
                     {/* Airbrushed Blush */}
                     <ellipse cx="38" cy="78" rx="10" ry="7" fill="url(#blushGradient)" />
@@ -128,7 +128,7 @@ export default function HomePage() {
                 </g>
                 
                 {/* Pastel Green Cat */}
-                 <g transform="translate(5, 30) scale(0.9)">
+                 <g transform="translate(15, 25) scale(0.9)">
                     <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-cat-green))" />
                 </g>
 
