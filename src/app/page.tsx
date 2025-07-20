@@ -67,7 +67,7 @@ export default function MatrixLifeSplashPage() {
                 Welcome
               </text>
             </svg>
-            <h1 className="text-7xl font-bold text-splash-foreground font-serif leading-tight">
+            <h1 className="text-4xl font-bold text-splash-foreground font-serif leading-tight">
                 SnapYoga
             </h1>
         </div>
