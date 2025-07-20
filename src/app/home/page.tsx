@@ -107,9 +107,12 @@ export default function WelcomePageAsRoot() {
                 <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-cat-pink))" />
                 <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
 
-                {/* Light Blue Cat with Smiley Face */}
-                <g>
+                {/* Light Blue Cat with Smiley Face and Blush */}
+                <g transform="translate(-10, 10)">
                     <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-cat-blue-light))" />
+                    {/* Blush */}
+                    <ellipse cx="38" cy="78" rx="7" ry="5" fill="hsl(var(--splash-cat-pink))" opacity="0.6" />
+                    <ellipse cx="62" cy="78" rx="7" ry="5" fill="hsl(var(--splash-cat-pink))" opacity="0.6" />
                     {/* Smiley Face */}
                     <ellipse cx="45" cy="72" rx="3" ry="4" fill="#2C3E50" />
                     <ellipse cx="58" cy="72" rx="3" ry="4" fill="#2C3E50" />
@@ -117,12 +120,12 @@ export default function WelcomePageAsRoot() {
                 </g>
                 
                 {/* Pastel Green Cat */}
-                 <g transform="translate(-15, -20) scale(0.7)">
+                 <g transform="translate(20, -15) scale(0.7)">
                     <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-cat-green))" />
                 </g>
 
                 {/* Pastel Grey Cat */}
-                <g transform="translate(-30, -40) scale(0.5)">
+                <g transform="translate(40, -35) scale(0.5)">
                     <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-cat-grey))" />
                 </g>
             </svg>
