@@ -57,8 +57,11 @@ export default function MatrixLifeSplashPage() {
                 x="50%" 
                 y="50%" 
                 dy=".35em"
-                textAnchor="middle" 
-                className="animate-handwriting text-8xl fill-none stroke-2"
+                textAnchor="middle"
+                className="animate-handwriting text-8xl"
+                fill="none"
+                stroke="hsl(var(--splash-foreground))"
+                strokeWidth="2"
               >
                 Welcome
               </text>
