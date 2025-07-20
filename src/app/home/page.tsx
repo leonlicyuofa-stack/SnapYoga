@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -14,6 +13,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Inter, Great_Vibes as GreatVibes } from 'next/font/google';
 import { PebbleStackMascot } from '@/components/icons/PebbleStackMascot';
 import { AvocadoIcon } from '@/components/icons/avocado-icon';
+import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
 
 const inter = Inter({
   subsets: ['latin'],
