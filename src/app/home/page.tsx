@@ -117,16 +117,14 @@ export default function WelcomePageAsRoot() {
         </header>
 
         <main className="relative z-10 flex flex-col items-center justify-center flex-grow text-center px-4 animate-in fade-in-0 slide-in-from-top-10 duration-1000 delay-200 pb-32">
-            <svg viewBox="0 0 400 100" className="w-auto h-24 font-script -mb-4">
+            <svg viewBox="0 0 400 100" className="w-auto h-24 font-script mb-2 drop-shadow-sm">
               <text 
                 x="50%" 
                 y="50%" 
                 dy=".35em"
                 textAnchor="middle"
                 className="animate-handwriting text-8xl"
-                fill="none"
-                stroke="hsl(var(--splash-foreground))"
-                strokeWidth="2"
+                fill="hsl(var(--splash-foreground))"
               >
                 Welcome
               </text>

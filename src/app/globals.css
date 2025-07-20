@@ -233,7 +233,8 @@
     animation: handwriting 2.5s ease-out 0.5s forwards;
   }
   .animate-handwriting text {
-    stroke: hsl(var(--splash-foreground));
+    fill: hsl(var(--splash-foreground));
+    stroke: none;
   }
   .animate-blob-breath {
     animation: blob-breath 12s ease-in-out infinite;
