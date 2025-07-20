@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -12,6 +11,10 @@ import { cn } from '@/lib/utils';
 import { MoveUpRight, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Inter, Great_Vibes as GreatVibes } from 'next/font/google';
+import { AvocadoIcon } from '@/components/icons/avocado-icon';
+import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
+import { PebbleStackMascot } from '@/components/icons/PebbleStackMascot';
+
 
 const inter = Inter({
   subsets: ['latin'],
@@ -115,9 +118,6 @@ export default function WelcomePageAsRoot() {
             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0">
                 {/* Big foreground cat */}
                 <path d="M -5,105 C 50,105 50,40 105,40 L 105,105 Z" fill="hsl(var(--splash-cat-blue-light))" />
-
-                {/* Smaller background cat */}
-                <path d="M 20,105 C 40,105 40,65 65,65 L 65,105 Z" fill="hsl(var(--splash-cat-blue-dark))" />
 
             </svg>
         </div>
