@@ -117,14 +117,14 @@ export default function WelcomePageAsRoot() {
         </header>
 
         <main className="relative z-10 flex flex-col items-center justify-center flex-grow text-center px-4 animate-in fade-in-0 slide-in-from-top-10 duration-1000 delay-200 pb-32">
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-splash-foreground/90 mb-2">{t('snapYogaTitle')}</h2>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-splash-foreground" dangerouslySetInnerHTML={{ __html: t('landingTitle').replace('Flow', '<b>Flow</b>').replace('Anytime', '<b>Anytime</b>') }}></h1>
-            <p className="mt-4 text-2xl text-splash-foreground/80 max-w-md sm:text-3xl">
+            <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-splash-foreground/90 mb-2">{t('snapYogaTitle')}</h2>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-splash-foreground" dangerouslySetInnerHTML={{ __html: t('landingTitle').replace('Flow', '<b>Flow</b>').replace('Anytime', '<b>Anytime</b>') }}></h1>
+            <p className="mt-4 text-xl text-splash-foreground/80 max-w-md sm:text-2xl">
             {t('landingSubtitle')}
             </p>
             <Button
             onClick={handleGetStarted}
-            className="mt-8 rounded-full h-14 w-auto px-8 bg-white/20 hover:bg-white/30 text-splash-foreground text-lg font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border border-white/20"
+            className="mt-8 rounded-full h-12 w-auto px-6 bg-white/10 hover:bg-white/20 text-splash-foreground text-md font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border border-white/20"
             aria-label={t('getStarted')}
             disabled={isLoading}
             >
