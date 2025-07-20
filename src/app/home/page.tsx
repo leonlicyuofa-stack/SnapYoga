@@ -11,9 +11,11 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { MoveUpRight, Loader2 } from 'lucide-react';
 import Image from 'next/image';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
-import { WelcomeRock } from '@/components/icons/rocks/welcome-rock';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { PenguinIcon } from '@/components/icons/penguin-icon';
+import { LadybirdIcon } from '@/components/icons/ladybird-icon';
+import { AvocadoIcon } from '@/components/icons/avocado-icon';
+import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
 
 interface UserProfileData extends DocumentData {
   uid?: string;
@@ -85,80 +87,63 @@ export default function WelcomePageAsRoot() {
   const isLoading = authLoading || loadingProfile || isProcessingClick;
 
   return (
-    <div className="flex min-h-screen flex-row items-stretch bg-background overflow-hidden">
-      {/* Left Pane (60%) */}
-      <div className="w-[60%] bg-gradient-to-br from-background via-primary/5 to-accent/5 flex flex-col justify-between p-6 sm:p-10">
-        <div></div> {/* Top spacer */}
+    <div className="flex min-h-screen flex-col items-center justify-between bg-[#a2d2ff] text-blue-900 overflow-hidden">
+      <header className="w-full absolute top-0 right-0 z-20 flex justify-end items-center p-6 sm:p-10">
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3 bg-white/50 backdrop-blur-sm hover:bg-white/80 text-blue-800 border-blue-200" aria-label="Switch Language">
+            <span className="mr-2">🇮🇩</span> Bahasa
+          </Button>
+          <Button variant="ghost" asChild className="h-9 text-white hover:text-white hover:bg-white/20 bg-black/20 backdrop-blur-sm">
+            <Link href="/auth/signin">
+              {t('signIn')}
+            </Link>
+          </Button>
+        </div>
+      </header>
 
-        <main className="relative z-10">
-            <h1 className="text-5xl font-bold tracking-tight text-primary mb-2 relative inline-block">
-                SnapYoga
-                <svg
-                    className="absolute -bottom-2 -left-2 -right-2 h-[120%] w-[110%] text-accent/70 -z-10"
-                    viewBox="0 0 300 70"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    preserveAspectRatio="none"
-                    >
-                    <path
-                        d="M3.5 31.9731C51.6667 12.3065 168 -15.0269 294.5 24.9731C229.5 35.4731 106.667 52.8065 53 58.9731C28.2 62.2731 11.5 54.9731 3.5 49.4731"
-                        stroke="currentColor"
-                        strokeWidth="8"
-                        strokeLinecap="round"
-                        className="animate-brush-stroke"
-                    />
-                </svg>
-            </h1>
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground max-w-lg leading-tight" dangerouslySetInnerHTML={{ __html: t('landingTitle') }}>
-            </h2>
-            <p className="mt-4 text-lg text-foreground/80 max-w-md sm:text-xl">
-            {t('landingSubtitle')}
-            </p>
-            <Button
-            onClick={handleGetStarted}
-            className="mt-8 rounded-full h-12 w-auto px-6 bg-primary hover:bg-primary/90 text-primary-foreground text-base font-semibold shadow-lg transition-transform hover:scale-105"
-            aria-label={t('getStarted')}
-            disabled={isLoading}
-            >
-            {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>{t('getStarted')}</span><MoveUpRight className="h-5 w-5 ml-2" /></>}
-            </Button>
-        </main>
-
-        <div></div> {/* Bottom spacer */}
-      </div>
-      
-      {/* Right Pane (40%) with masked frame */}
-      <div className="w-[40%] h-screen relative">
-         <header className="absolute top-0 right-0 z-10 flex justify-end items-center p-6 sm:p-10">
-            <div className="flex items-center gap-2">
-                <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3 bg-background/50 backdrop-blur-sm hover:bg-background/80" aria-label="Switch Language">
-                  <span className="mr-2">🇮🇩</span> Bahasa
-                </Button>
-                <Button variant="ghost" asChild className="h-9 text-white hover:text-white hover:bg-white/20 bg-black/20 backdrop-blur-sm">
-                    <Link href="/auth/signin">
-                        {t('signIn')}
-                    </Link>
-                </Button>
-            </div>
-        </header>
-
-        <div className="absolute inset-0"
-             style={{ 
-                maskImage: 'linear-gradient(to right, transparent 0%, black 25%)',
-                WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 25%)',
-             }}
+      <main className="relative z-10 flex flex-col items-center text-center pt-24 sm:pt-32 px-4">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-blue-900" dangerouslySetInnerHTML={{ __html: t('landingTitle').replace('Flow', '<b>Flow</b>').replace('Anytime', '<b>Anytime</b>') }}></h1>
+        <p className="mt-4 text-lg text-blue-800/90 max-w-md sm:text-xl">
+          {t('landingSubtitle')}
+        </p>
+        <Button
+          onClick={handleGetStarted}
+          className="mt-8 rounded-full h-14 w-auto px-8 bg-[#ffafcc] hover:bg-[#ffc8dd] text-pink-900 text-lg font-bold shadow-lg transition-transform hover:scale-105"
+          aria-label={t('getStarted')}
+          disabled={isLoading}
         >
-          <Image
-            src="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx5b2dhfGVufDB8fHx8MTc1MjU5Mzc5NXww&ixlib=rb-4.1.0&q=80&w=1080"
-            alt="Person doing yoga in a serene landscape"
-            fill
-            className="object-cover"
-            priority
-            data-ai-hint="yoga serene landscape"
-          />
+          {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>{t('getStarted')}</span><MoveUpRight className="h-5 w-5 ml-2" /></>}
+        </Button>
+      </main>
+
+      {/* Landscape and Characters */}
+      <div className="w-full h-[50vh] relative mt-auto">
+        {/* Ground */}
+        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-[#bde0fe]"></div>
+        
+        {/* Hills */}
+        <div className="absolute bottom-1/3 left-0 w-full h-2/3">
+           <svg viewBox="0 0 1440 320" className="w-full h-full" preserveAspectRatio="none">
+             <path fill="#a9d6a9" d="M0,192L60,176C120,160,240,128,360,138.7C480,149,600,203,720,224C840,245,960,235,1080,208C1200,181,1320,139,1380,117.3L1440,96L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
+           </svg>
+        </div>
+        
+        {/* Characters */}
+        <div className="absolute inset-0">
+          <div className="absolute bottom-[20%] left-[10%] sm:left-[15%] w-24 h-24 sm:w-32 sm:h-32 animate-character-appear" style={{ animationDelay: '200ms'}}>
+            <PenguinIcon className="w-full h-full text-pink-300 animate-character-wave" />
+          </div>
+          <div className="absolute bottom-[10%] left-[40%] sm:left-[45%] w-20 h-20 sm:w-28 sm:h-28 animate-character-appear" style={{ animationDelay: '600ms'}}>
+            <SmileyPebbleIcon className="w-full h-full animate-pebble-pulse" />
+          </div>
+          <div className="absolute bottom-[25%] right-[12%] sm:right-[18%] w-20 h-20 sm:w-24 sm:h-24 animate-character-appear" style={{ animationDelay: '400ms'}}>
+            <AvocadoIcon className="w-full h-full animate-character-wave" style={{ animationDelay: '1s' }} />
+          </div>
+           <div className="absolute bottom-[5%] right-[35%] sm:right-[40%] w-16 h-16 sm:w-20 sm:h-20 animate-character-appear" style={{ animationDelay: '800ms'}}>
+            <LadybirdIcon className="w-full h-full" />
+          </div>
         </div>
       </div>
-
     </div>
   );
 }

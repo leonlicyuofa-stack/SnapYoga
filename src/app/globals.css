@@ -181,6 +181,15 @@
     stroke-dashoffset: 1000;
     animation: brush-stroke 1.5s 0.5s ease-out forwards;
   }
+  .animate-character-appear {
+      animation: character-appear 1s ease-out 0.2s forwards;
+      opacity: 0;
+      transform: translateY(30px);
+  }
+  .animate-character-wave {
+      animation: character-wave 2.5s ease-in-out infinite;
+      transform-origin: bottom center;
+  }
 }
 
 @keyframes brush-stroke {
@@ -200,10 +209,10 @@
 
 @keyframes pebble-float {
     0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-    25% { transform: translate(20px, -30px) rotate(45deg) scale(1.05); opacity: 1; }
+    25% { transform: translate(20px, -30px) rotate(45deg) scale(1.05); }
     50% { transform: translate(-10px, 20px) rotate(0deg) scale(1); }
     75% { transform: translate(30px, 10px) rotate(-30deg) scale(1.05); }
-    100% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 0.8; }
+    100% { transform: translate(0, 0) rotate(0deg) scale(1); }
 }
 
 @keyframes fade-in-up {
@@ -408,4 +417,20 @@
 
 .pebble-stack-loader.finished #stack {
     animation: gentle-breath 3s ease-in-out 1.5s infinite;
+}
+
+@keyframes character-appear {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes character-wave {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
 }
