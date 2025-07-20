@@ -101,8 +101,7 @@ export default function WelcomePageAsRoot() {
         greatVibes.variable
     )}>
         {/* Full-screen background illustration */}
-        <div className="absolute inset-0 z-0">
-            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
+        <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
                 <defs>
                     <radialGradient id="blushGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
                         <stop offset="0%" style={{ stopColor: 'hsl(var(--splash-cat-pink))', stopOpacity: 0.7 }} />
@@ -127,16 +126,15 @@ export default function WelcomePageAsRoot() {
                 </g>
                 
                 {/* Pastel Green Cat */}
-                 <g transform="translate(-5, -20) scale(0.7)">
+                 <g transform="translate(-10, -5) scale(0.7)">
                     <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-cat-green))" />
                 </g>
 
                 {/* Pastel Grey Cat */}
-                <g transform="translate(0, -35) scale(0.5)">
+                <g transform="translate(5, -20) scale(0.5)">
                     <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-cat-grey))" />
                 </g>
             </svg>
-        </div>
         
          <div className="relative z-10 flex flex-col items-center justify-center text-center">
             <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3">{t('snapYogaTitle')}</h2>
