@@ -164,18 +164,6 @@ export default function WelcomePageAsRoot() {
         </header>
 
         <main className="relative z-20 flex flex-col items-center justify-center flex-grow text-center px-4 animate-in fade-in-0 slide-in-from-top-10 duration-1000 delay-200 pb-32">
-            <svg viewBox="0 0 400 100" className="w-auto h-24 mb-4 drop-shadow-sm">
-              <text 
-                x="50%" 
-                y="50%" 
-                dy=".35em"
-                textAnchor="middle"
-                className="animate-handwriting text-8xl"
-                style={{ fontFamily: 'var(--font-great-vibes), cursive', fill: '#263238' }}
-              >
-                Welcome
-              </text>
-            </svg>
             <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-[#37474F] mb-2">{t('snapYogaTitle')}</h2>
             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-[#37474F]" dangerouslySetInnerHTML={{ __html: t('landingTitle').replace('Flow', '<b>Flow</b>').replace('Anytime', '<b>Anytime</b>') }}></h1>
             <p className="mt-4 text-xs text-[#455A64] max-w-md sm:text-sm">
