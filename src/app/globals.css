@@ -47,9 +47,6 @@
     --splash-blob-2: 257 26% 78%; /* #C8BAD3 - Light Lavender */
     --splash-blob-3: 258 17% 62%; /* #A695B7 - Muted Purple */
     --splash-blob-4: 162 38% 77%; /* #B2D6CD - Mint Green */
-    --splash-blob-5: 226 28% 59%; /* #7A87B8 - Muted Blue */
-    --splash-blob-6: 257 26% 85%; /* Lighter version of blob-2 for layering */
-    --splash-blob-7: 30 30% 90%;  /* New soft beige color */
 
 
     /* Sidebar variables */
@@ -105,9 +102,6 @@
     --splash-blob-2: 257 16% 38%; /* Dark Light Lavender */
     --splash-blob-3: 258 17% 62%; /* Muted Purple (can stay brighter) */
     --splash-blob-4: 162 28% 37%; /* Dark Mint Green */
-    --splash-blob-5: 226 28% 59%; /* Muted Blue (can stay brighter) */
-    --splash-blob-6: 257 16% 30%; /* Darker version of blob-2 */
-    --splash-blob-7: 30 20% 25%;  /* New dark beige color */
 
 
     /* Sidebar variables for dark mode */
@@ -256,52 +250,32 @@
   .paper-cut-layer-1 {
     height: 60%;
     background-color: hsl(var(--splash-blob-1)); /* Pastel Pink */
-    clip-path: polygon(0 100%, 100% 100%, 100% 70%, 90% 65%, 80% 72%, 70% 68%, 60% 75%, 50% 70%, 40% 78%, 30% 72%, 20% 80%, 10% 75%, 0 82%);
+    clip-path: polygon(0% 100%, 100% 100%, 100% 70%, 90% 65%, 80% 72%, 70% 68%, 60% 75%, 50% 70%, 40% 78%, 30% 72%, 20% 80%, 10% 75%, 0 82%);
     animation-delay: 0s;
-    z-index: 6;
+    z-index: 4;
   }
   .paper-cut-layer-2 {
     height: 55%;
-    background-color: hsl(var(--splash-blob-6)); /* Lighter Lavender */
-    clip-path: polygon(0 100%, 100% 100%, 100% 62%, 92% 58%, 82% 65%, 72% 60%, 62% 68%, 52% 62%, 42% 70%, 32% 63%, 22% 72%, 12% 68%, 0 75%);
+    background-color: hsl(var(--splash-blob-2)); /* Lighter Lavender */
+    clip-path: polygon(0 100%, 100% 100%, 100% 62%, 92% 58%, 82% 65%, 72% 60%, 62% 68%, 52% 62%, 42% 70%, 32% 63%, 22% 72%, 12% 68%, 0% 75%);
     animation-delay: -2s;
-    z-index: 5;
+    z-index: 3;
   }
   .paper-cut-layer-3 {
     height: 50%;
-    background-color: hsl(var(--splash-blob-2)); /* Light Lavender */
+    background-color: hsl(var(--splash-blob-3)); /* Muted Purple */
     clip-path: polygon(0 100%, 100% 100%, 100% 55%, 90% 50%, 80% 58%, 70% 52%, 60% 60%, 50% 53%, 40% 62%, 30% 55%, 20% 63%, 10% 58%, 0% 65%);
     animation-delay: -4s;
-    z-index: 4;
+    z-index: 2;
   }
   .paper-cut-layer-4 {
     height: 45%;
-    background-color: hsl(var(--splash-blob-5)); /* Muted Blue */
+    background-color: hsl(var(--splash-blob-4)); /* Mint Green */
     clip-path: polygon(0 100%, 100% 100%, 100% 48%, 92% 43%, 82% 50%, 72% 45%, 62% 52%, 52% 46%, 42% 55%, 32% 48%, 22% 55%, 12% 50%, 0 58%);
     animation-delay: -6s;
-    z-index: 3;
-  }
-  .paper-cut-layer-5 {
-    height: 40%;
-    background-color: hsl(var(--splash-blob-3)); /* Muted Purple */
-    clip-path: polygon(0 100%, 100% 100%, 100% 40%, 90% 35%, 80% 42%, 70% 38%, 60% 45%, 50% 40%, 40% 48%, 30% 42%, 20% 50%, 10% 45%, 0 52%);
-    animation-delay: -8s;
-    z-index: 2;
-  }
-  .paper-cut-layer-6 {
-    height: 35%;
-    background-color: hsl(var(--splash-blob-4)); /* Mint Green */
-    clip-path: polygon(0 100%, 100% 100%, 100% 32%, 92% 28%, 82% 35%, 72% 30%, 62% 38%, 52% 32%, 42% 40%, 32% 33%, 22% 42%, 12% 38%, 0 45%);
-    animation-delay: -10s;
     z-index: 1;
   }
-  .paper-cut-layer-7 {
-    height: 30%;
-    background-color: hsl(var(--splash-blob-7)); /* Soft Beige */
-    clip-path: polygon(0 100%, 100% 100%, 100% 25%, 90% 20%, 80% 28%, 70% 22%, 60% 30%, 50% 23%, 40% 32%, 30% 25%, 20% 33%, 10% 28%, 0% 35%);
-    animation-delay: -12s;
-    z-index: 0;
-  }
+
 
   /* New Pebble Stacking Animations */
   .pebble-stack-loader {

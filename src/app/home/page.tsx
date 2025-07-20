@@ -138,9 +138,6 @@ export default function WelcomePageAsRoot() {
             <div className="paper-cut-layer paper-cut-layer-2 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-400"></div>
             <div className="paper-cut-layer paper-cut-layer-3 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-300"></div>
             <div className="paper-cut-layer paper-cut-layer-4 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-200"></div>
-            <div className="paper-cut-layer paper-cut-layer-5 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-100"></div>
-            <div className="paper-cut-layer paper-cut-layer-6 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-0"></div>
-            <div className="paper-cut-layer paper-cut-layer-7 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-0"></div>
         </div>
     </div>
   );
