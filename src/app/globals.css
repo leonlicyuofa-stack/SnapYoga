@@ -5,7 +5,7 @@
 
 @layer base {
   :root {
-    --background: 24 50% 98%;
+    --background: 30 100% 99%;
     --foreground: 240 10% 3.9%;
 
     --card: 0 0% 100%;
@@ -14,30 +14,30 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    --primary: 340 85% 70%;
-    --primary-foreground: 340 30% 15%;
+    --primary: 150 55% 55%;
+    --primary-foreground: 150 25% 15%;
 
-    --secondary: 45 90% 92%;
-    --secondary-foreground: 45 30% 25%;
+    --secondary: 160 30% 95%;
+    --secondary-foreground: 160 20% 25%;
 
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 280 70% 75%;
-    --accent-foreground: 280 30% 15%;
+    --accent: 190 60% 65%;
+    --accent-foreground: 190 30% 15%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
+    --ring: 150 55% 55%;
     
-    --chart-1: 340 85% 70%;
-    --chart-2: 280 70% 75%;
+    --chart-1: 150 55% 55%;
+    --chart-2: 190 60% 65%;
     --chart-3: 45 90% 80%;
-    --chart-4: 190 50% 70%;
-    --chart-5: 28 80% 75%;
+    --chart-4: 28 80% 75%;
+    --chart-5: 220 50% 70%;
     --radius: 0.75rem;
 
     /* Splash Screen colors - Earthy Greens & Terracotta */
@@ -52,14 +52,14 @@
 
 
     /* Sidebar variables */
-    --sidebar-background: 30 100% 98%;
-    --sidebar-foreground: 340 30% 25%;
-    --sidebar-primary: 340 85% 70%;
-    --sidebar-primary-foreground: 340 30% 15%;
-    --sidebar-accent: 340 85% 70%;
-    --sidebar-accent-foreground: 340 30% 15%;
-    --sidebar-border: 30 50% 92%;
-    --sidebar-ring: 340 85% 70%;
+    --sidebar-background: 160 30% 98%;
+    --sidebar-foreground: 150 25% 15%;
+    --sidebar-primary: 150 55% 55%;
+    --sidebar-primary-foreground: 150 25% 10%;
+    --sidebar-accent: 150 55% 55%;
+    --sidebar-accent-foreground: 150 25% 10%;
+    --sidebar-border: 160 30% 92%;
+    --sidebar-ring: 150 55% 55%;
   }
 
   .dark {
@@ -72,30 +72,30 @@
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 340 85% 70%; 
-    --primary-foreground: 340 30% 15%;
+    --primary: 150 55% 60%; 
+    --primary-foreground: 150 25% 15%;
 
-    --secondary: 45 20% 18%;
-    --secondary-foreground: 45 90% 92%;
+    --secondary: 160 20% 12%;
+    --secondary-foreground: 160 30% 90%;
 
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
 
-    --accent: 280 70% 75%; 
-    --accent-foreground: 280 30% 15%;
+    --accent: 190 60% 65%; 
+    --accent-foreground: 190 30% 15%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --ring: 150 55% 60%;
     
-    --chart-1: 340 85% 70%;
-    --chart-2: 280 70% 75%;
+    --chart-1: 150 55% 60%;
+    --chart-2: 190 60% 65%;
     --chart-3: 45 90% 80%;
-    --chart-4: 190 50% 70%;
-    --chart-5: 28 80% 75%;
+    --chart-4: 28 80% 75%;
+    --chart-5: 220 50% 70%;
 
     /* Splash Screen colors - Earthy Greens & Terracotta */
     --splash-background: 25 35% 15%; /* Dark Brown */
@@ -109,14 +109,14 @@
 
 
     /* Sidebar variables for dark mode */
-    --sidebar-background: 340 10% 10%;
-    --sidebar-foreground: 30 100% 97%;
-    --sidebar-primary: 340 85% 70%;
-    --sidebar-primary-foreground: 340 30% 15%;
-    --sidebar-accent: 340 85% 70%;
-    --sidebar-accent-foreground: 340 30% 15%;
-    --sidebar-border: 30 15% 20%;
-    --sidebar-ring: 340 85% 70%;
+    --sidebar-background: 160 15% 8%;
+    --sidebar-foreground: 160 30% 95%;
+    --sidebar-primary: 150 55% 60%;
+    --sidebar-primary-foreground: 150 25% 15%;
+    --sidebar-accent: 150 55% 60%;
+    --sidebar-accent-foreground: 150 25% 15%;
+    --sidebar-border: 160 15% 15%;
+    --sidebar-ring: 150 55% 60%;
   }
 }
 
