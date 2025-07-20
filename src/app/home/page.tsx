@@ -124,7 +124,7 @@ export default function WelcomePageAsRoot() {
             </p>
             <Button
             onClick={handleGetStarted}
-            className="mt-8 rounded-full h-14 w-auto px-8 bg-white hover:bg-gray-100 text-splash-foreground text-lg font-bold shadow-lg transition-transform hover:scale-105"
+            className="mt-8 rounded-full h-14 w-auto px-8 bg-white/20 hover:bg-white/30 text-splash-foreground text-lg font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border border-white/20"
             aria-label={t('getStarted')}
             disabled={isLoading}
             >
