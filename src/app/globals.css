@@ -14,27 +14,27 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    --primary: 150 55% 55%;
-    --primary-foreground: 150 25% 15%;
+    --primary: 180 82% 35%;
+    --primary-foreground: 180 25% 95%;
 
-    --secondary: 160 30% 95%;
-    --secondary-foreground: 160 20% 25%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
 
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 190 60% 65%;
-    --accent-foreground: 190 30% 15%;
+    --accent: 24 93% 69%;
+    --accent-foreground: 24 5.9% 10%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 150 55% 55%;
+    --ring: 180 82% 35%;
     
-    --chart-1: 150 55% 55%;
-    --chart-2: 190 60% 65%;
+    --chart-1: 180 82% 35%;
+    --chart-2: 24 93% 69%;
     --chart-3: 45 90% 80%;
     --chart-4: 28 80% 75%;
     --chart-5: 220 50% 70%;
@@ -49,6 +49,7 @@
     --splash-blob-4: 162 38% 77%; /* #B2D6CD - Mint Green */
     --splash-blob-5: 226 28% 59%; /* #7A87B8 - Muted Blue */
     --splash-blob-6: 257 26% 85%; /* Lighter version of blob-2 for layering */
+    --splash-blob-7: 30 30% 90%;  /* New soft beige color */
 
 
     /* Sidebar variables */
@@ -72,27 +73,27 @@
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 150 55% 60%; 
-    --primary-foreground: 150 25% 15%;
+    --primary: 180 82% 45%; 
+    --primary-foreground: 180 25% 95%;
 
-    --secondary: 160 20% 12%;
-    --secondary-foreground: 160 30% 90%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
 
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
 
-    --accent: 190 60% 65%; 
-    --accent-foreground: 190 30% 15%;
+    --accent: 24 93% 69%; 
+    --accent-foreground: 24 5.9% 10%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 150 55% 60%;
+    --ring: 180 82% 45%;
     
-    --chart-1: 150 55% 60%;
-    --chart-2: 190 60% 65%;
+    --chart-1: 180 82% 45%;
+    --chart-2: 24 93% 69%;
     --chart-3: 45 90% 80%;
     --chart-4: 28 80% 75%;
     --chart-5: 220 50% 70%;
@@ -106,6 +107,7 @@
     --splash-blob-4: 162 28% 37%; /* Dark Mint Green */
     --splash-blob-5: 226 28% 59%; /* Muted Blue (can stay brighter) */
     --splash-blob-6: 257 16% 30%; /* Darker version of blob-2 */
+    --splash-blob-7: 30 20% 25%;  /* New dark beige color */
 
 
     /* Sidebar variables for dark mode */
@@ -289,6 +291,13 @@
     clip-path: polygon(0 40%, 100% 65%, 100% 100%, 0% 100%);
     animation-delay: -10s;
     z-index: 1;
+  }
+  .paper-cut-layer-7 {
+    height: 30%;
+    background-color: hsl(var(--splash-blob-7)); /* Soft Beige */
+    clip-path: polygon(0 80%, 100% 50%, 100% 100%, 0% 100%);
+    animation-delay: -12s;
+    z-index: 0;
   }
 
   /* New Pebble Stacking Animations */
