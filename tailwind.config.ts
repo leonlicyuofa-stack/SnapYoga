@@ -55,6 +55,9 @@ export default {
             'splash-blob-1': 'hsl(var(--splash-blob-1))',
             'splash-blob-2': 'hsl(var(--splash-blob-2))',
             'splash-blob-3': 'hsl(var(--splash-blob-3))',
+            'splash-blob-4': 'hsl(var(--splash-blob-4))',
+            'splash-blob-5': 'hsl(var(--splash-blob-5))',
+            'splash-blob-6': 'hsl(var(--splash-blob-6))',
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
   				foreground: 'hsl(var(--sidebar-foreground))',
@@ -68,7 +71,7 @@ export default {
   		},
         fontFamily: {
             sans: ['var(--font-inter)'],
-            serif: ['var(--font-funnel-sans)'],
+            serif: ['var(--font-playfair)'],
         },
   		borderRadius: {
   			lg: 'var(--radius)',
