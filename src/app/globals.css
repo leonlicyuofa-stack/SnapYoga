@@ -105,6 +105,19 @@
   body {
     @apply bg-background text-foreground;
   }
+  .main-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 20%, #fecfef 40%, #ffc3a0 60%, #ffafbd 80%, #c471f5 100%),
+                radial-gradient(circle at 20% 80%, rgba(255, 154, 158, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 175, 189, 0.3) 0%, transparent 50%);
+    position: relative;
+  }
+
+  .navbar {
+      padding: 20px 0;
+      position: relative;
+      z-index: 100;
+  }
 }
 
 @layer utilities {
@@ -434,5 +447,3 @@
   25% { transform: rotate(-8deg); }
   75% { transform: rotate(8deg); }
 }
-
-    
