@@ -41,11 +41,13 @@
     --radius: 0.75rem;
 
     /* Splash Screen colors - From reference image */
-    --splash-background: 0 0% 98%; /* Off-white from image */
+    --splash-background: 0 0% 100%; /* White/Off-white from image */
     --splash-foreground: 233 16% 23%; /* Dark blue/grey for text */
-    --splash-blob-1: 345 53% 92%; /* #EADADE - Pastel Pink */
-    --splash-blob-2: 257 26% 78%; /* #C8BAD3 - Light Lavender */
-    --splash-blob-3: 258 17% 62%; /* #A695B7 - Muted Purple */
+    
+    --splash-cat-pink: 345 53% 92%; /* #EADADE - Pastel Pink */
+    --splash-cat-blue-light: 212 55% 80%; /* #AFC8E6 - Light Blue */
+    --splash-cat-blue-dark: 220 30% 60%; /* #8696B0 - Darker Muted Blue */
+    --splash-cat-moon: 257 10% 55%; /* #8A8191 - Muted Purple/Grey */
 
 
     /* Sidebar variables */
@@ -97,9 +99,11 @@
     /* Splash Screen colors - Dark mode adaptation of reference */
     --splash-background: 233 16% 15%; /* Dark blue/grey background */
     --splash-foreground: 0 0% 95%; /* Off-white text */
-    --splash-blob-1: 345 33% 32%; /* Dark Pastel Pink */
-    --splash-blob-2: 257 16% 38%; /* Dark Light Lavender */
-    --splash-blob-3: 258 17% 62%; /* Muted Purple (can stay brighter) */
+
+    --splash-cat-pink: 345 20% 30%; 
+    --splash-cat-blue-light: 212 30% 35%;
+    --splash-cat-blue-dark: 220 20% 25%;
+    --splash-cat-moon: 257 10% 75%;
 
 
     /* Sidebar variables for dark mode */
@@ -269,17 +273,8 @@
     animation: snapshot-content-appear 1s ease-out 1.5s forwards;
     opacity: 0;
   }
-  .animate-clouds {
-    animation: clouds 60s linear infinite;
-  }
 
 }
-
-@keyframes clouds {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
 
 @keyframes float-in-bottom {
   0% { transform: translate(-50px, 80px) rotate(-15deg); opacity: 0; }
