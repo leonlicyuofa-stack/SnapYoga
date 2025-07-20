@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -11,8 +12,6 @@ import { cn } from '@/lib/utils';
 import { MoveUpRight, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Inter, Great_Vibes as GreatVibes } from 'next/font/google';
-import { AvocadoIcon } from '@/components/icons/avocado-icon';
-import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
 import { PebbleStackMascot } from '@/components/icons/PebbleStackMascot';
 
 
@@ -104,24 +103,19 @@ export default function WelcomePageAsRoot() {
     )}>
         {/* Full-screen background illustration */}
         <div className="absolute inset-0 z-0">
-             {/* Background Shapes */}
             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0">
-                {/* This path now covers the entire SVG area with the base pink color */}
                 <path d="M 0,0 L 100,0 L 100,100 L 0,100 Z" fill="hsl(var(--splash-cat-pink))" />
-                {/* This path creates the top-left curve with the same pink color, effectively becoming invisible but defining the shape for the next color */}
                 <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-cat-pink))" />
-                {/* This path fills the bottom-right area with the background color, creating the yin-yang effect */}
                 <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
             </svg>
 
-            {/* Cat Shapes */}
             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0">
-                {/* Big foreground cat */}
                 <path d="M -5,105 C 50,105 50,40 105,40 L 105,105 Z" fill="hsl(var(--splash-cat-blue-light))" />
-
             </svg>
         </div>
         
+        <PebbleStackMascot className="absolute top-4 right-4 sm:top-8 sm:right-8 w-24 h-24 sm:w-32 sm:h-32 text-splash-foreground/80 z-10" />
+
          <div className="relative z-10 flex flex-col items-center justify-center text-center">
             <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3">{t('snapYogaTitle')}</h2>
             <p className="mt-2 text-sm text-splash-foreground/80 max-w-xs sm:text-base">
