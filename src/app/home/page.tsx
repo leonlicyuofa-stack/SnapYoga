@@ -94,49 +94,52 @@ export default function WelcomePageAsRoot() {
 
   return (
     <div className={cn(
-        "relative flex flex-col min-h-screen items-center justify-center p-4 bg-background font-sans overflow-hidden",
+        "relative flex flex-col min-h-screen items-center justify-center p-4 bg-splash-background font-sans overflow-hidden",
         inter.variable,
         greatVibes.variable
     )}>
-        <div className="relative w-full max-w-xl aspect-square flex items-center justify-center">
-            <div className="absolute inset-0 bg-splash-background rounded-2xl">
-                {/* Background Shapes */}
-                <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0">
-                    <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-cat-pink))" />
-                    <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-cat-pink))" />
-                </svg>
+        {/* Full-screen background illustration */}
+        <div className="absolute inset-0 z-0">
+             {/* Background Shapes */}
+            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0">
+                {/* This path now covers the entire SVG area with the base pink color */}
+                <path d="M 0,0 L 100,0 L 100,100 L 0,100 Z" fill="hsl(var(--splash-cat-pink))" />
+                {/* This path creates the top-left curve with the same pink color, effectively becoming invisible but defining the shape for the next color */}
+                <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-cat-pink))" />
+                {/* This path fills the bottom-right area with the background color, creating the yin-yang effect */}
+                <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
+            </svg>
 
-                {/* Cat Shapes */}
-                 <svg width="100%" height="100%" viewBox="0 0 100 100" className="absolute inset-0">
-                    {/* Big foreground cat */}
-                    <path d="M -5,105 C 50,105 50,40 105,40 L 105,105 Z" fill="hsl(var(--splash-cat-blue-light))" />
-                    {/* Ears for big cat */}
-                    <path d="M 65,45 C 75,42 80,30 80,30 C 80,30 85,42 95,45 Z" fill="hsl(var(--splash-cat-blue-light))" />
+            {/* Cat Shapes */}
+            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0">
+                {/* Big foreground cat */}
+                <path d="M -5,105 C 50,105 50,40 105,40 L 105,105 Z" fill="hsl(var(--splash-cat-blue-light))" />
+                {/* Ears for big cat */}
+                <path d="M 65,45 C 75,42 80,30 80,30 C 80,30 85,42 95,45 Z" fill="hsl(var(--splash-cat-blue-light))" />
 
-                    {/* Smaller background cat */}
-                    <path d="M 20,105 C 40,105 40,65 65,65 L 65,105 Z" fill="hsl(var(--splash-cat-blue-dark))" />
-                    {/* Ears for small cat */}
-                     <path d="M 35,70 C 40,68 42,60 42,60 C 42,60 45,68 50,70 Z" fill="hsl(var(--splash-cat-blue-dark))" />
+                {/* Smaller background cat */}
+                <path d="M 20,105 C 40,105 40,65 65,65 L 65,105 Z" fill="hsl(var(--splash-cat-blue-dark))" />
+                {/* Ears for small cat */}
+                <path d="M 35,70 C 40,68 42,60 42,60 C 42,60 45,68 50,70 Z" fill="hsl(var(--splash-cat-blue-dark))" />
 
-                    {/* Moon */}
-                    <circle cx="85" cy="20" r="5" fill="hsl(var(--splash-cat-moon))" />
-                 </svg>
-            </div>
-            
-             <div className="relative z-10 flex flex-col items-center justify-center text-center">
-                <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3">{t('snapYogaTitle')}</h2>
-                <p className="mt-2 text-sm text-splash-foreground/80 max-w-xs sm:text-base">
-                    {t('landingSubtitle')}
-                </p>
-                <Button
-                    onClick={handleGetStarted}
-                    className="mt-8 rounded-full h-10 w-auto px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
-                    aria-label={t('getStarted')}
-                    disabled={isLoading}
-                >
-                    {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>{t('getStarted')}</span><MoveUpRight className="h-5 w-5 ml-2" /></>}
-                </Button>
-            </div>
+                {/* Moon */}
+                <circle cx="85" cy="20" r="5" fill="hsl(var(--splash-cat-moon))" />
+            </svg>
+        </div>
+        
+         <div className="relative z-10 flex flex-col items-center justify-center text-center">
+            <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3">{t('snapYogaTitle')}</h2>
+            <p className="mt-2 text-sm text-splash-foreground/80 max-w-xs sm:text-base">
+                {t('landingSubtitle')}
+            </p>
+            <Button
+                onClick={handleGetStarted}
+                className="mt-8 rounded-full h-10 w-auto px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+                aria-label={t('getStarted')}
+                disabled={isLoading}
+            >
+                {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>{t('getStarted')}</span><MoveUpRight className="h-5 w-5 ml-2" /></>}
+            </Button>
         </div>
 
         <header className="navbar w-full absolute top-0 left-0">
