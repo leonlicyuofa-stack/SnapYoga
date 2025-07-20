@@ -14,7 +14,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Inter, Great_Vibes as GreatVibes } from 'next/font/google';
 import { PebbleStackMascot } from '@/components/icons/PebbleStackMascot';
 import { AvocadoIcon } from '@/components/icons/avocado-icon';
-import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -106,7 +105,6 @@ export default function WelcomePageAsRoot() {
         {/* Decorative Mascots */}
         <PebbleStackMascot className="absolute bottom-1/4 left-4 sm:left-12 md:left-24 w-28 h-28 sm:w-32 sm:h-32 text-splash-foreground/80 animate-cartoon-float-1 z-10" />
         <AvocadoIcon className="absolute top-1/2 right-4 sm:right-12 md:right-24 transform -translate-y-1/2 w-28 h-28 text-primary/10 animate-cartoon-float-2 z-10" />
-        <SmileyPebbleIcon className="absolute bottom-0 left-1/2 -translate-x-1/2 w-20 h-20 text-accent/20 animate-cartoon-float-3 z-10" />
 
         <header className="navbar w-full absolute top-0 left-0">
             <div className="container mx-auto flex justify-between items-center px-4 sm:px-8">
@@ -151,13 +149,6 @@ export default function WelcomePageAsRoot() {
             {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>{t('getStarted')}</span><MoveUpRight className="h-5 w-5 ml-2" /></>}
             </Button>
         </main>
-        
-        {/* Paper Cut Effect Divs */}
-        <div className="absolute bottom-0 left-0 w-full h-full pointer-events-none">
-            <div className="paper-cut-layer paper-cut-layer-1 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-500"></div>
-            <div className="paper-cut-layer paper-cut-layer-2 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-400"></div>
-            <div className="paper-cut-layer paper-cut-layer-3 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-300"></div>
-        </div>
     </div>
   );
 }
