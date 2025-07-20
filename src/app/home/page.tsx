@@ -12,6 +12,8 @@ import { cn } from '@/lib/utils';
 import { MoveUpRight, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Inter, Playfair_Display as PlayfairDisplay } from 'next/font/google';
+import { PebbleStackLoader } from '@/components/icons/pebble-stack-loader';
+
 
 const inter = Inter({
   subsets: ['latin'],
@@ -20,7 +22,6 @@ const inter = Inter({
 
 const playfair = PlayfairDisplay({
   subsets: ['latin'],
-  weight: ['400', '700'],
   style: ['normal', 'italic'],
   variable: '--font-playfair',
 });
@@ -121,17 +122,8 @@ export default function WelcomePageAsRoot() {
         </header>
 
         <main className="relative z-10 flex flex-col items-center justify-center flex-grow text-center px-4 animate-in fade-in-0 slide-in-from-top-10 duration-1000 delay-200">
-             <div className="relative w-full h-20 mb-4">
-                 <p className="text-2xl text-splash-foreground/80 font-serif italic mb-2">Welcome</p>
-                <svg viewBox="0 0 500 100" className="absolute inset-0 w-full h-full -mt-2">
-                    <path
-                    d="M 50 50 C 150 10, 350 90, 450 50"
-                    stroke="hsl(var(--splash-foreground))"
-                    strokeWidth="3"
-                    fill="none"
-                    className="animate-handwriting"
-                    />
-                </svg>
+             <div className="relative w-full h-28 mb-4 flex items-center justify-center">
+                 <PebbleStackLoader />
              </div>
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-splash-foreground/90 mb-2 font-serif">{t('snapYogaTitle')}</h2>
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-splash-foreground font-serif" dangerouslySetInnerHTML={{ __html: t('landingTitle').replace('Flow', '<b>Flow</b>').replace('Anytime', '<b>Anytime</b>') }}></h1>

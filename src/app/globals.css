@@ -386,7 +386,7 @@
 }
 
 
-/* Old Pebble Stacking Animations (keep for other pages if needed) */
+/* New Pebble Stacking Animations */
 .pebble-stack-loader {
   --duration: 4s;
   --stagger: 0.5s;
