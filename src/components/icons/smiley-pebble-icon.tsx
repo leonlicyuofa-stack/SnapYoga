@@ -1,10 +1,16 @@
 
 import type { SVGProps } from 'react';
-import { WelcomeRock } from './rocks/welcome-rock';
 
 export function SmileyPebbleIcon(props: SVGProps<SVGSVGElement>) {
-  // Defaulting to the WelcomeRock for general use, but can be customized.
-  return <WelcomeRock {...props} />;
+  return (
+    <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+      <ellipse cx="50" cy="60" rx="35" ry="25" fill="#e0e0e0" />
+      <ellipse cx="50" cy="60" rx="35" ry="25" stroke="black" strokeWidth="2" />
+      <ellipse cx="40" cy="55" rx="5" ry="8" fill="white" />
+      <circle cx="40" cy="55" r="2" fill="black" />
+      <ellipse cx="60" cy="55" rx="5" ry="8" fill="white" />
+      <circle cx="60" cy="55" r="2" fill="black" />
+      <path d="M48 68 C 50 72, 55 72, 57 68" stroke="black" strokeWidth="2" fill="none" strokeLinecap="round" />
+    </svg>
+  );
 }
-
-    

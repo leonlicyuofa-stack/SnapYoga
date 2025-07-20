@@ -87,7 +87,7 @@ export default function WelcomePageAsRoot() {
   const isLoading = authLoading || loadingProfile || isProcessingClick;
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-between bg-[#a2d2ff] text-blue-900 overflow-hidden">
+    <div className="flex min-h-screen flex-col items-center justify-between bg-[#ffafcc] text-pink-900 overflow-hidden">
       <header className="w-full absolute top-0 right-0 z-20 flex justify-end items-center p-6 sm:p-10">
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3 bg-white/50 backdrop-blur-sm hover:bg-white/80 text-blue-800 border-blue-200" aria-label="Switch Language">
@@ -102,13 +102,13 @@ export default function WelcomePageAsRoot() {
       </header>
 
       <main className="relative z-10 flex flex-col items-center text-center pt-24 sm:pt-32 px-4">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-blue-900" dangerouslySetInnerHTML={{ __html: t('landingTitle').replace('Flow', '<b>Flow</b>').replace('Anytime', '<b>Anytime</b>') }}></h1>
-        <p className="mt-4 text-lg text-blue-800/90 max-w-md sm:text-xl">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white" dangerouslySetInnerHTML={{ __html: t('landingTitle').replace('Flow', '<b>Flow</b>').replace('Anytime', '<b>Anytime</b>') }}></h1>
+        <p className="mt-4 text-lg text-pink-100/90 max-w-md sm:text-xl">
           {t('landingSubtitle')}
         </p>
         <Button
           onClick={handleGetStarted}
-          className="mt-8 rounded-full h-14 w-auto px-8 bg-[#ffafcc] hover:bg-[#ffc8dd] text-pink-900 text-lg font-bold shadow-lg transition-transform hover:scale-105"
+          className="mt-8 rounded-full h-14 w-auto px-8 bg-white hover:bg-gray-100 text-pink-600 text-lg font-bold shadow-lg transition-transform hover:scale-105"
           aria-label={t('getStarted')}
           disabled={isLoading}
         >

@@ -7,7 +7,7 @@ export function LadybirdIcon(props: SVGProps<SVGSVGElement>) {
         <g transform="rotate(-15 50 50)">
             {/* Body */}
             <circle cx="50" cy="50" r="35" fill="#D22B2B"/>
-            <circle cx="50" cy="50" r="35" stroke="currentColor" strokeWidth="2"/>
+            <circle cx="50" cy="50" r="35" stroke="black" strokeWidth="2"/>
             
             {/* Head */}
             <circle cx="50" cy="20" r="15" fill="black" />
