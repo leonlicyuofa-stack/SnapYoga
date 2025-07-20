@@ -232,6 +232,9 @@
     stroke-dashoffset: 1000;
     animation: handwriting 2.5s ease-out 0.5s forwards;
   }
+  .animate-handwriting text {
+    stroke: hsl(var(--splash-foreground));
+  }
   .animate-blob-breath {
     animation: blob-breath 12s ease-in-out infinite;
   }
@@ -250,21 +253,21 @@
     background-color: hsl(var(--splash-blob-1)); /* Pastel Pink */
     clip-path: polygon(100% 48%, 100% 100%, 0% 100%, 0% 85%, 15% 82%, 30% 80%, 45% 76%, 60% 70%, 75% 62%, 90% 55%);
     animation-delay: 0s;
-    z-index: 4;
+    z-index: 3;
   }
   .paper-cut-layer-2 {
     height: 55%;
     background-color: hsl(var(--splash-blob-2)); /* Lighter Lavender */
     clip-path: polygon(100% 55%, 100% 100%, 0% 100%, 0% 90%, 12% 88%, 25% 85%, 40% 80%, 55% 76%, 70% 70%, 85% 64%);
     animation-delay: -2s;
-    z-index: 3;
+    z-index: 2;
   }
   .paper-cut-layer-3 {
     height: 50%;
     background-color: hsl(var(--splash-blob-3)); /* Muted Purple */
     clip-path: polygon(100% 65%, 100% 100%, 0% 100%, 0% 95%, 10% 93%, 22% 90%, 35% 86%, 50% 82%, 65% 78%, 80% 73%);
     animation-delay: -4s;
-    z-index: 2;
+    z-index: 1;
   }
 
 
@@ -502,8 +505,4 @@
   0%, 100% { transform: rotate(0deg); }
   25% { transform: rotate(-8deg); }
   75% { transform: rotate(8deg); }
-}
-
-.animate-handwriting text {
-    stroke: hsl(var(--splash-foreground));
 }
