@@ -273,6 +273,17 @@
     animation: snapshot-content-appear 1s ease-out 1.5s forwards;
     opacity: 0;
   }
+  .animate-mascot-head {
+      animation: head-turn-and-face-reveal 3s ease-in-out 1s forwards;
+  }
+  .animate-mascot-arm {
+      animation: arm-extend-and-wave 3s ease-in-out 1s forwards;
+      transform-origin: 80% 90%;
+  }
+  .animate-speech-bubble {
+      animation: text-reveal-from-arm 3s ease-out 1s forwards;
+      transform-origin: bottom left;
+  }
 
 }
 

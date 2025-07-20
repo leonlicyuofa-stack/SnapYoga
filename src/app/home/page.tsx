@@ -103,18 +103,17 @@ export default function WelcomePageAsRoot() {
     )}>
         {/* Full-screen background illustration */}
         <div className="absolute inset-0 z-0">
-            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0">
-                <path d="M 0,0 L 100,0 L 100,100 L 0,100 Z" fill="hsl(var(--splash-cat-pink))" />
+            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
+                {/* Yin-Yang Style Background */}
                 <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-cat-pink))" />
                 <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
-            </svg>
 
-            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0">
-                <path d="M -5,105 C 50,105 50,40 105,40 L 105,105 Z" fill="hsl(var(--splash-cat-blue-light))" />
+                {/* Light Blue Cat */}
+                <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-cat-blue-light))" />
             </svg>
         </div>
         
-        <PebbleStackMascot className="absolute top-4 right-4 sm:top-8 sm:right-8 w-24 h-24 sm:w-32 sm:h-32 text-splash-foreground/80 z-10" />
+        <PebbleStackMascot className="absolute top-12 right-4 sm:top-24 sm:right-8 w-32 h-32 text-splash-foreground/80 z-20" />
 
          <div className="relative z-10 flex flex-col items-center justify-center text-center">
             <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3">{t('snapYogaTitle')}</h2>
