@@ -94,13 +94,14 @@ export default function WelcomePageAsRoot() {
 
   return (
     <div className={cn(
-        "flex flex-col min-h-screen items-center justify-start pt-32 p-8 bg-splash-background font-sans overflow-hidden",
+        "flex flex-col min-h-screen items-center justify-center p-8 bg-splash-background font-sans overflow-hidden",
         inter.variable,
         playfair.variable
     )}>
         
         <header className="navbar w-full absolute top-0 left-0">
-            <div className="container mx-auto flex justify-end items-center px-4 sm:px-8">
+            <div className="container mx-auto flex justify-between items-center px-4 sm:px-8">
+            <div></div>
             <div className="flex items-center gap-2">
                 <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3 bg-white/50 backdrop-blur-sm hover:bg-white/80 text-splash-foreground border-splash-foreground/20" aria-label="Switch Language">
                 <span className="mr-2">🇮🇩</span> Bahasa
@@ -114,7 +115,7 @@ export default function WelcomePageAsRoot() {
             </div>
         </header>
 
-        <main className="relative z-10 flex flex-col items-center justify-start flex-grow text-center px-4 animate-in fade-in-0 slide-in-from-top-10 duration-1000 delay-200">
+        <main className="relative z-10 flex flex-col items-center justify-center flex-grow text-center px-4 animate-in fade-in-0 slide-in-from-top-10 duration-1000 delay-200">
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-splash-foreground/90 mb-2 font-serif">{t('snapYogaTitle')}</h2>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-splash-foreground font-serif" dangerouslySetInnerHTML={{ __html: t('landingTitle').replace('Flow', '<b>Flow</b>').replace('Anytime', '<b>Anytime</b>') }}></h1>
             <p className="mt-4 text-lg text-splash-foreground/80 max-w-md sm:text-xl">
