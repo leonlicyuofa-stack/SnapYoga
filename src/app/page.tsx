@@ -37,10 +37,15 @@ export default function MatrixLifeSplashPage() {
         inter.variable,
         playfair.variable
     )}>
-        <div className="absolute top-0 left-0 w-[110%] h-[55%] bg-splash-blob-1 rounded-bl-[100%] rounded-br-[40%] -translate-x-1/4 -translate-y-1/4 opacity-90 animate-in fade-in-0 duration-1000"></div>
-        <div className="absolute top-0 left-0 w-[90%] h-[45%] bg-splash-blob-2 rounded-br-[100%] rounded-bl-[30%] translate-x-1/4 -translate-y-1/4 opacity-90 animate-in fade-in-0 duration-1000 delay-200"></div>
-        <div className="absolute bottom-0 right-0 w-[80%] h-[30%] bg-splash-blob-1 rounded-tl-[100%] rounded-tr-[20%] translate-x-1/4 translate-y-1/4 opacity-80 animate-in fade-in-0 duration-1000 delay-300"></div>
-        <div className="absolute bottom-0 right-0 w-[50%] h-[20%] bg-splash-blob-3 rounded-tl-[100%] translate-x-1/4 translate-y-1/4 opacity-70 animate-in fade-in-0 duration-1000 delay-500"></div>
+        {/* Paper Cut Effect Divs */}
+        <div className="absolute bottom-0 left-0 w-full h-full pointer-events-none">
+            <div className="paper-cut-layer paper-cut-layer-1 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-500"></div>
+            <div className="paper-cut-layer paper-cut-layer-2 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-400"></div>
+            <div className="paper-cut-layer paper-cut-layer-3 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-300"></div>
+            <div className="paper-cut-layer paper-cut-layer-4 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-200"></div>
+            <div className="paper-cut-layer paper-cut-layer-5 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-100"></div>
+            <div className="paper-cut-layer paper-cut-layer-6 animate-in fade-in-0 slide-in-from-bottom-20 duration-1000 delay-0"></div>
+        </div>
 
         <div className="relative z-10 w-full flex justify-between items-center animate-in fade-in slide-in-from-top-5 duration-1000 delay-500">
             <div className="flex items-center gap-2">
