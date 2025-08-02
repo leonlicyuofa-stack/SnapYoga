@@ -16,8 +16,8 @@ export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
         <ellipse cx="50" cy="65" rx="7" ry="4" fill="#ffc0cb" opacity="0.6"/>
         <ellipse cx="70" cy="65" rx="7" ry="4" fill="#ffc0cb" opacity="0.6"/>
         {/* Eyes */}
-        <circle cx="53" cy="58" r="2" fill="black" />
-        <circle cx="67" cy="58" r="2" fill="black" />
+        <ellipse cx="53" cy="58" rx="2" ry="3" fill="black" />
+        <ellipse cx="67" cy="58" rx="2" ry="3" fill="black" />
       </g>
 
       {/* Left Pebble */}
@@ -44,4 +44,3 @@ export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
-
