@@ -99,8 +99,9 @@ export default function VerifyEmailPage() {
           <CardHeader className="text-center">
             <PebbleTrioIcon className="mx-auto h-auto w-full text-primary mb-2" />
             <CardTitle className="text-3xl font-bold">Verify Your Email</CardTitle>
-            <CardDescription>
+            <CardDescription className="font-sans">
               A verification email has been sent to <span className="font-semibold text-primary">{user?.email}</span>.
+              <br />
               Please click the link in the email to continue.
             </CardDescription>
           </CardHeader>
@@ -121,13 +122,10 @@ export default function VerifyEmailPage() {
             >
               {isSending ? <SmileyRockLoader /> : <><RotateCw className="mr-2 h-5 w-5" /> Resend Verification Email</>}
             </Button>
-             <p className="text-xs text-muted-foreground text-center">
-              Didn&apos;t receive the email? Check your spam folder or try resending.
-            </p>
           </CardContent>
-          <CardFooter className="flex flex-col space-y-2">
-            <p className="text-xs text-muted-foreground">
-              If you used the wrong email, you can{' '}
+          <CardFooter className="flex flex-col">
+            <p className="text-xs text-muted-foreground text-center">
+              Didn&apos;t receive the email? Check your spam folder or try resending. If you used the wrong email, you can{' '}
               <Button variant="link" size="sm" className="p-0 h-auto text-xs" onClick={handleSignOutAndReturnToSignUp}>
                  sign out and try signing up again.
               </Button>
