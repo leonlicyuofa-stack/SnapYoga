@@ -95,26 +95,6 @@ export default function HomePage() {
                 <path d="M 0,0 L 80,0 C 40,40 80,40 80,80 L 0,80 Z" fill="hsl(var(--splash-blob-1))" />
                 <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
                 
-                {/* Pebble Cats */}
-                <g transform="translate(-100, 45) scale(1.1)">
-                    {/* Grey Cat - Bottom */}
-                    <g transform="translate(-60, -30) scale(0.7)">
-                        <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-blob-3))" />
-                    </g>
-                    {/* Green Cat - Middle */}
-                    <g transform="translate(-70, -10) scale(0.9)">
-                        <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-blob-3))" />
-                    </g>
-                    {/* Blue Cat - Top */}
-                    <g>
-                        <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-blob-2))" />
-                        <ellipse cx="38" cy="78" rx="10" ry="7" fill="url(#blushGradient)" />
-                        <ellipse cx="62" cy="78" rx="10" ry="7" fill="url(#blushGradient)" />
-                        <ellipse cx="45" cy="70" rx="3" ry="6" fill="#2C3E50" />
-                        <ellipse cx="62" cy="70" rx="3" ry="6" fill="#2C3E50" />
-                        <path d="M 48,80 Q 52,85 56,80" stroke="#2C3E50" fill="none" strokeWidth="1.5" strokeLinecap="round" />
-                    </g>
-                </g>
             </svg>
         
          <div className="relative z-10 flex flex-col items-center justify-center text-center">
