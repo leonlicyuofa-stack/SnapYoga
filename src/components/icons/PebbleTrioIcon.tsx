@@ -12,16 +12,23 @@ export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
           <stop offset="100%" style={{ stopColor: '#ffc0cb', stopOpacity: 0 }} />
         </radialGradient>
       </defs>
+
+      {/* Background Elements */}
+      <rect x="0" y="0" width="120" height="100" fill="#e0f7fa" />
+      <path d="M-10 70 Q 30 50, 60 70 T 130 70 L 120 100 L 0 100 Z" fill="#b3e5fc" />
+      <path d="M-10 80 Q 40 65, 70 80 T 140 80 L 120 100 L 0 100 Z" fill="#81d4fa" />
+      <path d="M 20 100 L 50 40 L 80 100 Z" fill="#c8e6c9" />
+      <path d="M 60 100 L 90 50 L 120 100 Z" fill="#a5d6a7" />
       
       {/* Middle Pebble */}
       <g>
-        <ellipse cx="60" cy="60" rx="40" ry="30" fill="#f5f5f5" stroke="black" strokeWidth="0.5"/>
+        <ellipse cx="60" cy="60" rx="20" ry="15" fill="#f5f5f5" stroke="black" strokeWidth="0.5"/>
         {/* Blush */}
-        <ellipse cx="50" cy="65" rx="7" ry="4" fill="url(#blushGradient)"/>
-        <ellipse cx="70" cy="65" rx="7" ry="4" fill="url(#blushGradient)"/>
+        <ellipse cx="55" cy="65" rx="3.5" ry="2" fill="url(#blushGradient)"/>
+        <ellipse cx="65" cy="65" rx="3.5" ry="2" fill="url(#blushGradient)"/>
         {/* Eyes */}
-        <ellipse cx="53" cy="58" rx="3" ry="5" fill="black" />
-        <ellipse cx="67" cy="58" rx="3" ry="5" fill="black" />
+        <ellipse cx="58" cy="58" rx="1.5" ry="2.5" fill="black" />
+        <ellipse cx="62" cy="58" rx="1.5" ry="2.5" fill="black" />
       </g>
 
       {/* Left Pebble */}
