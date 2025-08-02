@@ -92,9 +92,8 @@ export default function HomePage() {
                         <stop offset="100%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0 }} />
                     </radialGradient>
                 </defs>
-                <path d="M 0,0 L 80,0 C 40,50 80,50 80,100 L 0,100 Z" fill="hsl(var(--splash-blob-1))" />
+                <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-blob-1))" />
                 <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
-                
             </svg>
         
          <div className="relative z-10 flex flex-col items-center justify-center text-center">
