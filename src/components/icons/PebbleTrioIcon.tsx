@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { SVGProps } from 'react';
@@ -22,23 +23,23 @@ export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
       
       {/* Middle Pebble */}
       <g>
-        <ellipse cx="60" cy="60" rx="20" ry="15" fill="#f5f5f5" stroke="black" strokeWidth="0.5"/>
+        <ellipse cx="50" cy="45" rx="20" ry="15" fill="#f5f5f5" stroke="black" strokeWidth="0.5"/>
         {/* Blush */}
-        <ellipse cx="55" cy="65" rx="3.5" ry="2" fill="url(#blushGradient)"/>
-        <ellipse cx="65" cy="65" rx="3.5" ry="2" fill="url(#blushGradient)"/>
+        <ellipse cx="45" cy="50" rx="3.5" ry="2" fill="url(#blushGradient)"/>
+        <ellipse cx="55" cy="50" rx="3.5" ry="2" fill="url(#blushGradient)"/>
         {/* Eyes */}
-        <ellipse cx="58" cy="58" rx="1.5" ry="2.5" fill="black" />
-        <ellipse cx="62" cy="58" rx="1.5" ry="2.5" fill="black" />
+        <ellipse cx="48" cy="43" rx="1.5" ry="2.5" fill="black" />
+        <ellipse cx="52" cy="43" rx="1.5" ry="2.5" fill="black" />
       </g>
 
       {/* Left Pebble */}
       <g className="animate-pebble-bounce-left" style={{ transformOrigin: 'center center' }}>
-        <ellipse cx="30" cy="70" rx="14" ry="9" fill="#eeeeee" stroke="black" strokeWidth="0.5"/>
+        <ellipse cx="25" cy="50" rx="14" ry="9" fill="#eeeeee" stroke="black" strokeWidth="0.5"/>
       </g>
       
       {/* Right Pebble */}
       <g className="animate-pebble-bounce-right" style={{ transformOrigin: 'center center' }}>
-        <ellipse cx="90" cy="70" rx="14" ry="9" fill="#eeeeee" stroke="black" strokeWidth="0.5"/>
+        <ellipse cx="75" cy="50" rx="14" ry="9" fill="#eeeeee" stroke="black" strokeWidth="0.5"/>
       </g>
     </svg>
   );
