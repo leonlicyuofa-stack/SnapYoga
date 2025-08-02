@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -68,7 +69,7 @@ export default {
   		},
         fontFamily: {
             sans: ['var(--font-inter)'],
-            script: ['var(--font-shadows-into-light)'],
+            script: ['var(--font-caveat)'],
         },
   		borderRadius: {
   			lg: 'var(--radius)',

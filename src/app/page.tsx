@@ -99,7 +99,7 @@ export default function HomePage() {
         
          <div className="relative z-10 flex flex-col items-center justify-center text-center">
             <h2 className={cn(
-                "text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3",
+                "text-5xl sm:text-6xl font-bold tracking-tight text-splash-foreground mb-3",
                 "font-script"
             )}>{t('snapYogaTitle')}</h2>
             <p className="mt-2 text-sm text-splash-foreground/80 max-w-xs sm:text-base">
