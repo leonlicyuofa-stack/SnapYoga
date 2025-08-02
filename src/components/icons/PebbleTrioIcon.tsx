@@ -15,8 +15,9 @@ export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
         {/* Blush */}
         <ellipse cx="50" cy="65" rx="7" ry="4" fill="#ffc0cb" opacity="0.6"/>
         <ellipse cx="70" cy="65" rx="7" ry="4" fill="#ffc0cb" opacity="0.6"/>
-        <circle cx="53" cy="58" r="2" fill="black"/>
-        <circle cx="67" cy="58" r="2" fill="black"/>
+        {/* Eyes */}
+        <path d="M 50,58 Q 53,54 56,58" stroke="black" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+        <path d="M 64,58 Q 67,54 70,58" stroke="black" strokeWidth="1.5" fill="none" strokeLinecap="round" />
       </g>
 
       {/* Left Pebble */}
@@ -25,8 +26,9 @@ export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
         {/* Blush */}
         <ellipse cx="22" cy="68" rx="6" ry="3" fill="#ffc0cb" opacity="0.6"/>
         <ellipse cx="34" cy="68" rx="6" ry="3" fill="#ffc0cb" opacity="0.6"/>
-        <circle cx="23" cy="63" r="1.5" fill="black"/>
-        <circle cx="33" cy="63" r="1.5" fill="black"/>
+        {/* Eyes */}
+        <path d="M 21,63 Q 23,60 25,63" stroke="black" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+        <path d="M 31,63 Q 33,60 35,63" stroke="black" strokeWidth="1.5" fill="none" strokeLinecap="round" />
       </g>
       
       {/* Right Pebble */}
@@ -35,8 +37,9 @@ export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
         {/* Blush */}
         <ellipse cx="86" cy="68" rx="6" ry="3" fill="#ffc0cb" opacity="0.6"/>
         <ellipse cx="98" cy="68" rx="6" ry="3" fill="#ffc0cb" opacity="0.6"/>
-        <circle cx="87" cy="63" r="1.5" fill="black"/>
-        <circle cx="97" cy="63" r="1.5" fill="black"/>
+        {/* Eyes */}
+        <path d="M 85,63 Q 87,60 89,63" stroke="black" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+        <path d="M 95,63 Q 97,60 99,63" stroke="black" strokeWidth="1.5" fill="none" strokeLinecap="round" />
       </g>
     </svg>
   );
