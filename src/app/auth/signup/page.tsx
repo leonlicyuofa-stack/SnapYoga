@@ -23,6 +23,7 @@ import { PenguinIcon } from '@/components/icons/penguin-icon';
 import { LadybirdIcon } from '@/components/icons/ladybird-icon';
 import { AvocadoIcon } from '@/components/icons/avocado-icon';
 import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
+import Image from 'next/image';
 
 const signUpSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -39,22 +40,22 @@ const featurePages = [
     { 
         title: "AI Pose Analysis", 
         description: "Get instant, intelligent feedback on your yoga poses by simply uploading a video.",
-        icon: Sparkles 
+        image: { src: "https://placehold.co/400x225.png", hint: "app screenshot analysis" }
     },
     { 
         title: "Personalized Feedback", 
         description: "Receive custom scores and actionable tips to help you improve your alignment and form.",
-        icon: HeartPulse 
+        image: { src: "https://placehold.co/400x225.png", hint: "app screenshot feedback" }
     },
     { 
         title: "Progress Tracking", 
         description: "Watch your skills grow over time with a detailed history of all your analyzed poses.",
-        icon: BarChart 
+        image: { src: "https://placehold.co/400x225.png", hint: "app screenshot progress" }
     },
     { 
         title: "Friends Challenge", 
         description: "Join fun monthly challenges, invite your friends, and stay motivated together.",
-        icon: Users 
+        image: { src: "https://placehold.co/400x225.png", hint: "app screenshot challenges" }
     },
 ];
 
@@ -82,23 +83,29 @@ function FeaturesDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChang
   }, [isOpen])
 
   const currentFeature = featurePages[currentPage];
-  const Icon = currentFeature.icon;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md p-0">
         <DialogHeader className="p-6 text-center">
-             <div className="p-4 bg-primary/10 rounded-full w-24 h-24 mx-auto flex items-center justify-center mb-4">
-                <Icon className="h-12 w-12 text-primary"/>
+            <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-muted mb-4">
+                 <Image src={currentFeature.image.src} alt={currentFeature.title} fill className="object-cover" data-ai-hint={currentFeature.image.hint} />
             </div>
-            <DialogTitle className="text-2xl font-bold">{currentFeature.title}</DialogTitle>
-             <DialogDescription className="min-h-[40px]">
+            <DialogTitle className="text-3xl font-script text-primary">{currentFeature.title}</DialogTitle>
+             <DialogDescription className="min-h-[40px] text-base">
                 {currentFeature.description}
             </DialogDescription>
         </DialogHeader>
        
         <DialogFooter className="flex-row items-center justify-between p-4 bg-muted/50">
-           <div className="flex gap-2">
+            {currentPage > 0 ? (
+                <Button variant="outline" onClick={handleBack}>
+                    <ArrowLeft className="h-4 w-4 mr-1"/> Back
+                </Button>
+            ) : (
+                <div /> // Placeholder to keep right side aligned
+            )}
+           <div className="flex items-center gap-2">
                 {Array.from({ length: totalPages }).map((_, index) => (
                 <div
                     key={index}
@@ -109,12 +116,7 @@ function FeaturesDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChang
                 />
                 ))}
             </div>
-            <div className="flex gap-2">
-                {currentPage > 0 && (
-                     <Button variant="outline" onClick={handleBack}>
-                        <ArrowLeft className="h-4 w-4 mr-1"/> Back
-                    </Button>
-                )}
+            <div>
                 {currentPage < totalPages - 1 ? (
                     <Button onClick={handleNext}>
                         Next <ArrowRight className="h-4 w-4 ml-1"/>
@@ -192,7 +194,7 @@ export default function SignUpPage() {
                 <ZenRock progress={formProgress} isSuccess={isSuccess} />
                 <h1 className="text-3xl md:text-4xl font-bold text-primary mt-4">
                     Join{' '}
-                    <span className="relative inline-block">
+                    <span className="relative inline-block font-script">
                         SnapYoga
                         <svg
                             className="absolute -bottom-1 -left-2 -right-2 h-[120%] w-[110%] text-accent/70 -z-10"
@@ -322,3 +324,5 @@ export default function SignUpPage() {
     </div>
   );
 }
+
+    
