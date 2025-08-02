@@ -13,7 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon';
-import { Mail, KeyRound, UserPlus, Check, Sparkles, BarChart, HeartPulse, Users, Flame } from 'lucide-react';
+import { Mail, KeyRound, UserPlus, Check, Sparkles, BarChart, HeartPulse, Users, Flame, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
@@ -35,40 +35,96 @@ const signUpSchema = z.object({
 
 type SignUpFormValues = z.infer<typeof signUpSchema>;
 
-const featureItems = [
-    { text: "AI Pose Analysis", icon: Sparkles },
-    { text: "Personalized Feedback", icon: HeartPulse },
-    { text: "Progress Tracking", icon: BarChart },
-    { text: "Friends Challenge", icon: Users },
+const featurePages = [
+    { 
+        title: "AI Pose Analysis", 
+        description: "Get instant, intelligent feedback on your yoga poses by simply uploading a video.",
+        icon: Sparkles 
+    },
+    { 
+        title: "Personalized Feedback", 
+        description: "Receive custom scores and actionable tips to help you improve your alignment and form.",
+        icon: HeartPulse 
+    },
+    { 
+        title: "Progress Tracking", 
+        description: "Watch your skills grow over time with a detailed history of all your analyzed poses.",
+        icon: BarChart 
+    },
+    { 
+        title: "Friends Challenge", 
+        description: "Join fun monthly challenges, invite your friends, and stay motivated together.",
+        icon: Users 
+    },
 ];
 
 function FeaturesDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: (open: boolean) => void }) {
+  const [currentPage, setCurrentPage] = useState(0);
+  const totalPages = featurePages.length;
+
+  const handleNext = () => {
+    setCurrentPage((prev) => (prev + 1 < totalPages ? prev + 1 : prev));
+  };
+
+  const handleBack = () => {
+    setCurrentPage((prev) => (prev - 1 >= 0 ? prev - 1 : prev));
+  };
+  
+  const handleFinish = () => {
+    onOpenChange(false);
+  }
+
+  // Reset to first page when dialog re-opens
+  useEffect(() => {
+    if (isOpen) {
+        setCurrentPage(0);
+    }
+  }, [isOpen])
+
+  const currentFeature = featurePages[currentPage];
+  const Icon = currentFeature.icon;
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader className="text-center">
-            <DialogTitle className="text-2xl font-bold flex items-center justify-center gap-2">
-                <Flame className="h-6 w-6 text-accent" />
-                Here's what you'll unlock:
-            </DialogTitle>
-        </DialogHeader>
-        <div className="py-4">
-             <div className="grid grid-cols-2 gap-x-4 gap-y-8">
-                {featureItems.map((item, index) => {
-                    const Icon = item.icon;
-                    return (
-                        <div key={item.text} className="flex flex-col items-center gap-1.5 text-center">
-                            <div className="p-3 bg-primary/10 rounded-full">
-                                <Icon className="h-6 w-6 text-primary"/>
-                            </div>
-                            <p className="text-sm text-muted-foreground">{item.text}</p>
-                        </div>
-                    )
-                })}
+      <DialogContent className="sm:max-w-md p-0">
+        <DialogHeader className="p-6 text-center">
+             <div className="p-4 bg-primary/10 rounded-full w-24 h-24 mx-auto flex items-center justify-center mb-4">
+                <Icon className="h-12 w-12 text-primary"/>
             </div>
-        </div>
-        <DialogFooter>
-            <Button onClick={() => onOpenChange(false)} className="w-full">Continue</Button>
+            <DialogTitle className="text-2xl font-bold">{currentFeature.title}</DialogTitle>
+             <DialogDescription className="min-h-[40px]">
+                {currentFeature.description}
+            </DialogDescription>
+        </DialogHeader>
+       
+        <DialogFooter className="flex-row items-center justify-between p-4 bg-muted/50">
+           <div className="flex gap-2">
+                {Array.from({ length: totalPages }).map((_, index) => (
+                <div
+                    key={index}
+                    className={cn(
+                    'h-2 w-2 rounded-full transition-all duration-300',
+                    currentPage === index ? 'bg-primary w-4' : 'bg-muted-foreground/50'
+                    )}
+                />
+                ))}
+            </div>
+            <div className="flex gap-2">
+                {currentPage > 0 && (
+                     <Button variant="outline" onClick={handleBack}>
+                        <ArrowLeft className="h-4 w-4 mr-1"/> Back
+                    </Button>
+                )}
+                {currentPage < totalPages - 1 ? (
+                    <Button onClick={handleNext}>
+                        Next <ArrowRight className="h-4 w-4 ml-1"/>
+                    </Button>
+                ) : (
+                    <Button onClick={handleFinish} className="bg-green-600 hover:bg-green-700">
+                        Finish
+                    </Button>
+                )}
+            </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
