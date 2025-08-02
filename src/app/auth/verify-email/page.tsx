@@ -79,7 +79,7 @@ export default function VerifyEmailPage() {
 
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center py-12 bg-background font-sans overflow-hidden">
+    <div className="relative flex flex-col min-h-screen items-center justify-center py-12 bg-background font-sans overflow-hidden">
         {/* Animated Background */}
         <div className="absolute inset-0 z-0 bg-splash-background">
              <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
@@ -94,10 +94,13 @@ export default function VerifyEmailPage() {
                 <path d="M 100,0 L 0,0 C 50,50 0,50 0,100 L 100,100 Z" fill="hsl(var(--splash-blob-2))" style={{ opacity: 0.5 }}/>
             </svg>
         </div>
+        
+        <div className="flex-1 flex flex-col justify-center items-center -mt-16">
+            <PebbleTrioIcon className="h-auto w-40 sm:w-48 md:w-56 text-primary mb-8" />
+        </div>
 
-        <Card className="relative z-10 w-full max-w-lg shadow-xl border-border/60 bg-card/80 backdrop-blur-sm">
+        <Card className="relative z-10 w-full max-w-lg shadow-xl border-border/60 bg-card/80 backdrop-blur-sm -mt-24">
           <CardHeader className="text-center">
-            <PebbleTrioIcon className="mx-auto h-auto w-full text-primary mb-2" />
             <CardTitle className="text-3xl font-bold">Verify Your Email</CardTitle>
             <CardDescription className="font-sans">
               A verification email has been sent to <span className="font-semibold text-primary">{user?.email}</span>.
