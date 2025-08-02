@@ -97,7 +97,7 @@ export default function VerifyEmailPage() {
 
         <Card className="relative z-10 w-full max-w-lg shadow-xl border-border/60 bg-card/80 backdrop-blur-sm">
           <CardHeader className="text-center">
-            <PebbleTrioIcon className="mx-auto h-24 w-24 text-primary mb-2" />
+            <PebbleTrioIcon className="mx-auto h-auto w-full text-primary mb-2" />
             <CardTitle className="text-3xl font-bold">Verify Your Email</CardTitle>
             <CardDescription>
               A verification email has been sent to <span className="font-semibold text-primary">{user?.email}</span>.
