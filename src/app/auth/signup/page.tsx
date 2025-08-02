@@ -133,7 +133,6 @@ export default function SignUpPage() {
   const { signUpWithEmail, signInWithGoogle, signInWithApple, loading: authLoading } = useAuth();
   const { t } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
   const [formProgress, setFormProgress] = useState(0);
   const [showFeaturesDialog, setShowFeaturesDialog] = useState(false);
 
@@ -162,11 +161,8 @@ export default function SignUpPage() {
 
   const onSubmit: SubmitHandler<SignUpFormValues> = async (data) => {
     setIsSubmitting(true);
-    // Simulate network delay for animation
-    await new Promise(resolve => setTimeout(resolve, 1000));
     await signUpWithEmail(data.email, data.password);
-    setIsSuccess(true);
-    // Don't reset isSubmitting to keep success state
+    setIsSubmitting(false);
   };
 
   const isLoading = authLoading || isSubmitting;
@@ -280,18 +276,14 @@ export default function SignUpPage() {
                                 type="submit"
                                 className={cn(
                                     "w-full text-lg py-5 transition-all duration-300 transform active:scale-95",
-                                    isSuccess ? "bg-green-500 hover:bg-green-600" : "bg-primary hover:bg-primary/90"
+                                    "bg-primary hover:bg-primary/90"
                                 )}
                                 disabled={isLoading || !isValid}
                             >
                                 <div className={cn("transition-transform duration-300", isLoading && "animate-button-press")}>
-                                {isSuccess ? (
-                                    <Check className="mr-2 h-5 w-5 animate-scale-in" />
-                                ) : (
                                     <UserPlus className="mr-2 h-5 w-5" />
-                                )}
                                 </div>
-                                {isSuccess ? 'Success!' : isLoading ? 'Creating...' : t('authCreateAccount')}
+                                {isLoading ? 'Creating...' : t('authCreateAccount')}
                             </Button>
                         </div>
                     </form>
