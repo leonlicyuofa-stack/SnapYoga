@@ -68,7 +68,7 @@ export default {
   			}
   		},
         fontFamily: {
-            sans: ['var(--font-inter)'],
+            sans: ['var(--font-roboto)'],
             script: ['var(--font-caveat)'],
         },
   		borderRadius: {

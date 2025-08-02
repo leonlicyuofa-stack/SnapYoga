@@ -1,14 +1,15 @@
 
 import type {Metadata} from 'next';
-import { Inter, Caveat } from 'next/font/google';
+import { Roboto, Caveat } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/contexts/AuthContext'; 
 import { LanguageProvider } from '@/contexts/LanguageContext';
 
-const inter = Inter({
-  variable: '--font-inter',
+const roboto = Roboto({
+  variable: '--font-roboto',
   subsets: ['latin'],
+  weight: ['400', '500', '700']
 });
 
 const caveat = Caveat({
@@ -29,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${caveat.variable} antialiased`}>
+      <body className={`${roboto.variable} ${caveat.variable} antialiased`}>
         <AuthProvider>
           <LanguageProvider>
             {children}
