@@ -11,11 +11,8 @@ import { Send, RotateCw } from 'lucide-react';
 import { auth } from '@/lib/firebase/clientApp'; // direct import for sendEmailVerification
 import { sendEmailVerification as firebaseSendEmailVerification } from 'firebase/auth';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
-import { WelcomeRock } from '@/components/icons/rocks/welcome-rock';
-import { PenguinIcon } from '@/components/icons/penguin-icon';
-import { LadybirdIcon } from '@/components/icons/ladybird-icon';
-import { AvocadoIcon } from '@/components/icons/avocado-icon';
-import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
+import { PebbleTrioIcon } from '@/components/icons/PebbleTrioIcon';
+
 
 export default function VerifyEmailPage() {
   const { user, loading: authLoading, signOutUser } = useAuth();
@@ -84,16 +81,23 @@ export default function VerifyEmailPage() {
   return (
     <div className="relative flex min-h-screen items-center justify-center py-12 bg-background overflow-hidden">
         {/* Animated Background */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-background to-accent/10 animate-breathing-bg">
-            <PenguinIcon className="absolute top-1/4 left-1/4 w-32 h-32 text-foreground/10 animate-float-1" />
-            <LadybirdIcon className="absolute bottom-1/4 right-1/4 w-24 h-24 text-destructive/20 animate-float-2" />
-            <AvocadoIcon className="absolute bottom-1/2 right-1/3 w-28 h-28 text-primary/10 animate-float-3" />
-            <SmileyPebbleIcon className="absolute top-1/3 left-1/2 w-20 h-20 text-accent/20 animate-float-4" />
+        <div className="absolute inset-0 z-0 bg-splash-background">
+             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
+                <defs>
+                    <radialGradient id="blushGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                        <stop offset="0%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0.7 }} />
+                        <stop offset="100%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0 }} />
+                    </radialGradient>
+                </defs>
+                <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-blob-1))" />
+                <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
+                <path d="M 100,0 L 0,0 C 50,50 0,50 0,100 L 100,100 Z" fill="hsl(var(--splash-blob-2))" style={{ opacity: 0.5 }}/>
+            </svg>
         </div>
 
         <Card className="relative z-10 w-full max-w-lg shadow-xl border-border/60 bg-card/80 backdrop-blur-sm">
           <CardHeader className="text-center">
-            <WelcomeRock className="mx-auto h-16 w-16 text-primary mb-4" />
+            <PebbleTrioIcon className="mx-auto h-24 w-24 text-primary mb-2" />
             <CardTitle className="text-3xl font-bold">Verify Your Email</CardTitle>
             <CardDescription>
               A verification email has been sent to <span className="font-semibold text-primary">{user?.email}</span>.
