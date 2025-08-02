@@ -15,8 +15,8 @@ export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
       </defs>
 
       {/* Left Pebble */}
-      <g>
-        <ellipse cx="25" cy="50" rx="15" ry="12" fill="#F5F5F5" stroke="#757575" strokeWidth="0.5" />
+      <g transform="translate(-10, 25)">
+        <ellipse cx="25" cy="50" rx="15" ry="12" fill="#FFD1DC" stroke="#757575" strokeWidth="0.5" />
         {/* Blush */}
         <ellipse cx="20" cy="52" rx="4" ry="2" fill="url(#blushGradient)" />
         <ellipse cx="30" cy="52" rx="4" ry="2" fill="url(#blushGradient)" />
@@ -28,8 +28,8 @@ export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
       </g>
 
       {/* Center Pebble */}
-      <g>
-        <ellipse cx="50" cy="50" rx="15" ry="12" fill="#F5F5F5" stroke="#757575" strokeWidth="0.5" />
+      <g transform="translate(0, 25)">
+        <ellipse cx="50" cy="50" rx="15" ry="12" fill="#FFFACD" stroke="#757575" strokeWidth="0.5" />
         {/* Blush */}
         <ellipse cx="45" cy="52" rx="4" ry="2" fill="url(#blushGradient)" />
         <ellipse cx="55" cy="52" rx="4" ry="2" fill="url(#blushGradient)" />
@@ -41,8 +41,8 @@ export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
       </g>
 
       {/* Right Pebble */}
-      <g>
-        <ellipse cx="75" cy="50" rx="15" ry="12" fill="#F5F5F5" stroke="#757575" strokeWidth="0.5" />
+      <g transform="translate(10, 25)">
+        <ellipse cx="75" cy="50" rx="15" ry="12" fill="#ADD8E6" stroke="#757575" strokeWidth="0.5" />
          {/* Blush */}
         <ellipse cx="70" cy="52" rx="4" ry="2" fill="url(#blushGradient)" />
         <ellipse cx="80" cy="52" rx="4" ry="2" fill="url(#blushGradient)" />
