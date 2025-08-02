@@ -82,7 +82,7 @@ export default function HomePage() {
 
   return (
     <div className={cn(
-        "relative flex flex-col min-h-screen items-center justify-center p-4 bg-splash-background font-sans overflow-hidden"
+        "relative flex flex-col min-h-screen items-center justify-center p-4 bg-splash-background overflow-hidden"
     )}>
         {/* Full-screen background illustration */}
         <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
