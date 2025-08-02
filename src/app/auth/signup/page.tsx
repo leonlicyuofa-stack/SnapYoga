@@ -17,12 +17,7 @@ import { Mail, KeyRound, UserPlus, Check, Sparkles, BarChart, HeartPulse, Users,
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
-import { ZenRock } from '@/components/icons/rocks/zen-rock';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { PenguinIcon } from '@/components/icons/penguin-icon';
-import { LadybirdIcon } from '@/components/icons/ladybird-icon';
-import { AvocadoIcon } from '@/components/icons/avocado-icon';
-import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
 import Image from 'next/image';
 
 const signUpSchema = z.object({
@@ -178,39 +173,30 @@ export default function SignUpPage() {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-background flex items-center justify-center p-4">
-        {/* Animated Background */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-background to-accent/10 animate-breathing-bg">
-            <PenguinIcon className="absolute top-1/4 left-1/4 w-32 h-32 text-foreground/10 animate-float-1" />
-            <LadybirdIcon className="absolute bottom-1/4 right-1/4 w-24 h-24 text-destructive/20 animate-float-2" />
-            <AvocadoIcon className="absolute bottom-1/2 right-1/3 w-28 h-28 text-primary/10 animate-float-3" />
-            <SmileyPebbleIcon className="absolute top-1/3 left-1/2 w-20 h-20 text-accent/20 animate-float-4" />
+        {/* Pastel Shape Background */}
+        <div className="absolute inset-0 z-0 bg-splash-background">
+             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
+                <defs>
+                    <radialGradient id="blushGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                        <stop offset="0%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0.7 }} />
+                        <stop offset="100%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0 }} />
+                    </radialGradient>
+                </defs>
+                <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-blob-1))" />
+                <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
+                <path d="M 100,0 L 0,0 C 50,50 0,50 0,100 L 100,100 Z" fill="hsl(var(--splash-blob-2))" style={{ opacity: 0.5 }}/>
+            </svg>
         </div>
         
         <FeaturesDialog isOpen={showFeaturesDialog} onOpenChange={setShowFeaturesDialog} />
         
         <main className="relative z-10 w-full max-w-5xl flex flex-col md:flex-row items-center justify-center gap-8">
-            {/* Left Side: Welcome Text & Mascot */}
+            {/* Left Side: Welcome Text */}
             <div className="w-full md:w-1/2 text-center md:text-left animate-fade-in-up">
-                <ZenRock progress={formProgress} isSuccess={isSuccess} />
                 <h1 className="text-3xl md:text-4xl font-bold text-primary mt-4">
                     Join{' '}
-                    <span className="relative inline-block font-script">
+                    <span className="font-script text-4xl md:text-5xl">
                         SnapYoga
-                        <svg
-                            className="absolute -bottom-1 -left-2 -right-2 h-[120%] w-[110%] text-accent/70 -z-10"
-                            viewBox="0 0 200 60"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            preserveAspectRatio="none"
-                        >
-                            <path
-                                d="M3.5 31.9731C51.6667 12.3065 120 -15.0269 190.5 24.9731C159.5 35.4731 106.667 52.8065 83 58.9731C58.2 62.2731 11.5 54.9731 3.5 49.4731"
-                                stroke="currentColor"
-                                strokeWidth="8"
-                                strokeLinecap="round"
-                                className="animate-brush-stroke"
-                            />
-                        </svg>
                     </span>
                     {' '}to begin your journey.
                 </h1>
