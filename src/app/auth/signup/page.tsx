@@ -193,7 +193,7 @@ export default function SignUpPage() {
         <main className="relative z-10 w-full max-w-5xl flex flex-col md:flex-row items-center justify-center gap-8">
             {/* Left Side: Welcome Text */}
             <div className="w-full md:w-1/2 text-center md:text-left animate-fade-in-up">
-                <h1 className="text-3xl md:text-4xl font-bold text-primary mt-4">
+                <h1 className="text-3xl md:text-4xl font-bold text-splash-foreground mt-4">
                     Join{' '}
                     <span className="font-script text-4xl md:text-5xl">
                         SnapYoga
