@@ -95,46 +95,47 @@ export default function VerifyEmailPage() {
             </svg>
         </div>
         
-        <div className="flex-1 flex flex-col justify-center items-center -mt-16">
-            <PebbleTrioIcon className="h-auto w-40 sm:w-48 md:w-56 text-primary mb-8" />
+        <div className="relative w-full max-w-lg mt-24">
+            <Card className="relative z-10 shadow-xl border-border/60 bg-card/80 backdrop-blur-sm pt-24">
+              <div className="absolute -top-24 left-1/2 -translate-x-1/2">
+                <PebbleTrioIcon className="h-auto w-40 sm:w-48 md:w-56 text-primary" />
+              </div>
+              <CardHeader className="text-center">
+                <CardTitle className="text-3xl font-bold">Verify Your Email</CardTitle>
+                <CardDescription className="font-sans">
+                  A verification email has been sent to <span className="font-semibold text-primary">{user?.email}</span>.
+                  <br />
+                  Please click the link in the email to continue.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <Button
+                  onClick={handleContinue}
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                  disabled={isSending}
+                >
+                  <Send className="mr-2 h-5 w-5" />
+                  Continue
+                </Button>
+                <Button
+                  onClick={handleResendVerificationEmail}
+                  variant="outline"
+                  className="w-full"
+                  disabled={isSending}
+                >
+                  {isSending ? <SmileyRockLoader /> : <><RotateCw className="mr-2 h-5 w-5" /> Resend Verification Email</>}
+                </Button>
+              </CardContent>
+              <CardFooter className="flex flex-col">
+                <p className="text-xs text-muted-foreground text-center">
+                  Didn&apos;t receive the email? Check your spam folder or try resending. If you used the wrong email, you can{' '}
+                  <Button variant="link" size="sm" className="p-0 h-auto text-xs" onClick={handleSignOutAndReturnToSignUp}>
+                     sign out and try signing up again.
+                  </Button>
+                </p>
+              </CardFooter>
+            </Card>
         </div>
-
-        <Card className="relative z-10 w-full max-w-lg shadow-xl border-border/60 bg-card/80 backdrop-blur-sm -mt-24">
-          <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-bold">Verify Your Email</CardTitle>
-            <CardDescription className="font-sans">
-              A verification email has been sent to <span className="font-semibold text-primary">{user?.email}</span>.
-              <br />
-              Please click the link in the email to continue.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <Button
-              onClick={handleContinue}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-              disabled={isSending}
-            >
-              <Send className="mr-2 h-5 w-5" />
-              Continue
-            </Button>
-            <Button
-              onClick={handleResendVerificationEmail}
-              variant="outline"
-              className="w-full"
-              disabled={isSending}
-            >
-              {isSending ? <SmileyRockLoader /> : <><RotateCw className="mr-2 h-5 w-5" /> Resend Verification Email</>}
-            </Button>
-          </CardContent>
-          <CardFooter className="flex flex-col">
-            <p className="text-xs text-muted-foreground text-center">
-              Didn&apos;t receive the email? Check your spam folder or try resending. If you used the wrong email, you can{' '}
-              <Button variant="link" size="sm" className="p-0 h-auto text-xs" onClick={handleSignOutAndReturnToSignUp}>
-                 sign out and try signing up again.
-              </Button>
-            </p>
-          </CardFooter>
-        </Card>
       </div>
   );
 }
