@@ -10,7 +10,7 @@ export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
       
       {/* Middle Pebble */}
       <g>
-        <ellipse cx="60" cy="60" rx="22" ry="28" fill="#f5f5f5" stroke="black" strokeWidth="1.5"/>
+        <ellipse cx="60" cy="60" rx="25" ry="28" fill="#f5f5f5" stroke="black" strokeWidth="1.5"/>
         {/* Blush */}
         <ellipse cx="50" cy="65" rx="7" ry="4" fill="#ffc0cb" opacity="0.6"/>
         <ellipse cx="70" cy="65" rx="7" ry="4" fill="#ffc0cb" opacity="0.6"/>
@@ -21,7 +21,7 @@ export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
 
       {/* Left Pebble */}
       <g className="animate-pebble-bounce-left" style={{ transformOrigin: 'center center' }}>
-        <ellipse cx="28" cy="65" rx="22" ry="18" fill="#eeeeee" stroke="black" strokeWidth="1.5"/>
+        <ellipse cx="28" cy="65" rx="25" ry="18" fill="#eeeeee" stroke="black" strokeWidth="1.5"/>
         {/* Blush */}
         <ellipse cx="22" cy="68" rx="6" ry="3" fill="#ffc0cb" opacity="0.6"/>
         <ellipse cx="34" cy="68" rx="6" ry="3" fill="#ffc0cb" opacity="0.6"/>
@@ -32,7 +32,7 @@ export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
       
       {/* Right Pebble */}
       <g className="animate-pebble-bounce-right" style={{ transformOrigin: 'center center' }}>
-        <ellipse cx="92" cy="65" rx="22" ry="18" fill="#eeeeee" stroke="black" strokeWidth="1.5"/>
+        <ellipse cx="92" cy="65" rx="25" ry="18" fill="#eeeeee" stroke="black" strokeWidth="1.5"/>
         {/* Blush */}
         <ellipse cx="86" cy="68" rx="6" ry="3" fill="#ffc0cb" opacity="0.6"/>
         <ellipse cx="98" cy="68" rx="6" ry="3" fill="#ffc0cb" opacity="0.6"/>
