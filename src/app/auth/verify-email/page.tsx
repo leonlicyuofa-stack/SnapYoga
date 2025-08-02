@@ -79,7 +79,7 @@ export default function VerifyEmailPage() {
 
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center py-12 bg-background overflow-hidden">
+    <div className="relative flex min-h-screen items-center justify-center py-12 bg-background font-sans overflow-hidden">
         {/* Animated Background */}
         <div className="absolute inset-0 z-0 bg-splash-background">
              <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
