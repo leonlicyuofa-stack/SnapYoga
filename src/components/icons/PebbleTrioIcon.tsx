@@ -17,29 +17,23 @@ export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
       
       {/* Middle Pebble */}
       <g>
-        <ellipse cx="60" cy="60" rx="30" ry="28" fill="#f5f5f5" stroke="black" strokeWidth="1.5"/>
+        <ellipse cx="60" cy="60" rx="40" ry="30" fill="#f5f5f5" stroke="black" strokeWidth="1.5"/>
         {/* Blush */}
         <ellipse cx="50" cy="65" rx="7" ry="4" fill="url(#blushGradient)"/>
         <ellipse cx="70" cy="65" rx="7" ry="4" fill="url(#blushGradient)"/>
         {/* Eyes */}
-        <ellipse cx="53" cy="58" rx="2" ry="3" fill="black" />
-        <ellipse cx="67" cy="58" rx="2" ry="3" fill="black" />
+        <ellipse cx="53" cy="58" rx="2" ry="4" fill="black" />
+        <ellipse cx="67" cy="58" rx="2" ry="4" fill="black" />
       </g>
 
       {/* Left Pebble */}
       <g className="animate-pebble-bounce-left" style={{ transformOrigin: 'center center' }}>
-        <ellipse cx="40" cy="70" rx="14" ry="9" fill="#eeeeee" stroke="black" strokeWidth="1.5"/>
-        {/* Blush */}
-        <ellipse cx="37" cy="72" rx="3" ry="1.5" fill="url(#blushGradient)"/>
-        <ellipse cx="43" cy="72" rx="3" ry="1.5" fill="url(#blushGradient)"/>
+        <ellipse cx="30" cy="70" rx="14" ry="9" fill="#eeeeee" stroke="black" strokeWidth="1.5"/>
       </g>
       
       {/* Right Pebble */}
       <g className="animate-pebble-bounce-right" style={{ transformOrigin: 'center center' }}>
-        <ellipse cx="80" cy="70" rx="14" ry="9" fill="#eeeeee" stroke="black" strokeWidth="1.5"/>
-        {/* Blush */}
-        <ellipse cx="77" cy="72" rx="3" ry="1.5" fill="url(#blushGradient)"/>
-        <ellipse cx="83" cy="72" rx="3" ry="1.5" fill="url(#blushGradient)"/>
+        <ellipse cx="90" cy="70" rx="14" ry="9" fill="#eeeeee" stroke="black" strokeWidth="1.5"/>
       </g>
     </svg>
   );
