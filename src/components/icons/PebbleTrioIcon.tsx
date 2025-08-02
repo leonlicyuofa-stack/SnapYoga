@@ -14,14 +14,6 @@ export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
         </radialGradient>
       </defs>
 
-      {/* Background */}
-      <path d="M-10 70 L 50 40 L 110 70 Z" fill="#ffadad" />
-      <path d="M-10 60 L 50 30 L 110 60 Z" fill="#9bf6ff" />
-      <path d="M-10 50 L 50 20 L 110 50 Z" fill="#caffbf" />
-      <path d="M0 60 Q 25 50, 50 60 T 100 60 V 100 H 0 Z" fill="#bde0fe" />
-      <path d="M0 50 Q 25 40, 50 50 T 100 50 V 100 H 0 Z" fill="#a2d2ff" />
-
-
       {/* Left Pebble */}
       <g>
         <ellipse cx="25" cy="50" rx="15" ry="12" fill="#F5F5F5" stroke="#757575" strokeWidth="0.5" />
