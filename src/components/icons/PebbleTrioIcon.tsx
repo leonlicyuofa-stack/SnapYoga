@@ -34,12 +34,12 @@ export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
 
       {/* Left Pebble */}
       <g className="animate-pebble-bounce-left" style={{ transformOrigin: 'center center' }}>
-        <ellipse cx="25" cy="50" rx="14" ry="9" fill="#eeeeee" stroke="black" strokeWidth="0.5"/>
+        <ellipse cx="25" cy="50" rx="7" ry="4.5" fill="#eeeeee" stroke="black" strokeWidth="0.5"/>
       </g>
       
       {/* Right Pebble */}
       <g className="animate-pebble-bounce-right" style={{ transformOrigin: 'center center' }}>
-        <ellipse cx="75" cy="50" rx="14" ry="9" fill="#eeeeee" stroke="black" strokeWidth="0.5"/>
+        <ellipse cx="75" cy="50" rx="7" ry="4.5" fill="#eeeeee" stroke="black" strokeWidth="0.5"/>
       </g>
     </svg>
   );
