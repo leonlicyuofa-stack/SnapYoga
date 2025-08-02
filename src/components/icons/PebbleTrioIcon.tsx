@@ -1,4 +1,6 @@
 
+"use client";
+
 import type { SVGProps } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -9,32 +11,26 @@ export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
       
       {/* Middle Pebble */}
       <g>
-        <path d="M 60,35 C 40,30 35,50 45,70 C 55,90 75,85 80,65 C 85,45 80,40 60,35 Z" fill="#e0e0e0" stroke="black" strokeWidth="1.5"/>
-        <ellipse cx="55" cy="55" rx="3" ry="5" fill="white"/>
-        <circle cx="55" cy="55" r="1" fill="black"/>
-        <ellipse cx="70" cy="55" rx="3" ry="5" fill="white"/>
-        <circle cx="70" cy="55" r="1" fill="black"/>
-        <path d="M58,65 C60,72 65,72 67,65" stroke="black" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+        <ellipse cx="60" cy="60" rx="22" ry="28" fill="#e0e0e0" stroke="black" strokeWidth="1.5"/>
+        <ellipse cx="53" cy="58" rx="2" ry="3.5" fill="black"/>
+        <ellipse cx="67" cy="58" rx="2" ry="3.5" fill="black"/>
+        <path d="M58,68 Q60,71 62,68" stroke="black" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
       </g>
 
       {/* Left Pebble */}
       <g className="animate-pebble-bounce-left" style={{ transformOrigin: 'center center' }}>
-        <path d="M 30,50 C 15,45 10,60 20,75 C 30,90 45,85 50,70 L 45,60 C 40,55 35,55 30,50 Z" fill="#bdbdbd" stroke="black" strokeWidth="1.5"/>
-        <ellipse cx="30" cy="65" rx="2.5" ry="4" fill="white"/>
-        <circle cx="30" cy="65" r="1" fill="black"/>
-        <ellipse cx="40" cy="65" rx="2.5" ry="4" fill="white"/>
-        <circle cx="40" cy="65" r="1" fill="black"/>
-        <path d="M32,75 C34,80 38,80 40,75" stroke="black" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+        <ellipse cx="28" cy="65" rx="18" ry="22" fill="#bdbdbd" stroke="black" strokeWidth="1.5"/>
+        <ellipse cx="23" cy="63" rx="1.5" ry="3" fill="black"/>
+        <ellipse cx="33" cy="63" rx="1.5" ry="3" fill="black"/>
+        <path d="M26,72 Q28,75 30,72" stroke="black" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
       </g>
       
       {/* Right Pebble */}
       <g className="animate-pebble-bounce-right" style={{ transformOrigin: 'center center' }}>
-        <path d="M 90,50 C 105,45 110,60 100,75 C 90,90 75,85 70,70 L 75,60 C 80,55 85,55 90,50 Z" fill="#bdbdbd" stroke="black" strokeWidth="1.5"/>
-        <ellipse cx="80" cy="65" rx="2.5" ry="4" fill="white"/>
-        <circle cx="80" cy="65" r="1" fill="black"/>
-        <ellipse cx="90" cy="65" rx="2.5" ry="4" fill="white"/>
-        <circle cx="90" cy="65" r="1" fill="black"/>
-        <path d="M82,75 C84,80 88,80 90,75" stroke="black" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+        <ellipse cx="92" cy="65" rx="18" ry="22" fill="#bdbdbd" stroke="black" strokeWidth="1.5"/>
+        <ellipse cx="87" cy="63" rx="1.5" ry="3" fill="black"/>
+        <ellipse cx="97" cy="63" rx="1.5" ry="3" fill="black"/>
+        <path d="M90,72 Q92,75 94,72" stroke="black" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
       </g>
     </svg>
   );
