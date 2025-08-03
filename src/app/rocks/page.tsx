@@ -2,7 +2,7 @@
 "use client";
 
 import { AppShell } from '@/components/layout/app-shell';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Gem, ArrowLeft, CheckCircle, Lock } from 'lucide-react';
 import { allRocks, type Rock } from '@/components/features/dashboard/rock-data';
 import Link from 'next/link';
@@ -103,5 +103,3 @@ export default function RockCollectionPage() {
     </AppShell>
   );
 }
-
-    
