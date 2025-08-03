@@ -101,25 +101,32 @@ export default function PastAnalysisPage() {
     }
   }, [currentUser, analysisId, authLoading, router]);
 
-  const handleShareAnalysis = () => {
-    if (typeof window !== 'undefined') {
-      const shareUrl = `${window.location.origin}${pathname}`;
-      navigator.clipboard.writeText(shareUrl)
-        .then(() => {
+  const handleShare = (platform: 'link' | 'instagram') => {
+    if (typeof window === 'undefined') return;
+
+    const shareUrl = `${window.location.origin}${pathname}`;
+    navigator.clipboard.writeText(shareUrl)
+      .then(() => {
+        if (platform === 'instagram') {
+          toast({
+            title: "Link Copied for Instagram!",
+            description: "Paste the link in your story or bio to share your awesome progress!",
+          });
+        } else {
           toast({
             title: "Link Copied!",
             description: "A shareable link to this analysis has been copied to your clipboard.",
           });
-        })
-        .catch(err => {
-          console.error('Failed to copy link: ', err);
-          toast({
-            title: "Copy Failed",
-            description: "Could not copy the link. Please try manually.",
-            variant: "destructive",
-          });
+        }
+      })
+      .catch(err => {
+        console.error('Failed to copy link: ', err);
+        toast({
+          title: "Copy Failed",
+          description: "Could not copy the link. Please try manually.",
+          variant: "destructive",
         });
-    }
+      });
   };
 
 
@@ -183,11 +190,16 @@ export default function PastAnalysisPage() {
               <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
               Back to Dashboard
             </Button>
-            <Button variant="outline" onClick={handleShareAnalysis} className="group self-start sm:self-center">
-              <Share2 className="mr-2 h-4 w-4" />
-              Share this Analysis
-              <Copy className="ml-2 h-4 w-4 opacity-70 group-hover:opacity-100 transition-opacity"/>
-            </Button>
+            <div className="flex gap-2">
+                <Button variant="outline" onClick={() => handleShare('link')} className="group self-start sm:self-center">
+                  <Copy className="mr-2 h-4 w-4" />
+                  Copy Link
+                </Button>
+                <Button variant="accent" onClick={() => handleShare('instagram')} className="group self-start sm:self-center">
+                  <Share2 className="mr-2 h-4 w-4" />
+                  Share to Instagram
+                </Button>
+            </div>
         </div>
         
 
