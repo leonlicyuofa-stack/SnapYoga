@@ -5,7 +5,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, Link2, Copy, Mail, Share2, Search, Users, Send, Loader2 } from 'lucide-react';
+import { ArrowLeft, Link2, Copy, Mail, Share2, Search, Users, Send, Loader2, MessageSquare } from 'lucide-react';
 import { usePathname } from 'next/navigation'; 
 import { useToast } from '@/hooks/use-toast'; 
 import { Input } from '@/components/ui/input';
@@ -52,6 +52,7 @@ export default function CrowPoseInvitePage() {
   const emailBody = `Hey!\n\nI'm inviting you to join the ${challengeName} Yoga Challenge on SnapYoga. Let's master this pose together!\n\nChallenge link: ${inviteLink}\n\nSee you there!`;
   const mailtoLink = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
   const shareText = `Hey! I'm inviting you to the ${challengeName} on SnapYoga. You should check it out: ${inviteLink}`;
+  const whatsappLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
   const pinterestShareUrl = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(inviteLink)}&media=${encodeURIComponent('https://placehold.co/600x400.png')}&description=${encodeURIComponent(shareText)}`;
 
   const handleTikTokShare = () => {
@@ -66,6 +67,21 @@ export default function CrowPoseInvitePage() {
     }
   };
   
+    const handleInstagramShare = () => {
+     if (navigator.clipboard && inviteLink) {
+      navigator.clipboard.writeText(inviteLink).then(() => {
+        toast({
+          title: "Link Copied!",
+          description: "Paste this link in your Instagram bio or stories to share.",
+          duration: 5000,
+        });
+      }).catch(err => {
+        console.error("Copy failed", err);
+        toast({ title: "Copy Failed", description: "Could not copy the link.", variant: "destructive" });
+      });
+    }
+  };
+
   const handleCopyLink = () => {
     if (navigator.clipboard && inviteLink && inviteLink.trim() !== '') {
       navigator.clipboard.writeText(inviteLink)
@@ -256,12 +272,20 @@ export default function CrowPoseInvitePage() {
                           <Mail className="mr-2 h-5 w-5" /> Email
                         </a>
                       </Button>
-                      <Button variant="outline" asChild disabled={!inviteLink}>
+                      <Button variant="outline" asChild className="w-full sm:w-auto" disabled={!inviteLink}>
+                        <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                          <MessageSquare className="mr-2 h-5 w-5" /> WhatsApp
+                        </a>
+                      </Button>
+                       <Button variant="outline" onClick={handleInstagramShare} className="w-full sm:w-auto" disabled={!inviteLink}>
+                         <Share2 className="mr-2 h-5 w-5" /> Instagram
+                      </Button>
+                      <Button variant="outline" asChild disabled={!inviteLink} className="w-full sm:w-auto">
                         <a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer">
                           <PinterestIcon className="mr-2 h-5 w-5" /> Pinterest
                         </a>
                       </Button>
-                      <Button variant="outline" onClick={handleTikTokShare} disabled={!inviteLink}>
+                      <Button variant="outline" onClick={handleTikTokShare} disabled={!inviteLink} className="w-full sm:w-auto">
                           <TikTokIcon className="mr-2 h-5 w-5" /> TikTok
                       </Button>
                   </div>
