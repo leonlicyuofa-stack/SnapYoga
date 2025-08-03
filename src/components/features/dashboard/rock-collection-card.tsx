@@ -1,10 +1,12 @@
 
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Gem } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Gem, ArrowRight } from 'lucide-react';
 import type { Rock } from './rock-data';
+import { Badge } from "@/components/ui/badge";
 
 interface RockCollectionCardProps {
   rocks: Rock[];
@@ -13,6 +15,16 @@ interface RockCollectionCardProps {
 export function RockCollectionCard({ rocks }: RockCollectionCardProps) {
   // Simulate which rocks are collected for demo purposes
   const collectedRockIds = ['welcome', 'first-analysis', 'join-challenge'];
+
+  const getRarityClass = (rarity: Rock['rarity']) => {
+    switch(rarity) {
+        case 'Common': return 'text-gray-500';
+        case 'Uncommon': return 'text-green-600';
+        case 'Rare': return 'text-blue-600';
+        case 'Epic': return 'text-purple-600';
+        default: return 'text-muted-foreground';
+    }
+  }
 
   return (
     <Card className="shadow-lg mb-6">
@@ -52,10 +64,11 @@ export function RockCollectionCard({ rocks }: RockCollectionCardProps) {
                       </p>
                     </div>
                   </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="font-semibold">{rock.name}</p>
-                    <p className="text-sm text-muted-foreground">{rock.description}</p>
-                    {!isCollected && <p className="text-xs text-primary/80 italic mt-1">Keep exploring to unlock!</p>}
+                  <TooltipContent className="max-w-xs">
+                    <p className="font-semibold text-base" style={{color: rock.color}}>{rock.name}</p>
+                    <p className={`font-bold text-sm ${getRarityClass(rock.rarity)}`}>{rock.rarity}</p>
+                    <p className="text-sm text-muted-foreground mt-1 italic">&quot;{rock.story}&quot;</p>
+                    {!isCollected && <p className="text-xs text-primary/80 italic mt-2">Keep exploring to unlock!</p>}
                   </TooltipContent>
                 </Tooltip>
               );
@@ -63,6 +76,12 @@ export function RockCollectionCard({ rocks }: RockCollectionCardProps) {
           </div>
         </TooltipProvider>
       </CardContent>
+      <CardFooter className="flex justify-end">
+          <Button variant="outline" disabled>
+              Check Out Our Rocks Section (Coming Soon)
+              <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+      </CardFooter>
     </Card>
   );
 }

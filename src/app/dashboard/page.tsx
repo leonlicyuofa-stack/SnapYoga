@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Sparkles, ArrowRight, Users, ListChecks, CalendarDays, Trophy, Eye, Copy, MessageSquare, Share2, PlayCircle, UserPlus, BarChart3, Activity, ChevronRight, AlertCircle } from 'lucide-react';
+import { Sparkles, ArrowRight, Users, ListChecks, CalendarDays, Trophy, Eye, Copy, MessageSquare, Share2, PlayCircle, UserPlus, BarChart3, Activity, ChevronRight, AlertCircle, Gift } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
 import type { Timestamp, DocumentData } from 'firebase/firestore';
@@ -18,9 +18,9 @@ import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { LuckyWheelDialog } from '@/components/features/homepage/lucky-wheel-dialog'; 
-import { RockCollectionCard, type Rock } from '@/components/features/dashboard/rock-collection-card';
+import { RockCollectionCard } from '@/components/features/dashboard/rock-collection-card';
 import { RewardDialog } from '@/components/features/dashboard/reward-dialog';
-import { allRocks } from '@/components/features/dashboard/rock-data';
+import { allRocks, type Rock } from '@/components/features/dashboard/rock-data';
 import { WelcomeRock } from '@/components/icons/rocks/welcome-rock';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -66,6 +66,7 @@ export default function DashboardPage() {
   const [quote, setQuote] = useState<DailyQuote | null>(null);
   const [loadingQuote, setLoadingQuote] = useState(true);
   const [showLuckyWheelDialog, setShowLuckyWheelDialog] = useState(false);
+  const [showRockWheelDialog, setShowRockWheelDialog] = useState(false);
   const [showRewardDialog, setShowRewardDialog] = useState(false);
   const [rewardedRock, setRewardedRock] = useState<Rock | null>(null);
 
@@ -336,6 +337,23 @@ export default function DashboardPage() {
                   </h2>
                   
                   <RockCollectionCard rocks={allRocks} />
+
+                  <Card className="shadow-lg mb-6">
+                      <CardHeader>
+                          <CardTitle className="flex items-center text-xl md:text-2xl">
+                              <Gift className="mr-3 h-7 w-7 text-primary" />
+                              Challenge Rewards
+                          </CardTitle>
+                          <CardDescription>
+                              Completed a challenge? Spin the wheel to claim your rock!
+                          </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                          <Button onClick={() => setShowRockWheelDialog(true)} className="w-full" size="lg">
+                              Claim Challenge Reward
+                          </Button>
+                      </CardContent>
+                  </Card>
 
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mt-6">
                     <Card className="shadow-lg lg:col-span-2 bg-card/90 backdrop-blur-sm">
