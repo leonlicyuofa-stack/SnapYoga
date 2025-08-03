@@ -17,6 +17,9 @@ import { collection, query, where, getDocs, DocumentData, serverTimestamp, doc, 
 import Image from 'next/image'; 
 import { Checkbox } from '@/components/ui/checkbox'; 
 import { useAuth } from '@/contexts/AuthContext'; 
+import { useLanguage } from '@/contexts/LanguageContext';
+import { PinterestIcon } from '@/components/icons/PinterestIcon';
+import { TikTokIcon } from '@/components/icons/TikTokIcon';
 
 
 interface UserProfile {
@@ -28,6 +31,7 @@ interface UserProfile {
 
 export default function CrowPoseInvitePage() {
   const { user: currentUser } = useAuth();
+  const { t } = useLanguage();
   const pathname = usePathname();
   const [inviteLink, setInviteLink] = useState('');
   const { toast } = useToast();
@@ -47,7 +51,21 @@ export default function CrowPoseInvitePage() {
   const emailSubject = `Join me for the ${challengeName} Yoga Challenge on SnapYoga!`;
   const emailBody = `Hey!\n\nI'm inviting you to join the ${challengeName} Yoga Challenge on SnapYoga. Let's master this pose together!\n\nChallenge link: ${inviteLink}\n\nSee you there!`;
   const mailtoLink = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+  const shareText = `Hey! I'm inviting you to the ${challengeName} on SnapYoga. You should check it out: ${inviteLink}`;
+  const pinterestShareUrl = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(inviteLink)}&media=${encodeURIComponent('https://placehold.co/600x400.png')}&description=${encodeURIComponent(shareText)}`;
 
+  const handleTikTokShare = () => {
+    if (navigator.clipboard && inviteLink) {
+        navigator.clipboard.writeText(inviteLink).then(() => {
+            toast({
+                title: "Link Copied for TikTok!",
+                description: "Paste this link in your TikTok bio or video description.",
+                duration: 5000,
+            });
+        });
+    }
+  };
+  
   const handleCopyLink = () => {
     if (navigator.clipboard && inviteLink && inviteLink.trim() !== '') {
       navigator.clipboard.writeText(inviteLink)
@@ -211,6 +229,9 @@ export default function CrowPoseInvitePage() {
           </CardHeader>
           <CardContent className="p-6 md:p-8 space-y-8">
              <div> {/* Section for sharing unique link */}
+              <div className="text-center p-3 mb-6 bg-green-100/50 text-green-800 border border-green-200 rounded-md text-sm font-medium">
+                  {t('referralBonusText')}
+              </div>
               <div className="space-y-3">
                 <p className="text-sm font-medium text-foreground">Your unique invite link:</p>
                 <div className="flex items-center space-x-2">
@@ -229,14 +250,19 @@ export default function CrowPoseInvitePage() {
 
               <div className="text-center mt-6">
                   <p className="text-sm text-muted-foreground mb-4">Or share via:</p>
-                  <div className="flex justify-center gap-4">
-                      <Button variant="outline" asChild className="w-full md:w-auto">
+                  <div className="flex flex-wrap justify-center gap-4">
+                      <Button variant="outline" asChild className="w-full sm:w-auto">
                         <a href={inviteLink.trim() ? mailtoLink : undefined} target="_blank" rel="noopener noreferrer">
                           <Mail className="mr-2 h-5 w-5" /> Email
                         </a>
                       </Button>
-                      <Button variant="outline" disabled className="w-full md:w-auto">
-                          <Share2 className="mr-2 h-5 w-5" /> Social Media (Coming Soon)
+                      <Button variant="outline" asChild disabled={!inviteLink}>
+                        <a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer">
+                          <PinterestIcon className="mr-2 h-5 w-5" /> Pinterest
+                        </a>
+                      </Button>
+                      <Button variant="outline" onClick={handleTikTokShare} disabled={!inviteLink}>
+                          <TikTokIcon className="mr-2 h-5 w-5" /> TikTok
                       </Button>
                   </div>
               </div>

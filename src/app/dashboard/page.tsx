@@ -24,6 +24,9 @@ import { RockWheelDialog } from '@/components/features/dashboard/rock-wheel-dial
 import { allRocks, type Rock } from '@/components/features/dashboard/rock-data';
 import { WelcomeRock } from '@/components/icons/rocks/welcome-rock';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { PinterestIcon } from '@/components/icons/PinterestIcon';
+import { TikTokIcon } from '@/components/icons/TikTokIcon';
+
 
 interface StoredAnalysis {
   id: string;
@@ -241,9 +244,23 @@ export default function DashboardPage() {
         });
     }
   };
+  
+  const shareText = inviteLink ? `Hey! Check out SnapYoga - an awesome app to analyze and improve your yoga poses: ${inviteLink}` : '';
+  const whatsappShareUrl = inviteLink ? `whatsapp://send?text=${encodeURIComponent(shareText)}` : '#';
+  const pinterestShareUrl = inviteLink ? `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(inviteLink)}&media=${encodeURIComponent('https://placehold.co/600x400.png')}&description=${encodeURIComponent(shareText)}` : '#';
+  
+  const handleTikTokShare = () => {
+    if (navigator.clipboard && inviteLink) {
+        navigator.clipboard.writeText(inviteLink).then(() => {
+            toast({
+                title: "Link Copied for TikTok!",
+                description: "Paste this link in your TikTok bio or video description.",
+                duration: 5000,
+            });
+        });
+    }
+  };
 
-  const whatsappShareText = inviteLink ? `Hey! Check out SnapYoga - an awesome app to analyze and improve your yoga poses: ${inviteLink}` : '';
-  const whatsappShareUrl = inviteLink ? `whatsapp://send?text=${encodeURIComponent(whatsappShareText)}` : '#';
 
   const handleInstagramShare = () => {
     if (navigator.clipboard && inviteLink) {
@@ -493,6 +510,9 @@ export default function DashboardPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
+                     <div className="text-center p-3 bg-green-100/50 text-green-800 border border-green-200 rounded-md text-sm font-medium">
+                        {t('referralBonusText')}
+                    </div>
                     <div>
                       <p className="text-sm font-medium mb-1">{t('yourInviteLink')}</p>
                       <div className="flex items-center space-x-2">
@@ -508,26 +528,22 @@ export default function DashboardPage() {
                         </Button>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <Button
-                        variant="outline"
-                        className="w-full"
-                        asChild={!!inviteLink}
-                        disabled={!inviteLink}
-                      >
+                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <Button variant="outline" className="w-full" asChild disabled={!inviteLink}>
                         <a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer">
-                          <MessageSquare className="mr-2 h-5 w-5" />
-                          {t('shareOnWhatsapp')}
+                            <MessageSquare className="mr-2 h-5 w-5" /> WhatsApp
                         </a>
                       </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full"
-                        onClick={handleInstagramShare}
-                        disabled={!inviteLink}
-                      >
-                        <Share2 className="mr-2 h-5 w-5" />
-                        {t('shareOnInstagram')}
+                       <Button variant="outline" className="w-full" onClick={handleInstagramShare} disabled={!inviteLink}>
+                         <Share2 className="mr-2 h-5 w-5" /> Instagram
+                      </Button>
+                      <Button variant="outline" className="w-full" asChild disabled={!inviteLink}>
+                        <a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer">
+                           <PinterestIcon className="mr-2 h-5 w-5" /> Pinterest
+                        </a>
+                      </Button>
+                       <Button variant="outline" className="w-full" onClick={handleTikTokShare} disabled={!inviteLink}>
+                          <TikTokIcon className="mr-2 h-5 w-5" /> TikTok
                       </Button>
                     </div>
                   </CardContent>
@@ -625,5 +641,3 @@ export default function DashboardPage() {
     </AppShell>
   );
 }
-
-    

@@ -17,6 +17,10 @@ import { ArrowRight, Users, PlusCircle, Crown, Star, Scale, Zap, Spline, Anchor,
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { PinterestIcon } from '@/components/icons/PinterestIcon';
+import { TikTokIcon } from '@/components/icons/TikTokIcon';
+
 
 interface Friend {
   id: string;
@@ -155,6 +159,7 @@ const categoryIcons: Record<Challenge['category'], React.ElementType> = {
 
 function InviteFriendDialog() {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [inviteLink, setInviteLink] = useState('');
 
   React.useEffect(() => {
@@ -181,6 +186,19 @@ function InviteFriendDialog() {
   const shareText = `Hey! I'm using SnapYoga to improve my practice. You should check it out: ${inviteLink}`;
   const mailtoLink = `mailto:?subject=${encodeURIComponent("Join me on SnapYoga!")}&body=${encodeURIComponent(shareText)}`;
   const whatsappLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+  const pinterestShareUrl = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(inviteLink)}&media=${encodeURIComponent('https://placehold.co/600x400.png')}&description=${encodeURIComponent(shareText)}`;
+
+  const handleTikTokShare = () => {
+    if (navigator.clipboard && inviteLink) {
+        navigator.clipboard.writeText(inviteLink).then(() => {
+            toast({
+                title: "Link Copied for TikTok!",
+                description: "Paste this link in your TikTok bio or video description.",
+                duration: 5000,
+            });
+        });
+    }
+  };
 
   const handleInstagramShare = () => {
      if (navigator.clipboard && inviteLink) {
@@ -213,6 +231,9 @@ function InviteFriendDialog() {
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
+          <div className="text-center p-3 bg-green-100/50 text-green-800 border border-green-200 rounded-md text-sm font-medium">
+              {t('referralBonusText')}
+          </div>
           <div className="space-y-2">
             <Label htmlFor="invite-link">Copy your invite link</Label>
             <div className="flex space-x-2">
@@ -226,7 +247,7 @@ function InviteFriendDialog() {
               </Button>
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2">
              <Button variant="outline" asChild>
               <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
                 <Share2 className="mr-2 h-4 w-4" /> WhatsApp
@@ -239,6 +260,14 @@ function InviteFriendDialog() {
             </Button>
              <Button variant="outline" onClick={handleInstagramShare}>
               <Share2 className="mr-2 h-4 w-4" /> Instagram
+            </Button>
+             <Button variant="outline" asChild>
+              <a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer">
+                <PinterestIcon className="mr-2 h-4 w-4" /> Pinterest
+              </a>
+            </Button>
+             <Button variant="outline" onClick={handleTikTokShare}>
+                <TikTokIcon className="mr-2 h-4 w-4" /> TikTok
             </Button>
           </div>
         </div>
