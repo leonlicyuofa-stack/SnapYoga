@@ -20,6 +20,7 @@ import { useToast } from '@/hooks/use-toast';
 import { LuckyWheelDialog } from '@/components/features/homepage/lucky-wheel-dialog'; 
 import { RockCollectionCard } from '@/components/features/dashboard/rock-collection-card';
 import { RewardDialog } from '@/components/features/dashboard/reward-dialog';
+import { RockWheelDialog } from '@/components/features/dashboard/rock-wheel-dialog';
 import { allRocks, type Rock } from '@/components/features/dashboard/rock-data';
 import { WelcomeRock } from '@/components/icons/rocks/welcome-rock';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -206,6 +207,14 @@ export default function DashboardPage() {
     }
   }, [user, authLoading, toast]);
 
+  const handleRockReward = (rock: Rock) => {
+      setShowRockWheelDialog(false);
+      setRewardedRock(rock);
+      setShowRewardDialog(true);
+      // In a real app, you would also save this rock to the user's collection in Firestore
+      console.log("User won rock:", rock.name);
+  }
+
   const getScoreBadgeVariant = (score: number): "default" | "secondary" | "destructive" | "outline" => {
     if (score >= 90) return "default";
     if (score >= 75) return "secondary";
@@ -305,6 +314,11 @@ export default function DashboardPage() {
             rock={rewardedRock} 
           />
         )}
+        <RockWheelDialog 
+            isOpen={showRockWheelDialog} 
+            onClose={() => setShowRockWheelDialog(false)}
+            onReward={handleRockReward}
+        />
         <div className="flex flex-col items-center w-full">
           {user && !authLoading && (
             <div className="w-full bg-card/80 backdrop-blur-sm p-4 md:p-6 rounded-lg shadow-md border border-border mb-8 md:mb-12">
@@ -345,12 +359,12 @@ export default function DashboardPage() {
                               Challenge Rewards
                           </CardTitle>
                           <CardDescription>
-                              Completed a challenge? Spin the wheel to claim your rock!
+                            You've completed the Headstand Challenge! Claim your reward.
                           </CardDescription>
                       </CardHeader>
                       <CardContent>
                           <Button onClick={() => setShowRockWheelDialog(true)} className="w-full" size="lg">
-                              Claim Challenge Reward
+                              Claim Your Rock!
                           </Button>
                       </CardContent>
                   </Card>
@@ -611,3 +625,5 @@ export default function DashboardPage() {
     </AppShell>
   );
 }
+
+    

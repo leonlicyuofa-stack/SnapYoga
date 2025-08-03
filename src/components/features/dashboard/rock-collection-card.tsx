@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Gem, ArrowRight } from 'lucide-react';
 import type { Rock } from './rock-data';
 import { Badge } from "@/components/ui/badge";
+import Link from 'next/link';
 
 interface RockCollectionCardProps {
   rocks: Rock[];
@@ -77,11 +78,15 @@ export function RockCollectionCard({ rocks }: RockCollectionCardProps) {
         </TooltipProvider>
       </CardContent>
       <CardFooter className="flex justify-end">
-          <Button variant="outline" disabled>
-              Check Out Our Rocks Section (Coming Soon)
-              <ArrowRight className="ml-2 h-4 w-4" />
+          <Button variant="outline" asChild>
+              <Link href="/rocks">
+                Check Out Our Rocks Section
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
           </Button>
       </CardFooter>
     </Card>
   );
 }
+
+    
