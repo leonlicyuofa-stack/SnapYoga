@@ -61,51 +61,49 @@ export default function CrowPoseChallengePage() {
                     </Link>
                 </Button>
 
-                <Card className="shadow-xl overflow-hidden">
-                    <div className="relative w-full h-64 md:h-80">
-                         <Image
-                            src={challengeDetails.imageUrl}
-                            alt={challengeDetails.name}
-                            fill
-                            className="object-cover"
-                            data-ai-hint={challengeDetails.imageHint}
-                         />
-                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                         <div className="absolute bottom-0 left-0 p-6 md:p-8">
-                             <h1 className="text-3xl md:text-4xl font-extrabold text-white">{challengeDetails.name}</h1>
-                              <div className="flex items-center flex-wrap gap-x-4 gap-y-2 mt-2">
-                                <Badge variant="secondary">Upcoming Challenge</Badge>
-                                <div className="flex items-center gap-1.5">
-                                    {Array.from({ length: 5 }).map((_, i) => (
-                                        <Star key={i} className={cn("h-5 w-5", i < challengeDetails.difficulty ? "text-yellow-400 fill-yellow-400" : "text-gray-400")} />
-                                    ))}
-                                </div>
-                                <div className="flex items-center gap-2 text-white/90">
-                                    <Users className="h-5 w-5" />
-                                    <span className="font-medium">{challengeDetails.totalParticipants} participants ({challengeDetails.friendsInChallengeCount} {challengeDetails.friendsInChallengeCount === 1 ? 'friend' : 'friends'})</span>
-                                </div>
-                             </div>
+                <div className="relative w-full h-64 md:h-80 rounded-lg overflow-hidden shadow-xl">
+                     <Image
+                        src={challengeDetails.imageUrl}
+                        alt={challengeDetails.name}
+                        fill
+                        className="object-cover"
+                        data-ai-hint={challengeDetails.imageHint}
+                     />
+                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                     <div className="absolute bottom-0 left-0 p-6 md:p-8">
+                         <h1 className="text-3xl md:text-4xl font-extrabold text-white">{challengeDetails.name}</h1>
+                          <div className="flex items-center flex-wrap gap-x-4 gap-y-2 mt-2">
+                            <Badge variant="secondary">Upcoming Challenge</Badge>
+                            <div className="flex items-center gap-1.5">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                    <Star key={i} className={cn("h-5 w-5", i < challengeDetails.difficulty ? "text-yellow-400 fill-yellow-400" : "text-gray-400")} />
+                                ))}
+                            </div>
+                            <div className="flex items-center gap-2 text-white/90">
+                                <Users className="h-5 w-5" />
+                                <span className="font-medium">{challengeDetails.totalParticipants} participants ({challengeDetails.friendsInChallengeCount} {challengeDetails.friendsInChallengeCount === 1 ? 'friend' : 'friends'})</span>
+                            </div>
                          </div>
+                     </div>
+                </div>
+                <div className="p-6 md:p-8 bg-card/80 backdrop-blur-sm rounded-b-lg shadow-xl mb-12">
+                    <p className="text-lg text-muted-foreground leading-relaxed">{challengeDetails.description}</p>
+                    <Separator className="my-8" />
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <Button size="lg" className="w-full sm:w-auto flex-grow text-lg py-7 bg-primary hover:bg-primary/90" asChild>
+                            <Link href="/snap-yoga">
+                              <Video className="mr-2 h-5 w-5" />
+                              Analyze My Crow Pose
+                            </Link>
+                        </Button>
+                        <Button size="lg" variant="accent" asChild className="w-full sm:w-auto flex-grow text-lg py-7">
+                            <Link href={challengeDetails.inviteLink}>
+                                <Users className="mr-2 h-5 w-5" />
+                                Invite Friends
+                            </Link>
+                        </Button>
                     </div>
-                    <CardContent className="p-6 md:p-8">
-                        <p className="text-lg text-muted-foreground leading-relaxed">{challengeDetails.description}</p>
-                        <Separator className="my-8" />
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <Button size="lg" className="w-full sm:w-auto flex-grow text-lg py-7 bg-primary hover:bg-primary/90" asChild>
-                                <Link href="/snap-yoga">
-                                  <Video className="mr-2 h-5 w-5" />
-                                  Analyze My Crow Pose
-                                </Link>
-                            </Button>
-                            <Button size="lg" variant="accent" asChild className="w-full sm:w-auto flex-grow text-lg py-7">
-                                <Link href={challengeDetails.inviteLink}>
-                                    <Users className="mr-2 h-5 w-5" />
-                                    Invite Friends
-                                </Link>
-                            </Button>
-                        </div>
-                    </CardContent>
-                </Card>
+                </div>
 
                 {/* Friends in Challenge Section */}
                 <div className="mt-12">
@@ -113,7 +111,7 @@ export default function CrowPoseChallengePage() {
                     {friendsInChallenge.length > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
                             {friendsInChallenge.map((friend) => (
-                                <Card key={friend.id} className="text-center p-4 shadow-lg hover:shadow-xl transition-shadow flex flex-col items-center justify-center">
+                                <Card key={friend.id} className="text-center p-4 shadow-lg hover:shadow-xl transition-shadow flex flex-col items-center justify-center bg-card/80 backdrop-blur-sm">
                                     <Avatar className="h-20 w-20 border-4 border-primary/20">
                                         <AvatarImage src={friend.avatarUrl} alt={friend.name} data-ai-hint={friend.avatarHint} />
                                         <AvatarFallback>{friend.name.charAt(0)}</AvatarFallback>
@@ -147,7 +145,7 @@ export default function CrowPoseChallengePage() {
                                 </div>
                                 <div className="grid grid-cols-1 gap-8">
                                     {week.videos.map((video) => (
-                                        <Card key={video.day} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow w-full">
+                                        <Card key={video.day} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow w-full bg-card/80 backdrop-blur-sm">
                                         <div className="grid grid-cols-1 md:grid-cols-2 items-center">
                                                 <div className="aspect-video">
                                                     <iframe
@@ -181,5 +179,3 @@ export default function CrowPoseChallengePage() {
         </AppShell>
     );
 }
-
-    

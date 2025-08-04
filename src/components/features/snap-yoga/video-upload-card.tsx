@@ -61,8 +61,8 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
   };
 
   return (
-    <Card className="w-full shadow-lg">
-      <CardHeader>
+    <div className="w-full p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
+      <CardHeader className="p-0">
         <CardTitle className="flex items-center gap-2 text-2xl">
           <UploadCloud className="h-7 w-7 text-primary" />
           Upload Your Yoga Pose Video
@@ -71,7 +71,7 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
           Select a video of your yoga pose. We'll analyze it and provide feedback.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="p-0 space-y-6 mt-6">
         <div className="space-y-2">
           <Label htmlFor="video-upload" className="text-base font-medium">Video File</Label>
           <Input
@@ -100,6 +100,6 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
           {isLoading ? 'Analyzing...' : 'Analyze Pose'}
         </Button>
       </CardContent>
-    </Card>
+    </div>
   );
 }

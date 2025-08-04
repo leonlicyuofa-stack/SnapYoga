@@ -27,8 +27,8 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
   const videoSrc = videoDataUri;
 
   return (
-    <Card className="w-full shadow-lg">
-      <CardHeader>
+    <div className="w-full shadow-lg p-6 bg-card/80 backdrop-blur-sm rounded-lg">
+      <CardHeader className="p-0">
         <CardTitle className="flex items-center gap-2 text-2xl">
           <Activity className="h-7 w-7 text-primary" />
           Pose Analysis
@@ -37,7 +37,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
           {videoSrc ? `Showing analysis for ${videoFileName || 'your video'}.` : "Upload a video to see your pose analysis here."}
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="p-0 space-y-6 mt-6">
         <div className="aspect-video w-full bg-muted rounded-md overflow-hidden flex items-center justify-center border border-dashed">
           {isLoading && !videoSrc && (
             <div className="flex flex-col items-center text-muted-foreground p-4">
@@ -139,12 +139,12 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
         )}
       </CardContent>
       {analysis && (
-        <CardFooter>
+        <CardFooter className="p-0 pt-6">
             <p className="text-xs text-muted-foreground">
                 Remember, AI feedback and scores are guides. Listen to your body and consult a professional if needed.
             </p>
         </CardFooter>
       )}
-    </Card>
+    </div>
   );
 }

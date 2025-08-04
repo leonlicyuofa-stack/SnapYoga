@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -166,15 +167,15 @@ export default function ProfilePage() {
           </p>
         </header>
 
-        <Card className="shadow-xl">
-          <CardHeader>
+        <div className="p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
+          <CardHeader className="p-0 mb-6">
             <CardTitle className="text-2xl font-semibold flex items-center gap-2">
               <Ruler className="h-6 w-6 text-primary" />
               Your Measurements
             </CardTitle>
             <CardDescription>Update your height and weight. This is optional and helps us personalize suggestions.</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             <form onSubmit={handleSubmitMeasurements(onMeasurementsSubmit)} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -228,19 +229,19 @@ export default function ProfilePage() {
               </Button>
             </form>
           </CardContent>
-        </Card>
+        </div>
 
         <Separator />
 
-        <Card className="shadow-xl">
-          <CardHeader>
+        <div className="p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
+          <CardHeader className="p-0 mb-6">
             <CardTitle className="text-2xl font-semibold flex items-center gap-2">
               <KeyRound className="h-6 w-6 text-primary" />
               Change Password
             </CardTitle>
             <CardDescription>Update your account password for better security.</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             <form onSubmit={handleSubmitPassword(onPasswordSubmit)} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="currentPassword">Current Password</Label>
@@ -284,24 +285,24 @@ export default function ProfilePage() {
               </Button>
             </form>
           </CardContent>
-           <CardFooter>
+           <CardFooter className="p-0 pt-6">
             <p className="text-xs text-muted-foreground">
               Ensure your new password is strong and unique.
             </p>
           </CardFooter>
-        </Card>
+        </div>
 
         <Separator />
 
-        <Card className="shadow-xl">
-          <CardHeader>
+        <div className="p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
+          <CardHeader className="p-0 mb-6">
             <CardTitle className="text-2xl font-semibold flex items-center gap-2">
               <Languages className="h-6 w-6 text-primary" />
               Language Settings
             </CardTitle>
             <CardDescription>Choose your preferred language for the app.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="p-0 space-y-4">
             <div>
               <Label htmlFor="language-select">Select Language</Label>
                 <Select value={selectedLanguage} onValueChange={handleLanguageChange}>
@@ -321,12 +322,12 @@ export default function ProfilePage() {
               Note: Full application translation is a feature planned for the future. This setting currently saves your preference.
             </p>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="p-0 pt-6">
             <p className="text-xs text-muted-foreground">
               We're working to make SnapYoga accessible to everyone!
             </p>
           </CardFooter>
-        </Card>
+        </div>
       </div>
     </AppShell>
   );

@@ -222,8 +222,8 @@ export default function HeadstandInvitePage() {
             Back to Challenges
           </Link>
         </Button>
-        <Card className="max-w-2xl mx-auto shadow-xl rounded-lg overflow-hidden">
-          <CardHeader className="text-center bg-muted/30 p-8">
+        <div className="max-w-2xl mx-auto p-6 md:p-8 bg-card/80 backdrop-blur-sm shadow-xl rounded-lg overflow-hidden">
+          <CardHeader className="p-0 text-center mb-8">
             <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mx-auto mb-4">
                 <Link2 className="h-10 w-10 text-primary" />
             </div>
@@ -232,7 +232,7 @@ export default function HeadstandInvitePage() {
               Share this link with your friends and conquer the pose together!
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-6 md:p-8 space-y-8">
+          <CardContent className="p-0 space-y-8">
             <div> {/* Section for sharing unique link */}
              <div className="text-center p-3 mb-6 bg-green-100/50 text-green-800 border border-green-200 rounded-md text-sm font-medium">
                   {t('referralBonusText')}
@@ -380,12 +380,12 @@ export default function HeadstandInvitePage() {
             </div>
 
           </CardContent>
-          <CardFooter className="p-6 bg-muted/30">
+          <CardFooter className="p-0 pt-8 mt-8 border-t border-border">
             <p className="text-xs text-muted-foreground text-center w-full">
                 Happy practicing! Invite your friends to join the fun and support each other.
             </p>
           </CardFooter>
-        </Card>
+        </div>
       </div>
     </AppShell>
   );

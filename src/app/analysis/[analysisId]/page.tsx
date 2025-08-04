@@ -136,14 +136,14 @@ export default function PastAnalysisPage() {
         <div className="container mx-auto px-4 py-12">
           <Skeleton className="h-10 w-1/4 mb-8" />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            <Card>
-                <CardHeader><Skeleton className="h-8 w-3/4" /><Skeleton className="h-4 w-1/2 mt-2" /></CardHeader>
-                <CardContent><Skeleton className="aspect-video w-full rounded-md" /><Skeleton className="h-24 w-full mt-4" /></CardContent>
-            </Card>
-            <Card>
-                <CardHeader><Skeleton className="h-8 w-3/4" /><Skeleton className="h-4 w-1/2 mt-2" /></CardHeader>
-                <CardContent><Skeleton className="h-40 w-full" /></CardContent>
-            </Card>
+            <div className="p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
+                <Skeleton className="h-8 w-3/4" /><Skeleton className="h-4 w-1/2 mt-2" />
+                <Skeleton className="aspect-video w-full rounded-md mt-4" /><Skeleton className="h-24 w-full mt-4" />
+            </div>
+            <div className="p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
+                <Skeleton className="h-8 w-3/4" /><Skeleton className="h-4 w-1/2 mt-2" />
+                <Skeleton className="h-40 w-full mt-4" />
+            </div>
           </div>
         </div>
       </AppShell>
@@ -203,8 +203,8 @@ export default function PastAnalysisPage() {
         </div>
         
 
-        <Card className="mb-8 shadow-lg">
-          <CardHeader>
+        <div className="mb-8 p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
+          <CardHeader className="p-0">
             <CardTitle className="flex items-center gap-2 text-3xl text-primary">
               <FileText className="h-8 w-8" />
               Pose Analysis Report
@@ -218,7 +218,7 @@ export default function PastAnalysisPage() {
               Analyzed on: {format(analysisDetail.createdAt.toDate(), 'PPP p')}
             </CardDescription>
           </CardHeader>
-        </Card>
+        </div>
 
         <div className="grid grid-cols-1 gap-8 items-start">
           {/* We now pass the stored videoUrl instead of the data URI */}

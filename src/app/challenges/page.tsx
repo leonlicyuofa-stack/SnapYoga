@@ -317,15 +317,7 @@ export default function ChallengesPage() {
           </p>
         </div>
 
-        <Card className="shadow-xl">
-          <CardHeader className="p-6 sm:p-8">
-            <CardTitle className="flex items-center gap-3 text-3xl">
-              <Users className="h-8 w-8 text-primary" />
-              Challenge Friends
-            </CardTitle>
-            <CardDescription className="text-base">Add friends to join challenges and track progress together.</CardDescription>
-          </CardHeader>
-          <CardContent className="p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-8">
+        <div className="p-6 sm:p-8 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl flex flex-col sm:flex-row items-center justify-between gap-8">
             <div className="flex -space-x-6">
               {friends.map(friend => (
                 <Avatar key={friend.id} className="h-16 w-16 border-4 border-background hover:z-10 transition-transform hover:scale-110">
@@ -335,8 +327,7 @@ export default function ChallengesPage() {
               ))}
             </div>
             <InviteFriendDialog />
-          </CardContent>
-        </Card>
+        </div>
 
         <div className="space-y-12">
           {categoryOrder.map((category) => {
@@ -351,7 +342,7 @@ export default function ChallengesPage() {
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {challengesInCategory.map((challenge, index) => (
-                    <Card key={challenge.id} className="overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group rounded-lg flex flex-col">
+                    <Card key={challenge.id} className="overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group rounded-lg flex flex-col bg-card/80 backdrop-blur-sm">
                       <div className="relative w-full h-64">
                         <Image
                           src={typeof challenge.imageUrl === 'string' ? challenge.imageUrl : challenge.imageUrl.src}

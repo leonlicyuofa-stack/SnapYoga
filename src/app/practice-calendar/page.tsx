@@ -80,11 +80,9 @@ export default function PracticeCalendarPage() {
         <div className="container mx-auto px-4 py-12">
           <Skeleton className="h-10 w-3/4 mb-4" />
           <Skeleton className="h-6 w-1/2 mb-8" />
-          <Card className="max-w-2xl mx-auto">
-            <CardContent className="p-0">
-              <Skeleton className="h-[350px] w-full" />
-            </CardContent>
-          </Card>
+          <div className="max-w-md mx-auto p-1 sm:p-2 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
+             <Skeleton className="h-[330px] sm:h-[350px] w-full max-w-xs sm:max-w-sm" />
+          </div>
         </div>
       </AppShell>
     );
@@ -111,8 +109,7 @@ export default function PracticeCalendarPage() {
           </Alert>
         )}
 
-        <Card className="max-w-md mx-auto shadow-xl overflow-hidden">
-          <CardContent className="p-1 sm:p-2 flex justify-center">
+        <div className="max-w-md mx-auto p-1 sm:p-2 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl overflow-hidden">
             {isLoadingData && !error ? (
               <Skeleton className="h-[330px] sm:h-[350px] w-full max-w-xs sm:max-w-sm" />
             ) : !error ? (
@@ -132,22 +129,20 @@ export default function PracticeCalendarPage() {
                 disabled={isLoadingData} // Prevent interaction while loading (though not strictly needed for display)
               />
             ) : null}
-          </CardContent>
-          {practiceDates.length > 0 && !isLoadingData && !error && (
-            <CardFooter className="bg-muted/50 p-4 text-center">
-              <p className="text-sm text-muted-foreground w-full">
-                Highlighted days indicate completed pose analyses.
-              </p>
-            </CardFooter>
-          )}
-           {practiceDates.length === 0 && !isLoadingData && !error && (
-            <CardFooter className="bg-muted/50 p-4 text-center">
-              <p className="text-sm text-muted-foreground w-full">
-                No practices recorded yet. Analyze a pose to see it here!
-              </p>
-            </CardFooter>
-          )}
-        </Card>
+          
+           <div className="bg-muted/50 p-4 text-center">
+              {practiceDates.length > 0 && !isLoadingData && !error && (
+                <p className="text-sm text-muted-foreground w-full">
+                  Highlighted days indicate completed pose analyses.
+                </p>
+              )}
+               {practiceDates.length === 0 && !isLoadingData && !error && (
+                <p className="text-sm text-muted-foreground w-full">
+                  No practices recorded yet. Analyze a pose to see it here!
+                </p>
+              )}
+           </div>
+        </div>
       </div>
     </AppShell>
   );

@@ -59,16 +59,16 @@ export default function RockCollectionPage() {
                 const isCollected = collectedRockIds.includes(rock.id);
                 const RockIcon = rock.icon;
                 return (
-                    <Card 
+                    <div 
                         key={rock.id} 
                         className={cn(
-                            "shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col",
-                            isCollected ? 'bg-card' : 'bg-muted/50',
+                            "shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col p-6 rounded-lg bg-card/80 backdrop-blur-sm",
+                            isCollected ? '' : 'bg-muted/50',
                             getRarityClass(rock.rarity)
                         )}
                         style={{borderWidth: '2px'}}
                     >
-                        <CardHeader className="items-center text-center">
+                        <CardHeader className="p-0 items-center text-center">
                             <div className={cn(
                                 "p-3 rounded-full mb-3",
                                 isCollected ? 'bg-primary/10' : 'bg-secondary'
@@ -78,11 +78,11 @@ export default function RockCollectionPage() {
                             <CardTitle style={{color: rock.color}}>{rock.name}</CardTitle>
                             <Badge variant={getRarityBadgeVariant(rock.rarity)}>{rock.rarity}</Badge>
                         </CardHeader>
-                        <CardContent className="flex-grow text-center space-y-2">
+                        <CardContent className="p-0 flex-grow text-center space-y-2 mt-4">
                             <CardDescription className="italic">&quot;{rock.story}&quot;</CardDescription>
                             <p className="text-sm text-foreground/80">{rock.description}</p>
                         </CardContent>
-                        <CardFooter className="justify-center">
+                        <CardFooter className="p-0 justify-center pt-4">
                             {isCollected ? (
                                 <Badge variant="default" className="bg-green-600 hover:bg-green-700">
                                     <CheckCircle className="mr-2 h-4 w-4" />
@@ -95,7 +95,7 @@ export default function RockCollectionPage() {
                                 </Badge>
                             )}
                         </CardFooter>
-                    </Card>
+                    </div>
                 )
             })}
         </div>

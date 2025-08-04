@@ -17,10 +17,16 @@ interface RecommendedVideosCardProps {
 }
 
 export function RecommendedVideosCard({ videos, isLoading }: RecommendedVideosCardProps) {
+  const ContentContainer = ({ children }: { children: React.ReactNode }) => (
+    <div className="w-full p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl mt-8">
+      {children}
+    </div>
+  );
+
   if (isLoading) {
     return (
-        <Card className="w-full shadow-lg mt-8">
-            <CardHeader>
+        <ContentContainer>
+            <CardHeader className="p-0">
                 <CardTitle className="flex items-center gap-2 text-2xl">
                     <Youtube className="h-7 w-7 text-primary" />
                     Recommended Training Videos
@@ -29,7 +35,7 @@ export function RecommendedVideosCard({ videos, isLoading }: RecommendedVideosCa
                     Loading recommended videos to help you improve...
                 </CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <CardContent className="p-0 grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 {[1, 2].map((i) => (
                     <div key={i} className="space-y-2">
                         <Skeleton className="aspect-video bg-muted rounded-md" />
@@ -37,13 +43,13 @@ export function RecommendedVideosCard({ videos, isLoading }: RecommendedVideosCa
                     </div>
                 ))}
             </CardContent>
-        </Card>
+        </ContentContainer>
     );
   }
 
   return (
-    <Card className="w-full shadow-lg mt-8">
-      <CardHeader>
+    <ContentContainer>
+      <CardHeader className="p-0">
         <CardTitle className="flex items-center gap-2 text-2xl">
           <Youtube className="h-7 w-7 text-primary" />
           Recommended Training Videos
@@ -54,7 +60,7 @@ export function RecommendedVideosCard({ videos, isLoading }: RecommendedVideosCa
             : "Explore these general tips or check back later for more specific recommendations."}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-0 mt-6">
         {videos.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
             {videos.map((video) => (
@@ -81,6 +87,6 @@ export function RecommendedVideosCard({ videos, isLoading }: RecommendedVideosCa
           <p className="text-muted-foreground text-center py-4">No specific video recommendations available at the moment. Consider practicing foundational poses or general flexibility routines.</p>
         )}
       </CardContent>
-    </Card>
+    </ContentContainer>
   );
 }

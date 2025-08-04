@@ -36,8 +36,8 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
 
   if (!isAnalysisDone) {
     return (
-      <Card className="w-full shadow-lg opacity-50 cursor-not-allowed">
-        <CardHeader>
+      <div className="w-full p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl opacity-50 cursor-not-allowed">
+        <CardHeader className="p-0">
           <CardTitle className="flex items-center gap-2 text-2xl">
             <MessageCircleQuestion className="h-7 w-7 text-primary" />
             Provide Feedback
@@ -46,17 +46,17 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
             Once your pose is analyzed, you can provide feedback on the suggestions here.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 mt-6">
             <Skeleton className="h-24 w-full" />
             <Skeleton className="h-10 w-full mt-4" />
         </CardContent>
-      </Card>
+      </div>
     );
   }
 
   return (
-    <Card className="w-full shadow-lg">
-      <CardHeader>
+    <div className="w-full p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
+      <CardHeader className="p-0">
         <CardTitle className="flex items-center gap-2 text-2xl">
           <MessageCircleQuestion className="h-7 w-7 text-primary" />
           Provide Feedback on Suggestions
@@ -65,7 +65,7 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
           Let us know if the suggestions were helpful or if you have any comments.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="p-0 space-y-6 mt-6">
         <div>
           <Label htmlFor="feedback-text" className="text-base font-medium">Your Feedback</Label>
           <Textarea
@@ -119,12 +119,12 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
         )}
       </CardContent>
       {summary && (
-        <CardFooter>
+        <CardFooter className="p-0 pt-6">
             <p className="text-xs text-muted-foreground">
                 Thank you for your feedback! We've noted your comments.
             </p>
         </CardFooter>
       )}
-    </Card>
+    </div>
   );
 }
