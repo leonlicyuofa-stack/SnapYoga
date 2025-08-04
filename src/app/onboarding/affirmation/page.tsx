@@ -16,6 +16,12 @@ export default function OnboardingAffirmationPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [isRevealed, setIsRevealed] = useState(false);
+  const [luckyNumber, setLuckyNumber] = useState<number | null>(null);
+
+  const handleReveal = () => {
+    setLuckyNumber(Math.floor(Math.random() * 100) + 1);
+    setIsRevealed(true);
+  };
 
   const handleNext = () => {
     router.push('/onboarding/yoga-goal');
@@ -58,26 +64,22 @@ export default function OnboardingAffirmationPage() {
         </div>
         
         <div className="relative z-10 flex flex-col items-center">
-            <Heart className="mx-auto h-12 w-12 text-primary mb-4" />
-            <h1 className="text-3xl font-bold text-foreground">Quote of the Day</h1>
+            <Sparkles className="mx-auto h-12 w-12 text-primary mb-4" />
+            <h1 className="text-3xl font-bold text-foreground">What's your lucky number today?</h1>
 
             <div 
-              className="relative aspect-[9/16] w-full max-w-xs mx-auto rounded-lg overflow-hidden cursor-pointer group my-8 shadow-xl"
-              onClick={() => setIsRevealed(true)}
+              className="relative w-full max-w-xs h-64 mx-auto rounded-lg cursor-pointer group my-8 shadow-xl flex items-center justify-center bg-card/80 backdrop-blur-sm border-2 border-dashed border-muted-foreground/30 transition-colors hover:border-primary hover:bg-primary/5"
+              onClick={!isRevealed ? handleReveal : undefined}
             >
               {!isRevealed ? (
-                 <div className="absolute inset-0 bg-card/80 backdrop-blur-sm flex flex-col items-center justify-center border-2 border-dashed border-muted-foreground/30 transition-colors group-hover:border-primary group-hover:bg-primary/5">
+                 <div className="flex flex-col items-center justify-center">
                     <Sparkles className="h-10 w-10 text-muted-foreground/50 mb-2 transition-colors group-hover:text-primary" />
                     <p className="text-lg font-semibold text-muted-foreground transition-colors group-hover:text-primary">Tap to Reveal</p>
                 </div>
               ) : (
-                <Image
-                    src="https://images.unsplash.com/photo-1670796223293-b86095de8e59?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxNHx8bW90aXZhdGlvbmFsJTIwcXVvdGV8ZW58MHx8fHwxNzU0MzEzMTY0fDA&ixlib=rb-4.1.0&q=80&w=1080"
-                    alt="Consistency is the key"
-                    fill
-                    className="object-cover animate-in fade-in duration-500"
-                    data-ai-hint="motivational quote"
-                 />
+                <div className="text-8xl font-bold text-primary animate-in zoom-in-150 duration-500">
+                    {luckyNumber}
+                </div>
               )}
             </div>
 
