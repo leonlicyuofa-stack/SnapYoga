@@ -39,8 +39,7 @@ export default function OnboardingAffirmationPage() {
         <Card className="w-full max-w-md shadow-xl text-center">
           <CardHeader>
             <Heart className="mx-auto h-12 w-12 text-primary mb-4" />
-            <CardTitle className="text-3xl font-bold">A Moment of Motivation</CardTitle>
-            <CardDescription>Consistency is the key to progress in your yoga journey.</CardDescription>
+            <CardTitle className="text-3xl font-bold">Quote of the Day</CardTitle>
           </CardHeader>
           <CardContent className="py-8">
             <div className="relative aspect-[9/16] w-full max-w-xs mx-auto rounded-lg overflow-hidden">
