@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -68,7 +67,7 @@ export default function GenderProfilePage() {
           displayName: data.nickname,
           birthday: data.birthday.toISOString().split('T')[0], // Store as YYYY-MM-DD string
       });
-      router.push('/onboarding/yoga-goal');
+      router.push('/onboarding/affirmation');
     } catch (error) {
       console.error("Error saving profile:", error);
       toast({
