@@ -143,6 +143,16 @@
   }
 }
 
+@layer components {
+  /* New Bottom Navigation Bar Styles */
+  .btm-nav {
+    @apply fixed bottom-0 left-0 right-0 z-40 flex h-16 items-stretch justify-around border-t bg-card/80 shadow-[0_-1px_4px_rgba(0,0,0,0.05)] backdrop-blur-sm;
+  }
+  .btm-nav-label {
+    @apply text-xs transition-opacity duration-200 sm:text-sm;
+  }
+}
+
 @layer utilities {
   .animate-pebble-pulse {
     animation: pebble-pulse 2.5s infinite ease-in-out;

@@ -6,7 +6,7 @@ import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogIn, LogOut, UserCircle, Loader2, Home, Settings, CalendarDays, Trophy, Languages } from 'lucide-react';
+import { LogIn, LogOut, UserCircle, Loader2, Home, Settings, CalendarDays, Trophy, Languages, Sparkles } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,8 +54,10 @@ export function AppShell({ children }: AppShellProps) {
 
   const navLinkClasses = (path: string) => 
     cn(
-      "flex items-center",
-      pathname === path ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground"
+      "flex flex-col items-center justify-center h-full w-full gap-1 p-2 rounded-md transition-colors",
+      pathname === path 
+        ? "bg-primary/10 text-primary font-semibold" 
+        : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
     );
 
   const homeLinkPath = user ? "/dashboard" : "/";
@@ -64,6 +66,13 @@ export function AppShell({ children }: AppShellProps) {
     const newLang = language === 'en' ? 'id' : 'en';
     setLanguage(newLang);
   };
+  
+  // Hide shell elements on specific routes like the landing page or auth pages
+  const noShellRoutes = ['/auth/signin', '/auth/signup', '/auth/verify-email', '/', '/welcome', '/onboarding/gender-profile'];
+  if (noShellRoutes.includes(pathname)) {
+      return <>{children}</>;
+  }
+
 
   return (
     <div className="relative flex flex-col min-h-screen bg-background selection:bg-primary/20 selection:text-primary">
@@ -75,40 +84,13 @@ export function AppShell({ children }: AppShellProps) {
             <SmileyPebbleIcon className="absolute top-1/3 left-1/2 w-20 h-20 text-accent/20 animate-float-4" />
         </div>
 
-      <header className="sticky top-0 z-50 w-full border-b bg-card/80 backdrop-blur-sm shadow-sm">
-        <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-40 w-full border-b bg-card/80 backdrop-blur-sm shadow-sm">
+        <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href={user ? "/dashboard" : "/"} className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm">
             <SnapYogaLogo />
           </Link>
           
-          <nav className="flex items-center space-x-2 sm:space-x-4">
-            <Button variant="ghost" asChild className={navLinkClasses(homeLinkPath)}>
-              <Link href={homeLinkPath}>
-                <Home className="mr-0 sm:mr-2 h-5 w-5" />
-                <span className="hidden sm:inline">{t('navHome')}</span>
-              </Link>
-            </Button>
-            {user && ( 
-              <>
-                <Button variant="ghost" asChild className={navLinkClasses("/practice-calendar")}>
-                  <Link href="/practice-calendar">
-                    <CalendarDays className="mr-0 sm:mr-2 h-5 w-5" />
-                    <span className="hidden sm:inline">{t('navCalendar')}</span>
-                  </Link>
-                </Button>
-                <Button variant="ghost" asChild className={navLinkClasses("/challenges")}>
-                  <Link href="/challenges">
-                    <Trophy className="mr-0 sm:mr-2 h-5 w-5" />
-                    <span className="hidden sm:inline">{t('navChallenges')}</span>
-                  </Link>
-                </Button>
-              </>
-            )}
-            <div className="flex-grow sm:hidden"></div> 
-             <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3" aria-label="Switch Language">
-               <span className="mr-2">🇮🇩</span> Bahasa
-            </Button>
-            
+          <div className="flex items-center space-x-2">
             {loading ? (
               <Loader2 className="h-6 w-6 animate-spin text-primary" />
             ) : user ? (
@@ -153,33 +135,51 @@ export function AppShell({ children }: AppShellProps) {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <>
-                <Button variant="ghost" asChild className="h-9 px-4 py-2">
-                  <Link href="/auth/signin">
-                    <LogIn className="mr-2 h-5 w-5" />
-                    {t('signIn')}
-                  </Link>
-                </Button>
-                <Button asChild className="h-9 px-4 py-2">
+               <Button asChild className="h-9 px-4 py-2">
                   <Link href="/auth/signup">
                     <UserCircle className="mr-2 h-5 w-5" />
                     {t('signUp')}
                   </Link>
                 </Button>
-              </>
             )}
-          </nav>
+            </div>
         </div>
       </header>
-      <main className="flex-grow container mx-auto px-4 py-8 sm:px-6 lg:px-8">
+
+      <main className="flex-grow container mx-auto px-4 py-8 sm:px-6 lg:px-8 mb-20">
         {children}
       </main>
-      <footer className="py-8 border-t bg-card/80 backdrop-blur-sm">
-        <div className="container mx-auto flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
-          <p className="text-sm text-muted-foreground">
-            {t('footerText')}
-          </p>
-        </div>
+
+      {/* Bottom Navigation */}
+       <footer className="btm-nav">
+          <Link href={homeLinkPath} className={navLinkClasses(homeLinkPath)}>
+            <Home className="h-6 w-6" />
+            <span className="btm-nav-label">{t('navHome')}</span>
+          </Link>
+          
+          {user && (
+            <Link href="/practice-calendar" className={navLinkClasses("/practice-calendar")}>
+                <CalendarDays className="h-6 w-6" />
+                <span className="btm-nav-label">{t('navCalendar')}</span>
+            </Link>
+          )}
+
+          <Link href="/snap-yoga" className={cn(navLinkClasses('/snap-yoga'), "bg-accent/20 text-accent-foreground")}>
+            <Sparkles className="h-6 w-6" />
+            <span className="btm-nav-label">Analyze</span>
+          </Link>
+
+          {user && (
+            <Link href="/challenges" className={navLinkClasses("/challenges")}>
+                <Trophy className="h-6 w-6" />
+                <span className="btm-nav-label">{t('navChallenges')}</span>
+            </Link>
+          )}
+
+          <Link href="/profile" className={navLinkClasses("/profile")}>
+            <UserCircle className="h-6 w-6" />
+            <span className="btm-nav-label">{t('profile')}</span>
+          </Link>
       </footer>
     </div>
   );
