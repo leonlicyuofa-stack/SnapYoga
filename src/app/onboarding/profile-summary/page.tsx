@@ -138,7 +138,6 @@ export default function ProfileSummaryPage() {
                 {renderDetailItem("Display Name", profileData.displayName, undefined, '/onboarding/gender-profile')} {/* Assuming name/displayName is part of first steps */}
                 {renderDetailItem("Email", profileData.email)}
                 {renderDetailItem("Gender", profileData.gender, undefined, '/onboarding/gender-profile')}
-                {renderDetailItem("Age Group", profileData.ageGroup, undefined, '/onboarding/age-group')}
                 {renderDetailItem("Main Yoga Goal", profileData.mainGoal, undefined, '/onboarding/yoga-goal')}
                 {renderDetailItem("Height", profileData.height, profileData.heightUnit, '/onboarding/measurements')}
                 {renderDetailItem("Weight", profileData.weight, profileData.weightUnit, '/onboarding/measurements')}
