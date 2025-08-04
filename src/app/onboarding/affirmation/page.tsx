@@ -45,7 +45,7 @@ export default function OnboardingAffirmationPage() {
           <CardContent className="py-8">
             <div className="relative aspect-[9/16] w-full max-w-xs mx-auto rounded-lg overflow-hidden">
                 <Image
-                    src="https://storage.googleapis.com/project-1-426515-3999bb.appspot.com/revisions/2a4b8686-35ba-411a-8452-fefce0c5e7b5/image-1.jpeg"
+                    src="https://images.unsplash.com/photo-1670796223293-b86095de8e59?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxNHx8bW90aXZhdGlvbmFsJTIwcXVvdGV8ZW58MHx8fHwxNzU0MzEzMTY0fDA&ixlib=rb-4.1.0&q=80&w=1080"
                     alt="Consistency is the key"
                     fill
                     className="object-cover"
