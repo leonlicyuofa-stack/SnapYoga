@@ -2,6 +2,7 @@
 "use client";
 
 import type { SVGProps } from 'react';
+import { cn } from '@/lib/utils';
 
 export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
   return (
@@ -15,42 +16,33 @@ export function PebbleTrioIcon(props: SVGProps<SVGSVGElement>) {
       </defs>
 
       {/* Left Pebble */}
-      <g transform="translate(-10, 25)">
-        <ellipse cx="25" cy="50" rx="15" ry="12" fill="#FFD1DC" stroke="#757575" strokeWidth="0.5" />
-        {/* Blush */}
-        <ellipse cx="20" cy="52" rx="4" ry="2" fill="url(#blushGradient)" />
-        <ellipse cx="30" cy="52" rx="4" ry="2" fill="url(#blushGradient)" />
-        {/* Eyes */}
-        <ellipse cx="22" cy="48" rx="1.5" ry="3" fill="#424242" />
-        <ellipse cx="28" cy="48" rx="1.5" ry="3" fill="#424242" />
-        {/* Smile */}
-        <path d="M24 55 Q 25 57 26 55" stroke="#424242" strokeWidth="0.5" fill="none" strokeLinecap="round" />
+      <g className="animate-pebble-bounce" style={{ animationDelay: '0s' }}>
+        <ellipse cx="25" cy="65" rx="15" ry="15" fill="#FFD1DC" stroke="#757575" strokeWidth="0.5" />
+        <g className="animate-pebble-eyes">
+            <ellipse cx="22" cy="62" rx="1.5" ry="3" fill="#424242" />
+            <ellipse cx="28" cy="62" rx="1.5" ry="3" fill="#424242" />
+        </g>
+        <path d="M24 72 Q 25 74 26 72" stroke="#424242" strokeWidth="0.5" fill="none" strokeLinecap="round" />
       </g>
 
       {/* Center Pebble */}
-      <g transform="translate(0, 25)">
-        <ellipse cx="50" cy="50" rx="15" ry="12" fill="#FFFACD" stroke="#757575" strokeWidth="0.5" />
-        {/* Blush */}
-        <ellipse cx="45" cy="52" rx="4" ry="2" fill="url(#blushGradient)" />
-        <ellipse cx="55" cy="52" rx="4" ry="2" fill="url(#blushGradient)" />
-        {/* Eyes */}
-        <ellipse cx="47" cy="48" rx="1.5" ry="3" fill="#424242" />
-        <ellipse cx="53" cy="48" rx="1.5" ry="3" fill="#424242" />
-        {/* Smile */}
-        <path d="M49 55 Q 50 57 51 55" stroke="#424242" strokeWidth="0.5" fill="none" strokeLinecap="round" />
+      <g className="animate-pebble-bounce" style={{ animationDelay: '0.2s' }}>
+        <ellipse cx="50" cy="65" rx="15" ry="15" fill="#FFFACD" stroke="#757575" strokeWidth="0.5" />
+        <g className="animate-pebble-eyes">
+            <ellipse cx="47" cy="62" rx="1.5" ry="3" fill="#424242" />
+            <ellipse cx="53" cy="62" rx="1.5" ry="3" fill="#424242" />
+        </g>
+        <path d="M49 72 Q 50 74 51 72" stroke="#424242" strokeWidth="0.5" fill="none" strokeLinecap="round" />
       </g>
 
       {/* Right Pebble */}
-      <g transform="translate(10, 25)">
-        <ellipse cx="75" cy="50" rx="15" ry="12" fill="#ADD8E6" stroke="#757575" strokeWidth="0.5" />
-         {/* Blush */}
-        <ellipse cx="70" cy="52" rx="4" ry="2" fill="url(#blushGradient)" />
-        <ellipse cx="80" cy="52" rx="4" ry="2" fill="url(#blushGradient)" />
-        {/* Eyes */}
-        <ellipse cx="72" cy="48" rx="1.5" ry="3" fill="#424242" />
-        <ellipse cx="78" cy="48" rx="1.5" ry="3" fill="#424242" />
-        {/* Smile */}
-        <path d="M74 55 Q 75 57 76 55" stroke="#424242" strokeWidth="0.5" fill="none" strokeLinecap="round" />
+      <g className="animate-pebble-bounce" style={{ animationDelay: '0.4s' }}>
+        <ellipse cx="75" cy="65" rx="15" ry="15" fill="#ADD8E6" stroke="#757575" strokeWidth="0.5" />
+        <g className="animate-pebble-eyes">
+            <ellipse cx="72" cy="62" rx="1.5" ry="3" fill="#424242" />
+            <ellipse cx="78" cy="62" rx="1.5" ry="3" fill="#424242" />
+        </g>
+        <path d="M74 72 Q 75 74 76 72" stroke="#424242" strokeWidth="0.5" fill="none" strokeLinecap="round" />
       </g>
     </svg>
   );

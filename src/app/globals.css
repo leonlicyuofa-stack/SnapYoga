@@ -163,6 +163,15 @@
     animation: pebble-bounce-right 2.5s ease-in-out infinite;
   }
 
+  .animate-pebble-bounce {
+    animation: pebble-bounce 2s infinite ease-in-out;
+    transform-origin: 50% 100%;
+  }
+  .animate-pebble-eyes {
+    animation: pebble-eyes 2s infinite ease-in-out;
+  }
+
+
   /* Signup Page Animations */
   .animate-breathing-bg {
     animation: breathing-bg 15s ease-in-out infinite;
@@ -547,4 +556,28 @@
   100% {
     opacity: 1;
   }
+}
+
+@keyframes pebble-bounce {
+  0%, 40%, 100% {
+    transform: translateY(0) scale(1, 1);
+  }
+  10% {
+    transform: translateY(0) scale(1.1, 0.9);
+  }
+  20% {
+    transform: translateY(-15px) scale(0.9, 1.1);
+  }
+  30% {
+    transform: translateY(0) scale(1.05, 0.95);
+  }
+}
+
+@keyframes pebble-eyes {
+    0%, 15%, 25%, 100% {
+        transform: scaleY(1);
+    }
+    20% {
+        transform: scaleY(0.1);
+    }
 }
