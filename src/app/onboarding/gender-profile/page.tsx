@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -9,47 +8,42 @@ import * as z from 'zod';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
-import { Loader2, User, Users, ArrowRight } from 'lucide-react';
-import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
+import { Loader2, ArrowRight, X, CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { FemaleAvatar } from '@/components/icons/FemaleAvatar';
+import { MaleAvatar } from '@/components/icons/MaleAvatar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
 
-const genderProfileSchema = z.object({
-  gender: z.string().min(1, { message: "Please select a gender option" }),
+const profileSchema = z.object({
+  gender: z.string().min(1, { message: "Please select a gender" }),
+  nickname: z.string().min(2, { message: "Nickname must be at least 2 characters" }),
+  birthday: z.date({
+    required_error: "A date of birth is required.",
+  }),
 });
 
-type GenderProfileFormValues = z.infer<typeof genderProfileSchema>;
-
-const genderOptions = [
-  { value: "male", label: "Male" },
-  { value: "female", label: "Female" },
-  { value: "non-binary", label: "Non-binary" },
-  { value: "prefer-not-to-say", label: "Prefer not to say" },
-];
+type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export default function GenderProfilePage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [animateLandingPebble, setAnimateLandingPebble] = useState(false);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined' && sessionStorage.getItem('snapYogaPebbleIncoming') === 'true') {
-      setAnimateLandingPebble(true);
-      sessionStorage.removeItem('snapYogaPebbleIncoming');
-      setTimeout(() => {
-        setAnimateLandingPebble(false);
-      }, 1000); // Animation duration (0.7s) + buffer
-    }
-  }, []);
-
-  const { control, handleSubmit, formState: { errors } } = useForm<GenderProfileFormValues>({
-    resolver: zodResolver(genderProfileSchema),
+  const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileSchema),
+     defaultValues: {
+      nickname: "",
+    },
   });
+
+  const selectedGender = watch('gender');
 
   if (authLoading) {
     return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div></AppShell>;
@@ -60,20 +54,25 @@ export default function GenderProfilePage() {
     return <AppShell><div className="flex justify-center items-center min-h-screen"><p>Redirecting to sign in...</p></div></AppShell>;
   }
 
-  const onSubmit: SubmitHandler<GenderProfileFormValues> = async (data) => {
+  const onSubmit: SubmitHandler<ProfileFormValues> = async (data) => {
     if (!user) {
       toast({ title: "Error", description: "No authenticated user found.", variant: "destructive" });
       return;
     }
     setIsSubmitting(true);
     try {
-      await createUserProfileDocument(user, { gender: data.gender });
+      // We are using 'nickname' for the 'displayName' field in Firestore
+      await createUserProfileDocument(user, { 
+          gender: data.gender,
+          displayName: data.nickname,
+          birthday: data.birthday.toISOString().split('T')[0], // Store as YYYY-MM-DD string
+      });
       router.push('/onboarding/age-group');
     } catch (error) {
-      console.error("Error saving gender:", error);
+      console.error("Error saving profile:", error);
       toast({
         title: "Save Failed",
-        description: "Could not save your gender. Please try again.",
+        description: "Could not save your profile. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -83,60 +82,105 @@ export default function GenderProfilePage() {
 
   return (
     <AppShell>
-      <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
-        <Card className="w-full max-w-lg shadow-xl">
-          <CardHeader className="text-center">
-            <div className="relative mx-auto mb-4">
-              <Users className="h-12 w-12 text-primary" />
-              {animateLandingPebble && (
-                <SmileyPebbleIcon className="absolute -bottom-2 -right-3 h-8 w-8 text-accent animate-pebble-land-on-icon" />
-              )}
+      <div className="flex min-h-[calc(100vh-5rem)] items-center justify-center bg-muted/20 p-4">
+        <Card className="w-full max-w-sm shadow-xl rounded-3xl">
+          <CardHeader>
+             <div className="flex justify-start mb-6">
+                <Button variant="ghost" size="icon" className="rounded-full" onClick={() => router.back()}>
+                    <X className="h-5 w-5" />
+                </Button>
             </div>
-            <CardTitle className="text-3xl font-bold">Your Profile</CardTitle>
-            <CardDescription>Please select your gender.</CardDescription>
+            <CardTitle className="text-2xl font-bold text-center">Please fill in the true information</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <Controller
-                name="gender"
-                control={control}
-                render={({ field }) => (
-                  <RadioGroup
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    className="grid grid-cols-1 gap-4 sm:grid-cols-2"
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+              <div className="flex justify-around items-center">
+                  <div 
+                    className={cn(
+                        "cursor-pointer p-4 border-2 rounded-2xl transition-all w-32 h-32 flex flex-col items-center justify-center space-y-2",
+                        selectedGender === 'female' ? 'border-pink-400 bg-pink-50' : 'border-transparent'
+                    )}
+                    onClick={() => setValue('gender', 'female', { shouldValidate: true })}
                   >
-                    {genderOptions.map((option) => (
-                      <Label
-                        key={option.value}
-                        htmlFor={`gender-${option.value}`}
-                        className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary cursor-pointer transition-colors"
-                      >
-                        <RadioGroupItem value={option.value} id={`gender-${option.value}`} className="sr-only" />
-                        <User className="mb-3 h-6 w-6" />
-                        {option.label}
-                      </Label>
-                    ))}
-                  </RadioGroup>
-                )}
-              />
-              {errors.gender && <p className="text-sm text-destructive text-center">{errors.gender.message}</p>}
+                    <span className={cn("font-semibold", selectedGender === 'female' ? 'text-pink-500' : 'text-muted-foreground')}>Girl</span>
+                    <FemaleAvatar className="w-16 h-16"/>
+                  </div>
+                   <div 
+                    className={cn(
+                        "cursor-pointer p-4 border-2 rounded-2xl transition-all w-32 h-32 flex flex-col items-center justify-center space-y-2",
+                        selectedGender === 'male' ? 'border-blue-400 bg-blue-50' : 'border-transparent'
+                    )}
+                    onClick={() => setValue('gender', 'male', { shouldValidate: true })}
+                  >
+                    <span className={cn("font-semibold", selectedGender === 'male' ? 'text-blue-500' : 'text-muted-foreground')}>Boy</span>
+                    <MaleAvatar className="w-16 h-16"/>
+                  </div>
+              </div>
+              {errors.gender && <p className="text-sm text-destructive text-center -mt-4">{errors.gender.message}</p>}
+
+              <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                    <Label htmlFor="nickname" className="font-semibold text-base">Nickname</Label>
+                    <Input
+                        id="nickname"
+                        {...register("nickname")}
+                        className="w-1/2 text-right border-0 border-b-2 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary"
+                        placeholder="e.g. Chahua"
+                    />
+                </div>
+                 {errors.nickname && <p className="text-sm text-destructive text-right -mt-4">{errors.nickname.message}</p>}
+
+                 <div className="flex justify-between items-center">
+                    <Label className="font-semibold text-base">Birthday</Label>
+                     <Controller
+                        name="birthday"
+                        control={control}
+                        render={({ field }) => (
+                           <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                variant={"outline"}
+                                className={cn(
+                                    "w-1/2 justify-end text-right font-normal border-0 border-b-2 rounded-none",
+                                    !field.value && "text-muted-foreground"
+                                )}
+                                >
+                                {field.value ? (
+                                    format(field.value, "PPP")
+                                ) : (
+                                    <span>Pick a date</span>
+                                )}
+                                <CalendarIcon className="ml-2 h-4 w-4" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0">
+                                <Calendar
+                                mode="single"
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) =>
+                                    date > new Date() || date < new Date("1900-01-01")
+                                }
+                                initialFocus
+                                />
+                            </PopoverContent>
+                            </Popover>
+                        )}
+                        />
+                </div>
+                 {errors.birthday && <p className="text-sm text-destructive text-right -mt-4">{errors.birthday.message}</p>}
+                <p className="text-xs text-muted-foreground">* Real age can quickly match accurate objects</p>
+              </div>
+
               <Button 
                 type="submit" 
-                className="w-full" 
-                isLoadingWithBar={isSubmitting}
+                className="w-full rounded-full text-lg py-6 bg-cyan-400 hover:bg-cyan-500" 
                 disabled={isSubmitting || authLoading}
               >
-                <ArrowRight className="mr-2 h-5 w-5" />
-                Next
+                {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Next'}
               </Button>
             </form>
           </CardContent>
-          <CardFooter>
-            <p className="text-xs text-muted-foreground text-center w-full">
-              This information helps us tailor your SnapYoga experience.
-            </p>
-          </CardFooter>
         </Card>
       </div>
     </AppShell>
