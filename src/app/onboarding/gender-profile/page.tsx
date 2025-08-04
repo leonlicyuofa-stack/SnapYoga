@@ -20,6 +20,7 @@ import { MaleAvatar } from '@/components/icons/MaleAvatar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { format, differenceInYears } from 'date-fns';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const profileSchema = z.object({
   gender: z.string().min(1, { message: "Please select a gender" }),
@@ -179,7 +180,7 @@ export default function GenderProfilePage() {
                                     )}
                                     >
                                     {field.value ? (
-                                        format(field.value, "dd/MM/yyyy")
+                                        format(field.value, "PPP")
                                     ) : (
                                         <span>Pick a date</span>
                                     )}
@@ -187,18 +188,19 @@ export default function GenderProfilePage() {
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0">
+                                   <ScrollArea className="h-72">
                                     <Calendar
-                                    mode="single"
-                                    captionLayout="dropdown-buttons"
-                                    fromYear={new Date().getFullYear() - 100}
-                                    toYear={new Date().getFullYear()}
-                                    selected={field.value}
-                                    onSelect={field.onChange}
-                                    disabled={(date) =>
-                                        date > new Date() || date < new Date("1900-01-01")
-                                    }
-                                    initialFocus
+                                        mode="single"
+                                        selected={field.value}
+                                        onSelect={field.onChange}
+                                        disabled={(date) =>
+                                            date > new Date() || date < new Date("1900-01-01")
+                                        }
+                                        initialFocus
+                                        numberOfMonths={2}
+                                        defaultMonth={field.value || new Date(new Date().setFullYear(new Date().getFullYear() - 25))}
                                     />
+                                   </ScrollArea>
                                 </PopoverContent>
                                 </Popover>
                             )}
