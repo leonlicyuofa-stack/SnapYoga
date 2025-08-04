@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -9,8 +8,6 @@ import * as z from 'zod';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
 import { Loader2, Target, ArrowRight, ArrowLeft, HeartPulse, Wind, Spline, Dumbbell, BrainCircuit, MoreHorizontal } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -94,72 +91,69 @@ export default function YogaGoalPage() {
                 <path d="M 100,0 L 0,0 C 50,50 0,50 0,100 L 100,100 Z" fill="hsl(var(--splash-blob-2))" style={{ opacity: 0.5 }}/>
             </svg>
         </div>
-        <Card className="w-full max-w-2xl shadow-xl z-10 bg-card/80 backdrop-blur-sm">
-          <CardHeader className="text-center">
-            <Target className="mx-auto h-12 w-12 text-primary mb-4" />
-            <CardTitle className="text-3xl font-bold">Your Main Yoga Goal</CardTitle>
-            <CardDescription>What do you hope to achieve with yoga?</CardDescription>
-          </CardHeader>
-          <CardContent>
+        <div className="w-full max-w-2xl z-10 px-4">
+            <div className="text-center mb-8">
+                <Target className="mx-auto h-12 w-12 text-primary mb-4" />
+                <h1 className="text-3xl font-bold text-foreground">Your Main Yoga Goal</h1>
+                <p className="text-muted-foreground mt-2">What do you hope to achieve with yoga?</p>
+            </div>
+            
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <Controller
-                  name="mainGoal"
-                  control={control}
-                  render={({ field }) => (
+                    name="mainGoal"
+                    control={control}
+                    render={({ field }) => (
                     <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="grid grid-cols-2 md:grid-cols-3 gap-4"
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="grid grid-cols-2 md:grid-cols-3 gap-4"
                     >
-                      {mainGoalOptions.map((option) => {
+                        {mainGoalOptions.map((option) => {
                         const Icon = option.icon;
                         return (
-                          <Label
+                            <Label
                             key={option.value}
                             htmlFor={`goal-${option.value}`}
-                            className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 h-32 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary cursor-pointer transition-colors"
-                          >
+                            className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card/80 backdrop-blur-sm p-4 h-32 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/10 cursor-pointer transition-all shadow-md"
+                            >
                             <RadioGroupItem value={option.value} id={`goal-${option.value}`} className="sr-only" />
                             <Icon className="mb-2 h-8 w-8" />
                             <span className="text-center font-semibold">{option.label}</span>
-                          </Label>
+                            </Label>
                         );
-                      })}
+                        })}
                     </RadioGroup>
-                  )}
+                    )}
                 />
-              {errors.mainGoal && <p className="text-sm text-destructive text-center">{errors.mainGoal.message}</p>}
-              <div className="flex flex-col sm:flex-row gap-2 pt-4">
+                {errors.mainGoal && <p className="text-sm text-destructive text-center">{errors.mainGoal.message}</p>}
+                <div className="flex flex-col sm:flex-row gap-2 pt-4">
                 <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={handleBackNavigation} 
-                  className="w-full flex-grow"
-                  isLoadingWithBar={isNavigatingBack}
-                  loadingBarDirection="rtl"
-                  disabled={isSubmitting || isNavigatingBack}
+                    type="button" 
+                    variant="outline" 
+                    onClick={handleBackNavigation} 
+                    className="w-full flex-grow bg-card/80 backdrop-blur-sm"
+                    isLoadingWithBar={isNavigatingBack}
+                    loadingBarDirection="rtl"
+                    disabled={isSubmitting || isNavigatingBack}
                 >
                     <ArrowLeft className="mr-2 h-5 w-5" />
                     Back
                 </Button>
                 <Button 
-                  type="submit" 
-                  className="w-full flex-grow" 
-                  isLoadingWithBar={isSubmitting}
-                  disabled={isSubmitting || authLoading || isNavigatingBack}
+                    type="submit" 
+                    className="w-full flex-grow" 
+                    isLoadingWithBar={isSubmitting}
+                    disabled={isSubmitting || authLoading || isNavigatingBack}
                 >
                     <ArrowRight className="mr-2 h-5 w-5" />
                     Next
                 </Button>
-              </div>
+                </div>
             </form>
-          </CardContent>
-           <CardFooter>
-            <p className="text-xs text-muted-foreground text-center w-full">
+             <p className="text-xs text-muted-foreground text-center w-full mt-6">
               Understanding your goals helps us personalize suggestions.
             </p>
-          </CardFooter>
-        </Card>
+        </div>
       </div>
     </AppShell>
   );
