@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -18,7 +19,7 @@ import { FemaleAvatar } from '@/components/icons/FemaleAvatar';
 import { MaleAvatar } from '@/components/icons/MaleAvatar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { format } from 'date-fns';
+import { format, differenceInYears } from 'date-fns';
 
 const profileSchema = z.object({
   gender: z.string().min(1, { message: "Please select a gender" }),
@@ -35,6 +36,7 @@ export default function GenderProfilePage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [age, setAge] = useState<number | null>(null);
 
   const { control, register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -44,6 +46,21 @@ export default function GenderProfilePage() {
   });
 
   const selectedGender = watch('gender');
+  const birthdayValue = watch('birthday');
+
+  useEffect(() => {
+    if (birthdayValue) {
+      try {
+        const calculatedAge = differenceInYears(new Date(), birthdayValue);
+        setAge(calculatedAge);
+      } catch (error) {
+        setAge(null); // Reset if date is invalid
+      }
+    } else {
+      setAge(null);
+    }
+  }, [birthdayValue]);
+
 
   if (authLoading) {
     return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div></AppShell>;
@@ -145,51 +162,58 @@ export default function GenderProfilePage() {
                 </div>
                  {errors.nickname && <p className="text-sm text-destructive text-right -mt-4">{errors.nickname.message}</p>}
 
-                 <div className="flex justify-between items-center">
-                    <Label className="font-semibold text-base">Birthday</Label>
-                     <Controller
-                        name="birthday"
-                        control={control}
-                        render={({ field }) => (
-                           <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                variant={"outline"}
-                                className={cn(
-                                    "w-1/2 justify-end text-right font-normal border-0 border-b-2 rounded-none",
-                                    !field.value && "text-muted-foreground"
-                                )}
-                                >
-                                {field.value ? (
-                                    format(field.value, "dd/MM/yyyy")
-                                ) : (
-                                    <span>Pick a date</span>
-                                )}
-                                <CalendarIcon className="ml-2 h-4 w-4" />
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                                <Calendar
-                                mode="single"
-                                selected={field.value}
-                                onSelect={field.onChange}
-                                disabled={(date) =>
-                                    date > new Date() || date < new Date("1900-01-01")
-                                }
-                                initialFocus
-                                />
-                            </PopoverContent>
-                            </Popover>
+                 <div className="flex justify-between items-start flex-col">
+                    <div className="flex justify-between items-center w-full">
+                        <Label className="font-semibold text-base">Birthday</Label>
+                         <Controller
+                            name="birthday"
+                            control={control}
+                            render={({ field }) => (
+                               <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                    variant={"outline"}
+                                    className={cn(
+                                        "w-1/2 justify-end text-right font-normal border-0 border-b-2 rounded-none",
+                                        !field.value && "text-muted-foreground"
+                                    )}
+                                    >
+                                    {field.value ? (
+                                        format(field.value, "dd/MM/yyyy")
+                                    ) : (
+                                        <span>Pick a date</span>
+                                    )}
+                                    <CalendarIcon className="ml-2 h-4 w-4" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0">
+                                    <Calendar
+                                    mode="single"
+                                    selected={field.value}
+                                    onSelect={field.onChange}
+                                    disabled={(date) =>
+                                        date > new Date() || date < new Date("1900-01-01")
+                                    }
+                                    initialFocus
+                                    />
+                                </PopoverContent>
+                                </Popover>
+                            )}
+                            />
+                    </div>
+                    <div className="w-full text-right">
+                        {errors.birthday && <p className="text-sm text-destructive -mt-4">{errors.birthday.message}</p>}
+                        {age !== null && !errors.birthday && (
+                          <p className="text-xs text-muted-foreground mt-1">Age: {age}</p>
                         )}
-                        />
+                    </div>
                 </div>
-                 {errors.birthday && <p className="text-sm text-destructive text-right -mt-4">{errors.birthday.message}</p>}
               </div>
 
               <Button 
                 type="submit" 
                 variant="default"
-                className="w-full rounded-full text-lg py-6" 
+                className="w-full rounded-full text-lg py-6 bg-primary hover:bg-primary/90 text-primary-foreground" 
                 disabled={isSubmitting || authLoading}
               >
                 {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Next'}
