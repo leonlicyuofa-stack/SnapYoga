@@ -27,6 +27,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { PebbleTrioIcon } from '@/components/icons/PebbleTrioIcon';
+import { HowToGuideDialog } from '@/components/features/dashboard/how-to-guide-dialog';
 
 
 interface StoredAnalysis {
@@ -75,6 +76,7 @@ export default function DashboardPage() {
   const [showRewardDialog, setShowRewardDialog] = useState(false);
   const [rewardedRock, setRewardedRock] = useState<Rock | null>(null);
   const [showWelcomeAnimation, setShowWelcomeAnimation] = useState(false);
+  const [showHowToGuide, setShowHowToGuide] = useState(false);
 
 
   useEffect(() => {
@@ -227,6 +229,12 @@ export default function DashboardPage() {
       console.log("User won rock:", rock.name);
   }
 
+  const handleRewardDialogClose = () => {
+    setShowRewardDialog(false);
+    // After the user closes the reward dialog, show the "How to" guide.
+    setShowHowToGuide(true);
+  }
+
   const getScoreBadgeVariant = (score: number): "default" | "secondary" | "destructive" | "outline" => {
     if (score >= 90) return "default";
     if (score >= 75) return "secondary";
@@ -344,10 +352,11 @@ export default function DashboardPage() {
         {rewardedRock && (
           <RewardDialog 
             isOpen={showRewardDialog} 
-            onClose={() => setShowRewardDialog(false)} 
+            onClose={handleRewardDialogClose} 
             rock={rewardedRock} 
           />
         )}
+        <HowToGuideDialog isOpen={showHowToGuide} onClose={() => setShowHowToGuide(false)} />
         <RockWheelDialog 
             isOpen={showRockWheelDialog} 
             onClose={() => setShowRockWheelDialog(false)}
