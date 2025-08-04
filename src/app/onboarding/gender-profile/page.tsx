@@ -105,7 +105,7 @@ export default function GenderProfilePage() {
                     <X className="h-5 w-5" />
                 </Button>
             </div>
-            <CardTitle className="text-2xl font-bold text-center">Who are you?</CardTitle>
+            <CardTitle className="text-2xl font-bold">Who are you?</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
