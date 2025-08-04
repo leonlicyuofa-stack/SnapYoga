@@ -4,22 +4,32 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { AppShell } from '@/components/layout/app-shell';
-import { ArrowRight, ArrowLeft, Heart, Hand, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
-import Image from 'next/image';
-import { cn } from '@/lib/utils';
+
+const affirmations = [
+    "I am becoming everything I’m meant to be, one small step at a time.",
+    "Today, I choose peace over pressure.",
+    "I don’t need to rush. What’s meant for me will find me.",
+    "I am allowed to take up space, rest, and breathe deeply.",
+    "Progress is quiet, gentle, and still counts.",
+    "I trust myself to grow through what I go through.",
+    "Even slow blooms still become flowers.",
+    "I honor where I am, even if it’s not where I thought I’d be.",
+    "Every breath is a reset. I start fresh now."
+];
 
 export default function OnboardingAffirmationPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [isRevealed, setIsRevealed] = useState(false);
-  const [luckyNumber, setLuckyNumber] = useState<number | null>(null);
+  const [affirmation, setAffirmation] = useState<string | null>(null);
 
   const handleReveal = () => {
-    setLuckyNumber(Math.floor(Math.random() * 100) + 1);
+    const randomIndex = Math.floor(Math.random() * affirmations.length);
+    setAffirmation(affirmations[randomIndex]);
     setIsRevealed(true);
   };
 
@@ -65,10 +75,10 @@ export default function OnboardingAffirmationPage() {
         
         <div className="relative z-10 flex flex-col items-center">
             <Sparkles className="mx-auto h-12 w-12 text-primary mb-4" />
-            <h1 className="text-3xl font-bold text-foreground">What's your lucky number today?</h1>
+            <h1 className="text-3xl font-bold text-foreground">Daily affirmation</h1>
 
             <div 
-              className="relative w-full max-w-xs h-64 mx-auto rounded-lg cursor-pointer group my-8 shadow-xl flex items-center justify-center bg-card/80 backdrop-blur-sm border-2 border-dashed border-muted-foreground/30 transition-colors hover:border-primary hover:bg-primary/5"
+              className="relative w-full max-w-sm h-64 mx-auto rounded-lg cursor-pointer group my-8 shadow-xl flex items-center justify-center bg-card/80 backdrop-blur-sm border-2 border-dashed border-muted-foreground/30 transition-colors hover:border-primary hover:bg-primary/5 p-6"
               onClick={!isRevealed ? handleReveal : undefined}
             >
               {!isRevealed ? (
@@ -77,9 +87,9 @@ export default function OnboardingAffirmationPage() {
                     <p className="text-lg font-semibold text-muted-foreground transition-colors group-hover:text-primary">Tap to Reveal</p>
                 </div>
               ) : (
-                <div className="text-8xl font-bold text-primary animate-in zoom-in-150 duration-500">
-                    {luckyNumber}
-                </div>
+                <p className="text-xl font-medium text-primary/90 animate-in zoom-in-125 duration-500">
+                    &ldquo;{affirmation}&rdquo;
+                </p>
               )}
             </div>
 
@@ -89,7 +99,7 @@ export default function OnboardingAffirmationPage() {
                     className="w-full"
                     variant="outline"
                 >
-                  <ArrowLeft className="ml-2 h-4 w-4" /> Back
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Back
                 </Button>
                 <Button 
                     onClick={handleNext} 
