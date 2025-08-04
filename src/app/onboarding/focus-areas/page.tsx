@@ -16,6 +16,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Loader2, Crosshair, ArrowRight, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 const focusAreasSchema = z.object({
   focusBodyParts: z.array(z.string()).min(1, { message: "Please select at least one focus area" }),
@@ -108,12 +109,18 @@ export default function FocusAreasPage() {
   };
 
   if (authLoading) {
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div></AppShell>;
+      return (
+          <AppShell>
+              <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
+                  <SmileyRockLoader text="Loading..." />
+              </div>
+          </AppShell>
+      );
   }
 
   if (!user && !authLoading) {
     router.replace('/auth/signin');
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><p>Redirecting to sign in...</p></div></AppShell>;
+    return null;
   }
 
   const onSubmit: SubmitHandler<FocusAreasFormValues> = async (data) => {
@@ -146,21 +153,36 @@ export default function FocusAreasPage() {
 
   return (
     <AppShell>
-      <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
-        <Card className="w-full max-w-2xl shadow-xl">
-          <CardHeader className="text-center">
+      <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4 text-center">
+        <div className="absolute inset-0 z-0 bg-splash-background">
+             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
+                <defs>
+                    <radialGradient id="blushGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                        <stop offset="0%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0.7 }} />
+                        <stop offset="100%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0 }} />
+                    </radialGradient>
+                </defs>
+                <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-blob-1))" />
+                <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
+                <path d="M 100,0 L 0,0 C 50,50 0,50 0,100 L 100,100 Z" fill="hsl(var(--splash-blob-2))" style={{ opacity: 0.5 }}/>
+            </svg>
+        </div>
+        
+        <div className="relative z-10 w-full max-w-2xl">
+          <div className="text-center mb-4">
             <Crosshair className="mx-auto h-12 w-12 text-primary mb-4" />
-            <CardTitle className="text-3xl font-bold">Focus Areas</CardTitle>
-            <CardDescription>Select body parts from the figure or choose a goal below.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <h1 className="text-3xl font-bold">Focus Areas</h1>
+            <p className="text-muted-foreground mt-2">Select body parts from the figure or choose a goal below.</p>
+          </div>
+          
+          <div className="bg-card/50 backdrop-blur-sm p-4 rounded-lg">
+             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <BodyFigure selectedParts={selectedParts} onPartToggle={handlePartToggle} />
               
               {selectedParts.length > 0 && (
                 <div className="space-y-2">
-                    <Label>Your Selection</Label>
-                    <div className="flex flex-wrap gap-2 p-3 border rounded-md min-h-[40px]">
+                    <Label className="text-foreground">Your Selection</Label>
+                    <div className="flex flex-wrap justify-center gap-2 p-3 border rounded-md min-h-[40px] bg-background/50">
                         {selectedParts.map(partId => {
                             const option = physicalBodyParts.find(opt => opt.id === partId);
                             return <Badge key={partId} variant="secondary">{option ? option.label.split(' (')[0] : partId}</Badge>
@@ -195,13 +217,11 @@ export default function FocusAreasPage() {
                 </Button>
               </div>
             </form>
-          </CardContent>
-          <CardFooter>
-            <p className="text-xs text-muted-foreground text-center w-full">
-              This helps us tailor content for you.
-            </p>
-          </CardFooter>
-        </Card>
+          </div>
+          <p className="text-xs text-muted-foreground text-center w-full mt-6">
+            This helps us tailor content for you.
+          </p>
+        </div>
       </div>
     </AppShell>
   );
