@@ -129,7 +129,7 @@ export default function DrawResultPage() {
               disabled={isFinalizing}
             >
               <ArrowRight className="mr-2 h-5 w-5" />
-              Complete Setup & Go to Dashboard
+              Go to Dashboard
             </Button>
           </CardContent>
           <CardFooter>
