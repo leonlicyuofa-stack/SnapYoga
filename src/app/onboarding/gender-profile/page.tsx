@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
+import { useForm, Controller, type SubmitHandler, useFormContext } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
@@ -82,15 +82,30 @@ export default function GenderProfilePage() {
 
   return (
     <AppShell>
-      <div className="flex min-h-[calc(100vh-5rem)] items-center justify-center bg-muted/20 p-4">
-        <Card className="w-full max-w-sm shadow-xl rounded-3xl">
+      <div className="relative flex min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 z-0 bg-splash-background">
+             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
+                <defs>
+                    <radialGradient id="blushGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                        <stop offset="0%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0.7 }} />
+                        <stop offset="100%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0 }} />
+                    </radialGradient>
+                </defs>
+                <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-blob-1))" />
+                <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
+                <path d="M 100,0 L 0,0 C 50,50 0,50 0,100 L 100,100 Z" fill="hsl(var(--splash-blob-2))" style={{ opacity: 0.5 }}/>
+            </svg>
+        </div>
+        
+        <Card className="relative z-10 w-full max-w-sm shadow-xl rounded-3xl bg-card/80 backdrop-blur-sm">
           <CardHeader>
              <div className="flex justify-start mb-6">
                 <Button variant="ghost" size="icon" className="rounded-full" onClick={() => router.back()}>
                     <X className="h-5 w-5" />
                 </Button>
             </div>
-            <CardTitle className="text-2xl font-bold text-center">Please fill in the true information</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">Who are you?</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -169,7 +184,6 @@ export default function GenderProfilePage() {
                         />
                 </div>
                  {errors.birthday && <p className="text-sm text-destructive text-right -mt-4">{errors.birthday.message}</p>}
-                <p className="text-xs text-muted-foreground">* Real age can quickly match accurate objects</p>
               </div>
 
               <Button 
