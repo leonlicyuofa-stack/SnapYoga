@@ -7,12 +7,10 @@ import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext'; // 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Send, RotateCw } from 'lucide-react';
+import { Send, RotateCw, Mail } from 'lucide-react';
 import { auth } from '@/lib/firebase/clientApp'; // direct import for sendEmailVerification
 import { sendEmailVerification as firebaseSendEmailVerification } from 'firebase/auth';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
-import { PebbleTrioIcon } from '@/components/icons/PebbleTrioIcon';
-
 
 export default function VerifyEmailPage() {
   const { user, loading: authLoading, signOutUser } = useAuth();
@@ -95,12 +93,10 @@ export default function VerifyEmailPage() {
             </svg>
         </div>
         
-        <div className="relative w-full max-w-lg mt-24">
-            <Card className="relative z-10 shadow-xl border-border/60 bg-card/80 backdrop-blur-sm pt-24">
-              <div className="absolute -top-24 left-1/2 -translate-x-1/2">
-                <PebbleTrioIcon className="h-auto w-40 sm:w-48 md:w-56 text-primary" />
-              </div>
-              <CardHeader className="text-center">
+        <div className="relative w-full max-w-lg">
+            <Card className="relative z-10 shadow-xl border-border/60 bg-card/80 backdrop-blur-sm text-center">
+              <CardHeader className="pt-8">
+                <Mail className="mx-auto h-12 w-12 text-primary mb-4" />
                 <CardTitle className="text-3xl font-bold">Verify Your Email</CardTitle>
                 <CardDescription className="font-sans">
                   A verification email has been sent to <span className="font-semibold text-primary">{user?.email}</span>.
