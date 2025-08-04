@@ -29,16 +29,8 @@ const physicalBodyParts = [
   { id: "core", label: "Core" },
   { id: "hips", label: "Hips" },
   { id: "legs", label: "Legs" },
+  { id: "back", label: "Back" },
 ];
-
-const conceptualGoals = [
-  { id: "back", label: "Back (Flexibility, Pain Relief)" },
-  { id: "full-body", label: "Full Body (Overall Fitness)" },
-  { id: "balance", label: "Balance & Coordination" },
-  { id: "mindfulness", label: "Mindfulness & Relaxation" },
-];
-
-const allOptions = [...physicalBodyParts, ...conceptualGoals];
 
 
 // Interactive Body Figure Component
@@ -71,6 +63,8 @@ const BodyFigure = ({ selectedParts, onPartToggle }: { selectedParts: string[]; 
           <path d="M125,80 l10,80 h-25 l5,-80 z" className={partClasses('arms')} />
         </g>
         
+        {/* Back (overlaying torso) */}
+        <path d="M55,90 h40 v65 h-40 z" rx="5" className={partClasses('back')} onClick={() => onPartToggle('back')}><title>Back</title></path>
         {/* Core */}
         <path d="M50,90 h50 v65 h-50 z" rx="5" className={partClasses('core')} onClick={() => onPartToggle('core')}><title>Core</title></path>
 
@@ -163,36 +157,12 @@ export default function FocusAreasPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <BodyFigure selectedParts={selectedParts} onPartToggle={handlePartToggle} />
               
-              <div className="space-y-2">
-                <Label>Other Goals</Label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {conceptualGoals.map((item) => (
-                      <div key={item.id} className="flex items-center space-x-2 p-3 border rounded-md hover:bg-muted/50 transition-colors">
-                        <Checkbox
-                          id={item.id}
-                          checked={selectedParts.includes(item.id)}
-                          onCheckedChange={(checked) => {
-                            const currentSelection = selectedParts || [];
-                            const newSelection = checked
-                              ? [...currentSelection, item.id]
-                              : currentSelection.filter((value) => value !== item.id);
-                            setValue('focusBodyParts', newSelection, { shouldValidate: true });
-                          }}
-                        />
-                        <Label htmlFor={item.id} className="font-normal cursor-pointer flex-grow">
-                          {item.label}
-                        </Label>
-                      </div>
-                    ))}
-                </div>
-              </div>
-
               {selectedParts.length > 0 && (
                 <div className="space-y-2">
                     <Label>Your Selection</Label>
                     <div className="flex flex-wrap gap-2 p-3 border rounded-md min-h-[40px]">
                         {selectedParts.map(partId => {
-                            const option = allOptions.find(opt => opt.id === partId);
+                            const option = physicalBodyParts.find(opt => opt.id === partId);
                             return <Badge key={partId} variant="secondary">{option ? option.label.split(' (')[0] : partId}</Badge>
                         })}
                     </div>
