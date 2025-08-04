@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { AppShell } from '@/components/layout/app-shell';
 import { Loader2, Target, ArrowRight, ArrowLeft, HeartPulse, Wind, Spline, Dumbbell, BrainCircuit, MoreHorizontal } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { useToast } from '@/hooks/use-toast';
 
 const yogaGoalSchema = z.object({
   mainGoal: z.string().min(1, { message: "Please select your main yoga goal" }),
