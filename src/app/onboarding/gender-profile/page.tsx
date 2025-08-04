@@ -36,7 +36,7 @@ export default function GenderProfilePage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProfileFormValues>({
+  const { control, register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
      defaultValues: {
       nickname: "",
