@@ -100,7 +100,7 @@ export default function GenderProfilePage() {
 
   return (
     <AppShell>
-      <div className="relative flex min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden">
+      <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden">
         {/* Animated Background */}
         <div className="absolute inset-0 z-0 bg-splash-background">
              <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
@@ -116,48 +116,45 @@ export default function GenderProfilePage() {
             </svg>
         </div>
         
-        <Card className="relative z-10 w-full max-w-sm shadow-xl rounded-3xl bg-card/80 backdrop-blur-sm">
-          <CardHeader>
+        <div className="relative z-10 w-full max-w-sm">
              <div className="flex justify-start mb-6">
-                <Button variant="ghost" size="icon" className="rounded-full" onClick={() => router.back()}>
+                <Button variant="ghost" size="icon" className="rounded-full bg-card/20 backdrop-blur-sm" onClick={() => router.back()}>
                     <X className="h-5 w-5" />
                 </Button>
             </div>
-            <CardTitle className="text-2xl font-bold">Who are you?</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+            <h1 className="text-2xl font-bold text-center">Who are you?</h1>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 mt-8">
               <div className="flex justify-around items-center">
                   <div 
                     className={cn(
-                        "cursor-pointer p-4 border-2 rounded-2xl transition-all w-32 h-32 flex flex-col items-center justify-center space-y-2",
-                        selectedGender === 'female' ? 'border-transparent bg-pink-50' : 'border-transparent'
+                        "cursor-pointer p-4 border-2 rounded-2xl transition-all w-32 h-32 flex flex-col items-center justify-center space-y-2 bg-card/20 backdrop-blur-sm",
+                        selectedGender === 'female' ? 'border-primary' : 'border-transparent'
                     )}
                     onClick={() => setValue('gender', 'female', { shouldValidate: true })}
                   >
-                    <span className={cn("font-semibold", selectedGender === 'female' ? 'text-pink-500' : 'text-muted-foreground')}>Female</span>
+                    <span className={cn("font-semibold", selectedGender === 'female' ? 'text-primary' : 'text-muted-foreground')}>Female</span>
                     <FemaleAvatar className="w-16 h-16"/>
                   </div>
                    <div 
                     className={cn(
-                        "cursor-pointer p-4 border-2 rounded-2xl transition-all w-32 h-32 flex flex-col items-center justify-center space-y-2",
-                        selectedGender === 'male' ? 'border-transparent bg-blue-50' : 'border-transparent'
+                        "cursor-pointer p-4 border-2 rounded-2xl transition-all w-32 h-32 flex flex-col items-center justify-center space-y-2 bg-card/20 backdrop-blur-sm",
+                        selectedGender === 'male' ? 'border-primary' : 'border-transparent'
                     )}
                     onClick={() => setValue('gender', 'male', { shouldValidate: true })}
                   >
-                    <span className={cn("font-semibold", selectedGender === 'male' ? 'text-blue-500' : 'text-muted-foreground')}>Male</span>
+                    <span className={cn("font-semibold", selectedGender === 'male' ? 'text-primary' : 'text-muted-foreground')}>Male</span>
                     <MaleAvatar className="w-16 h-16"/>
                   </div>
               </div>
               {errors.gender && <p className="text-sm text-destructive text-center -mt-4">{errors.gender.message}</p>}
 
-              <div className="space-y-6">
+              <div className="space-y-6 p-4 bg-card/20 backdrop-blur-sm rounded-2xl">
                 <div className="flex justify-between items-center">
                     <Label htmlFor="nickname" className="font-semibold text-base">Nickname</Label>
                     <Input
                         id="nickname"
                         {...register("nickname")}
-                        className="w-1/2 text-right border-0 border-b-2 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary"
+                        className="w-1/2 text-right border-0 border-b-2 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary bg-transparent"
                         placeholder="e.g. Chahua"
                     />
                 </div>
@@ -175,7 +172,7 @@ export default function GenderProfilePage() {
                                     <Button
                                     variant={"outline"}
                                     className={cn(
-                                        "w-1/2 justify-end text-right font-normal border-0 border-b-2 rounded-none",
+                                        "w-1/2 justify-end text-right font-normal border-0 border-b-2 rounded-none bg-transparent hover:bg-card/20",
                                         !field.value && "text-muted-foreground"
                                     )}
                                     >
@@ -225,8 +222,7 @@ export default function GenderProfilePage() {
                 {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Next'}
               </Button>
             </form>
-          </CardContent>
-        </Card>
+        </div>
       </div>
     </AppShell>
   );
