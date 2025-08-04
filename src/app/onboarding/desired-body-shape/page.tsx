@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -61,7 +60,7 @@ export default function DesiredBodyShapePage() {
     setIsSubmitting(true);
     try {
       await createUserProfileDocument(user, { desiredBodyShape: data.desiredBodyShape });
-      router.push('/onboarding/focus-areas');
+      router.push('/onboarding/almost-there');
     } catch (error) {
       console.error("Error saving desired body shape:", error);
       toast({
