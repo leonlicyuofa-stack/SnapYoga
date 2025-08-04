@@ -10,10 +10,10 @@ import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
 import { Loader2, HeartPulse, ArrowRight, ArrowLeft, Dumbbell, Spline, Anchor, HelpCircle, Mountain, Zap, Activity } from 'lucide-react';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 const desiredBodyShapeSchema = z.object({
   desiredBodyShape: z.string().min(1, { message: "Please select your desired body shape or goal" }),
@@ -45,7 +45,7 @@ export default function DesiredBodyShapePage() {
   });
 
   if (authLoading) {
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div></AppShell>;
+    return <AppShell><div className="flex justify-center items-center min-h-screen"><SmileyRockLoader text="Loading..." /></div></AppShell>;
   }
 
   if (!user && !authLoading) {
@@ -83,14 +83,27 @@ export default function DesiredBodyShapePage() {
 
   return (
     <AppShell>
-      <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
-        <Card className="w-full max-w-2xl shadow-xl">
-          <CardHeader className="text-center">
-            <HeartPulse className="mx-auto h-12 w-12 text-primary mb-4" />
-            <CardTitle className="text-3xl font-bold">Desired Body Shape</CardTitle>
-            <CardDescription>What are your aspirations for your body?</CardDescription>
-          </CardHeader>
-          <CardContent>
+      <div className="relative flex min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4 overflow-hidden">
+        <div className="absolute inset-0 z-0 bg-splash-background">
+             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
+                <defs>
+                    <radialGradient id="blushGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                        <stop offset="0%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0.7 }} />
+                        <stop offset="100%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0 }} />
+                    </radialGradient>
+                </defs>
+                <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-blob-1))" />
+                <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
+                <path d="M 100,0 L 0,0 C 50,50 0,50 0,100 L 100,100 Z" fill="hsl(var(--splash-blob-2))" style={{ opacity: 0.5 }}/>
+            </svg>
+        </div>
+        
+        <div className="w-full max-w-3xl z-10">
+            <div className="text-center mb-8">
+                <HeartPulse className="mx-auto h-12 w-12 text-primary mb-4" />
+                <h1 className="text-3xl font-bold">Desired Body Shape</h1>
+                <p className="text-muted-foreground mt-2">What are your aspirations for your body?</p>
+            </div>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <Controller
                 name="desiredBodyShape"
@@ -99,7 +112,7 @@ export default function DesiredBodyShapePage() {
                   <RadioGroup
                     onValueChange={field.onChange}
                     defaultValue={field.value}
-                    className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4"
+                    className="grid grid-cols-2 md:grid-cols-4 gap-4"
                   >
                     {desiredShapeOptions.map((option) => {
                       const Icon = option.icon;
@@ -107,7 +120,7 @@ export default function DesiredBodyShapePage() {
                         <Label
                           key={option.value}
                           htmlFor={`shape-${option.value}`}
-                          className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 h-32 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary cursor-pointer transition-colors"
+                          className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card/80 backdrop-blur-sm p-4 h-32 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/10 cursor-pointer transition-all shadow-md"
                         >
                           <RadioGroupItem value={option.value} id={`shape-${option.value}`} className="sr-only" />
                           <Icon className="mb-2 h-8 w-8" />
@@ -125,7 +138,7 @@ export default function DesiredBodyShapePage() {
                   type="button" 
                   variant="outline" 
                   onClick={handleBackNavigation} 
-                  className="w-full"
+                  className="w-full flex-grow bg-card/80 backdrop-blur-sm"
                   isLoadingWithBar={isNavigatingBack}
                   loadingBarDirection="rtl"
                   disabled={isSubmitting || isNavigatingBack}
@@ -135,7 +148,7 @@ export default function DesiredBodyShapePage() {
                 </Button>
                 <Button 
                   type="submit" 
-                  className="w-full" 
+                  className="w-full flex-grow" 
                   isLoadingWithBar={isSubmitting}
                   disabled={isSubmitting || authLoading || isNavigatingBack}
                 >
@@ -144,13 +157,10 @@ export default function DesiredBodyShapePage() {
                 </Button>
               </div>
             </form>
-          </CardContent>
-          <CardFooter>
-            <p className="text-xs text-muted-foreground text-center w-full">
+             <p className="text-xs text-muted-foreground text-center w-full mt-6">
               Your goals help us suggest relevant yoga practices.
             </p>
-          </CardFooter>
-        </Card>
+        </div>
       </div>
     </AppShell>
   );
