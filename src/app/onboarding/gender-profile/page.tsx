@@ -114,7 +114,7 @@ export default function GenderProfilePage() {
                   <div 
                     className={cn(
                         "cursor-pointer p-4 border-2 rounded-2xl transition-all w-32 h-32 flex flex-col items-center justify-center space-y-2",
-                        selectedGender === 'female' ? 'border-pink-400 bg-pink-50' : 'border-transparent'
+                        selectedGender === 'female' ? 'border-transparent bg-pink-50' : 'border-transparent'
                     )}
                     onClick={() => setValue('gender', 'female', { shouldValidate: true })}
                   >
@@ -124,7 +124,7 @@ export default function GenderProfilePage() {
                    <div 
                     className={cn(
                         "cursor-pointer p-4 border-2 rounded-2xl transition-all w-32 h-32 flex flex-col items-center justify-center space-y-2",
-                        selectedGender === 'male' ? 'border-blue-400 bg-blue-50' : 'border-transparent'
+                        selectedGender === 'male' ? 'border-transparent bg-blue-50' : 'border-transparent'
                     )}
                     onClick={() => setValue('gender', 'male', { shouldValidate: true })}
                   >
@@ -189,7 +189,8 @@ export default function GenderProfilePage() {
 
               <Button 
                 type="submit" 
-                className="w-full rounded-full text-lg py-6 bg-cyan-400 hover:bg-cyan-500" 
+                variant="default"
+                className="w-full rounded-full text-lg py-6" 
                 disabled={isSubmitting || authLoading}
               >
                 {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Next'}
