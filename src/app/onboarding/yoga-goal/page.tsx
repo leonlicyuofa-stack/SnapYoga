@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,6 +13,9 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Loader2, Target, ArrowRight, ArrowLeft, HeartPulse, Wind, Spline, Dumbbell, BrainCircuit, MoreHorizontal } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
+import { doc, getDoc } from 'firebase/firestore';
+import { firestore } from '@/lib/firebase/clientApp';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 const yogaGoalSchema = z.object({
   mainGoal: z.string().min(1, { message: "Please select your main yoga goal" }),
@@ -34,13 +38,41 @@ export default function YogaGoalPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isNavigatingBack, setIsNavigatingBack] = useState(false);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
 
-  const { control, handleSubmit, formState: { errors } } = useForm<YogaGoalFormValues>({
+  const { control, handleSubmit, formState: { errors }, reset } = useForm<YogaGoalFormValues>({
     resolver: zodResolver(yogaGoalSchema),
   });
 
-   if (authLoading) {
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div></AppShell>;
+  useEffect(() => {
+    if (user) {
+      const userDocRef = doc(firestore, 'users', user.uid);
+      getDoc(userDocRef).then(docSnap => {
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          if (userData.mainGoal) {
+            reset({ mainGoal: userData.mainGoal });
+          }
+        }
+      }).catch(error => {
+        console.error("Error fetching user profile for default value:", error);
+      }).finally(() => {
+        setIsLoadingProfile(false);
+      });
+    } else if (!authLoading) {
+      setIsLoadingProfile(false);
+    }
+  }, [user, authLoading, reset]);
+
+
+   if (authLoading || isLoadingProfile) {
+    return (
+        <AppShell>
+            <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
+                <SmileyRockLoader text="Loading your goal..." />
+            </div>
+        </AppShell>
+    );
   }
 
   if (!user && !authLoading) {
@@ -106,7 +138,7 @@ export default function YogaGoalPage() {
                     render={({ field }) => (
                     <RadioGroup
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                         className="grid grid-cols-2 md:grid-cols-3 gap-4"
                     >
                         {mainGoalOptions.map((option) => {
