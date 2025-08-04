@@ -9,11 +9,11 @@ import * as z from 'zod';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
-import { Loader2, Target, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Loader2, Target, ArrowRight, ArrowLeft, HeartPulse, Wind, Spline, Dumbbell, BrainCircuit, MoreHorizontal } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const yogaGoalSchema = z.object({
   mainGoal: z.string().min(1, { message: "Please select your main yoga goal" }),
@@ -22,12 +22,12 @@ const yogaGoalSchema = z.object({
 type YogaGoalFormValues = z.infer<typeof yogaGoalSchema>;
 
 const mainGoalOptions = [
-  { value: "fitness", label: "Stay Fit" },
-  { value: "stress-relief", label: "Stress Relief" },
-  { value: "flexibility", label: "Improve Flexibility" },
-  { value: "strength", label: "Build Strength" },
-  { value: "mindfulness", label: "Practice Mindfulness" },
-  { value: "other", label: "Other (please specify)" }, // You might need another input for this
+  { value: "fitness", label: "Stay Fit", icon: HeartPulse },
+  { value: "stress-relief", label: "Stress Relief", icon: Wind },
+  { value: "flexibility", label: "Improve Flexibility", icon: Spline },
+  { value: "strength", label: "Build Strength", icon: Dumbbell },
+  { value: "mindfulness", label: "Practice Mindfulness", icon: BrainCircuit },
+  { value: "other", label: "Other", icon: MoreHorizontal },
 ];
 
 export default function YogaGoalPage() {
@@ -81,7 +81,7 @@ export default function YogaGoalPage() {
   return (
     <AppShell>
       <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
-        <Card className="w-full max-w-lg shadow-xl">
+        <Card className="w-full max-w-2xl shadow-xl">
           <CardHeader className="text-center">
             <Target className="mx-auto h-12 w-12 text-primary mb-4" />
             <CardTitle className="text-3xl font-bold">Your Main Yoga Goal</CardTitle>
@@ -89,29 +89,34 @@ export default function YogaGoalPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="mainGoal">Main Goal</Label>
                 <Controller
                   name="mainGoal"
                   control={control}
                   render={({ field }) => (
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <SelectTrigger id="mainGoal" className="w-full">
-                        <SelectValue placeholder="Select your primary goal" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {mainGoalOptions.map(option => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="grid grid-cols-2 md:grid-cols-3 gap-4"
+                    >
+                      {mainGoalOptions.map((option) => {
+                        const Icon = option.icon;
+                        return (
+                          <Label
+                            key={option.value}
+                            htmlFor={`goal-${option.value}`}
+                            className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 h-32 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary cursor-pointer transition-colors"
+                          >
+                            <RadioGroupItem value={option.value} id={`goal-${option.value}`} className="sr-only" />
+                            <Icon className="mb-2 h-8 w-8" />
+                            <span className="text-center font-semibold">{option.label}</span>
+                          </Label>
+                        );
+                      })}
+                    </RadioGroup>
                   )}
                 />
-                {errors.mainGoal && <p className="text-sm text-destructive">{errors.mainGoal.message}</p>}
-              </div>
-              <div className="flex flex-col sm:flex-row gap-2">
+              {errors.mainGoal && <p className="text-sm text-destructive text-center">{errors.mainGoal.message}</p>}
+              <div className="flex flex-col sm:flex-row gap-2 pt-4">
                 <Button 
                   type="button" 
                   variant="outline" 
