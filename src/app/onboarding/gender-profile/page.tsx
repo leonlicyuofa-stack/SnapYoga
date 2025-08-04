@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -203,8 +204,12 @@ export default function GenderProfilePage() {
                             )}
                             />
                     </div>
-                     <div className="w-full text-right">
-                        {errors.birthday && <p className="text-sm text-destructive mt-1">{errors.birthday.message}</p>}
+                     <div className="w-full text-right pr-1">
+                        {errors.birthday ? (
+                            <p className="text-sm text-destructive mt-1">{errors.birthday.message}</p>
+                        ) : age !== null ? (
+                            <p className="text-sm text-muted-foreground mt-1">Age: {age}</p>
+                        ) : null}
                     </div>
                 </div>
               </div>
