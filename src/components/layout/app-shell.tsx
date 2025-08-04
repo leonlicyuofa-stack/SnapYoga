@@ -68,7 +68,7 @@ export function AppShell({ children }: AppShellProps) {
   };
   
   // Hide shell elements on specific routes like the landing page or auth pages
-  const noShellRoutes = ['/auth/signin', '/auth/signup', '/auth/verify-email', '/', '/welcome', '/onboarding/gender-profile'];
+  const noShellRoutes = ['/auth/signin', '/auth/signup', '/auth/verify-email', '/'];
   if (noShellRoutes.includes(pathname)) {
       return <>{children}</>;
   }
