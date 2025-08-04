@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, type SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -11,10 +10,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, KeyRound, Languages, ShieldCheck, UserCircle } from 'lucide-react'; 
+import { Loader2, KeyRound, Languages, ShieldCheck, UserCircle, Ruler, Scale, Save } from 'lucide-react'; 
 import { Separator } from '@/components/ui/separator';
+import { Switch } from '@/components/ui/switch';
+import { firestore } from '@/lib/firebase/clientApp';
+import { doc, getDoc, DocumentData } from 'firebase/firestore';
 
 const passwordChangeSchema = z.object({
   currentPassword: z.string().min(1, { message: "Current password is required" }),
@@ -27,9 +29,25 @@ const passwordChangeSchema = z.object({
 
 type PasswordChangeFormValues = z.infer<typeof passwordChangeSchema>;
 
+const measurementsSchema = z.object({
+  height: z.preprocess(
+    (val) => (val === "" ? undefined : Number(val)),
+    z.number({ invalid_type_error: "Height must be a number" }).positive({ message: "Height must be positive" }).optional()
+  ),
+  heightUnit: z.enum(['cm', 'in']).default('cm'),
+  weight: z.preprocess(
+    (val) => (val === "" ? undefined : Number(val)),
+    z.number({ invalid_type_error: "Weight must be a number" }).positive({ message: "Weight must be positive" }).optional()
+  ),
+  weightUnit: z.enum(['kg', 'lbs']).default('kg'),
+});
+
+type MeasurementsFormValues = z.infer<typeof measurementsSchema>;
+
+
 const languageOptions = [
   { value: "en", label: "English" },
-  { value: "id", label: "Bahasa Indonesia" }, // Added Indonesian
+  { value: "id", label: "Bahasa Indonesia" },
   { value: "es", label: "Español (Spanish)" },
   { value: "fr", label: "Français (French)" },
 ];
@@ -38,7 +56,8 @@ export default function ProfilePage() {
   const { user, updateUserPassword, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState("en"); // Default to English
+  const [isMeasurementsSubmitting, setIsMeasurementsSubmitting] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("en"); 
 
   const { 
     register: registerPassword, 
@@ -48,6 +67,45 @@ export default function ProfilePage() {
   } = useForm<PasswordChangeFormValues>({
     resolver: zodResolver(passwordChangeSchema),
   });
+  
+  const {
+    control: controlMeasurements,
+    register: registerMeasurements,
+    handleSubmit: handleSubmitMeasurements,
+    watch: watchMeasurements,
+    setValue: setMeasurementsValue,
+    formState: { errors: measurementsErrors },
+    reset: resetMeasurementsForm,
+  } = useForm<MeasurementsFormValues>({
+    resolver: zodResolver(measurementsSchema),
+    defaultValues: {
+        height: undefined,
+        weight: undefined,
+        heightUnit: 'cm',
+        weightUnit: 'kg',
+    },
+  });
+
+  const heightUnit = watchMeasurements('heightUnit');
+  const weightUnit = watchMeasurements('weightUnit');
+  
+  useEffect(() => {
+    if (user) {
+        const userDocRef = doc(firestore, 'users', user.uid);
+        getDoc(userDocRef).then((docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data() as DocumentData;
+                resetMeasurementsForm({
+                    height: data.height,
+                    weight: data.weight,
+                    heightUnit: data.heightUnit || 'cm',
+                    weightUnit: data.weightUnit || 'kg',
+                });
+            }
+        });
+    }
+  }, [user, resetMeasurementsForm]);
+
 
   const onPasswordSubmit: SubmitHandler<PasswordChangeFormValues> = async (data) => {
     setIsPasswordSubmitting(true);
@@ -57,6 +115,28 @@ export default function ProfilePage() {
     }
     setIsPasswordSubmitting(false);
   };
+  
+  const onMeasurementsSubmit: SubmitHandler<MeasurementsFormValues> = async (data) => {
+    if (!user) {
+      toast({ title: 'Not authenticated', description: 'You must be logged in to update your profile.', variant: 'destructive'});
+      return;
+    }
+    setIsMeasurementsSubmitting(true);
+    try {
+      const profileData: any = {};
+      if (data.height) profileData.height = data.height;
+      profileData.heightUnit = data.heightUnit;
+      if (data.weight) profileData.weight = data.weight;
+      profileData.weightUnit = data.weightUnit;
+      
+      await createUserProfileDocument(user, profileData);
+      toast({ title: "Measurements Saved", description: "Your measurements have been updated." });
+    } catch (error) {
+       toast({ title: "Error", description: "Failed to save measurements. Please try again.", variant: 'destructive'});
+    } finally {
+      setIsMeasurementsSubmitting(false);
+    }
+  }
 
   const handleLanguageChange = (value: string) => {
     setSelectedLanguage(value);
@@ -64,7 +144,6 @@ export default function ProfilePage() {
       title: "Language Preference Updated",
       description: `Language preference set to ${languageOptions.find(opt => opt.value === value)?.label || value}. Full app translation coming soon!`,
     });
-    // In a real app, you would save this preference to Firestore and use an i18n library.
   };
   
   if (authLoading && !user) {
@@ -72,7 +151,6 @@ export default function ProfilePage() {
   }
 
   if (!user) {
-     // This should ideally be handled by a protected route wrapper, but for now, redirect or show message.
     return <AppShell><div className="text-center p-8"><p>Please sign in to view your profile.</p></div></AppShell>;
   }
 
@@ -88,9 +166,72 @@ export default function ProfilePage() {
           </p>
         </header>
 
+        <Card className="shadow-xl">
+          <CardHeader>
+            <CardTitle className="text-2xl font-semibold flex items-center gap-2">
+              <Ruler className="h-6 w-6 text-primary" />
+              Your Measurements
+            </CardTitle>
+            <CardDescription>Update your height and weight. This is optional and helps us personalize suggestions.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmitMeasurements(onMeasurementsSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <Label htmlFor="height">Height ({heightUnit})</Label>
+                    <div className="flex items-center space-x-2">
+                      <Label htmlFor="heightUnitCm" className="text-sm">cm</Label>
+                      <Switch
+                        id="heightUnitSwitch"
+                        checked={heightUnit === 'in'}
+                        onCheckedChange={(checked) => setMeasurementsValue('heightUnit', checked ? 'in' : 'cm')}
+                      />
+                      <Label htmlFor="heightUnitIn" className="text-sm">in</Label>
+                    </div>
+                  </div>
+                  <Input
+                    id="height"
+                    type="number"
+                    step="any"
+                    placeholder={heightUnit === 'cm' ? "e.g., 170" : "e.g., 67"}
+                    {...registerMeasurements("height")}
+                  />
+                  {measurementsErrors.height && <p className="text-sm text-destructive">{measurementsErrors.height.message}</p>}
+                </div>
+                <div className="space-y-2">
+                   <div className="flex justify-between items-center">
+                    <Label htmlFor="weight">Weight ({weightUnit})</Label>
+                    <div className="flex items-center space-x-2">
+                      <Label htmlFor="weightUnitKg" className="text-sm">kg</Label>
+                      <Switch
+                        id="weightUnitSwitch"
+                        checked={weightUnit === 'lbs'}
+                        onCheckedChange={(checked) => setMeasurementsValue('weightUnit', checked ? 'lbs' : 'kg')}
+                      />
+                      <Label htmlFor="weightUnitLbs" className="text-sm">lbs</Label>
+                    </div>
+                  </div>
+                  <Input
+                    id="weight"
+                    type="number"
+                    step="any"
+                    placeholder={weightUnit === 'kg' ? "e.g., 65" : "e.g., 143"}
+                    {...registerMeasurements("weight")}
+                  />
+                  {measurementsErrors.weight && <p className="text-sm text-destructive">{measurementsErrors.weight.message}</p>}
+                </div>
+              </div>
+              <Button type="submit" className="w-full text-lg py-3 mt-4" disabled={isMeasurementsSubmitting || authLoading}>
+                {isMeasurementsSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Save className="mr-2 h-5 w-5" />}
+                {isMeasurementsSubmitting ? "Saving..." : "Save Measurements"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
         <Separator />
 
-        {/* Change Password Section */}
         <Card className="shadow-xl">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold flex items-center gap-2">
@@ -152,7 +293,6 @@ export default function ProfilePage() {
 
         <Separator />
 
-        {/* Language Settings Section */}
         <Card className="shadow-xl">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold flex items-center gap-2">

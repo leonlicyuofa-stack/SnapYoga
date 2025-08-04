@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -19,10 +18,6 @@ interface UserProfile extends DocumentData {
   gender?: string;
   ageGroup?: string;
   mainGoal?: string;
-  height?: number;
-  heightUnit?: 'cm' | 'in';
-  weight?: number;
-  weightUnit?: 'kg' | 'lbs';
   interestedPoses?: string[];
   currentBodyShape?: string;
   desiredBodyShape?: string;
@@ -139,8 +134,6 @@ export default function ProfileSummaryPage() {
                 {renderDetailItem("Email", profileData.email)}
                 {renderDetailItem("Gender", profileData.gender, undefined, '/onboarding/gender-profile')}
                 {renderDetailItem("Main Yoga Goal", profileData.mainGoal, undefined, '/onboarding/yoga-goal')}
-                {renderDetailItem("Height", profileData.height, profileData.heightUnit, '/onboarding/measurements')}
-                {renderDetailItem("Weight", profileData.weight, profileData.weightUnit, '/onboarding/measurements')}
                 {renderDetailItem("Interested Poses", profileData.interestedPoses, undefined, '/onboarding/yoga-type')}
                 {renderDetailItem("Current Body Shape", profileData.currentBodyShape, undefined, '/onboarding/current-body-shape')}
                 {renderDetailItem("Desired Body Shape", profileData.desiredBodyShape, undefined, '/onboarding/desired-body-shape')}

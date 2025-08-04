@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -88,7 +87,7 @@ export default function YogaGoalPage() {
     setIsSubmitting(true);
     try {
       await createUserProfileDocument(user, { mainGoal: data.mainGoal });
-      router.push('/onboarding/measurements');
+      router.push('/onboarding/yoga-type');
     } catch (error) {
       console.error("Error saving main goal:", error);
       toast({
