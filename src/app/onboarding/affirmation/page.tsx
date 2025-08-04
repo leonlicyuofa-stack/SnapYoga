@@ -84,9 +84,11 @@ export default function OnboardingAffirmationPage() {
             >
               Next <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-            <p className="text-xs text-muted-foreground">
-              Let's set up your goals.
-            </p>
+            {isRevealed && (
+                <p className="text-xs text-muted-foreground animate-in fade-in duration-500">
+                    Let's set up your goals.
+                </p>
+            )}
           </CardFooter>
         </Card>
       </div>
