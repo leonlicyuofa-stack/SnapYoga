@@ -6,29 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { AppShell } from '@/components/layout/app-shell';
 import { ArrowRight, Heart } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
-import { InteractivePebble } from '@/components/icons/InteractivePebble';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import Image from 'next/image';
 
 export default function OnboardingAffirmationPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
-  const [revealed, setRevealed] = useState<string[]>([]);
-
-  const pebbles = [
-    { id: 'i', text: 'I' },
-    { id: 'am', text: 'Am' },
-    { id: 'amazing', text: 'Amazing!' },
-  ];
-
-  const handlePebbleClick = (id: string) => {
-    if (!revealed.includes(id)) {
-      setRevealed(prev => [...prev, id]);
-    }
-  };
-
-  const allRevealed = revealed.length === pebbles.length;
 
   const handleNext = () => {
     router.push('/onboarding/yoga-goal');
@@ -55,39 +39,29 @@ export default function OnboardingAffirmationPage() {
         <Card className="w-full max-w-md shadow-xl text-center">
           <CardHeader>
             <Heart className="mx-auto h-12 w-12 text-primary mb-4" />
-            <CardTitle className="text-3xl font-bold">A Quick Affirmation</CardTitle>
-            <CardDescription>Tap the pebbles from top to bottom.</CardDescription>
+            <CardTitle className="text-3xl font-bold">A Moment of Motivation</CardTitle>
+            <CardDescription>Consistency is the key to progress in your yoga journey.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-8 py-8">
-            <div className="flex flex-col items-center space-y-4">
-              {pebbles.map(({ id, text }) => {
-                  const isRevealed = revealed.includes(id);
-                  return (
-                      <div key={id} className="flex flex-col items-center w-full">
-                           <button onClick={() => handlePebbleClick(id)} className="group focus:outline-none">
-                              <InteractivePebble isRevealed={isRevealed} />
-                           </button>
-                           <p className={cn(
-                               "text-3xl font-script font-bold text-primary mt-2 transition-all duration-500",
-                               isRevealed ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
-                           )}>
-                               {text}
-                           </p>
-                      </div>
-                  )
-              })}
+          <CardContent className="py-8">
+            <div className="relative aspect-[9/16] w-full max-w-xs mx-auto rounded-lg overflow-hidden">
+                <Image
+                    src="https://storage.googleapis.com/project-1-426515-3999bb.appspot.com/revisions/2a4b8686-35ba-411a-8452-fefce0c5e7b5/image-1.jpeg"
+                    alt="Consistency is the key"
+                    fill
+                    className="object-cover"
+                    data-ai-hint="motivational quote"
+                 />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
             <Button 
                 onClick={handleNext} 
-                disabled={!allRevealed} 
                 className="w-full"
             >
               Next <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
             <p className="text-xs text-muted-foreground">
-              {allRevealed ? "You are amazing! Let's continue." : "Complete the affirmation to proceed."}
+              Let's set up your goals.
             </p>
           </CardFooter>
         </Card>
