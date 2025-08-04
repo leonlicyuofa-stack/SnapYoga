@@ -118,7 +118,7 @@ export default function GenderProfilePage() {
                     )}
                     onClick={() => setValue('gender', 'female', { shouldValidate: true })}
                   >
-                    <span className={cn("font-semibold", selectedGender === 'female' ? 'text-pink-500' : 'text-muted-foreground')}>Girl</span>
+                    <span className={cn("font-semibold", selectedGender === 'female' ? 'text-pink-500' : 'text-muted-foreground')}>Female</span>
                     <FemaleAvatar className="w-16 h-16"/>
                   </div>
                    <div 
@@ -128,7 +128,7 @@ export default function GenderProfilePage() {
                     )}
                     onClick={() => setValue('gender', 'male', { shouldValidate: true })}
                   >
-                    <span className={cn("font-semibold", selectedGender === 'male' ? 'text-blue-500' : 'text-muted-foreground')}>Boy</span>
+                    <span className={cn("font-semibold", selectedGender === 'male' ? 'text-blue-500' : 'text-muted-foreground')}>Male</span>
                     <MaleAvatar className="w-16 h-16"/>
                   </div>
               </div>
