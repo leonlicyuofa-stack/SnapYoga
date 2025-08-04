@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -5,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { AppShell } from '@/components/layout/app-shell';
-import { ArrowRight, Heart, Hand, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Heart, Hand, Sparkles } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import Image from 'next/image';
@@ -19,6 +20,10 @@ export default function OnboardingAffirmationPage() {
   const handleNext = () => {
     router.push('/onboarding/yoga-goal');
   };
+
+  const handleBack = () => {
+      router.back();
+  }
 
   if (authLoading) {
       return (
@@ -78,12 +83,21 @@ export default function OnboardingAffirmationPage() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button 
-                onClick={handleNext} 
-                className="w-full"
-            >
-              Next <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="w-full flex flex-col gap-2">
+                <Button 
+                    onClick={handleBack} 
+                    className="w-full"
+                    variant="outline"
+                >
+                  <ArrowLeft className="ml-2 h-4 w-4" /> Back
+                </Button>
+                <Button 
+                    onClick={handleNext} 
+                    className="w-full"
+                >
+                  Next <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+            </div>
             {isRevealed && (
                 <p className="text-xs text-muted-foreground animate-in fade-in duration-500">
                     Let's set up your goals.
