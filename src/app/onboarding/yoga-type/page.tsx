@@ -10,7 +10,6 @@ import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
 import { Loader2, Sparkles, ArrowRight, ArrowLeft, CheckCircle } from 'lucide-react';
@@ -103,14 +102,27 @@ export default function InterestedPosesPage() {
 
   return (
     <AppShell>
-      <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
-        <Card className="w-full max-w-2xl shadow-xl">
-          <CardHeader className="text-center">
-            <Sparkles className="mx-auto h-12 w-12 text-primary mb-4" />
-            <CardTitle className="text-3xl font-bold">Interested Yoga Poses</CardTitle>
-            <CardDescription>Select the categories of poses you're interested in learning or improving.</CardDescription>
-          </CardHeader>
-          <CardContent>
+      <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12">
+        <div className="absolute inset-0 z-0 bg-splash-background">
+             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
+                <defs>
+                    <radialGradient id="blushGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                        <stop offset="0%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0.7 }} />
+                        <stop offset="100%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0 }} />
+                    </radialGradient>
+                </defs>
+                <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-blob-1))" />
+                <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
+                <path d="M 100,0 L 0,0 C 50,50 0,50 0,100 L 100,100 Z" fill="hsl(var(--splash-blob-2))" style={{ opacity: 0.5 }}/>
+            </svg>
+        </div>
+        <div className="w-full max-w-2xl z-10 px-4">
+            <div className="text-center mb-8">
+                <Sparkles className="mx-auto h-12 w-12 text-primary mb-4" />
+                <h1 className="text-3xl font-bold text-foreground">Interested Yoga Poses</h1>
+                <p className="text-muted-foreground mt-2">Select the categories of poses you're interested in learning or improving.</p>
+            </div>
+        
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <Controller
                 name="interestedPoses"
@@ -136,9 +148,9 @@ export default function InterestedPosesPage() {
                           <Label
                             htmlFor={item.id}
                             className={cn(
-                              "flex flex-col justify-between p-4 border-2 rounded-lg cursor-pointer transition-all h-full min-h-[160px]",
+                              "flex flex-col justify-between p-4 border-2 rounded-lg cursor-pointer transition-all h-full min-h-[160px] bg-card/80 backdrop-blur-sm",
                               "hover:border-primary/50",
-                              isChecked ? "border-primary bg-primary/5 shadow-md" : "border-muted bg-background"
+                              isChecked ? "border-primary bg-primary/10 shadow-md" : "border-muted"
                             )}
                           >
                             <div>
@@ -185,13 +197,11 @@ export default function InterestedPosesPage() {
                 </Button>
               </div>
             </form>
-          </CardContent>
-          <CardFooter>
-            <p className="text-xs text-muted-foreground text-center w-full">
+
+            <p className="text-xs text-muted-foreground text-center w-full mt-6">
               This helps us recommend suitable poses and challenges.
             </p>
-          </CardFooter>
-        </Card>
+        </div>
       </div>
     </AppShell>
   );
