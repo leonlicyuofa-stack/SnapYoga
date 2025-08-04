@@ -26,6 +26,7 @@ import { WelcomeRock } from '@/components/icons/rocks/welcome-rock';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
+import { PebbleTrioIcon } from '@/components/icons/PebbleTrioIcon';
 
 
 interface StoredAnalysis {
@@ -73,6 +74,7 @@ export default function DashboardPage() {
   const [showRockWheelDialog, setShowRockWheelDialog] = useState(false);
   const [showRewardDialog, setShowRewardDialog] = useState(false);
   const [rewardedRock, setRewardedRock] = useState<Rock | null>(null);
+  const [showWelcomeAnimation, setShowWelcomeAnimation] = useState(false);
 
 
   useEffect(() => {
@@ -109,12 +111,19 @@ export default function DashboardPage() {
       }
 
       if (sessionStorage.getItem('justCompletedOnboarding') === 'true') {
+        setShowWelcomeAnimation(true);
         const welcomeRock = allRocks.find(r => r.id === 'welcome');
         if (welcomeRock) {
             setRewardedRock(welcomeRock);
-            setShowRewardDialog(true);
+            // Delay showing the reward dialog until after the welcome animation
+            setTimeout(() => {
+              setShowRewardDialog(true);
+            }, 3000);
         }
         sessionStorage.removeItem('justCompletedOnboarding');
+        setTimeout(() => {
+          setShowWelcomeAnimation(false);
+        }, 2500);
       }
     }
 
@@ -283,34 +292,42 @@ export default function DashboardPage() {
     }
   };
 
-  if (authLoading || (!user && loadingUserProfile)) {
+  if (authLoading || (!user && loadingUserProfile) || showWelcomeAnimation) {
     return (
       <AppShell>
-        <div className="space-y-12 p-4 md:p-8 animate-pulse">
-          <div className="bg-muted/30 p-6 rounded-lg shadow">
-            <Skeleton className="h-8 w-3/4 mb-6" />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Skeleton className="h-48 rounded-lg" />
-              <Skeleton className="h-48 rounded-lg" />
-              <Skeleton className="h-48 rounded-lg" />
+         {showWelcomeAnimation ? (
+            <div className="flex flex-col justify-center items-center min-h-[calc(100vh-12rem)] text-center animate-in fade-in duration-500">
+                <PebbleTrioIcon className="h-40 w-40" />
+                <h2 className="text-3xl font-bold mt-4 text-primary animate-pulse">Welcome to SnapYoga!</h2>
+                <p className="text-muted-foreground mt-2">Setting up your dashboard...</p>
             </div>
-          </div>
-           <Card className="w-full max-w-2xl shadow-2xl overflow-hidden mx-auto">
-            <CardHeader className="text-center pt-8">
-              <Skeleton className="h-10 w-4/5 mx-auto mb-3" />
-              <Skeleton className="h-6 w-3/5 mx-auto" />
-            </CardHeader>
-            <CardContent className="flex flex-col items-center space-y-4 p-8 min-h-[200px] justify-center">
-              <Skeleton className="h-6 w-3/4" />
-              <Skeleton className="h-5 w-1/2" />
-              <Skeleton className="h-5 w-1/4" />
-            </CardContent>
-          </Card>
-          <Card className="w-full max-w-2xl shadow-2xl overflow-hidden mt-12 mx-auto">
-            <CardHeader className="text-center pt-8"><Skeleton className="h-8 w-3/5 mx-auto" /><Skeleton className="h-6 w-4/5 mx-auto mt-2" /></CardHeader>
-            <CardContent className="flex flex-col items-center space-y-6 p-8"><Skeleton className="h-12 w-1/2" /></CardContent>
-          </Card>
-        </div>
+          ) : (
+             <div className="space-y-12 p-4 md:p-8 animate-pulse">
+              <div className="bg-muted/30 p-6 rounded-lg shadow">
+                <Skeleton className="h-8 w-3/4 mb-6" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Skeleton className="h-48 rounded-lg" />
+                  <Skeleton className="h-48 rounded-lg" />
+                  <Skeleton className="h-48 rounded-lg" />
+                </div>
+              </div>
+              <Card className="w-full max-w-2xl shadow-2xl overflow-hidden mx-auto">
+                <CardHeader className="text-center pt-8">
+                  <Skeleton className="h-10 w-4/5 mx-auto mb-3" />
+                  <Skeleton className="h-6 w-3/5 mx-auto" />
+                </CardHeader>
+                <CardContent className="flex flex-col items-center space-y-4 p-8 min-h-[200px] justify-center">
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-5 w-1/2" />
+                  <Skeleton className="h-5 w-1/4" />
+                </CardContent>
+              </Card>
+              <Card className="w-full max-w-2xl shadow-2xl overflow-hidden mt-12 mx-auto">
+                <CardHeader className="text-center pt-8"><Skeleton className="h-8 w-3/5 mx-auto" /><Skeleton className="h-6 w-4/5 mx-auto mt-2" /></CardHeader>
+                <CardContent className="flex flex-col items-center space-y-6 p-8"><Skeleton className="h-12 w-1/2" /></CardContent>
+              </Card>
+            </div>
+          )}
       </AppShell>
     );
   }
@@ -641,3 +658,5 @@ export default function DashboardPage() {
     </AppShell>
   );
 }
+
+    
