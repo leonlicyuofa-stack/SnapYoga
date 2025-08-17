@@ -13,11 +13,15 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, KeyRound, Languages, ShieldCheck, UserCircle, Ruler, Scale, Save } from 'lucide-react'; 
+import { Loader2, KeyRound, Languages, ShieldCheck, UserCircle, Ruler, Scale, Save, Share2, Copy, MessageSquare } from 'lucide-react'; 
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc, DocumentData } from 'firebase/firestore';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { PinterestIcon } from '@/components/icons/PinterestIcon';
+import { TikTokIcon } from '@/components/icons/TikTokIcon';
+
 
 const passwordChangeSchema = z.object({
   currentPassword: z.string().min(1, { message: "Current password is required" }),
@@ -55,10 +59,12 @@ const languageOptions = [
 
 export default function ProfilePage() {
   const { user, updateUserPassword, loading: authLoading } = useAuth();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false);
   const [isMeasurementsSubmitting, setIsMeasurementsSubmitting] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("en"); 
+  const [inviteLink, setInviteLink] = useState('');
 
   const { 
     register: registerPassword, 
@@ -91,6 +97,9 @@ export default function ProfilePage() {
   const weightUnit = watchMeasurements('weightUnit');
   
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setInviteLink(window.location.origin);
+    }
     if (user) {
         const userDocRef = doc(firestore, 'users', user.uid);
         getDoc(userDocRef).then((docSnap) => {
@@ -145,6 +154,64 @@ export default function ProfilePage() {
       title: "Language Preference Updated",
       description: `Language preference set to ${languageOptions.find(opt => opt.value === value)?.label || value}. Full app translation coming soon!`,
     });
+  };
+
+  const handleCopyInviteLink = () => {
+    if (navigator.clipboard && inviteLink) {
+      navigator.clipboard.writeText(inviteLink)
+        .then(() => {
+          toast({
+            title: "Link Copied!",
+            description: "Invite link copied to your clipboard.",
+          });
+        })
+        .catch(err => {
+          console.error('Failed to copy link: ', err);
+          toast({
+            title: "Copy Failed",
+            description: "Could not copy the link. Please try manually.",
+            variant: "destructive",
+          });
+        });
+    }
+  };
+
+  const shareText = inviteLink ? `Hey! Check out SnapYoga - an awesome app to analyze and improve your yoga poses: ${inviteLink}` : '';
+  const whatsappShareUrl = inviteLink ? `whatsapp://send?text=${encodeURIComponent(shareText)}` : '#';
+  const pinterestShareUrl = inviteLink ? `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(inviteLink)}&media=${encodeURIComponent('https://placehold.co/600x400.png')}&description=${encodeURIComponent(shareText)}` : '#';
+
+  const handleTikTokShare = () => {
+    if (navigator.clipboard && inviteLink) {
+        navigator.clipboard.writeText(inviteLink).then(() => {
+            toast({
+                title: "Link Copied for TikTok!",
+                description: "Paste this link in your TikTok bio or video description.",
+                duration: 5000,
+            });
+        });
+    }
+  };
+
+
+  const handleInstagramShare = () => {
+    if (navigator.clipboard && inviteLink) {
+      navigator.clipboard.writeText(inviteLink)
+        .then(() => {
+          toast({
+            title: "Link Copied for Instagram!",
+            description: "Paste this link in your Instagram bio or stories.",
+            duration: 5000,
+          });
+        })
+        .catch(err => {
+          console.error('Failed to copy link: ', err);
+          toast({
+            title: "Copy Failed",
+            description: "Could not copy the link. Please try manually.",
+            variant: "destructive",
+          });
+        });
+    }
   };
   
   if (authLoading && !user) {
@@ -328,7 +395,67 @@ export default function ProfilePage() {
             </p>
           </CardFooter>
         </div>
+
+        <Separator />
+
+        <div className="p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
+            <CardHeader className="p-0 mb-6">
+                <CardTitle className="text-2xl font-semibold flex items-center gap-2">
+                    <Share2 className="h-7 w-7 text-primary" />
+                    {t('inviteFriendsTitle')}
+                </CardTitle>
+                <CardDescription className="mt-1">
+                    {t('inviteFriendsDesc')}
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0 space-y-4">
+                <div className="text-center p-3 bg-green-100/50 text-green-800 border border-green-200 rounded-md text-sm font-medium">
+                    {t('referralBonusText')}
+                </div>
+                <div>
+                    <p className="text-sm font-medium mb-1">{t('yourInviteLink')}</p>
+                    <div className="flex items-center space-x-2">
+                    <Input
+                        type="text"
+                        value={inviteLink}
+                        readOnly
+                        className="text-sm text-muted-foreground"
+                        aria-label="Invite Link"
+                    />
+                    <Button variant="outline" size="icon" onClick={handleCopyInviteLink} title="Copy Link">
+                        <Copy className="h-5 w-5" />
+                    </Button>
+                    </div>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <Button variant="outline" className="w-full" asChild disabled={!inviteLink}>
+                    <a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer">
+                        <MessageSquare className="mr-2 h-5 w-5" /> WhatsApp
+                    </a>
+                    </Button>
+                    <Button variant="outline" className="w-full" onClick={handleInstagramShare} disabled={!inviteLink}>
+                        <Share2 className="mr-2 h-5 w-5" /> Instagram
+                    </Button>
+                    <Button variant="outline" className="w-full" asChild disabled={!inviteLink}>
+                    <a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer">
+                        <PinterestIcon className="mr-2 h-5 w-5" /> Pinterest
+                    </a>
+                    </Button>
+                    <Button variant="outline" className="w-full" onClick={handleTikTokShare} disabled={!inviteLink}>
+                        <TikTokIcon className="mr-2 h-5 w-5" /> TikTok
+                    </Button>
+                </div>
+            </CardContent>
+            <CardFooter className="p-0 pt-6">
+                <p className="text-xs text-muted-foreground text-center w-full">
+                    {t('inviteLinkHelp')}
+                </p>
+            </CardFooter>
+        </div>
+
+
       </div>
     </AppShell>
   );
 }
+

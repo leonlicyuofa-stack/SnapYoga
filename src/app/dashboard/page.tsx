@@ -214,26 +214,6 @@ export default function DashboardPage() {
     return "destructive";
   };
 
-  const handleCopyInviteLink = () => {
-    if (navigator.clipboard && inviteLink) {
-      navigator.clipboard.writeText(inviteLink)
-        .then(() => {
-          toast({
-            title: "Link Copied!",
-            description: "Invite link copied to your clipboard.",
-          });
-        })
-        .catch(err => {
-          console.error('Failed to copy link: ', err);
-          toast({
-            title: "Copy Failed",
-            description: "Could not copy the link. Please try manually.",
-            variant: "destructive",
-          });
-        });
-    }
-  };
-  
   const getInitials = (email?: string | null, displayName?: string | null) => {
     if (displayName) {
       const names = displayName.split(' ');
@@ -248,44 +228,6 @@ export default function DashboardPage() {
     return 'U';
   };
   
-  const shareText = inviteLink ? `Hey! Check out SnapYoga - an awesome app to analyze and improve your yoga poses: ${inviteLink}` : '';
-  const whatsappShareUrl = inviteLink ? `whatsapp://send?text=${encodeURIComponent(shareText)}` : '#';
-  const pinterestShareUrl = inviteLink ? `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(inviteLink)}&media=${encodeURIComponent('https://placehold.co/600x400.png')}&description=${encodeURIComponent(shareText)}` : '#';
-  
-  const handleTikTokShare = () => {
-    if (navigator.clipboard && inviteLink) {
-        navigator.clipboard.writeText(inviteLink).then(() => {
-            toast({
-                title: "Link Copied for TikTok!",
-                description: "Paste this link in your TikTok bio or video description.",
-                duration: 5000,
-            });
-        });
-    }
-  };
-
-
-  const handleInstagramShare = () => {
-    if (navigator.clipboard && inviteLink) {
-      navigator.clipboard.writeText(inviteLink)
-        .then(() => {
-          toast({
-            title: "Link Copied for Instagram!",
-            description: "Paste this link in your Instagram bio or stories.",
-            duration: 5000,
-          });
-        })
-        .catch(err => {
-          console.error('Failed to copy link: ', err);
-          toast({
-            title: "Copy Failed",
-            description: "Could not copy the link. Please try manually.",
-            variant: "destructive",
-          });
-        });
-    }
-  };
-
   if (authLoading || (!user && loadingUserProfile) || showWelcomeAnimation) {
     return (
       <AppShell>
@@ -494,67 +436,9 @@ export default function DashboardPage() {
                           </CardFooter>
                       )}
                     </Card>
-
                 </>
               ) : null
               }
-
-              {showStatsDashboard && (
-                <Card className="w-full max-w-2xl shadow-lg mt-8 mx-auto bg-card/80 backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle className="text-2xl font-semibold flex items-center justify-center gap-2 text-primary">
-                      <Share2 className="h-7 w-7" />
-                      {t('inviteFriendsTitle')}
-                    </CardTitle>
-                    <CardDescription className="text-center mt-1">
-                      {t('inviteFriendsDesc')}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                     <div className="text-center p-3 bg-green-100/50 text-green-800 border border-green-200 rounded-md text-sm font-medium">
-                        {t('referralBonusText')}
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium mb-1">{t('yourInviteLink')}</p>
-                      <div className="flex items-center space-x-2">
-                        <Input
-                          type="text"
-                          value={inviteLink}
-                          readOnly
-                          className="text-sm text-muted-foreground"
-                          aria-label="Invite Link"
-                        />
-                        <Button variant="outline" size="icon" onClick={handleCopyInviteLink} title="Copy Link">
-                          <Copy className="h-5 w-5" />
-                        </Button>
-                      </div>
-                    </div>
-                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      <Button variant="outline" className="w-full" asChild disabled={!inviteLink}>
-                        <a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer">
-                            <MessageSquare className="mr-2 h-5 w-5" /> WhatsApp
-                        </a>
-                      </Button>
-                       <Button variant="outline" className="w-full" onClick={handleInstagramShare} disabled={!inviteLink}>
-                         <Share2 className="mr-2 h-5 w-5" /> Instagram
-                      </Button>
-                      <Button variant="outline" className="w-full" asChild disabled={!inviteLink}>
-                        <a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer">
-                           <PinterestIcon className="mr-2 h-5 w-5" /> Pinterest
-                        </a>
-                      </Button>
-                       <Button variant="outline" className="w-full" onClick={handleTikTokShare} disabled={!inviteLink}>
-                          <TikTokIcon className="mr-2 h-5 w-5" /> TikTok
-                      </Button>
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <p className="text-xs text-muted-foreground text-center w-full">
-                      {t('inviteLinkHelp')}
-                    </p>
-                  </CardFooter>
-                </Card>
-              )}
             </div>
           )}
               
@@ -612,3 +496,4 @@ export default function DashboardPage() {
     
 
     
+
