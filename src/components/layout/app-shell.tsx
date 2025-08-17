@@ -76,7 +76,7 @@ export function AppShell({ children }: AppShellProps) {
   
   if (noShellRoutes.includes(pathname)) {
       return (
-        <div className="relative flex flex-col min-h-screen bg-background selection:bg-primary/20 selection:text-primary">
+        <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
             {children}
         </div>
       );
