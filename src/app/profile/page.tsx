@@ -7,13 +7,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, KeyRound, Languages, ShieldCheck, UserCircle, Ruler, Scale, Save, Share2, Copy, MessageSquare } from 'lucide-react'; 
+import { Loader2, KeyRound, Save, Share2, Copy, MessageSquare, UserCircle, Ruler } from 'lucide-react'; 
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { firestore } from '@/lib/firebase/clientApp';
@@ -50,20 +48,12 @@ const measurementsSchema = z.object({
 type MeasurementsFormValues = z.infer<typeof measurementsSchema>;
 
 
-const languageOptions = [
-  { value: "en", label: "English" },
-  { value: "id", label: "Bahasa Indonesia" },
-  { value: "es", label: "Español (Spanish)" },
-  { value: "fr", label: "Français (French)" },
-];
-
 export default function ProfilePage() {
   const { user, updateUserPassword, loading: authLoading } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
   const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false);
   const [isMeasurementsSubmitting, setIsMeasurementsSubmitting] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState("en"); 
   const [inviteLink, setInviteLink] = useState('');
 
   const { 
@@ -148,14 +138,6 @@ export default function ProfilePage() {
     }
   }
 
-  const handleLanguageChange = (value: string) => {
-    setSelectedLanguage(value);
-    toast({
-      title: "Language Preference Updated",
-      description: `Language preference set to ${languageOptions.find(opt => opt.value === value)?.label || value}. Full app translation coming soon!`,
-    });
-  };
-
   const handleCopyInviteLink = () => {
     if (navigator.clipboard && inviteLink) {
       navigator.clipboard.writeText(inviteLink)
@@ -224,7 +206,7 @@ export default function ProfilePage() {
 
   return (
     <AppShell>
-      <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8 space-y-8">
         <header className="text-center">
           <h1 className="text-4xl font-extrabold tracking-tight text-primary flex items-center justify-center gap-3">
             <UserCircle className="h-10 w-10" /> Your Profile
@@ -234,189 +216,133 @@ export default function ProfilePage() {
           </p>
         </header>
 
-        {/* Measurements Section */}
-        <div className="p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
-          <CardHeader className="p-0 mb-6">
-            <CardTitle className="text-2xl font-semibold flex items-center gap-2">
-              <Ruler className="h-6 w-6 text-primary" />
-              Your Measurements
-            </CardTitle>
-            <CardDescription>Update your height and weight. This is optional and helps us personalize suggestions.</CardDescription>
-          </CardHeader>
-          <CardContent className="p-0">
-            <form onSubmit={handleSubmitMeasurements(onMeasurementsSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <Label htmlFor="height">Height ({heightUnit})</Label>
-                    <div className="flex items-center space-x-2">
-                      <Label htmlFor="heightUnitCm" className="text-sm">cm</Label>
-                      <Switch
-                        id="heightUnitSwitch"
-                        checked={heightUnit === 'in'}
-                        onCheckedChange={(checked) => setMeasurementsValue('heightUnit', checked ? 'in' : 'cm')}
-                      />
-                      <Label htmlFor="heightUnitIn" className="text-sm">in</Label>
-                    </div>
-                  </div>
-                  <Input
-                    id="height"
-                    type="number"
-                    step="any"
-                    placeholder={heightUnit === 'cm' ? "e.g., 170" : "e.g., 67"}
-                    {...registerMeasurements("height")}
-                  />
-                  {measurementsErrors.height && <p className="text-sm text-destructive">{measurementsErrors.height.message}</p>}
+        <div className="p-6 sm:p-8 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl border">
+            <dl className="divide-y divide-border">
+                {/* Measurements */}
+                <div className="py-5">
+                    <dt className="text-xl font-semibold flex items-center gap-2 mb-4">
+                        <Ruler className="h-6 w-6 text-primary" />
+                        Your Measurements
+                    </dt>
+                    <dd>
+                        <form onSubmit={handleSubmitMeasurements(onMeasurementsSubmit)} className="space-y-6 mt-2">
+                           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                                <div className="space-y-2">
+                                  <div className="flex justify-between items-center">
+                                    <Label htmlFor="height">Height ({heightUnit})</Label>
+                                    <div className="flex items-center space-x-2">
+                                      <Label htmlFor="heightUnitCm" className="text-sm">cm</Label>
+                                      <Switch
+                                        id="heightUnitSwitch"
+                                        checked={heightUnit === 'in'}
+                                        onCheckedChange={(checked) => setMeasurementsValue('heightUnit', checked ? 'in' : 'cm')}
+                                      />
+                                      <Label htmlFor="heightUnitIn" className="text-sm">in</Label>
+                                    </div>
+                                  </div>
+                                  <Input
+                                    id="height"
+                                    type="number"
+                                    step="any"
+                                    placeholder={heightUnit === 'cm' ? "e.g., 170" : "e.g., 67"}
+                                    {...registerMeasurements("height")}
+                                  />
+                                  {measurementsErrors.height && <p className="text-sm text-destructive">{measurementsErrors.height.message}</p>}
+                                </div>
+                                <div className="space-y-2">
+                                   <div className="flex justify-between items-center">
+                                    <Label htmlFor="weight">Weight ({weightUnit})</Label>
+                                    <div className="flex items-center space-x-2">
+                                      <Label htmlFor="weightUnitKg" className="text-sm">kg</Label>
+                                      <Switch
+                                        id="weightUnitSwitch"
+                                        checked={weightUnit === 'lbs'}
+                                        onCheckedChange={(checked) => setMeasurementsValue('weightUnit', checked ? 'lbs' : 'kg')}
+                                      />
+                                      <Label htmlFor="weightUnitLbs" className="text-sm">lbs</Label>
+                                    </div>
+                                  </div>
+                                  <Input
+                                    id="weight"
+                                    type="number"
+                                    step="any"
+                                    placeholder={weightUnit === 'kg' ? "e.g., 65" : "e.g., 143"}
+                                    {...registerMeasurements("weight")}
+                                  />
+                                  {measurementsErrors.weight && <p className="text-sm text-destructive">{measurementsErrors.weight.message}</p>}
+                                </div>
+                              </div>
+                              <Button type="submit" className="w-full" disabled={isMeasurementsSubmitting || authLoading}>
+                                {isMeasurementsSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                                {isMeasurementsSubmitting ? "Saving..." : "Save Measurements"}
+                              </Button>
+                        </form>
+                    </dd>
                 </div>
-                <div className="space-y-2">
-                   <div className="flex justify-between items-center">
-                    <Label htmlFor="weight">Weight ({weightUnit})</Label>
-                    <div className="flex items-center space-x-2">
-                      <Label htmlFor="weightUnitKg" className="text-sm">kg</Label>
-                      <Switch
-                        id="weightUnitSwitch"
-                        checked={weightUnit === 'lbs'}
-                        onCheckedChange={(checked) => setMeasurementsValue('weightUnit', checked ? 'lbs' : 'kg')}
-                      />
-                      <Label htmlFor="weightUnitLbs" className="text-sm">lbs</Label>
-                    </div>
-                  </div>
-                  <Input
-                    id="weight"
-                    type="number"
-                    step="any"
-                    placeholder={weightUnit === 'kg' ? "e.g., 65" : "e.g., 143"}
-                    {...registerMeasurements("weight")}
-                  />
-                  {measurementsErrors.weight && <p className="text-sm text-destructive">{measurementsErrors.weight.message}</p>}
+                
+                {/* Change Password */}
+                <div className="py-5">
+                    <dt className="text-xl font-semibold flex items-center gap-2 mb-4">
+                        <KeyRound className="h-6 w-6 text-primary" />
+                        Change Password
+                    </dt>
+                    <dd>
+                        <form onSubmit={handleSubmitPassword(onPasswordSubmit)} className="space-y-4 mt-2">
+                          <div className="space-y-2">
+                            <Label htmlFor="currentPassword">Current Password</Label>
+                            <Input id="currentPassword" type="password" {...registerPassword("currentPassword")} placeholder="••••••••" className={passwordErrors.currentPassword ? "border-destructive" : ""}/>
+                            {passwordErrors.currentPassword && <p className="text-sm text-destructive">{passwordErrors.currentPassword.message}</p>}
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="newPassword">New Password</Label>
+                            <Input id="newPassword" type="password" {...registerPassword("newPassword")} placeholder="Minimum 6 characters" className={passwordErrors.newPassword ? "border-destructive" : ""}/>
+                            {passwordErrors.newPassword && <p className="text-sm text-destructive">{passwordErrors.newPassword.message}</p>}
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="confirmNewPassword">Confirm New Password</Label>
+                            <Input id="confirmNewPassword" type="password" {...registerPassword("confirmNewPassword")} placeholder="Re-type new password" className={passwordErrors.confirmNewPassword ? "border-destructive" : ""}/>
+                            {passwordErrors.confirmNewPassword && <p className="text-sm text-destructive">{passwordErrors.confirmNewPassword.message}</p>}
+                          </div>
+                          <Button type="submit" className="w-full" disabled={isPasswordSubmitting || authLoading}>
+                            {isPasswordSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                            {isPasswordSubmitting ? "Updating..." : "Update Password"}
+                          </Button>
+                        </form>
+                    </dd>
                 </div>
-              </div>
-              <Button type="submit" className="w-full text-lg py-3 mt-4" disabled={isMeasurementsSubmitting || authLoading}>
-                {isMeasurementsSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Save className="mr-2 h-5 w-5" />}
-                {isMeasurementsSubmitting ? "Saving..." : "Save Measurements"}
-              </Button>
-            </form>
-          </CardContent>
-        </div>
-
-        <Separator />
-
-        {/* Change Password Section */}
-        <div className="p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
-          <CardHeader className="p-0 mb-6">
-            <CardTitle className="text-2xl font-semibold flex items-center gap-2">
-              <KeyRound className="h-6 w-6 text-primary" />
-              Change Password
-            </CardTitle>
-            <CardDescription>Update your account password for better security.</CardDescription>
-          </CardHeader>
-          <CardContent className="p-0">
-            <form onSubmit={handleSubmitPassword(onPasswordSubmit)} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="currentPassword">Current Password</Label>
-                <Input
-                  id="currentPassword"
-                  type="password"
-                  {...registerPassword("currentPassword")}
-                  placeholder="••••••••"
-                  className={passwordErrors.currentPassword ? "border-destructive" : ""}
-                />
-                {passwordErrors.currentPassword && <p className="text-sm text-destructive">{passwordErrors.currentPassword.message}</p>}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="newPassword">New Password</Label>
-                <Input
-                  id="newPassword"
-                  type="password"
-                  {...registerPassword("newPassword")}
-                  placeholder="Minimum 6 characters"
-                  className={passwordErrors.newPassword ? "border-destructive" : ""}
-                />
-                {passwordErrors.newPassword && <p className="text-sm text-destructive">{passwordErrors.newPassword.message}</p>}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="confirmNewPassword">Confirm New Password</Label>
-                <Input
-                  id="confirmNewPassword"
-                  type="password"
-                  {...registerPassword("confirmNewPassword")}
-                  placeholder="Re-type new password"
-                  className={passwordErrors.confirmNewPassword ? "border-destructive" : ""}
-                />
-                {passwordErrors.confirmNewPassword && <p className="text-sm text-destructive">{passwordErrors.confirmNewPassword.message}</p>}
-              </div>
-              
-              <Button type="submit" className="w-full text-lg py-3" disabled={isPasswordSubmitting || authLoading}>
-                {isPasswordSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <ShieldCheck className="mr-2 h-5 w-5" />}
-                {isPasswordSubmitting ? "Updating..." : "Update Password"}
-              </Button>
-            </form>
-          </CardContent>
-        </div>
-
-        <Separator />
-        
-        {/* Invite Friends Section */}
-        <div className="p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
-            <CardHeader className="p-0 mb-6">
-                <CardTitle className="text-2xl font-semibold flex items-center gap-2">
-                    <Share2 className="h-7 w-7 text-primary" />
-                    {t('inviteFriendsTitle')}
-                </CardTitle>
-                <CardDescription className="mt-1">
-                    {t('inviteFriendsDesc')}
-                </CardDescription>
-            </CardHeader>
-            <CardContent className="p-0 space-y-4">
-                <div className="text-center p-3 bg-green-100/50 text-green-800 border border-green-200 rounded-md text-sm font-medium">
-                    {t('referralBonusText')}
+                
+                {/* Invite Friends */}
+                <div className="py-5">
+                    <dt className="text-xl font-semibold flex items-center gap-2 mb-4">
+                        <Share2 className="h-6 w-6 text-primary" />
+                        {t('inviteFriendsTitle')}
+                    </dt>
+                    <dd className="space-y-4">
+                         <div className="text-center p-3 bg-green-100/50 text-green-800 border border-green-200 rounded-md text-sm font-medium">
+                            {t('referralBonusText')}
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium mb-1">{t('yourInviteLink')}</p>
+                            <div className="flex items-center space-x-2">
+                                <Input type="text" value={inviteLink} readOnly className="text-sm text-muted-foreground" aria-label="Invite Link" />
+                                <Button variant="outline" size="icon" onClick={handleCopyInviteLink} title="Copy Link"><Copy className="h-5 w-5" /></Button>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <Button variant="outline" className="w-full" asChild disabled={!inviteLink}><a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer"><MessageSquare className="mr-2 h-5 w-5" /> WhatsApp</a></Button>
+                            <Button variant="outline" className="w-full" onClick={handleInstagramShare} disabled={!inviteLink}><Share2 className="mr-2 h-5 w-5" /> Instagram</Button>
+                            <Button variant="outline" className="w-full" asChild disabled={!inviteLink}><a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer"><PinterestIcon className="mr-2 h-5 w-5" /> Pinterest</a></Button>
+                            <Button variant="outline" className="w-full" onClick={handleTikTokShare} disabled={!inviteLink}><TikTokIcon className="mr-2 h-5 w-5" /> TikTok</Button>
+                        </div>
+                         <p className="text-xs text-muted-foreground text-center w-full !mt-6">
+                            {t('inviteLinkHelp')}
+                        </p>
+                    </dd>
                 </div>
-                <div>
-                    <p className="text-sm font-medium mb-1">{t('yourInviteLink')}</p>
-                    <div className="flex items-center space-x-2">
-                    <Input
-                        type="text"
-                        value={inviteLink}
-                        readOnly
-                        className="text-sm text-muted-foreground"
-                        aria-label="Invite Link"
-                    />
-                    <Button variant="outline" size="icon" onClick={handleCopyInviteLink} title="Copy Link">
-                        <Copy className="h-5 w-5" />
-                    </Button>
-                    </div>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <Button variant="outline" className="w-full" asChild disabled={!inviteLink}>
-                    <a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer">
-                        <MessageSquare className="mr-2 h-5 w-5" /> WhatsApp
-                    </a>
-                    </Button>
-                    <Button variant="outline" className="w-full" onClick={handleInstagramShare} disabled={!inviteLink}>
-                        <Share2 className="mr-2 h-5 w-5" /> Instagram
-                    </Button>
-                    <Button variant="outline" className="w-full" asChild disabled={!inviteLink}>
-                    <a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer">
-                        <PinterestIcon className="mr-2 h-5 w-5" /> Pinterest
-                    </a>
-                    </Button>
-                    <Button variant="outline" className="w-full" onClick={handleTikTokShare} disabled={!inviteLink}>
-                        <TikTokIcon className="mr-2 h-5 w-5" /> TikTok
-                    </Button>
-                </div>
-            </CardContent>
-            <CardFooter className="p-0 pt-6">
-                <p className="text-xs text-muted-foreground text-center w-full">
-                    {t('inviteLinkHelp')}
-                </p>
-            </CardFooter>
+            </dl>
         </div>
 
       </div>
     </AppShell>
   );
 }
-
-    
