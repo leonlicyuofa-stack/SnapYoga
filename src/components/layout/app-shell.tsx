@@ -83,7 +83,7 @@ export function AppShell({ children }: AppShellProps) {
   }
 
   return (
-    <div className="relative flex flex-col min-h-screen bg-background selection:bg-primary/20 selection:text-primary">
+    <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
        {/* Animated Background */}
        <div className="absolute inset-0 z-[-1] bg-gradient-to-br from-[hsl(var(--splash-blob-1))] via-background to-[hsl(var(--splash-blob-2))] animate-breathing-bg">
             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
