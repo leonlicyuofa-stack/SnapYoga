@@ -357,39 +357,6 @@ export default function ProfilePage() {
         </div>
 
         <Separator />
-
-        {/* Language Settings Section */}
-        <div className="p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
-          <CardHeader className="p-0 mb-6">
-            <CardTitle className="text-2xl font-semibold flex items-center gap-2">
-              <Languages className="h-6 w-6 text-primary" />
-              Language Settings
-            </CardTitle>
-            <CardDescription>Choose your preferred language for the app.</CardDescription>
-          </CardHeader>
-          <CardContent className="p-0 space-y-4">
-            <div>
-              <Label htmlFor="language-select">Select Language</Label>
-                <Select value={selectedLanguage} onValueChange={handleLanguageChange}>
-                  <SelectTrigger id="language-select" className="w-full mt-1">
-                    <SelectValue placeholder="Select language" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {languageOptions.map(option => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-            </div>
-             <p className="text-sm text-muted-foreground">
-              Note: Full application translation is a feature planned for the future. This setting currently saves your preference.
-            </p>
-          </CardContent>
-        </div>
-
-        <Separator />
         
         {/* Invite Friends Section */}
         <div className="p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
@@ -451,3 +418,5 @@ export default function ProfilePage() {
     </AppShell>
   );
 }
+
+    
