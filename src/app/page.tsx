@@ -100,13 +100,11 @@ export default function HomePage() {
         </div>
         
          <div className="relative z-10 flex flex-col items-center justify-center text-center">
-            <h2 className={cn(
-                "text-5xl sm:text-6xl font-bold tracking-tight text-splash-foreground mb-3",
-                "font-script"
-            )}>{t('snapYogaTitle')}</h2>
-            <p className="mt-2 text-sm text-splash-foreground/80 max-w-xs sm:text-base">
-                {t('landingSubtitle')}
-            </p>
+            <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3 font-script">{t('snapYogaTitle')}</h2>
+            <div className="mt-2 text-sm text-splash-foreground/80 max-w-md sm:text-base">
+                <p>personalized yoga feedback • progress tracking • mindful practice.</p>
+                <p>your AI companion</p>
+            </div>
             <Button
                 onClick={handleGetStarted}
                 className="mt-8 rounded-full h-10 w-auto px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
