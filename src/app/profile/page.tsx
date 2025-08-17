@@ -208,7 +208,7 @@ export default function ProfilePage() {
   return (
     <AppShell>
       <div className="container mx-auto px-4 py-12">
-        <div className="max-w-3xl mx-auto space-y-8 w-full">
+        <div className="max-w-3xl mx-auto space-y-8 w-full bg-card/50 backdrop-blur-sm p-4 sm:p-6 md:p-8 rounded-xl">
             <header className="text-center">
               <h1 className="text-4xl font-extrabold tracking-tight text-primary flex items-center justify-center gap-3">
                 <UserCircle className="h-10 w-10" /> Your Profile
