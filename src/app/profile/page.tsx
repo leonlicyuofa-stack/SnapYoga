@@ -224,7 +224,7 @@ export default function ProfilePage() {
 
   return (
     <AppShell>
-      <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8 space-y-10">
+      <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8 space-y-12">
         <header className="text-center">
           <h1 className="text-4xl font-extrabold tracking-tight text-primary flex items-center justify-center gap-3">
             <UserCircle className="h-10 w-10" /> Your Profile
@@ -234,6 +234,7 @@ export default function ProfilePage() {
           </p>
         </header>
 
+        {/* Measurements Section */}
         <div className="p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
           <CardHeader className="p-0 mb-6">
             <CardTitle className="text-2xl font-semibold flex items-center gap-2">
@@ -300,6 +301,7 @@ export default function ProfilePage() {
 
         <Separator />
 
+        {/* Change Password Section */}
         <div className="p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
           <CardHeader className="p-0 mb-6">
             <CardTitle className="text-2xl font-semibold flex items-center gap-2">
@@ -352,15 +354,11 @@ export default function ProfilePage() {
               </Button>
             </form>
           </CardContent>
-           <CardFooter className="p-0 pt-6">
-            <p className="text-xs text-muted-foreground">
-              Ensure your new password is strong and unique.
-            </p>
-          </CardFooter>
         </div>
 
         <Separator />
 
+        {/* Language Settings Section */}
         <div className="p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
           <CardHeader className="p-0 mb-6">
             <CardTitle className="text-2xl font-semibold flex items-center gap-2">
@@ -389,15 +387,11 @@ export default function ProfilePage() {
               Note: Full application translation is a feature planned for the future. This setting currently saves your preference.
             </p>
           </CardContent>
-          <CardFooter className="p-0 pt-6">
-            <p className="text-xs text-muted-foreground">
-              We're working to make SnapYoga accessible to everyone!
-            </p>
-          </CardFooter>
         </div>
 
         <Separator />
-
+        
+        {/* Invite Friends Section */}
         <div className="p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
             <CardHeader className="p-0 mb-6">
                 <CardTitle className="text-2xl font-semibold flex items-center gap-2">
@@ -453,9 +447,7 @@ export default function ProfilePage() {
             </CardFooter>
         </div>
 
-
       </div>
     </AppShell>
   );
 }
-
