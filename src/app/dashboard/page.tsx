@@ -29,6 +29,7 @@ import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { PebbleTrioIcon } from '@/components/icons/PebbleTrioIcon';
 import { HowToGuideDialog } from '@/components/features/dashboard/how-to-guide-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { QuoteCarousel } from '@/components/features/dashboard/QuoteCarousel';
 
 
 interface StoredAnalysis {
@@ -51,11 +52,6 @@ interface UserProfileData extends DocumentData {
   yogaInterest?: string;
 }
 
-interface DailyQuote {
-  content: string;
-  author: string;
-}
-
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth();
   const { t } = useLanguage();
@@ -70,37 +66,12 @@ export default function DashboardPage() {
   const [posesAnalyzedPast30Days, setPosesAnalyzedPast30Days] = useState<number | null>(null);
   const [loadingAppUsageStats, setLoadingAppUsageStats] = useState(true);
 
-  const [quote, setQuote] = useState<DailyQuote | null>(null);
-  const [loadingQuote, setLoadingQuote] = useState(true);
   const [showLuckyWheelDialog, setShowLuckyWheelDialog] = useState(false);
   const [showRockWheelDialog, setShowRockWheelDialog] = useState(false);
   const [showRewardDialog, setShowRewardDialog] = useState(false);
   const [rewardedRock, setRewardedRock] = useState<Rock | null>(null);
   const [showWelcomeAnimation, setShowWelcomeAnimation] = useState(false);
   const [showHowToGuide, setShowHowToGuide] = useState(false);
-
-
-  useEffect(() => {
-    const fetchDailyQuote = async () => {
-      setLoadingQuote(true);
-      try {
-        const response = await fetch('https://api.quotable.io/random?tags=wisdom|inspiration|life|philosophy&maxLength=150');
-        if (!response.ok) {
-          throw new Error('Quotable API failed');
-        }
-        const data = await response.json();
-        setQuote({ content: data.content, author: data.author });
-      } catch (err) {
-        setQuote({ 
-            content: "The body benefits from movement, and the mind benefits from stillness.", 
-            author: "Sakyong Mipham" 
-        });
-      } finally {
-        setLoadingQuote(false);
-      }
-    };
-    fetchDailyQuote();
-  }, []);
 
 
   useEffect(() => {
@@ -378,39 +349,10 @@ export default function DashboardPage() {
             onReward={handleRockReward}
         />
         <div className="flex flex-col items-center w-full">
-         <Card className="w-full shadow-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-background/80 to-secondary/10 border-primary/20 backdrop-blur-sm mb-8 md:mb-12">
-            <CardHeader className="text-center p-6 md:p-8">
-                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-primary flex items-center justify-center">
-                  <WelcomeRock className="mr-3 h-10 w-10 md:h-12 md:w-12" />
-                  {t('snapYogaTitle')}
-                </h1>
-                <p className="mt-3 text-lg text-muted-foreground max-w-xl mx-auto">
-                  {t('snapYogaSubtitle')}
-                </p>
-            </CardHeader>
-            <CardContent className="p-6 md:p-8 pt-0 min-h-[150px] md:min-h-[200px] flex flex-col items-center justify-center text-center">
-              {loadingQuote ? (
-                <>
-                  <Skeleton className="h-6 w-3/4 mb-3" />
-                  <Skeleton className="h-5 w-1/2 mb-4" />
-                  <Skeleton className="h-4 w-1/4" />
-                </>
-              ) : quote ? (
-                <>
-                  <blockquote className="text-xl md:text-2xl font-medium text-foreground/90 italic leading-relaxed">
-                    &ldquo;{quote.content}&rdquo;
-                  </blockquote>
-                  <cite className="mt-4 block text-sm md:text-base text-muted-foreground not-italic">
-                    &ndash; {quote.author}
-                  </cite>
-                </>
-              ) : (
-                <p className="text-muted-foreground">Loading daily inspiration...</p>
-              )}
-            </CardContent>
-          </Card>
+            <QuoteCarousel />
+
           {user && !authLoading && (
-            <div className="w-full bg-card/80 backdrop-blur-sm p-4 md:p-6 rounded-lg shadow-md border border-border mb-8 md:mb-12">
+            <div className="w-full bg-card/80 backdrop-blur-sm p-4 md:p-6 rounded-lg shadow-md border border-border mb-8 md:mb-12 mt-8">
               {loadingUserProfile && !userProfile ? (
                 <div className="text-center py-8">
                   <Skeleton className="h-10 w-3/4 mb-4 mx-auto" />
