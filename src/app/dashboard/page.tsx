@@ -28,6 +28,7 @@ import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { PebbleTrioIcon } from '@/components/icons/PebbleTrioIcon';
 import { HowToGuideDialog } from '@/components/features/dashboard/how-to-guide-dialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 
 interface StoredAnalysis {
@@ -262,6 +263,20 @@ export default function DashboardPage() {
     }
   };
   
+  const getInitials = (email?: string | null, displayName?: string | null) => {
+    if (displayName) {
+      const names = displayName.split(' ');
+      if (names.length > 1) {
+        return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+      }
+      return displayName.substring(0, 2).toUpperCase();
+    }
+    if (email) {
+      return email.substring(0, 2).toUpperCase();
+    }
+    return 'U';
+  };
+  
   const shareText = inviteLink ? `Hey! Check out SnapYoga - an awesome app to analyze and improve your yoga poses: ${inviteLink}` : '';
   const whatsappShareUrl = inviteLink ? `whatsapp://send?text=${encodeURIComponent(shareText)}` : '#';
   const pinterestShareUrl = inviteLink ? `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(inviteLink)}&media=${encodeURIComponent('https://placehold.co/600x400.png')}&description=${encodeURIComponent(shareText)}` : '#';
@@ -363,6 +378,37 @@ export default function DashboardPage() {
             onReward={handleRockReward}
         />
         <div className="flex flex-col items-center w-full">
+         <Card className="w-full shadow-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-background/80 to-secondary/10 border-primary/20 backdrop-blur-sm mb-8 md:mb-12">
+            <CardHeader className="text-center p-6 md:p-8">
+                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-primary flex items-center justify-center">
+                  <WelcomeRock className="mr-3 h-10 w-10 md:h-12 md:w-12" />
+                  {t('snapYogaTitle')}
+                </h1>
+                <p className="mt-3 text-lg text-muted-foreground max-w-xl mx-auto">
+                  {t('snapYogaSubtitle')}
+                </p>
+            </CardHeader>
+            <CardContent className="p-6 md:p-8 pt-0 min-h-[150px] md:min-h-[200px] flex flex-col items-center justify-center text-center">
+              {loadingQuote ? (
+                <>
+                  <Skeleton className="h-6 w-3/4 mb-3" />
+                  <Skeleton className="h-5 w-1/2 mb-4" />
+                  <Skeleton className="h-4 w-1/4" />
+                </>
+              ) : quote ? (
+                <>
+                  <blockquote className="text-xl md:text-2xl font-medium text-foreground/90 italic leading-relaxed">
+                    &ldquo;{quote.content}&rdquo;
+                  </blockquote>
+                  <cite className="mt-4 block text-sm md:text-base text-muted-foreground not-italic">
+                    &ndash; {quote.author}
+                  </cite>
+                </>
+              ) : (
+                <p className="text-muted-foreground">Loading daily inspiration...</p>
+              )}
+            </CardContent>
+          </Card>
           {user && !authLoading && (
             <div className="w-full bg-card/80 backdrop-blur-sm p-4 md:p-6 rounded-lg shadow-md border border-border mb-8 md:mb-12">
               {loadingUserProfile && !userProfile ? (
@@ -389,31 +435,74 @@ export default function DashboardPage() {
                 </div>
               ) : showStatsDashboard ? (
                 <>
-                  <h2 className="text-2xl md:text-3xl font-semibold text-primary mb-4 md:mb-6 text-center">
-                    {t('dashboardWelcome').replace('{name}', welcomeName)}
-                  </h2>
-                  
-                  <RockCollectionCard rocks={allRocks} />
-
                   <Card className="shadow-lg mb-6">
-                      <CardHeader>
-                          <CardTitle className="flex items-center text-xl md:text-2xl">
-                              <Gift className="mr-3 h-7 w-7 text-primary" />
-                              Challenge Rewards
-                          </CardTitle>
-                          <CardDescription>
-                            You've completed the Headstand Challenge! Claim your reward.
-                          </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                          <Button onClick={() => setShowRockWheelDialog(true)} className="w-full" size="lg">
-                              Claim Your Rock!
-                          </Button>
-                      </CardContent>
+                    <CardHeader className="flex flex-row items-center gap-4">
+                        <Avatar className="h-20 w-20 border-4 border-primary/20">
+                            <AvatarImage src={user.photoURL || undefined} alt={user.displayName || 'User'} />
+                            <AvatarFallback>{getInitials(user.email, user.displayName)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                            <CardTitle className="text-2xl">{welcomeName}</CardTitle>
+                            <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                                <span><strong className="text-foreground">{loadingAppUsageStats ? <Skeleton className="h-4 w-8 inline-block" /> : activeLoginDays ?? '-'}</strong> {t('activeDays')}</span>
+                                <span><strong className="text-foreground">{loadingAppUsageStats ? <Skeleton className="h-4 w-8 inline-block" /> : posesAnalyzedPast30Days ?? '-'}</strong> {t('posesDone')}</span>
+                            </div>
+                        </div>
+                    </CardHeader>
                   </Card>
+                
+                  <div className="mb-6">
+                    <h3 className="text-2xl font-bold mb-4">Statistics</h3>
+                    <RockCollectionCard rocks={allRocks} />
+                  </div>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mt-6">
-                    <Card className="shadow-lg lg:col-span-2 bg-card/90 backdrop-blur-sm">
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mt-6">
+                      <Card className="shadow-lg">
+                          <CardHeader>
+                              <CardTitle className="flex items-center text-xl md:text-2xl">
+                                  <Gift className="mr-3 h-7 w-7 text-primary" />
+                                  Challenge Rewards
+                              </CardTitle>
+                              <CardDescription>
+                                You've completed the Headstand Challenge! Claim your reward.
+                              </CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                              <Button onClick={() => setShowRockWheelDialog(true)} className="w-full" size="lg">
+                                  Claim Your Rock!
+                              </Button>
+                          </CardContent>
+                      </Card>
+
+                      <Card className="shadow-lg bg-card/90 backdrop-blur-sm">
+                        <CardHeader>
+                          <CardTitle className="flex items-center text-xl md:text-2xl">
+                            <Trophy className="mr-3 h-7 w-7 text-primary" />
+                            {t('friendChallengesTitle')}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-muted-foreground mb-1 text-sm">Headstand Challenge:</p>
+                          <div className="mb-2">
+                            <div className="flex justify-between text-xs text-foreground/80 mb-0.5"><span>You</span><span>75%</span></div>
+                            <Progress value={75} className="h-2.5" />
+                          </div>
+                          <div>
+                            <div className="flex justify-between text-xs text-muted-foreground mb-0.5"><span>Alex</span><span>60%</span></div>
+                            <Progress value={60} className="h-2.5 bg-secondary/70" />
+                          </div>
+                          <Button variant="outline" size="sm" className="mt-4 w-full" asChild>
+                            <Link href="/challenges">
+                              {t('viewAllChallenges')}
+                              <ArrowRight className="ml-2 h-4 w-4" />
+                            </Link>
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    </div>
+
+                    <Card className="shadow-lg lg:col-span-2 bg-card/90 backdrop-blur-sm mt-6">
                       <CardHeader>
                         <CardTitle className="flex items-center text-xl md:text-2xl">
                           <ListChecks className="mr-3 h-7 w-7 text-primary" />
@@ -464,62 +553,6 @@ export default function DashboardPage() {
                       )}
                     </Card>
 
-                    <div className="space-y-4 md:space-y-6">
-                      <Card className="shadow-lg bg-card/90 backdrop-blur-sm">
-                        <CardHeader>
-                          <CardTitle className="flex items-center text-xl md:text-2xl">
-                            <BarChart3 className="mr-3 h-7 w-7 text-primary" />
-                            {t('appUsageTitle')}
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex flex-row justify-around items-center text-center space-x-2 md:space-x-4">
-                          <div className="flex-1">
-                            <div className="text-3xl md:text-4xl font-bold text-accent">
-                              {loadingAppUsageStats ? <Skeleton className="h-9 w-12 md:h-10 md:w-16 inline-block" /> : activeLoginDays ?? '-'}
-                            </div>
-                            <p className="text-xs md:text-sm text-muted-foreground flex items-center justify-center gap-1"><CalendarDays className="h-3 w-3 md:h-4 md:w-4"/>{t('activeDays')}</p>
-                          </div>
-                          <div className="flex-1">
-                            <div className="text-3xl md:text-4xl font-bold text-accent">
-                              {loadingAppUsageStats ? <Skeleton className="h-9 w-12 md:h-10 md:w-16 inline-block" /> : posesAnalyzedPast30Days ?? '-'}
-                            </div>
-                            <p className="text-xs md:text-sm text-muted-foreground flex items-center justify-center gap-1"><Activity className="h-3 w-3 md:h-4 md:w-4"/>{t('posesDone')}</p>
-                          </div>
-                        </CardContent>
-                        { (!loadingAppUsageStats && ((activeLoginDays ?? 0) > 0 || (posesAnalyzedPast30Days ?? 0) > 0)) &&
-                          <CardFooter className="pt-3 pb-4">
-                              <p className="text-xs text-foreground/80 text-center w-full">Keep up the great work!</p>
-                          </CardFooter>
-                        }
-                      </Card>
-
-                      <Card className="shadow-lg bg-card/90 backdrop-blur-sm">
-                        <CardHeader>
-                          <CardTitle className="flex items-center text-xl md:text-2xl">
-                            <Trophy className="mr-3 h-7 w-7 text-primary" />
-                            {t('friendChallengesTitle')}
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-muted-foreground mb-1 text-sm">Headstand Challenge:</p>
-                          <div className="mb-2">
-                            <div className="flex justify-between text-xs text-foreground/80 mb-0.5"><span>You</span><span>75%</span></div>
-                            <Progress value={75} className="h-2.5" />
-                          </div>
-                          <div>
-                            <div className="flex justify-between text-xs text-muted-foreground mb-0.5"><span>Alex</span><span>60%</span></div>
-                            <Progress value={60} className="h-2.5 bg-secondary/70" />
-                          </div>
-                          <Button variant="outline" size="sm" className="mt-4 w-full" asChild>
-                            <Link href="/challenges">
-                              {t('viewAllChallenges')}
-                              <ArrowRight className="ml-2 h-4 w-4" />
-                            </Link>
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </div>
                 </>
               ) : null
               }
@@ -582,41 +615,8 @@ export default function DashboardPage() {
               )}
             </div>
           )}
-
-          <div className="w-full max-w-2xl flex flex-col items-center justify-center py-8 md:py-6">
-              <Card className="w-full shadow-2xl overflow-hidden bg-gradient-to-br from-primary/10 via-background/80 to-secondary/10 border-primary/20 backdrop-blur-sm mb-8 md:mb-12">
-                <CardHeader className="text-center p-6 md:p-8">
-                    <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-primary flex items-center justify-center">
-                      <WelcomeRock className="mr-3 h-10 w-10 md:h-12 md:w-12" />
-                      {t('snapYogaTitle')}
-                    </h1>
-                    <p className="mt-3 text-lg text-muted-foreground max-w-xl mx-auto">
-                      {t('snapYogaSubtitle')}
-                    </p>
-                </CardHeader>
-                <CardContent className="p-6 md:p-8 pt-0 min-h-[150px] md:min-h-[200px] flex flex-col items-center justify-center text-center">
-                  {loadingQuote ? (
-                    <>
-                      <Skeleton className="h-6 w-3/4 mb-3" />
-                      <Skeleton className="h-5 w-1/2 mb-4" />
-                      <Skeleton className="h-4 w-1/4" />
-                    </>
-                  ) : quote ? (
-                    <>
-                      <blockquote className="text-xl md:text-2xl font-medium text-foreground/90 italic leading-relaxed">
-                        &ldquo;{quote.content}&rdquo;
-                      </blockquote>
-                      <cite className="mt-4 block text-sm md:text-base text-muted-foreground not-italic">
-                        &ndash; {quote.author}
-                      </cite>
-                    </>
-                  ) : (
-                    <p className="text-muted-foreground">Loading daily inspiration...</p>
-                  )}
-                </CardContent>
-              </Card>
               
-              <Card className="w-full shadow-2xl overflow-hidden bg-card/80 backdrop-blur-sm">
+              <Card className="w-full shadow-2xl overflow-hidden mt-12 bg-card/80 backdrop-blur-sm">
                 <CardHeader className="text-center pt-8">
                   <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
                     <Sparkles className="h-8 w-8 text-primary" />
@@ -662,10 +662,11 @@ export default function DashboardPage() {
                   </Link>
                 </CardContent>
               </Card>
-          </div>
         </div>
     </AppShell>
   );
 }
+
+    
 
     
