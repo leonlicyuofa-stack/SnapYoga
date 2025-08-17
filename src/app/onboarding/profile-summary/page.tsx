@@ -12,12 +12,13 @@ import { AppShell } from '@/components/layout/app-shell';
 import { UserCheck, ArrowRight, ArrowLeft, Edit3 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { format } from 'date-fns';
 
 interface UserProfile extends DocumentData {
   displayName?: string;
   email?: string;
   gender?: string;
-  ageGroup?: string;
+  birthday?: string;
   mainGoal?: string;
   interestedPoses?: string[];
   currentBodyShape?: string;
@@ -47,7 +48,6 @@ export default function ProfileSummaryPage() {
         if (docSnap.exists()) {
           setProfileData(docSnap.data() as UserProfile);
         } else {
-          // Should not happen if previous steps saved data
           console.error("Profile data not found for summary.");
         }
       })
@@ -73,29 +73,39 @@ export default function ProfileSummaryPage() {
     router.push(stepPath);
   }
 
-  const renderDetailItem = (label: string, value?: string | number | string[] | null, unit?: string, editPath?: string) => {
+  const renderDetailItem = (label: string, value?: string | number | string[] | null, editPath?: string) => {
     if (value === undefined || value === null || (Array.isArray(value) && value.length === 0)) {
-      return null; // Don't render if value is not set
+      return null;
     }
-    let displayValue = '';
+    
+    let displayValue: React.ReactNode = '';
+
     if (Array.isArray(value)) {
-      // Format an array of strings like ["downward-dog", "warrior-2"] into "Downward Dog, Warrior 2"
-      displayValue = value.map(v => 
-        v.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
-      ).join(', ');
-    } else if (typeof value === 'number') {
-      displayValue = `${value}${unit || ''}`;
-    } else {
-      displayValue = value.charAt(0).toUpperCase() + value.slice(1);
+      displayValue = (
+        <div className="flex flex-wrap gap-2">
+          {value.map(v => 
+            <Badge key={v} variant="secondary">{v.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</Badge>
+          )}
+        </div>
+      );
+    } else if (label === "Birthday" && typeof value === 'string') {
+        try {
+            displayValue = format(new Date(value), 'PPP');
+        } catch (e) {
+            displayValue = value;
+        }
+    }
+    else {
+      displayValue = <span className="capitalize">{value.toString()}</span>;
     }
     
     return (
-      <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center">
+      <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-start">
         <dt className="text-sm font-medium leading-6 text-muted-foreground">{label}</dt>
-        <dd className="mt-1 text-sm leading-6 text-foreground sm:col-span-2 sm:mt-0 flex justify-between items-center">
-          <span>{displayValue}</span>
+        <dd className="mt-1 text-sm leading-6 text-foreground sm:col-span-2 sm:mt-0 flex justify-between items-start gap-2">
+          <div className="flex-grow">{displayValue}</div>
           {editPath && (
-            <Button variant="ghost" size="sm" onClick={() => handleEdit(editPath)} className="text-xs text-primary hover:text-primary/80">
+            <Button variant="ghost" size="sm" onClick={() => handleEdit(editPath)} className="text-xs text-primary hover:text-primary/80 shrink-0">
               <Edit3 className="mr-1 h-3 w-3" /> Edit
             </Button>
           )}
@@ -138,34 +148,21 @@ export default function ProfileSummaryPage() {
         <Card className="w-full max-w-2xl shadow-xl z-10 bg-card/80 backdrop-blur-sm">
           <CardHeader className="text-center">
             <UserCheck className="mx-auto h-12 w-12 text-primary mb-4" />
-            <CardTitle className="text-3xl font-bold">Fitness Profile Summary</CardTitle>
-            <CardDescription>Review your selections. You can edit them if needed.</CardDescription>
+            <CardTitle className="text-3xl font-bold">Your Profile Summary</CardTitle>
+            <CardDescription>Please review your selections. You can edit any item if needed.</CardDescription>
           </CardHeader>
           <CardContent className="px-4 sm:px-6">
             {profileData ? (
               <dl className="divide-y divide-border">
-                {renderDetailItem("Display Name", profileData.displayName, undefined, '/onboarding/gender-profile')}
-                {renderDetailItem("Email", profileData.email)}
-                {renderDetailItem("Gender", profileData.gender, undefined, '/onboarding/gender-profile')}
-                {renderDetailItem("Main Yoga Goal", profileData.mainGoal, undefined, '/onboarding/yoga-goal')}
-                {renderDetailItem("Interested Poses", profileData.interestedPoses, undefined, '/onboarding/yoga-type')}
-                {renderDetailItem("Current Body Shape", profileData.currentBodyShape, undefined, '/onboarding/current-body-shape')}
-                {renderDetailItem("Desired Body Shape", profileData.desiredBodyShape, undefined, '/onboarding/desired-body-shape')}
-                {profileData.focusBodyParts && profileData.focusBodyParts.length > 0 && (
-                  <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-start">
-                    <dt className="text-sm font-medium leading-6 text-muted-foreground">Focus Areas</dt>
-                    <dd className="mt-1 text-sm leading-6 text-foreground sm:col-span-2 sm:mt-0 flex justify-between items-start">
-                       <div className="flex flex-wrap gap-2">
-                        {profileData.focusBodyParts.map(part => <Badge key={part} variant="secondary">{part.charAt(0).toUpperCase() + part.slice(1)}</Badge>)}
-                      </div>
-                       {profileData.focusBodyParts && (
-                        <Button variant="ghost" size="sm" onClick={() => handleEdit('/onboarding/focus-areas')} className="text-xs text-primary hover:text-primary/80 ml-2 shrink-0">
-                          <Edit3 className="mr-1 h-3 w-3" /> Edit
-                        </Button>
-                       )}
-                    </dd>
-                  </div>
-                )}
+                {renderDetailItem("Nickname", profileData.displayName, '/onboarding/gender-profile')}
+                {renderDetailItem("Email", user.email)}
+                {renderDetailItem("Gender", profileData.gender, '/onboarding/gender-profile')}
+                {renderDetailItem("Birthday", profileData.birthday, '/onboarding/gender-profile')}
+                {renderDetailItem("Main Yoga Goal", profileData.mainGoal, '/onboarding/yoga-goal')}
+                {renderDetailItem("Interested Pose Types", profileData.interestedPoses, '/onboarding/yoga-type')}
+                {renderDetailItem("Current Body Shape", profileData.currentBodyShape, '/onboarding/current-body-shape')}
+                {renderDetailItem("Desired Body Shape", profileData.desiredBodyShape, '/onboarding/desired-body-shape')}
+                {renderDetailItem("Focus Areas", profileData.focusBodyParts, '/onboarding/focus-areas')}
               </dl>
             ) : (
               <p className="text-muted-foreground text-center">Could not load profile data.</p>
