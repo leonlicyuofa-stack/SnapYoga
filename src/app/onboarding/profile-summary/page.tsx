@@ -144,7 +144,7 @@ export default function ProfileSummaryPage() {
           <CardContent className="px-4 sm:px-6">
             {profileData ? (
               <dl className="divide-y divide-border">
-                {renderDetailItem("Display Name", profileData.displayName, undefined, '/onboarding/gender-profile')} {/* Assuming name/displayName is part of first steps */}
+                {renderDetailItem("Display Name", profileData.displayName, undefined, '/onboarding/gender-profile')}
                 {renderDetailItem("Email", profileData.email)}
                 {renderDetailItem("Gender", profileData.gender, undefined, '/onboarding/gender-profile')}
                 {renderDetailItem("Main Yoga Goal", profileData.mainGoal, undefined, '/onboarding/yoga-goal')}
