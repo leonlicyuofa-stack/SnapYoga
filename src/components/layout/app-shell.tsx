@@ -52,12 +52,16 @@ export function AppShell({ children }: AppShellProps) {
     return 'U';
   };
 
-  const navLinkClasses = (path: string) => 
+  const navLinkClasses = (path: string, isAnalyzeButton = false) => 
     cn(
       "flex flex-col items-center justify-center h-full w-full gap-1 p-2 rounded-md transition-colors",
       pathname === path 
-        ? "bg-primary/10 text-primary font-semibold" 
-        : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
+        ? isAnalyzeButton
+          ? "bg-accent text-accent-foreground font-semibold"
+          : "bg-primary/10 text-primary font-semibold"
+        : isAnalyzeButton
+          ? "text-muted-foreground hover:bg-accent/80 hover:text-accent-foreground"
+          : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
     );
 
   const homeLinkPath = user ? "/dashboard" : "/";
@@ -175,7 +179,7 @@ export function AppShell({ children }: AppShellProps) {
             </Link>
           )}
 
-          <Link href="/snap-yoga" className={cn(navLinkClasses('/snap-yoga'), "bg-accent/20 text-accent-foreground")}>
+          <Link href="/snap-yoga" className={navLinkClasses('/snap-yoga', true)}>
             <Sparkles className="h-6 w-6" />
             <span className="btm-nav-label">Analyze</span>
           </Link>
