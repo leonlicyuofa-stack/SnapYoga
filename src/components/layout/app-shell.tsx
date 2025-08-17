@@ -56,13 +56,13 @@ export function AppShell({ children }: AppShellProps) {
     cn(
       "flex flex-col items-center justify-center h-full w-full gap-1 p-2 rounded-md transition-colors",
       pathname === path 
-        ? isAnalyzeButton
-          ? "bg-accent text-accent-foreground font-semibold"
-          : "text-primary"
-        : isAnalyzeButton
-          ? "text-muted-foreground hover:bg-accent/80 hover:text-accent-foreground"
-          : "text-muted-foreground hover:text-primary"
+        ? "text-primary"
+        : "text-muted-foreground hover:text-primary",
+      isAnalyzeButton && (pathname === path
+        ? "bg-accent text-accent-foreground font-semibold"
+        : "text-muted-foreground hover:bg-accent/80 hover:text-accent-foreground")
     );
+
 
   const homeLinkPath = user ? "/dashboard" : "/";
   
@@ -71,7 +71,6 @@ export function AppShell({ children }: AppShellProps) {
     setLanguage(newLang);
   };
   
-  // Hide shell elements on specific routes like the landing page or auth pages
   const noShellRoutes = ['/auth/signin', '/auth/signup', '/auth/verify-email', '/', '/home'];
   
   if (noShellRoutes.includes(pathname)) {
@@ -84,19 +83,10 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
-       {/* Animated Background */}
-       <div className="absolute inset-0 z-[-1] bg-gradient-to-br from-[hsl(var(--splash-blob-1))] via-background to-[hsl(var(--splash-blob-2))] animate-breathing-bg">
-            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
-                <defs>
-                    <radialGradient id="blushGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                        <stop offset="0%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0.7 }} />
-                        <stop offset="100%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0 }} />
-                    </radialGradient>
-                </defs>
-                <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-blob-1))" />
-                <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
-                <path d="M 100,0 L 0,0 C 50,50 0,50 0,100 L 100,100 Z" fill="hsl(var(--splash-blob-2))" style={{ opacity: 0.5 }}/>
-            </svg>
+       <div className="absolute inset-0 z-[-1] overflow-hidden bg-background">
+          <div className="absolute w-96 h-96 bg-primary/10 rounded-full -top-32 -left-32 animate-cartoon-float-1" />
+          <div className="absolute w-80 h-80 bg-accent/10 rounded-full -bottom-24 -right-24 animate-cartoon-float-2" />
+          <div className="absolute w-72 h-72 bg-secondary/20 rounded-full bottom-1/2 left-1/3 animate-cartoon-float-3" />
         </div>
 
       <header className="sticky top-0 z-40 w-full border-b bg-card/80 backdrop-blur-sm shadow-sm">
