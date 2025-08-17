@@ -58,10 +58,10 @@ export function AppShell({ children }: AppShellProps) {
       pathname === path 
         ? isAnalyzeButton
           ? "bg-accent text-accent-foreground font-semibold"
-          : "bg-primary/10 text-primary font-semibold"
+          : "text-primary"
         : isAnalyzeButton
           ? "text-muted-foreground hover:bg-accent/80 hover:text-accent-foreground"
-          : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
+          : "text-muted-foreground hover:text-primary"
     );
 
   const homeLinkPath = user ? "/dashboard" : "/";
@@ -161,7 +161,7 @@ export function AppShell({ children }: AppShellProps) {
         </div>
       </header>
 
-      <main className="flex-grow container mx-auto px-4 py-8 sm:px-6 lg:px-8 mb-20">
+      <main className="flex-grow mb-20">
         {children}
       </main>
 
