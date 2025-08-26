@@ -281,6 +281,7 @@ function InviteFriendDialog() {
 
 export default function ChallengesPage() {
   const [friends] = useState<Friend[]>(initialFriends);
+  const { t } = useLanguage();
   
   const getStatusBadge = (challenge: Challenge) => {
     switch (challenge.status) {
@@ -317,7 +318,17 @@ export default function ChallengesPage() {
           </p>
         </div>
 
-        <div className="p-6 sm:p-8 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl flex flex-col sm:flex-row items-center justify-between gap-8">
+        <Card className="w-full shadow-2xl overflow-hidden bg-card/80 backdrop-blur-sm">
+          <CardHeader className="text-center pt-8">
+            <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
+              <Users className="h-8 w-8 text-primary" />
+              {t('challengesWithFriendsTitle')}
+            </CardTitle>
+            <CardDescription className="text-lg text-muted-foreground mt-2 max-w-md mx-auto">
+              {t('challengesWithFriendsDesc')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center space-y-6 p-8">
             <div className="flex -space-x-6">
               {friends.map(friend => (
                 <Avatar key={friend.id} className="h-16 w-16 border-4 border-background hover:z-10 transition-transform hover:scale-110">
@@ -327,7 +338,8 @@ export default function ChallengesPage() {
               ))}
             </div>
             <InviteFriendDialog />
-        </div>
+          </CardContent>
+        </Card>
 
         <div className="space-y-12">
           {categoryOrder.map((category) => {

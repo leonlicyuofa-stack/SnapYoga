@@ -469,31 +469,7 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
 
-              <Card className="w-full shadow-2xl overflow-hidden mt-12 bg-card/80 backdrop-blur-sm">
-                <CardHeader className="text-center pt-8">
-                  <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
-                    <Users className="h-8 w-8 text-primary" />
-                    {t('challengesWithFriendsTitle')}
-                  </CardTitle>
-                  <CardDescription className="text-lg text-muted-foreground mt-2 max-w-md mx-auto">
-                    {t('challengesWithFriendsDesc')}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col items-center space-y-6 p-8">
-                  <Link href="/challenges" passHref>
-                    <Button size="lg" variant="outline" className="text-lg py-7 px-8 rounded-lg shadow-md hover:shadow-lg transition-transform transform hover:scale-105">
-                      {t('exploreChallenges')}
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
         </div>
     </AppShell>
   );
 }
-
-    
-
-    
-
