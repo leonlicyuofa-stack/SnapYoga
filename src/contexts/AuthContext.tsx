@@ -220,12 +220,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-      await sendEmailVerification(userCredential.user);
+      // await sendEmailVerification(userCredential.user); // Removed email verification
       await recordDailyLogin(userCredential.user.uid);
       await createUserProfileDocument(userCredential.user, { email }); 
       
-      toast({ title: 'Account Created!', description: 'A verification email has been sent. Please check your inbox.' });
-      router.push('/auth/verify-email');
+      toast({ title: 'Account Created!', description: 'Welcome! Let\'s get your profile set up.' });
+      router.push('/onboarding/gender-profile'); // Redirect directly to onboarding
     } catch (error) {
       handleAuthError(error, 'Failed to create account.');
     } finally {
@@ -240,15 +240,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, pass);
       
-      if (!userCredential.user.emailVerified) {
-        toast({ 
-          title: 'Verification Required', 
-          description: 'Please verify your email before signing in. Check your inbox for the verification link or resend it.',
-          variant: 'destructive' 
-        });
-        router.push('/auth/verify-email');
-        return; 
-      }
+      // Removed email verification check
       
       await recordDailyLogin(userCredential.user.uid);
       await createUserProfileDocument(userCredential.user);
