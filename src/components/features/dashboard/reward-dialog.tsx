@@ -78,7 +78,7 @@ export function RewardDialog({ isOpen, onClose, rock }: RewardDialogProps) {
         <DialogFooter className="px-6 pb-6 pt-2">
             <Button onClick={onClose} className="w-full" variant="default">
                 <CheckCircle className="mr-2 h-5 w-5"/>
-                Awesome!
+                Got it!
             </Button>
         </DialogFooter>
       </DialogContent>
