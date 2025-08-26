@@ -133,9 +133,7 @@ export default function DrawResultPage() {
             </Button>
           </CardContent>
           <CardFooter>
-            <p className="text-xs text-muted-foreground text-center w-full">
-              Welcome to the SnapYoga family!
-            </p>
+            
           </CardFooter>
         </Card>
       </div>
