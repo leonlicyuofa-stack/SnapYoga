@@ -204,8 +204,6 @@ export default function YogaGoalPage() {
         </div>
         <div className="w-full max-w-2xl z-10 px-4">
             <div className="text-center mb-8">
-                <Target className="mx-auto h-12 w-12 text-primary mb-4" />
-                <h1 className="text-3xl font-bold text-foreground">Your Main Yoga Goal</h1>
                 <p className="text-muted-foreground mt-2">What do you hope to achieve with yoga?</p>
             </div>
             
