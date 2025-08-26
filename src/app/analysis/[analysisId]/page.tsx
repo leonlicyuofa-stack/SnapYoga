@@ -18,6 +18,7 @@ import type { AnalyzeYogaPoseOutput } from '@/ai/flows/analyze-yoga-pose';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 
 interface StoredAnalysisData {
@@ -37,6 +38,7 @@ export default function PastAnalysisPage() {
   const { toast } = useToast();
   const analysisId = params.analysisId as string;
   const { user: currentUser, loading: authLoading } = useAuth();
+  const isMobile = useIsMobile();
 
   const [analysisDetail, setAnalysisDetail] = useState<StoredAnalysisData | null>(null);
   const [analysisForCard, setAnalysisForCard] = useState<AnalyzeYogaPoseOutput | null>(null);
@@ -110,8 +112,14 @@ export default function PastAnalysisPage() {
         if (platform === 'instagram') {
           toast({
             title: "Link Copied for Instagram!",
-            description: "Paste the link in your story or bio to share your awesome progress!",
+            description: "Paste the link in your story or bio. We'll open Instagram for you.",
           });
+          // Attempt to open Instagram app on mobile, or website on desktop
+          if (isMobile) {
+            window.location.href = "instagram://";
+          } else {
+            window.open("https://instagram.com", "_blank");
+          }
         } else {
           toast({
             title: "Link Copied!",
