@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -131,7 +130,7 @@ export default function FocusAreasPage() {
     setIsSubmitting(true);
     try {
       await createUserProfileDocument(user, { focusBodyParts: data.focusBodyParts });
-      router.push('/onboarding/app-features');
+      router.push('/onboarding/profile-summary');
     } catch (error) {
       console.error("Error saving focus areas:", error);
       toast({
