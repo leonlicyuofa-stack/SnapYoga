@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
-import { Loader2, Sparkles, ArrowRight, ArrowLeft, CheckCircle } from 'lucide-react';
+import { Loader2, ArrowRight, ArrowLeft, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const interestedPosesSchema = z.object({
@@ -117,7 +117,7 @@ export default function InterestedPosesPage() {
         </div>
         <div className="w-full max-w-2xl z-10 px-4">
             <div className="text-center mb-8">
-                <Sparkles className="mx-auto h-12 w-12 text-primary mb-4" />
+                
                 <h1 className="text-3xl font-bold text-foreground">Interested Yoga Poses</h1>
                 <p className="text-muted-foreground mt-2">Select the categories of poses you're interested in learning or improving.</p>
             </div>
