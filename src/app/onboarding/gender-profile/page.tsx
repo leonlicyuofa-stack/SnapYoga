@@ -30,7 +30,7 @@ const profileSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
-const ageOptions = Array.from({ length: 88 }, (_, i) => (i + 13).toString()); // Ages 13 to 100
+const ageOptions = Array.from({ length: 83 }, (_, i) => (i + 18).toString()); // Ages 18 to 100
 
 export default function GenderProfilePage() {
   const { user, loading: authLoading } = useAuth();
