@@ -90,14 +90,14 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
           onClick={handleSubmit}
           disabled={isLoading || !selectedFile}
           className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6 rounded-md shadow-md transition-all duration-150 ease-in-out transform hover:scale-105 active:scale-95"
-          aria-label="Analyze Pose"
+          aria-label="yoga analysis"
         >
           {isLoading ? (
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
           ) : (
             <UploadCloud className="mr-2 h-5 w-5" />
           )}
-          {isLoading ? 'Analyzing...' : 'Analyze Pose'}
+          {isLoading ? 'Analyzing...' : 'yoga analysis'}
         </Button>
       </CardContent>
     </div>
