@@ -336,7 +336,6 @@ export default function DashboardPage() {
                   </Card>
                 
                   <div className="mb-6">
-                    <h3 className="text-2xl font-bold mb-4">Statistics</h3>
                     <RockCollectionCard rocks={allRocks} />
                   </div>
 
