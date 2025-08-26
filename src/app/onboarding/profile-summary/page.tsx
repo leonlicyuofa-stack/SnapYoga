@@ -18,7 +18,7 @@ interface UserProfile extends DocumentData {
   displayName?: string;
   email?: string;
   gender?: string;
-  birthday?: string;
+  age?: number;
   mainGoal?: string;
   interestedPoses?: string[];
   currentBodyShape?: string;
@@ -157,7 +157,7 @@ export default function ProfileSummaryPage() {
                 {renderDetailItem("Nickname", profileData.displayName, '/onboarding/gender-profile')}
                 {renderDetailItem("Email", user.email)}
                 {renderDetailItem("Gender", profileData.gender, '/onboarding/gender-profile')}
-                {renderDetailItem("Birthday", profileData.birthday, '/onboarding/gender-profile')}
+                {renderDetailItem("Age", profileData.age, '/onboarding/gender-profile')}
                 {renderDetailItem("Main Yoga Goal", profileData.mainGoal, '/onboarding/yoga-goal')}
                 {renderDetailItem("Interested Pose Types", profileData.interestedPoses, '/onboarding/yoga-type')}
                 {renderDetailItem("Current Body Shape", profileData.currentBodyShape, '/onboarding/current-body-shape')}

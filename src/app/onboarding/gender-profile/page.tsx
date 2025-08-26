@@ -17,28 +17,27 @@ import { Loader2, ArrowRight, X, CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FemaleAvatar } from '@/components/icons/FemaleAvatar';
 import { MaleAvatar } from '@/components/icons/MaleAvatar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { format, differenceInYears } from 'date-fns';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 const profileSchema = z.object({
   gender: z.string().min(1, { message: "Please select a gender" }),
   nickname: z.string().min(2, { message: "Nickname must be at least 2 characters" }),
-  birthday: z.date({
-    required_error: "A date of birth is required.",
+  age: z.string().refine(val => !isNaN(parseInt(val, 10)), {
+      message: "Age is required"
   }),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
+
+const ageOptions = Array.from({ length: 88 }, (_, i) => (i + 13).toString()); // Ages 13 to 100
 
 export default function GenderProfilePage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [age, setAge] = useState<number | null>(null);
-
+  
   const { control, register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
      defaultValues: {
@@ -47,20 +46,7 @@ export default function GenderProfilePage() {
   });
 
   const selectedGender = watch('gender');
-  const birthdayValue = watch('birthday');
-
-  useEffect(() => {
-    if (birthdayValue) {
-      try {
-        const calculatedAge = differenceInYears(new Date(), birthdayValue);
-        setAge(calculatedAge);
-      } catch (error) {
-        setAge(null); // Reset if date is invalid
-      }
-    } else {
-      setAge(null);
-    }
-  }, [birthdayValue]);
+  const ageValue = watch('age');
 
 
   if (authLoading) {
@@ -83,7 +69,7 @@ export default function GenderProfilePage() {
       await createUserProfileDocument(user, { 
           gender: data.gender,
           displayName: data.nickname,
-          birthday: data.birthday.toISOString().split('T')[0], // Store as YYYY-MM-DD string
+          age: parseInt(data.age, 10),
       });
       router.push('/onboarding/yoga-goal');
     } catch (error) {
@@ -160,57 +146,28 @@ export default function GenderProfilePage() {
                 </div>
                  {errors.nickname && <p className="text-sm text-destructive text-right -mt-4">{errors.nickname.message}</p>}
 
-                 <div className="flex justify-between items-start flex-col">
-                    <div className="flex justify-between items-center w-full">
-                        <Label className="font-semibold text-base">Birthday</Label>
-                         <Controller
-                            name="birthday"
-                            control={control}
-                            render={({ field }) => (
-                               <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button
-                                    variant={"outline"}
-                                    className={cn(
-                                        "w-1/2 justify-end text-right font-normal border-0 border-b-2 rounded-none bg-transparent hover:bg-card/20",
-                                        !field.value && "text-muted-foreground"
-                                    )}
-                                    >
-                                    {field.value ? (
-                                        format(field.value, "dd/MM/yyyy")
-                                    ) : (
-                                        <span>Pick a date</span>
-                                    )}
-                                    <CalendarIcon className="ml-2 h-4 w-4" />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0">
-                                   <ScrollArea className="h-72">
-                                    <Calendar
-                                        mode="single"
-                                        selected={field.value}
-                                        onSelect={field.onChange}
-                                        disabled={(date) =>
-                                            date > new Date() || date < new Date("1900-01-01")
-                                        }
-                                        initialFocus
-                                        numberOfMonths={2}
-                                        defaultMonth={field.value || new Date(new Date().setFullYear(new Date().getFullYear() - 25))}
-                                    />
-                                   </ScrollArea>
-                                </PopoverContent>
-                                </Popover>
-                            )}
-                            />
-                    </div>
-                     <div className="w-full text-right pr-1">
-                        {errors.birthday ? (
-                            <p className="text-sm text-destructive mt-1">{errors.birthday.message}</p>
-                        ) : age !== null ? (
-                            <p className="text-sm text-muted-foreground mt-1">Age: {age}</p>
-                        ) : null}
-                    </div>
+                 <div className="flex justify-between items-center w-full">
+                    <Label className="font-semibold text-base">Age</Label>
+                    <Controller
+                        name="age"
+                        control={control}
+                        render={({ field }) => (
+                            <Select onValueChange={field.onChange} value={field.value}>
+                                <SelectTrigger className="w-1/2 justify-end text-right font-normal border-0 border-b-2 rounded-none bg-transparent hover:bg-card/20">
+                                    <SelectValue placeholder="Select age" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <ScrollArea className="h-72">
+                                        {ageOptions.map(age => (
+                                            <SelectItem key={age} value={age}>{age}</SelectItem>
+                                        ))}
+                                    </ScrollArea>
+                                </SelectContent>
+                            </Select>
+                        )}
+                    />
                 </div>
+                {errors.age && <p className="text-sm text-destructive text-right -mt-4">{errors.age.message}</p>}
               </div>
 
               <Button 
