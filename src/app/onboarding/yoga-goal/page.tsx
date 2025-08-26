@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -9,12 +10,13 @@ import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { AppShell } from '@/components/layout/app-shell';
-import { Loader2, Target, ArrowRight, ArrowLeft, HeartPulse, Wind, Spline, Dumbbell, BrainCircuit, MoreHorizontal } from 'lucide-react';
+import { Loader2, Target, ArrowRight, ArrowLeft, HeartPulse, Wind, Spline, Dumbbell, BrainCircuit, MoreHorizontal, Sparkles } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 
 const yogaGoalSchema = z.object({
   mainGoal: z.string().min(1, { message: "Please select your main yoga goal" }),
@@ -31,6 +33,55 @@ const mainGoalOptions = [
   { value: "other", label: "Other", icon: MoreHorizontal },
 ];
 
+const affirmations = [
+    "I am becoming everything I’m meant to be, one small step at a time.",
+    "Today, I choose peace over pressure.",
+    "I don’t need to rush. What’s meant for me will find me.",
+    "I am allowed to take up space, rest, and breathe deeply.",
+    "Progress is quiet, gentle, and still counts.",
+    "I trust myself to grow through what I go through.",
+    "Even slow blooms still become flowers.",
+    "I honor where I am, even if it’s not where I thought I’d be.",
+    "Every breath is a reset. I start fresh now."
+];
+
+// Affirmation Dialog Component
+function AffirmationDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: (open: boolean) => void }) {
+    const [affirmation, setAffirmation] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (isOpen) {
+            const randomIndex = Math.floor(Math.random() * affirmations.length);
+            setAffirmation(affirmations[randomIndex]);
+        }
+    }, [isOpen]);
+
+    return (
+        <Dialog open={isOpen} onOpenChange={onOpenChange}>
+            <DialogContent className="sm:max-w-md text-center">
+                <DialogHeader>
+                    <Sparkles className="mx-auto h-12 w-12 text-primary mb-4" />
+                    <DialogTitle className="text-2xl font-bold">Your Daily Affirmation</DialogTitle>
+                </DialogHeader>
+                <div className="py-4">
+                    {affirmation ? (
+                        <p className="text-xl font-medium text-primary/90 animate-in zoom-in-125 duration-500">
+                           &ldquo;{affirmation}&rdquo;
+                        </p>
+                    ) : (
+                        <SmileyRockLoader text="Generating your affirmation..." />
+                    )}
+                </div>
+                <DialogFooter>
+                    <Button onClick={() => onOpenChange(false)} className="w-full">
+                        Continue
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
 export default function YogaGoalPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -38,12 +89,20 @@ export default function YogaGoalPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isNavigatingBack, setIsNavigatingBack] = useState(false);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [showAffirmation, setShowAffirmation] = useState(false);
 
   const { control, handleSubmit, formState: { errors }, reset } = useForm<YogaGoalFormValues>({
     resolver: zodResolver(yogaGoalSchema),
   });
 
   useEffect(() => {
+    // Show affirmation dialog on first load of this page
+    const hasSeenAffirmation = sessionStorage.getItem('seenOnboardingAffirmation');
+    if (!hasSeenAffirmation) {
+        setShowAffirmation(true);
+        sessionStorage.setItem('seenOnboardingAffirmation', 'true');
+    }
+
     if (user) {
       const userDocRef = doc(firestore, 'users', user.uid);
       getDoc(userDocRef).then(docSnap => {
@@ -109,6 +168,7 @@ export default function YogaGoalPage() {
 
   return (
     <AppShell>
+      <AffirmationDialog isOpen={showAffirmation} onOpenChange={setShowAffirmation} />
       <div className="relative flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
         <div className="absolute inset-0 z-0 bg-splash-background">
             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">

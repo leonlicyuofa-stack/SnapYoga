@@ -85,7 +85,7 @@ export default function GenderProfilePage() {
           displayName: data.nickname,
           birthday: data.birthday.toISOString().split('T')[0], // Store as YYYY-MM-DD string
       });
-      router.push('/onboarding/affirmation');
+      router.push('/onboarding/yoga-goal');
     } catch (error) {
       console.error("Error saving profile:", error);
       toast({
