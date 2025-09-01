@@ -30,6 +30,7 @@ import { PebbleTrioIcon } from '@/components/icons/PebbleTrioIcon';
 import { HowToGuideDialog } from '@/components/features/dashboard/how-to-guide-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { QuoteCarousel } from '@/components/features/dashboard/QuoteCarousel';
+import { FontTestBox } from '@/components/features/dashboard/FontTestBox';
 
 
 interface StoredAnalysis {
@@ -294,7 +295,7 @@ export default function DashboardPage() {
             <QuoteCarousel />
 
           {user && !authLoading && (
-            <div className="w-full bg-card/80 backdrop-blur-sm p-4 md:p-6 rounded-lg shadow-md border border-border mb-8 md:mb-12 mt-8">
+            <div className="w-full bg-card/80 backdrop-blur-sm p-4 md:p-6 rounded-lg shadow-md mb-8 md:mb-12 mt-8">
               {loadingUserProfile && !userProfile ? (
                 <div className="text-center py-8">
                   <Skeleton className="h-10 w-3/4 mb-4 mx-auto" />
@@ -435,6 +436,7 @@ export default function DashboardPage() {
                           </CardFooter>
                       )}
                     </Card>
+                    <FontTestBox />
                 </>
               ) : null
               }
