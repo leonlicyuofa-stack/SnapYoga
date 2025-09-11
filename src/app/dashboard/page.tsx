@@ -31,7 +31,7 @@ const projects = [
     title: "Dashboard",
     category: "Challenges",
     bgColor: "bg-card text-card-foreground",
-    href: "/challenges",
+    href: "/homepage",
   },
   {
     icon: Users,
