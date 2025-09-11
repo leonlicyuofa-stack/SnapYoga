@@ -132,21 +132,12 @@
       position: relative;
       z-index: 100;
   }
-  .font-serif {
-      font-family: var(--font-playfair), serif;
-  }
-  .font-sans {
-      font-family: var(--font-lexend), sans-serif;
-  }
-  .font-script {
-    font-family: var(--font-caveat), cursive;
-  }
 }
 
 @layer components {
   /* Bottom Navigation Bar Styles */
   .btm-nav {
-    @apply fixed bottom-0 left-0 right-0 z-40 flex h-16 items-stretch justify-around border-t bg-card/95 shadow-[0_-1px_4px_rgba(0,0,0,0.05)] backdrop-blur-sm;
+    @apply fixed bottom-0 left-0 right-0 z-40 flex h-16 items-stretch justify-around border-t bg-background shadow-[0_-1px_4px_rgba(0,0,0,0.05)];
   }
   .btm-nav-label {
     @apply text-xs transition-opacity duration-200 sm:text-sm;
@@ -492,7 +483,7 @@
     25% { transform: translateY(-10px) rotate(3deg); }
     50% { transform: translateY(0px) rotate(0deg); }
     75% { transform: translateY(10px) rotate(-3deg); }
-    100% { transform: translateY(0px) rotate(0deg); }
+    100% { translateY(0px) rotate(0deg); }
 }
 
 @keyframes pebble-bounce-left {
@@ -592,4 +583,5 @@
     }
 }
 
+    
     
