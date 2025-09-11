@@ -56,7 +56,7 @@ export function QuoteCarousel() {
 
   if (loading) {
     return (
-        <Card className="relative w-full max-w-2xl h-64 md:h-72 shadow-2xl overflow-hidden bg-primary/10 border-primary/20 backdrop-blur-sm flex flex-col items-center justify-center p-8">
+        <Card className="relative w-full max-w-lg h-64 md:h-72 shadow-2xl overflow-hidden bg-primary/10 border-primary/20 backdrop-blur-sm flex flex-col items-center justify-center p-8">
             <Skeleton className="h-6 w-3/4 mb-3" />
             <Skeleton className="h-5 w-1/2 mb-4" />
             <Skeleton className="h-4 w-1/4" />
@@ -65,7 +65,7 @@ export function QuoteCarousel() {
   }
 
   return (
-    <div className="relative w-full max-w-2xl">
+    <div className="relative w-full max-w-lg">
         <div className="relative h-64 md:h-72 overflow-hidden">
             {quotes.map((quote, index) => (
                 <div
