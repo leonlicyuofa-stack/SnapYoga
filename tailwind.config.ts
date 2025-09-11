@@ -70,6 +70,7 @@ export default {
         fontFamily: {
             sans: ['var(--font-roboto)'],
             script: ['var(--font-caveat)'],
+            body: ['var(--font-inter)'],
         },
   		borderRadius: {
   			lg: 'var(--radius)',

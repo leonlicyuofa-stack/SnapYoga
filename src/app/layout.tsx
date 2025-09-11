@@ -1,6 +1,6 @@
 
 import type {Metadata} from 'next';
-import { Roboto, Caveat } from 'next/font/google';
+import { Roboto, Caveat, Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/contexts/AuthContext'; 
@@ -18,6 +18,11 @@ const caveat = Caveat({
   weight: ['400', '500', '600', '700'],
 });
 
+const inter = Inter({
+  variable: '--font-inter',
+  subsets: ['latin'],
+});
+
 export const metadata: Metadata = {
   title: 'SnapYoga',
   description: 'AI-powered yoga pose analysis and feedback.',
@@ -30,7 +35,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${roboto.variable} ${caveat.variable} antialiased`}>
+      <body className={`${roboto.variable} ${caveat.variable} ${inter.variable} antialiased`}>
         <AuthProvider>
           <LanguageProvider>
             {children}
