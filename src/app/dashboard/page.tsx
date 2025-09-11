@@ -443,32 +443,7 @@ export default function DashboardPage() {
             </div>
           )}
               
-              <Card className="w-full shadow-2xl overflow-hidden mt-12 bg-card/80 backdrop-blur-sm">
-                <CardHeader className="text-center pt-8">
-                  <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
-                    <Sparkles className="h-8 w-8 text-primary" />
-                    {t('analyzeYourPoseTitle')}
-                  </CardTitle>
-                  <CardDescription className="text-lg text-muted-foreground mt-2 max-w-md mx-auto">
-                    {t('analyzeYourPoseDesc')}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col items-center space-y-6 p-8">
-                  <p className="text-center text-foreground/80">
-                    {t('analyzeYourPoseHelp')}
-                  </p>
-                  <Link href="/snap-yoga" passHref>
-                    <Button
-                      size="lg"
-                      className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-7 px-8 rounded-lg shadow-lg transition-transform transform hover:scale-105"
-                      aria-label="Go to SnapYoga Analysis Page"
-                    >
-                      {t('startAnalyzing')}
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+              
 
         </div>
     </AppShell>
