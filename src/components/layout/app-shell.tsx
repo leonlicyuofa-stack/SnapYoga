@@ -6,7 +6,7 @@ import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogIn, LogOut, UserCircle, Loader2, Home, Settings, CalendarDays, Trophy, Languages, Sparkles, Plus, ListOrdered, User, DollarSign } from 'lucide-react';
+import { LogIn, LogOut, UserCircle, Loader2, Home, Settings, CalendarDays, Trophy, Languages, Sparkles } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,8 +64,6 @@ export function AppShell({ children }: AppShellProps) {
   
   const noShellRoutes = ['/auth/signin', '/auth/signup', '/auth/verify-email', '/', '/home'];
   
-  const isDashboard = pathname === '/dashboard';
-
   if (noShellRoutes.includes(pathname)) {
       return (
         <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
@@ -74,43 +72,6 @@ export function AppShell({ children }: AppShellProps) {
       );
   }
 
-  // A different shell for the new dashboard UI
-  if (isDashboard) {
-      return (
-        <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
-            <main className="flex-grow mb-20">
-                {children}
-            </main>
-            <footer className="btm-nav h-20 shadow-[-2px_-1px_10px_rgba(0,0,0,0.08)]">
-                <Link href={homeLinkPath} className={navLinkClasses(homeLinkPath)}>
-                    <Home className="h-6 w-6" />
-                    <span className="btm-nav-label">Home</span>
-                </Link>
-                <Link href="/tasks" className={navLinkClasses("/tasks")}>
-                    <ListOrdered className="h-6 w-6" />
-                    <span className="btm-nav-label">My Task</span>
-                </Link>
-                <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center -mt-8 shadow-lg">
-                   <Button asChild variant="ghost" size="icon" className="w-14 h-14 rounded-full text-primary-foreground hover:bg-primary/90">
-                     <Link href="/snap-yoga">
-                        <Plus className="h-8 w-8" />
-                     </Link>
-                   </Button>
-                </div>
-                <Link href="/payment" className={navLinkClasses("/payment")}>
-                    <DollarSign className="h-6 w-6" />
-                    <span className="btm-nav-label">Payment</span>
-                </Link>
-                <Link href="/profile" className={navLinkClasses("/profile")}>
-                    <User className="h-6 w-6" />
-                    <span className="btm-nav-label">Profile</span>
-                </Link>
-            </footer>
-        </div>
-      )
-  }
-
-  // Original AppShell for other pages
   return (
     <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
        <div className="absolute inset-0 z-[-1] overflow-hidden bg-background">
