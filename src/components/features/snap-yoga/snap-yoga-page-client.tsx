@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -24,6 +23,7 @@ export function SnapYogaPageClient() {
   const [analysisResult, setAnalysisResult] = useState<AnalyzeYogaPoseOutput | null>(null);
   const [summaryResult, setSummaryResult] = useState<SummarizeFeedbackOutput | null>(null);
   const [recommendedVideos, setRecommendedVideos] = useState<YouTubeVideo[]>([]);
+  const [analysisMethod, setAnalysisMethod] = useState('cloud-run'); // 'cloud-run' or 'gemini'
   
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
@@ -32,7 +32,7 @@ export function SnapYogaPageClient() {
 
   const { toast } = useToast();
 
-  const handleVideoUpload = async (dataUri: string, fileName: string) => {
+  const handleVideoUpload = async (dataUri: string, fileName: string, method: string) => {
     if (!currentUser) {
         toast({
             title: "Authentication Required",
@@ -55,7 +55,12 @@ export function SnapYogaPageClient() {
       const input: AnalyzeYogaPoseInput = { 
           videoDataUri: dataUri,
           userId: currentUser.uid,
+          // analysisMethod will be added in the next step
       };
+      // In the next step, you will modify this to pass the 'method'
+      // to the analyzeYogaPose function and handle it on the backend.
+      console.log(`Analyzing with method: ${method}`);
+      
       const result = await analyzeYogaPose(input);
       setAnalysisResult(result);
       toast({
@@ -155,7 +160,12 @@ export function SnapYogaPageClient() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         <div className="space-y-8">
-            <VideoUploadCard onVideoUpload={handleVideoUpload} isLoading={isLoadingAnalysis} />
+            <VideoUploadCard 
+                onVideoUpload={handleVideoUpload} 
+                isLoading={isLoadingAnalysis} 
+                analysisMethod={analysisMethod}
+                onAnalysisMethodChange={setAnalysisMethod}
+            />
             <ActiveChallengesSnapshotCard />
         </div>
         <PoseAnalysisCard
