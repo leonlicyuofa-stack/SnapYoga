@@ -54,27 +54,9 @@ async function uploadVideoToStorage(videoDataUri: string, userId: string): Promi
     return downloadUrl;
 }
 
-const geminiAnalysisPrompt = ai.definePrompt({
-    name: 'geminiYogaAnalysisPrompt',
-    input: { schema: z.object({ videoDataUri: z.string() }) },
-    output: { schema: AnalyzeYogaPoseOutputSchema.pick({ feedback: true, score: true, identifiedPose: true }) },
-    prompt: `You are a world-class yoga instructor. Analyze the provided video of a yoga pose.
-
-    Video: {{media url=videoDataUri}}
-
-    Your task is to:
-    1.  Identify the yoga pose being performed.
-    2.  Provide a score from 0 to 100 based on the accuracy of the form, alignment, and stability.
-    3.  Give clear, concise, and encouraging feedback. Point out specific areas of improvement (e.g., "try to straighten your back more," "engage your core to prevent wobbling," "your right knee seems to be extending past your ankle").
-    
-    Return the analysis in the specified JSON format.`,
-});
-
-
 export async function analyzeYogaPose(input: AnalyzeYogaPoseInput): Promise<AnalyzeYogaPoseOutput> {
   return analyzeYogaPoseFlow(input);
 }
-
 
 const analyzeYogaPoseFlow = ai.defineFlow(
   {
@@ -83,43 +65,30 @@ const analyzeYogaPoseFlow = ai.defineFlow(
     outputSchema: AnalyzeYogaPoseOutputSchema,
   },
   async (input) => {
-    // Step 1: Upload video to Firebase Storage (common for both methods)
+    // Step 1: Upload video to Firebase Storage
     const videoUrl = await uploadVideoToStorage(input.videoDataUri, input.userId);
     
-    let analysisResult;
-
-    if (input.analysisMethod === 'gemini') {
-        // Step 2 (Option A): Analyze with Gemini
-        console.log(`Analyzing with Gemini for video: ${videoUrl}`);
-        const { output } = await geminiAnalysisPrompt({ videoDataUri: input.videoDataUri });
-        if (!output) {
-            throw new Error("Gemini analysis failed to produce an output.");
-        }
-        analysisResult = output;
-
-    } else {
-        // Step 2 (Option B): Call the external Python service on Cloud Run
-        const analysisServiceUrl = process.env.ANALYSIS_SERVICE_URL;
-        if (!analysisServiceUrl) {
-            throw new Error("ANALYSIS_SERVICE_URL environment variable is not set.");
-        }
-        
-        console.log(`Calling analysis service at: ${analysisServiceUrl} for video: ${videoUrl}`);
-
-        const response = await fetch(analysisServiceUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ videoUrl: videoUrl }),
-        });
-
-        if (!response.ok) {
-            const errorBody = await response.text();
-            console.error("Error from analysis service:", errorBody);
-            throw new Error(`Analysis service failed with status ${response.status}: ${errorBody}`);
-        }
-
-        analysisResult = await response.json();
+    // Step 2: Call the external Python service on Cloud Run
+    const analysisServiceUrl = process.env.ANALYSIS_SERVICE_URL;
+    if (!analysisServiceUrl) {
+        throw new Error("ANALYSIS_SERVICE_URL environment variable is not set.");
     }
+    
+    console.log(`Calling analysis service at: ${analysisServiceUrl} for video: ${videoUrl}`);
+
+    const response = await fetch(analysisServiceUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ videoUrl: videoUrl }),
+    });
+
+    if (!response.ok) {
+        const errorBody = await response.text();
+        console.error("Error from analysis service:", errorBody);
+        throw new Error(`Analysis service failed with status ${response.status}: ${errorBody}`);
+    }
+
+    const analysisResult = await response.json();
     
     // Step 3: Return the combined result
     return {

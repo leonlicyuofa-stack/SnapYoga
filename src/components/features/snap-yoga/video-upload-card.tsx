@@ -6,18 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, UploadCloud, BrainCircuit, Cloud } from 'lucide-react';
+import { Loader2, UploadCloud } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface VideoUploadCardProps {
-  onVideoUpload: (videoDataUri: string, fileName: string, analysisMethod: string) => void;
+  onVideoUpload: (videoDataUri: string, fileName: string) => void;
   isLoading: boolean;
-  analysisMethod: string;
-  onAnalysisMethodChange: (method: string) => void;
 }
 
-export function VideoUploadCard({ onVideoUpload, isLoading, analysisMethod, onAnalysisMethodChange }: VideoUploadCardProps) {
+export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { toast } = useToast();
 
@@ -43,7 +40,7 @@ export function VideoUploadCard({ onVideoUpload, isLoading, analysisMethod, onAn
       const reader = new FileReader();
       reader.onloadend = () => {
         const dataUri = reader.result as string;
-        onVideoUpload(dataUri, selectedFile.name, analysisMethod);
+        onVideoUpload(dataUri, selectedFile.name);
       };
       reader.onerror = () => {
         toast({
@@ -70,7 +67,7 @@ export function VideoUploadCard({ onVideoUpload, isLoading, analysisMethod, onAn
           Upload Your Yoga Pose Video
         </CardTitle>
         <CardDescription>
-          Select a video of your yoga pose. We'll analyze it and provide feedback.
+          Select a video of your yoga pose. We'll analyze it and provide feedback using your custom service.
         </CardDescription>
       </CardHeader>
       <CardContent className="p-0 space-y-6 mt-6">
@@ -90,46 +87,18 @@ export function VideoUploadCard({ onVideoUpload, isLoading, analysisMethod, onAn
           </p>
         </div>
 
-        <div className="space-y-3">
-            <Label className="text-base font-medium">Analysis Method</Label>
-            <RadioGroup
-                value={analysisMethod}
-                onValueChange={onAnalysisMethodChange}
-                className="grid grid-cols-2 gap-4"
-                disabled={isLoading}
-            >
-                <Label
-                    htmlFor="method-cloud-run"
-                    className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card/80 p-4 h-28 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/10 cursor-pointer transition-all"
-                >
-                    <RadioGroupItem value="cloud-run" id="method-cloud-run" className="sr-only" />
-                    <Cloud className="mb-2 h-7 w-7" />
-                    <span className="text-center font-semibold">Cloud Run Service</span>
-                </Label>
-                 <Label
-                    htmlFor="method-gemini"
-                    className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card/80 p-4 h-28 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/10 cursor-pointer transition-all"
-                >
-                    <RadioGroupItem value="gemini" id="method-gemini" className="sr-only" />
-                    <BrainCircuit className="mb-2 h-7 w-7" />
-                    <span className="text-center font-semibold">Gemini API</span>
-                </Label>
-            </RadioGroup>
-        </div>
-
-
         <Button
           onClick={handleSubmit}
           disabled={isLoading || !selectedFile}
           className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6 rounded-md shadow-md transition-all duration-150 ease-in-out transform hover:scale-105 active:scale-95"
-          aria-label="yoga analysis"
+          aria-label="Analyze Pose"
         >
           {isLoading ? (
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
           ) : (
             <UploadCloud className="mr-2 h-5 w-5" />
           )}
-          {isLoading ? 'Analyzing...' : 'yoga analysis'}
+          {isLoading ? 'Analyzing...' : 'Analyze Pose'}
         </Button>
       </CardContent>
     </div>

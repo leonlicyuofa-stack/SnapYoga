@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -24,7 +23,6 @@ export function SnapYogaPageClient() {
   const [analysisResult, setAnalysisResult] = useState<AnalyzeYogaPoseOutput | null>(null);
   const [summaryResult, setSummaryResult] = useState<SummarizeFeedbackOutput | null>(null);
   const [recommendedVideos, setRecommendedVideos] = useState<YouTubeVideo[]>([]);
-  const [analysisMethod, setAnalysisMethod] = useState('cloud-run'); // 'cloud-run' or 'gemini'
   
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
@@ -33,7 +31,7 @@ export function SnapYogaPageClient() {
 
   const { toast } = useToast();
 
-  const handleVideoUpload = async (dataUri: string, fileName: string, method: string) => {
+  const handleVideoUpload = async (dataUri: string, fileName: string) => {
     if (!currentUser) {
         toast({
             title: "Authentication Required",
@@ -56,10 +54,8 @@ export function SnapYogaPageClient() {
       const input: AnalyzeYogaPoseInput = { 
           videoDataUri: dataUri,
           userId: currentUser.uid,
-          analysisMethod: method, // Include the selected method
+          analysisMethod: 'cloud-run', // Always use the cloud-run method now
       };
-      
-      console.log(`Analyzing with method: ${method}`);
       
       const result = await analyzeYogaPose(input);
       setAnalysisResult(result);
@@ -162,9 +158,7 @@ export function SnapYogaPageClient() {
         <div className="space-y-8">
             <VideoUploadCard 
                 onVideoUpload={handleVideoUpload} 
-                isLoading={isLoadingAnalysis} 
-                analysisMethod={analysisMethod}
-                onAnalysisMethodChange={setAnalysisMethod}
+                isLoading={isLoadingAnalysis}
             />
             <ActiveChallengesSnapshotCard />
         </div>
