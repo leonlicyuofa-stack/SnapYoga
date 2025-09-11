@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -55,10 +56,9 @@ export function SnapYogaPageClient() {
       const input: AnalyzeYogaPoseInput = { 
           videoDataUri: dataUri,
           userId: currentUser.uid,
-          // analysisMethod will be added in the next step
+          analysisMethod: method, // Include the selected method
       };
-      // In the next step, you will modify this to pass the 'method'
-      // to the analyzeYogaPose function and handle it on the backend.
+      
       console.log(`Analyzing with method: ${method}`);
       
       const result = await analyzeYogaPose(input);
