@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Search, Bell, MoreHorizontal, Tv, LayoutDashboard, Megaphone, Users } from 'lucide-react';
+import { Search, Bell, MoreHorizontal, Sparkles, Trophy, Megaphone, Users, CalendarDays } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState, useEffect } from 'react';
 import type { DocumentData } from 'firebase/firestore';
@@ -20,27 +20,27 @@ interface UserProfileData extends DocumentData {
 
 const projects = [
   {
-    icon: Tv,
-    title: "Mobile App",
-    category: "E-commerce",
+    icon: Sparkles,
+    title: "Pose Analysis",
+    category: "AI Feedback",
     bgColor: "bg-primary text-primary-foreground",
   },
   {
-    icon: LayoutDashboard,
+    icon: Trophy,
     title: "Dashboard",
-    category: "Friends Challenges",
-    bgColor: "bg-card text-card-foreground",
-  },
-  {
-    icon: Megaphone,
-    title: "Banner",
-    category: "Pose Analysis",
+    category: "Challenges",
     bgColor: "bg-card text-card-foreground",
   },
   {
     icon: Users,
+    title: "Friends Challenges",
+    category: "Community",
+    bgColor: "bg-card text-card-foreground",
+  },
+  {
+    icon: CalendarDays,
     title: "Practice Calendar",
-    category: "Task Manager",
+    category: "Tracking",
     bgColor: "bg-card text-card-foreground",
   },
 ]
@@ -86,7 +86,7 @@ export default function DashboardPage() {
               <p className="text-muted-foreground">Let's schedule your projects</p>
             </div>
              <div className="relative w-24 h-20">
-                <Image src="https://picsum.photos/seed/desk/200/200" alt="Person working at desk" layout="fill" objectFit="contain" data-ai-hint="desk illustration" />
+                <Image src="https://picsum.photos/seed/desk/200/200" alt="Person working at desk" fill objectFit="contain" data-ai-hint="desk illustration" />
             </div>
           </CardContent>
         </Card>
