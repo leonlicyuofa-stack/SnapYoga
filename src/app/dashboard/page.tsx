@@ -14,6 +14,7 @@ import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Image from 'next/image';
 import { QuoteCarousel } from '@/components/features/dashboard/QuoteCarousel';
+import { FontTestBox } from '@/components/features/dashboard/FontTestBox';
 
 interface UserProfileData extends DocumentData {
   displayName?: string;
@@ -115,6 +116,8 @@ export default function DashboardPage() {
                   })}
               </div>
           </div>
+
+          <FontTestBox />
 
         </div>
       </div>

@@ -70,7 +70,7 @@ export default {
         fontFamily: {
             sans: ['var(--font-sans)'],
             script: ['var(--font-caveat)'],
-            body: ['var(--font-inter)'],
+            body: ['var(--font-body)'],
         },
   		borderRadius: {
   			lg: 'var(--radius)',
