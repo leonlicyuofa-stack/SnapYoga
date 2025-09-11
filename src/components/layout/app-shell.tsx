@@ -80,7 +80,7 @@ export function AppShell({ children }: AppShellProps) {
           <div className="absolute w-72 h-72 bg-secondary/20 rounded-full bottom-1/2 left-1/3 animate-cartoon-float-3" />
         </div>
 
-      <header className="sticky top-0 z-40 w-full border-b bg-card/80 backdrop-blur-sm shadow-sm">
+      <header className="sticky top-0 z-40 w-full border-b bg-popover shadow-sm">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href={user ? "/dashboard" : "/"} className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm">
             <SnapYogaLogo />
