@@ -54,7 +54,6 @@ export function SnapYogaPageClient() {
       const input: AnalyzeYogaPoseInput = { 
           videoDataUri: dataUri,
           userId: currentUser.uid,
-          analysisMethod: 'cloud-run', // Always use the cloud-run method now
       };
       
       const result = await analyzeYogaPose(input);

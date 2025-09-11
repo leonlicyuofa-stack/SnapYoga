@@ -22,7 +22,6 @@ const AnalyzeYogaPoseInputSchema = z.object({
       "A video of the user performing a yoga pose, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
   userId: z.string().describe("The UID of the user uploading the video."),
-  analysisMethod: z.string().describe("The method to use for analysis: 'cloud-run' or 'gemini'.")
 });
 export type AnalyzeYogaPoseInput = z.infer<typeof AnalyzeYogaPoseInputSchema>;
 
