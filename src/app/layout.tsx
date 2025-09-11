@@ -13,14 +13,13 @@ const lexend = Lexend({
 });
 
 const caveat = Caveat({
-  variable: '--font-caveat',
+  variable: '--font-script',
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
 });
 
 const inter = Inter({
-  variable: '--font-inter',
-  subsets: ['latin'],
+    variable: '--font-body',
+    subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
