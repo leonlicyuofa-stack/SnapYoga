@@ -14,6 +14,7 @@ import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
+import { app } from '@/lib/firebase/clientApp'; // Import the initialized app
 
 const AnalyzeYogaPoseInputSchema = z.object({
   videoDataUri: z
@@ -36,7 +37,8 @@ export type AnalyzeYogaPoseOutput = z.infer<typeof AnalyzeYogaPoseOutputSchema>;
 
 // This is a new helper function to upload the video to Firebase Storage
 async function uploadVideoToStorage(videoDataUri: string, userId: string): Promise<string> {
-    const storage = getStorage();
+    // Pass the initialized 'app' to getStorage to ensure it works on the server
+    const storage = getStorage(app);
     const videoId = uuidv4();
     // Assumes the data URI is in the format 'data:video/mp4;base64,....'
     // We extract the mime type for the storage metadata.
