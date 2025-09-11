@@ -19,43 +19,33 @@ let auth: Auth;
 let firestore: Firestore;
 let storage: FirebaseStorage;
 
-function initializeFirebase() {
-  if (typeof window !== 'undefined') {
-    if (!firebaseConfigClient.apiKey || !firebaseConfigClient.projectId) {
-      console.error("Firebase config is missing. Please check your .env.local or .env file.");
-      // We don't throw here to avoid crashing the app, but services will be unavailable.
-      return null;
-    }
-    
-    if (getApps().length === 0) {
-      try {
-        app = initializeApp(firebaseConfigClient);
-        auth = getAuth(app);
-        firestore = getFirestore(app);
-        storage = getStorage(app);
-      } catch (e) {
-        console.error("Failed to initialize Firebase", e);
-        return null;
-      }
-    } else {
-      app = getApps()[0];
-      auth = getAuth(app);
-      firestore = getFirestore(app);
-      storage = getStorage(app);
-    }
-    return { app, auth, firestore, storage };
+// This check ensures we only initialize the app once.
+if (getApps().length === 0) {
+  // Check if the essential config values are present.
+  if (firebaseConfigClient.apiKey && firebaseConfigClient.projectId) {
+    app = initializeApp(firebaseConfigClient);
+  } else {
+    // This will help in debugging if the .env file is missing.
+    console.error("Firebase config is missing or incomplete. Please check your environment variables.");
+    // We create a dummy object to avoid crashing the app, but services will not work.
+    app = {} as FirebaseApp;
   }
-  return null;
+} else {
+  app = getApps()[0];
 }
 
-// Initialize and export. If initialization fails, these will be undefined.
-const firebaseServices = initializeFirebase();
-
-// The variables might be undefined if initialization fails,
-// and consuming code must handle this gracefully.
-app = firebaseServices?.app!;
-auth = firebaseServices?.auth!;
-firestore = firebaseServices?.firestore!;
-storage = firebaseServices?.storage!;
+// We get the services from the initialized app.
+// If the app failed to initialize, these will throw errors when used,
+// which is appropriate behavior.
+try {
+  auth = getAuth(app);
+  firestore = getFirestore(app);
+  storage = getStorage(app);
+} catch (e) {
+  console.error("Failed to get Firebase services. Is the app initialized correctly?", e);
+  auth = {} as Auth;
+  firestore = {} as Firestore;
+  storage = {} as FirebaseStorage;
+}
 
 export { app, auth, firestore, storage };
