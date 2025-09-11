@@ -5,35 +5,35 @@
 
 @layer base {
   :root {
-    --background: 30 100% 99%;
-    --foreground: 240 10% 3.9%;
+    --background: 228 60% 98%;
+    --foreground: 222 47% 11%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card: 255 100% 100%;
+    --card-foreground: 222 47% 11%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover: 255 100% 100%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 180 82% 35%;
-    --primary-foreground: 180 25% 95%;
+    --primary: 216 84% 52%;
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 220 20% 95%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 24 93% 69%;
-    --accent-foreground: 24 5.9% 10%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 180 82% 35%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 216 84% 52%;
     
-    --chart-1: 180 82% 35%;
+    --chart-1: 216 84% 52%;
     --chart-2: 24 93% 69%;
     --chart-3: 45 90% 80%;
     --chart-4: 28 80% 75%;
@@ -60,35 +60,35 @@
   }
 
   .dark {
-    --background: 240 10% 3.9%; 
-    --foreground: 0 0% 98%; 
+    --background: 222 47% 11%; 
+    --foreground: 210 40% 98%; 
 
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 180 82% 45%; 
-    --primary-foreground: 180 25% 95%;
+    --primary: 216 84% 62%; 
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 24 93% 69%; 
-    --accent-foreground: 24 5.9% 10%;
+    --accent: 217.2 32.6% 17.5%; 
+    --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 180 82% 45%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 216 84% 62%;
     
-    --chart-1: 180 82% 45%;
+    --chart-1: 216 84% 62%;
     --chart-2: 24 93% 69%;
     --chart-3: 45 90% 80%;
     --chart-4: 28 80% 75%;
@@ -136,7 +136,7 @@
       font-family: var(--font-playfair), serif;
   }
   .font-sans {
-      font-family: var(--font-roboto), sans-serif;
+      font-family: var(--font-lexend), sans-serif;
   }
   .font-script {
     font-family: var(--font-caveat), cursive;
@@ -144,9 +144,9 @@
 }
 
 @layer components {
-  /* New Bottom Navigation Bar Styles */
+  /* Bottom Navigation Bar Styles */
   .btm-nav {
-    @apply fixed bottom-0 left-0 right-0 z-40 flex h-16 items-stretch justify-around border-t bg-card/80 shadow-[0_-1px_4px_rgba(0,0,0,0.05)] backdrop-blur-sm;
+    @apply fixed bottom-0 left-0 right-0 z-40 flex h-16 items-stretch justify-around border-t bg-card/95 shadow-[0_-1px_4px_rgba(0,0,0,0.05)] backdrop-blur-sm;
   }
   .btm-nav-label {
     @apply text-xs transition-opacity duration-200 sm:text-sm;
