@@ -2,12 +2,9 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import { ChevronLeftIcon } from '@/components/icons/ChevronLeftIcon';
-import { ChevronRightIcon } from '@/components/icons/ChevronRightIcon';
 
 interface DailyQuote {
   content: string;
@@ -47,13 +44,15 @@ export function QuoteCarousel() {
     fetchQuotes();
   }, []);
 
-  const goToPrevious = () => {
-    setCurrentIndex(prevIndex => (prevIndex === 0 ? quotes.length - 1 : prevIndex - 1));
-  };
+  useEffect(() => {
+    if (quotes.length > 1) {
+      const timer = setInterval(() => {
+        setCurrentIndex(prevIndex => (prevIndex === quotes.length - 1 ? 0 : prevIndex + 1));
+      }, 5000); // Change quote every 5 seconds
+      return () => clearInterval(timer);
+    }
+  }, [quotes]);
 
-  const goToNext = () => {
-    setCurrentIndex(prevIndex => (prevIndex === quotes.length - 1 ? 0 : prevIndex + 1));
-  };
 
   if (loading) {
     return (
@@ -72,7 +71,7 @@ export function QuoteCarousel() {
                 <div
                     key={index}
                     className={cn(
-                        "absolute inset-0 transition-opacity duration-500 ease-in-out flex items-center justify-center",
+                        "absolute inset-0 transition-opacity duration-1000 ease-in-out flex items-center justify-center",
                         index === currentIndex ? "opacity-100" : "opacity-0"
                     )}
                     aria-hidden={index !== currentIndex}
@@ -88,24 +87,6 @@ export function QuoteCarousel() {
                 </div>
             ))}
         </div>
-        <Button 
-            variant="outline" 
-            size="icon" 
-            onClick={goToPrevious}
-            className="absolute top-1/2 -translate-y-1/2 left-0 md:-left-12 rounded-full w-10 h-10 bg-card/80 backdrop-blur-sm"
-            aria-label="Previous quote"
-        >
-            <ChevronLeftIcon className="h-6 w-6" />
-        </Button>
-        <Button 
-            variant="outline" 
-            size="icon" 
-            onClick={goToNext}
-            className="absolute top-1/2 -translate-y-1/2 right-0 md:-right-12 rounded-full w-10 h-10 bg-card/80 backdrop-blur-sm"
-            aria-label="Next quote"
-        >
-            <ChevronRightIcon className="h-6 w-6" />
-        </Button>
     </div>
   );
 }
