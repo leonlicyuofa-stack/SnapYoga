@@ -81,7 +81,7 @@ export default function DashboardPage() {
           {/* Search */}
           <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <Input placeholder="Search" className="pl-10 h-12 rounded-lg bg-card border-none shadow-sm" />
+              <Input placeholder="Search" className="pl-10 h-12 rounded-lg bg-transparent border shadow-sm" />
           </div>
 
           {/* Quote Carousel */}
