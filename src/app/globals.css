@@ -14,8 +14,8 @@
     --popover: 255 100% 100%;
     --popover-foreground: 222 47% 11%;
 
-    --primary: 150 55% 55%;
-    --primary-foreground: 150 25% 10%;
+    --primary: 216 84% 52%; /* Dark Blue */
+    --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -23,17 +23,17 @@
     --muted: 220 20% 95%;
     --muted-foreground: 220 20% 65%;
 
-    --accent: 150 55% 55%;
-    --accent-foreground: 150 25% 10%;
+    --accent: 210 70% 60%; /* Lighter Blue for gradient effect */
+    --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 150 55% 55%;
+    --ring: 216 84% 52%; /* Dark Blue */
     
-    --chart-1: 150 55% 55%;
+    --chart-1: 216 84% 52%;
     --chart-2: 24 93% 69%;
     --chart-3: 45 90% 80%;
     --chart-4: 28 80% 75%;
@@ -51,12 +51,12 @@
     /* Sidebar variables */
     --sidebar-background: 160 30% 98%;
     --sidebar-foreground: 150 25% 15%;
-    --sidebar-primary: 150 55% 55%;
-    --sidebar-primary-foreground: 150 25% 10%;
-    --sidebar-accent: 150 55% 55%;
-    --sidebar-accent-foreground: 150 25% 10%;
+    --sidebar-primary: 216 84% 52%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 210 70% 60%;
+    --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 160 30% 92%;
-    --sidebar-ring: 150 55% 55%;
+    --sidebar-ring: 216 84% 52%;
   }
 
   .dark {
@@ -69,8 +69,8 @@
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 150 55% 60%; 
-    --primary-foreground: 150 25% 15%;
+    --primary: 216 84% 62%; /* Dark Blue - Lighter for dark mode */
+    --primary-foreground: 210 40% 98%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -78,17 +78,17 @@
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 150 55% 60%; 
-    --accent-foreground: 150 25% 15%;
+    --accent: 210 70% 68%; /* Lighter Blue for gradient effect - dark mode */
+    --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 150 55% 60%;
+    --ring: 216 84% 62%;
     
-    --chart-1: 150 55% 60%;
+    --chart-1: 216 84% 62%;
     --chart-2: 24 93% 69%;
     --chart-3: 45 90% 80%;
     --chart-4: 28 80% 75%;
@@ -105,12 +105,12 @@
     /* Sidebar variables for dark mode */
     --sidebar-background: 160 15% 8%;
     --sidebar-foreground: 160 30% 95%;
-    --sidebar-primary: 150 55% 60%;
-    --sidebar-primary-foreground: 150 25% 15%;
-    --sidebar-accent: 150 55% 60%;
-    --sidebar-accent-foreground: 150 25% 15%;
+    --sidebar-primary: 216 84% 62%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 210 70% 68%;
+    --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 160 15% 15%;
-    --sidebar-ring: 150 55% 60%;
+    --sidebar-ring: 216 84% 62%;
   }
 }
 
