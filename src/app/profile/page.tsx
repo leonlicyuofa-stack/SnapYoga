@@ -54,7 +54,6 @@ export default function ProfilePage() {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false);
-  const [isMeasurementsSubmitting, setIsMeasurementsSubmitting] = useState(false);
   const [inviteLink, setInviteLink] = useState('');
 
   const { 
@@ -66,46 +65,11 @@ export default function ProfilePage() {
     resolver: zodResolver(passwordChangeSchema),
   });
   
-  const {
-    control: controlMeasurements,
-    register: registerMeasurements,
-    handleSubmit: handleSubmitMeasurements,
-    watch: watchMeasurements,
-    setValue: setMeasurementsValue,
-    formState: { errors: measurementsErrors },
-    reset: resetMeasurementsForm,
-  } = useForm<MeasurementsFormValues>({
-    resolver: zodResolver(measurementsSchema),
-    defaultValues: {
-        height: undefined,
-        weight: undefined,
-        heightUnit: 'cm',
-        weightUnit: 'kg',
-    },
-  });
-
-  const heightUnit = watchMeasurements('heightUnit');
-  const weightUnit = watchMeasurements('weightUnit');
-  
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setInviteLink(window.location.origin);
     }
-    if (user) {
-        const userDocRef = doc(firestore, 'users', user.uid);
-        getDoc(userDocRef).then((docSnap) => {
-            if (docSnap.exists()) {
-                const data = docSnap.data() as DocumentData;
-                resetMeasurementsForm({
-                    height: data.height,
-                    weight: data.weight,
-                    heightUnit: data.heightUnit || 'cm',
-                    weightUnit: data.weightUnit || 'kg',
-                });
-            }
-        });
-    }
-  }, [user, resetMeasurementsForm]);
+  }, []);
 
 
   const onPasswordSubmit: SubmitHandler<PasswordChangeFormValues> = async (data) => {
@@ -117,28 +81,6 @@ export default function ProfilePage() {
     setIsPasswordSubmitting(false);
   };
   
-  const onMeasurementsSubmit: SubmitHandler<MeasurementsFormValues> = async (data) => {
-    if (!user) {
-      toast({ title: 'Not authenticated', description: 'You must be logged in to update your profile.', variant: 'destructive'});
-      return;
-    }
-    setIsMeasurementsSubmitting(true);
-    try {
-      const profileData: any = {};
-      if (data.height) profileData.height = data.height;
-      profileData.heightUnit = data.heightUnit;
-      if (data.weight) profileData.weight = data.weight;
-      profileData.weightUnit = data.weightUnit;
-      
-      await createUserProfileDocument(user, profileData);
-      toast({ title: "Measurements Saved", description: "Your measurements have been updated." });
-    } catch (error) {
-       toast({ title: "Error", description: "Failed to save measurements. Please try again.", variant: 'destructive'});
-    } finally {
-      setIsMeasurementsSubmitting(false);
-    }
-  }
-
   const handleCopyInviteLink = () => {
     if (navigator.clipboard && inviteLink) {
       navigator.clipboard.writeText(inviteLink)
@@ -219,68 +161,6 @@ export default function ProfilePage() {
             </header>
 
             <dl className="divide-y divide-border/50">
-                {/* Measurements */}
-                <div className="py-5">
-                    <dt className="text-xl font-semibold flex items-center gap-2 mb-4">
-                        <Ruler className="h-6 w-6 text-primary" />
-                        Your Measurements
-                    </dt>
-                    <dd>
-                        <form onSubmit={handleSubmitMeasurements(onMeasurementsSubmit)} className="space-y-6 mt-2">
-                           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                                <div className="space-y-2">
-                                  <div className="flex justify-between items-center">
-                                    <Label htmlFor="height">Height ({heightUnit})</Label>
-                                    <div className="flex items-center space-x-2">
-                                      <Label htmlFor="heightUnitCm" className="text-sm">cm</Label>
-                                      <Switch
-                                        id="heightUnitSwitch"
-                                        checked={heightUnit === 'in'}
-                                        onCheckedChange={(checked) => setMeasurementsValue('heightUnit', checked ? 'in' : 'cm')}
-                                      />
-                                      <Label htmlFor="heightUnitIn" className="text-sm">in</Label>
-                                    </div>
-                                  </div>
-                                  <Input
-                                    id="height"
-                                    type="number"
-                                    step="any"
-                                    placeholder={heightUnit === 'cm' ? "e.g., 170" : "e.g., 67"}
-                                    {...registerMeasurements("height")}
-                                  />
-                                  {measurementsErrors.height && <p className="text-sm text-destructive">{measurementsErrors.height.message}</p>}
-                                </div>
-                                <div className="space-y-2">
-                                   <div className="flex justify-between items-center">
-                                    <Label htmlFor="weight">Weight ({weightUnit})</Label>
-                                    <div className="flex items-center space-x-2">
-                                      <Label htmlFor="weightUnitKg" className="text-sm">kg</Label>
-                                      <Switch
-                                        id="weightUnitSwitch"
-                                        checked={weightUnit === 'lbs'}
-                                        onCheckedChange={(checked) => setMeasurementsValue('weightUnit', checked ? 'lbs' : 'kg')}
-                                      />
-                                      <Label htmlFor="weightUnitLbs" className="text-sm">lbs</Label>
-                                    </div>
-                                  </div>
-                                  <Input
-                                    id="weight"
-                                    type="number"
-                                    step="any"
-                                    placeholder={weightUnit === 'kg' ? "e.g., 65" : "e.g., 143"}
-                                    {...registerMeasurements("weight")}
-                                  />
-                                  {measurementsErrors.weight && <p className="text-sm text-destructive">{measurementsErrors.weight.message}</p>}
-                                </div>
-                              </div>
-                              <Button type="submit" className="w-full" disabled={isMeasurementsSubmitting || authLoading}>
-                                {isMeasurementsSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-                                {isMeasurementsSubmitting ? "Saving..." : "Save Measurements"}
-                              </Button>
-                        </form>
-                    </dd>
-                </div>
-                
                 {/* Change Password */}
                 <div className="py-5">
                     <dt className="text-xl font-semibold flex items-center gap-2 mb-4">
