@@ -24,24 +24,28 @@ const projects = [
     title: "Pose Analysis",
     category: "AI Feedback",
     bgColor: "bg-primary text-primary-foreground",
+    href: "/snap-yoga",
   },
   {
     icon: Trophy,
     title: "Dashboard",
     category: "Challenges",
     bgColor: "bg-card text-card-foreground",
+    href: "/challenges",
   },
   {
     icon: Users,
     title: "Friends Challenges",
     category: "Community",
     bgColor: "bg-card text-card-foreground",
+    href: "/challenges",
   },
   {
     icon: CalendarDays,
     title: "Practice Calendar",
     category: "Tracking",
     bgColor: "bg-card text-card-foreground",
+    href: "/practice-calendar",
   },
 ]
 
@@ -100,7 +104,8 @@ export default function DashboardPage() {
                 {projects.map((project, index) => {
                     const Icon = project.icon;
                     return (
-                        <Card key={index} className={`${project.bgColor} rounded-xl shadow-sm p-4 flex flex-col justify-between h-32`}>
+                      <Link href={project.href} key={index} className="block hover:scale-105 transition-transform duration-200">
+                        <Card className={`${project.bgColor} rounded-xl shadow-sm p-4 flex flex-col justify-between h-32`}>
                             <div className="flex justify-between items-start">
                                 <div className="p-2 bg-card/20 rounded-lg">
                                     <Icon className="h-6 w-6" />
@@ -114,6 +119,7 @@ export default function DashboardPage() {
                                 <p className="text-sm opacity-80">{project.category}</p>
                             </div>
                         </Card>
+                      </Link>
                     )
                 })}
             </div>
