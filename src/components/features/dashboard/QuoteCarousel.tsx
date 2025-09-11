@@ -29,7 +29,7 @@ export function QuoteCarousel() {
     const fetchQuotes = async () => {
       setLoading(true);
       try {
-        const response = await fetch('https://api.quotable.io/quotes/random?limit=5&tags=wisdom|inspiration|life|philosophy&maxLength=180');
+        const response = await fetch('https://api.quotable.io/quotes/random?limit=5&tags=wisdom|inspiration|life|philosophy&maxLength=180', { cache: 'no-store' });
         if (!response.ok) throw new Error('Quotable API failed');
         const data = await response.json();
         if (data.length > 0) {
