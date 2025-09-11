@@ -19,7 +19,7 @@ export function FontTestBox() {
       <CardContent className="space-y-4 text-lg">
         <div>
           <p className="text-sm text-muted-foreground mb-1">
-            Default Sans Serif: `font-sans` (Roboto)
+            Default Sans Serif: `font-sans` (Lexend)
           </p>
           <p className="font-sans">
             The quick brown fox jumps over the lazy dog.

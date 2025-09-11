@@ -1,15 +1,15 @@
 
 import type {Metadata} from 'next';
-import { Roboto, Caveat, Inter } from 'next/font/google';
+import { Lexend, Caveat, Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/contexts/AuthContext'; 
 import { LanguageProvider } from '@/contexts/LanguageContext';
 
-const roboto = Roboto({
-  variable: '--font-roboto',
+const lexend = Lexend({
+  variable: '--font-sans',
   subsets: ['latin'],
-  weight: ['400', '500', '700']
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900']
 });
 
 const caveat = Caveat({
@@ -35,7 +35,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${roboto.variable} ${caveat.variable} ${inter.variable} antialiased`}>
+      <body className={`${lexend.variable} ${caveat.variable} ${inter.variable} antialiased`}>
         <AuthProvider>
           <LanguageProvider>
             {children}

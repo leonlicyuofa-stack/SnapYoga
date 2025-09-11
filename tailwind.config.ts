@@ -68,7 +68,7 @@ export default {
   			}
   		},
         fontFamily: {
-            sans: ['var(--font-roboto)'],
+            sans: ['var(--font-sans)'],
             script: ['var(--font-caveat)'],
             body: ['var(--font-inter)'],
         },
