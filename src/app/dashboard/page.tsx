@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Image from 'next/image';
+import { QuoteCarousel } from '@/components/features/dashboard/QuoteCarousel';
 
 interface UserProfileData extends DocumentData {
   displayName?: string;
@@ -83,18 +84,10 @@ export default function DashboardPage() {
               <Input placeholder="Search" className="pl-10 h-12 rounded-lg bg-card border-none shadow-sm" />
           </div>
 
-          {/* Welcome Banner */}
-          <Card className="flex items-center p-4 rounded-xl shadow-sm">
-            <CardContent className="p-0 flex items-center gap-4">
-              <div>
-                <p className="font-bold text-lg">Welcome!</p>
-                <p className="text-muted-foreground">Let's schedule your projects</p>
-              </div>
-               <div className="relative w-24 h-20">
-                  <Image src="https://picsum.photos/seed/desk/200/200" alt="Person working at desk" fill objectFit="contain" data-ai-hint="desk illustration" />
-              </div>
-            </CardContent>
-          </Card>
+          {/* Quote Carousel */}
+          <div className="flex justify-center">
+              <QuoteCarousel />
+          </div>
           
           {/* Ongoing Projects */}
           <div className="space-y-4">
