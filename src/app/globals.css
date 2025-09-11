@@ -21,10 +21,10 @@
     --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 220 20% 95%;
-    --muted-foreground: 220 20% 65%;
+    --muted-foreground: 220 15% 85%; /* Softer pastel grey */
 
-    --accent: 217 90% 30%; /* Lighter shade of #001B48 for gradient effect */
-    --accent-foreground: 210 40% 98%;
+    --accent: 210 60% 90%; /* Pastel accent */
+    --accent-foreground: 217 100% 14%; /* Dark text on light accent */
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -76,9 +76,9 @@
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted-foreground: 220 15% 65%; /* Darker pastel grey for dark mode */
 
-    --accent: 217 90% 40%; /* Lighter accent for dark mode */
+    --accent: 217 90% 20%; /* Darker pastel accent for dark mode */
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -591,3 +591,5 @@
         transform: scaleY(0.1);
     }
 }
+
+    
