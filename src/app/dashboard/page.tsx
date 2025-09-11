@@ -103,9 +103,6 @@ export default function DashboardPage() {
         <div>
             <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold text-foreground">Ongoing Projects</h3>
-                <Link href="#" className="text-sm font-medium text-primary hover:underline">
-                    view all
-                </Link>
             </div>
             <div className="grid grid-cols-2 gap-4">
                 {projects.map((project, index) => {
