@@ -15,6 +15,8 @@ import { z } from 'genkit';
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 import { app } from '@/lib/firebase/clientApp'; // Import the initialized app
+import { GoogleAuth } from 'google-auth-library';
+
 
 const AnalyzeYogaPoseInputSchema = z.object({
   videoDataUri: z
@@ -55,6 +57,19 @@ async function uploadVideoToStorage(videoDataUri: string, userId: string): Promi
     return downloadUrl;
 }
 
+async function getAuthToken(audience: string): Promise<string> {
+    const auth = new GoogleAuth({
+        scopes: 'https://www.googleapis.com/auth/cloud-platform'
+    });
+    const client = await auth.getIdTokenClient(audience);
+    const res = await client.getRequestHeaders();
+    if (!res.Authorization) {
+        throw new Error('Could not generate authorization token for Cloud Run service.');
+    }
+    return res.Authorization;
+}
+
+
 export async function analyzeYogaPose(input: AnalyzeYogaPoseInput): Promise<AnalyzeYogaPoseOutput> {
   return analyzeYogaPoseFlow(input);
 }
@@ -77,9 +92,15 @@ const analyzeYogaPoseFlow = ai.defineFlow(
     
     console.log(`Calling analysis service at: ${analysisServiceUrl} for video: ${videoUrl}`);
 
+    // Generate an identity token to authenticate to the private Cloud Run service.
+    const authToken = await getAuthToken(analysisServiceUrl);
+
     const response = await fetch(analysisServiceUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': authToken,
+        },
         body: JSON.stringify({ videoUrl: videoUrl }),
     });
 
