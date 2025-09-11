@@ -6,38 +6,38 @@
 @layer base {
   :root {
     --background: 228 60% 98%;
-    --foreground: 222 47% 11%;
+    --foreground: 240 28% 25%; /* #46467A */
 
-    --card: 255 100% 100%;
-    --card-foreground: 222 47% 11%;
+    --card: 245 83% 93%; /* #E0DFFD */
+    --card-foreground: 240 28% 25%;
 
     --popover: 255 100% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 240 28% 25%;
 
-    --primary: 217 100% 14%; /* #001B48 */
+    --primary: 240 28% 38%; /* #46467A */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 248 46% 60%; /* #7768C8 */
+    --secondary-foreground: 210 40% 98%;
 
     --muted: 220 20% 95%;
-    --muted-foreground: 220 15% 85%; /* Softer pastel grey */
+    --muted-foreground: 240 10% 55%; 
 
-    --accent: 210 60% 90%; /* Pastel accent */
-    --accent-foreground: 217 100% 14%; /* Dark text on light accent */
+    --accent: 43 100% 54%; /* #FFC212 */
+    --accent-foreground: 240 28% 25%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 346 89% 83%; /* #F9B0C3 */
+    --destructive-foreground: 240 28% 25%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 217 100% 14%; /* #001B48 */
+    --border: 245 50% 88%;
+    --input: 245 50% 88%;
+    --ring: 248 46% 60%; /* #7768C8 */
     
-    --chart-1: 217 100% 14%;
-    --chart-2: 24 93% 69%;
-    --chart-3: 45 90% 80%;
-    --chart-4: 28 80% 75%;
-    --chart-5: 220 50% 70%;
+    --chart-1: 240 28% 38%;
+    --chart-2: 248 46% 60%;
+    --chart-3: 43 100% 54%;
+    --chart-4: 346 89% 83%;
+    --chart-5: 245 83% 93%;
     --radius: 0.75rem;
 
     /* Splash Screen colors - From reference image */
@@ -60,39 +60,39 @@
   }
 
   .dark {
-    --background: 222 47% 11%; 
-    --foreground: 210 40% 98%; 
+    --background: 240 28% 15%; 
+    --foreground: 245 83% 93%; 
 
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
+    --card: 240 28% 20%;
+    --card-foreground: 245 83% 93%;
 
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 240 28% 10%;
+    --popover-foreground: 245 83% 93%;
 
-    --primary: 217 100% 25%; /* Lighter version of #001B48 for dark mode */
+    --primary: 248 46% 60%; /* #7768C8 */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 240 28% 38%; /* #46467A */
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 220 15% 65%; /* Darker pastel grey for dark mode */
+    --muted: 240 28% 25%;
+    --muted-foreground: 240 10% 65%; 
 
-    --accent: 217 90% 20%; /* Darker pastel accent for dark mode */
-    --accent-foreground: 210 40% 98%;
+    --accent: 43 100% 54%; /* #FFC212 */
+    --accent-foreground: 240 28% 15%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 346 89% 73%; /* Lighter pink for dark mode */
+    --destructive-foreground: 240 28% 15%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 217 100% 25%;
+    --border: 240 28% 25%;
+    --input: 240 28% 25%;
+    --ring: 248 46% 60%;
     
-    --chart-1: 217 100% 25%;
-    --chart-2: 24 93% 69%;
-    --chart-3: 45 90% 80%;
-    --chart-4: 28 80% 75%;
-    --chart-5: 220 50% 70%;
+    --chart-1: 248 46% 60%;
+    --chart-2: 43 100% 54%;
+    --chart-3: 346 89% 73%;
+    --chart-4: 240 28% 38%;
+    --chart-5: 245 83% 93%;
 
     /* Splash Screen colors - Dark mode adaptation of reference */
     --splash-background: 233 16% 15%; /* Dark blue/grey background */
