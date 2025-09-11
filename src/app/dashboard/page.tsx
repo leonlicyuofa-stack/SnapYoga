@@ -23,32 +23,24 @@ const projects = [
     icon: Tv,
     title: "Mobile App",
     category: "E-commerce",
-    date: "May 30, 2022",
-    progress: 90,
     bgColor: "bg-primary text-primary-foreground",
   },
   {
     icon: LayoutDashboard,
     title: "Dashboard",
-    category: "Hotel",
-    date: "May 30, 2022",
-    progress: 80,
+    category: "Friends Challenges",
     bgColor: "bg-card text-card-foreground",
   },
   {
     icon: Megaphone,
     title: "Banner",
-    category: "Marketing",
-    date: "May 30, 2022",
-    progress: 40,
+    category: "Pose Analysis",
     bgColor: "bg-card text-card-foreground",
   },
   {
     icon: Users,
-    title: "UI/UX",
+    title: "Practice Calendar",
     category: "Task Manager",
-    date: "May 30, 2022",
-    progress: 60,
     bgColor: "bg-card text-card-foreground",
   },
 ]
@@ -99,6 +91,34 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         
+        {/* Ongoing Projects */}
+        <div className="space-y-4">
+            <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-foreground">Ongoing Projects</h2>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+                {projects.map((project, index) => {
+                    const Icon = project.icon;
+                    return (
+                        <Card key={index} className={`${project.bgColor} rounded-xl shadow-sm p-4 flex flex-col justify-between h-32`}>
+                            <div className="flex justify-between items-start">
+                                <div className="p-2 bg-card/20 rounded-lg">
+                                    <Icon className="h-6 w-6" />
+                                </div>
+                                <Button variant="ghost" size="icon" className="h-6 w-6">
+                                    <MoreHorizontal className="h-5 w-5" />
+                                </Button>
+                            </div>
+                            <div>
+                                <p className="font-semibold">{project.title}</p>
+                                <p className="text-sm opacity-80">{project.category}</p>
+                            </div>
+                        </Card>
+                    )
+                })}
+            </div>
+        </div>
+
       </div>
     </div>
   );
