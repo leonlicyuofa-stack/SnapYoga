@@ -99,39 +99,6 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         
-        {/* Ongoing Projects */}
-        <div>
-            <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold text-foreground">Ongoing Projects</h3>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-                {projects.map((project, index) => {
-                  const Icon = project.icon;
-                  return (
-                    <Card key={index} className={`${project.bgColor} p-4 rounded-2xl shadow-sm flex flex-col justify-between aspect-square`}>
-                        <div className="flex justify-between items-start">
-                            <div className="p-2 bg-white/20 rounded-lg">
-                                <Icon className="h-6 w-6" />
-                            </div>
-                            <MoreHorizontal className="h-5 w-5 opacity-70" />
-                        </div>
-                        <div>
-                            <p className="text-sm opacity-80">{project.date}</p>
-                            <h4 className="font-bold text-lg">{project.title}</h4>
-                            <p className="text-xs opacity-70">{project.category}</p>
-                        </div>
-                        <div>
-                            <p className="text-xs font-medium mb-1">Progress</p>
-                            <div className="flex items-center gap-2">
-                                <Progress value={project.progress} className="h-1.5 [&>div]:bg-white/80" />
-                                <span className="text-xs font-semibold">{project.progress}%</span>
-                            </div>
-                        </div>
-                    </Card>
-                  )
-                })}
-            </div>
-        </div>
       </div>
     </div>
   );
