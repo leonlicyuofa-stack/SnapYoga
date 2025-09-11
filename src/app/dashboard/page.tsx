@@ -68,7 +68,6 @@ export default function DashboardPage() {
   const [loadingAppUsageStats, setLoadingAppUsageStats] = useState(true);
 
   const [showLuckyWheelDialog, setShowLuckyWheelDialog] = useState(false);
-  const [showRockWheelDialog, setShowRockWheelDialog] = useState(false);
   const [showRewardDialog, setShowRewardDialog] = useState(false);
   const [rewardedRock, setRewardedRock] = useState<Rock | null>(null);
   const [showWelcomeAnimation, setShowWelcomeAnimation] = useState(false);
@@ -195,7 +194,6 @@ export default function DashboardPage() {
   }, [user, authLoading, toast]);
 
   const handleRockReward = (rock: Rock) => {
-      setShowRockWheelDialog(false);
       setRewardedRock(rock);
       setShowRewardDialog(true);
       // In a real app, you would also save this rock to the user's collection in Firestore
@@ -286,11 +284,7 @@ export default function DashboardPage() {
           />
         )}
         <HowToGuideDialog isOpen={showHowToGuide} onClose={() => setShowHowToGuide(false)} />
-        <RockWheelDialog 
-            isOpen={showRockWheelDialog} 
-            onClose={() => setShowRockWheelDialog(false)}
-            onReward={handleRockReward}
-        />
+        
         <div className="flex flex-col items-center w-full">
             <QuoteCarousel />
 
@@ -342,23 +336,6 @@ export default function DashboardPage() {
 
 
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mt-6">
-                      <Card className="shadow-lg">
-                          <CardHeader>
-                              <CardTitle className="flex items-center text-xl md:text-2xl">
-                                  <Gift className="mr-3 h-7 w-7 text-primary" />
-                                  Challenge Rewards
-                              </CardTitle>
-                              <CardDescription>
-                                You've completed the Headstand Challenge! Claim your reward.
-                              </CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                              <Button onClick={() => setShowRockWheelDialog(true)} className="w-full" size="lg">
-                                  Claim Your Rock!
-                              </Button>
-                          </CardContent>
-                      </Card>
-
                       <Card className="shadow-lg bg-card/90 backdrop-blur-sm">
                         <CardHeader>
                           <CardTitle className="flex items-center text-xl md:text-2xl">
@@ -449,3 +426,5 @@ export default function DashboardPage() {
     </AppShell>
   );
 }
+
+    

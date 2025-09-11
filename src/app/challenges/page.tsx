@@ -13,14 +13,16 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowRight, Users, PlusCircle, Crown, Star, Scale, Zap, Spline, Anchor, Copy, Mail, Share2 } from 'lucide-react';
+import { ArrowRight, Users, PlusCircle, Crown, Star, Scale, Zap, Spline, Anchor, Copy, Mail, Share2, Gift } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
-
+import { RockWheelDialog } from '@/components/features/dashboard/rock-wheel-dialog';
+import { RewardDialog } from '@/components/features/dashboard/reward-dialog';
+import type { Rock } from '@/components/features/dashboard/rock-data';
 
 interface Friend {
   id: string;
@@ -282,6 +284,17 @@ function InviteFriendDialog() {
 export default function ChallengesPage() {
   const [friends] = useState<Friend[]>(initialFriends);
   const { t } = useLanguage();
+  const [showRockWheelDialog, setShowRockWheelDialog] = useState(false);
+  const [showRewardDialog, setShowRewardDialog] = useState(false);
+  const [rewardedRock, setRewardedRock] = useState<Rock | null>(null);
+
+  const handleRockReward = (rock: Rock) => {
+    setShowRockWheelDialog(false);
+    setRewardedRock(rock);
+    setShowRewardDialog(true);
+    // In a real app, you would also save this rock to the user's collection in Firestore
+    console.log("User won rock:", rock.name);
+  }
   
   const getStatusBadge = (challenge: Challenge) => {
     switch (challenge.status) {
@@ -307,6 +320,18 @@ export default function ChallengesPage() {
 
   return (
     <AppShell>
+      <RockWheelDialog 
+            isOpen={showRockWheelDialog} 
+            onClose={() => setShowRockWheelDialog(false)}
+            onReward={handleRockReward}
+      />
+      {rewardedRock && (
+          <RewardDialog 
+            isOpen={showRewardDialog} 
+            onClose={() => setShowRewardDialog(false)} 
+            rock={rewardedRock} 
+          />
+      )}
       <div className="container mx-auto px-4 py-12 space-y-12">
         <div className="text-center">
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl flex items-center justify-center gap-3">
@@ -317,6 +342,23 @@ export default function ChallengesPage() {
             Improve your practice, track your progress, and connect with friends.
           </p>
         </div>
+
+        <Card className="w-full shadow-lg">
+            <CardHeader>
+                <CardTitle className="flex items-center text-xl md:text-2xl">
+                    <Gift className="mr-3 h-7 w-7 text-primary" />
+                    Challenge Rewards
+                </CardTitle>
+                <CardDescription>
+                    You've completed the Headstand Challenge! Claim your reward.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Button onClick={() => setShowRockWheelDialog(true)} className="w-full" size="lg">
+                    Claim Your Rock!
+                </Button>
+            </CardContent>
+        </Card>
 
         <Card className="w-full shadow-2xl overflow-hidden bg-card/80 backdrop-blur-sm">
           <CardHeader className="text-center pt-8">
@@ -418,3 +460,5 @@ export default function ChallengesPage() {
     </AppShell>
   );
 }
+
+    
