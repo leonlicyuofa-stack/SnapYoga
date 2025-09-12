@@ -19,6 +19,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from 'next/navigation'; 
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { PenguinIcon } from '../icons/penguin-icon';
+import { LadybirdIcon } from '../icons/ladybird-icon';
+import { AvocadoIcon } from '../icons/avocado-icon';
+import { SmileyPebbleIcon } from '../icons/smiley-pebble-icon';
 
 interface AppShellProps {
   children: ReactNode;
@@ -51,8 +55,8 @@ export function AppShell({ children }: AppShellProps) {
     cn(
       "flex flex-col items-center justify-center h-full w-full gap-1 p-2 rounded-md transition-colors",
       pathname === path 
-        ? "text-primary"
-        : "text-muted-foreground hover:text-primary"
+        ? "text-primary bg-primary/10" 
+        : "text-muted-foreground hover:bg-accent/50 hover:text-primary"
     );
 
   const homeLinkPath = user ? "/dashboard" : "/";
@@ -62,7 +66,7 @@ export function AppShell({ children }: AppShellProps) {
     setLanguage(newLang);
   };
   
-  const noShellRoutes = ['/auth/signin', '/auth/signup', '/auth/verify-email', '/', '/home'];
+  const noShellRoutes = ['/auth/signin', '/auth/signup', '/auth/verify-email', '/'];
   
   if (noShellRoutes.includes(pathname)) {
       return (
@@ -74,7 +78,13 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
-      <header className="sticky top-0 z-40 w-full border-b bg-white shadow-sm">
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-background to-accent/10 animate-breathing-bg overflow-hidden">
+            <PenguinIcon className="absolute top-1/4 left-1/4 w-32 h-32 text-foreground/10 animate-float-1" />
+            <LadybirdIcon className="absolute bottom-1/4 right-1/4 w-24 h-24 text-destructive/20 animate-float-2" />
+            <AvocadoIcon className="absolute bottom-1/2 right-1/3 w-28 h-28 text-primary/10 animate-float-3" />
+            <SmileyPebbleIcon className="absolute top-1/3 left-1/2 w-20 h-20 text-accent/20 animate-float-4" />
+        </div>
+      <header className="sticky top-0 z-40 w-full border-b bg-card/80 shadow-sm backdrop-blur-sm">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href={user ? "/dashboard" : "/"} className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm">
             <SnapYogaLogo />
@@ -153,7 +163,7 @@ export function AppShell({ children }: AppShellProps) {
             </Link>
           )}
 
-          <Link href="/snap-yoga" className={cn(navLinkClasses('/snap-yoga'), "text-muted-foreground hover:text-primary")}>
+          <Link href="/snap-yoga" className={cn(navLinkClasses('/snap-yoga'), "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground scale-110 rounded-lg shadow-lg -translate-y-2 border-4 border-background")}>
             <Sparkles className="h-6 w-6" />
             <span className="btm-nav-label">Analyze</span>
           </Link>
