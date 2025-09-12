@@ -2,6 +2,7 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
@@ -82,32 +83,28 @@ export default function HomePage() {
 
   return (
     <div className={cn(
-        "relative flex flex-col min-h-screen items-center justify-center p-4 bg-splash-background overflow-hidden"
+        "relative flex flex-col min-h-screen items-center justify-center p-4 text-white overflow-hidden"
     )}>
-        {/* Animated Background */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-[hsl(var(--splash-blob-1))] via-background to-[hsl(var(--splash-blob-2))] animate-breathing-bg">
-            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
-                <defs>
-                    <radialGradient id="blushGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                        <stop offset="0%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0.7 }} />
-                        <stop offset="100%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0 }} />
-                    </radialGradient>
-                </defs>
-                <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-blob-1))" />
-                <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
-                <path d="M 100,0 L 0,0 C 50,50 0,50 0,100 L 100,100 Z" fill="hsl(var(--splash-blob-2))" style={{ opacity: 0.5 }}/>
-            </svg>
-        </div>
+        {/* Background Image and Overlay */}
+        <Image
+            src="https://picsum.photos/seed/yogapose/1920/1080"
+            alt="Person doing yoga outdoors"
+            fill
+            className="object-cover -z-10"
+            data-ai-hint="yoga nature"
+            priority
+        />
+        <div className="absolute inset-0 bg-black/60 -z-10" />
         
          <div className="relative z-10 flex flex-col items-center justify-center text-center">
-            <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3 font-script">{t('snapYogaTitle')}</h2>
-            <div className="mt-2 text-sm text-splash-foreground/80 max-w-md sm:text-base">
+            <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight mb-3 font-script">{t('snapYogaTitle')}</h2>
+            <div className="mt-2 text-sm text-white/80 max-w-md sm:text-base">
                 <p>yoga feedback • progress tracking • mindful practice</p>
                 <p>Your AI companion</p>
             </div>
             <Button
                 onClick={handleGetStarted}
-                className="mt-8 rounded-full h-10 w-auto px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+                className="mt-8 rounded-full h-10 w-auto px-6 bg-white/30 hover:bg-white/50 text-white text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
                 aria-label={t('getStarted')}
                 disabled={isLoading}
             >
@@ -119,10 +116,10 @@ export default function HomePage() {
             <div className="container mx-auto flex justify-between items-center px-4 sm:px-8">
             <div></div>
             <div className="flex items-center gap-2">
-                <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3 bg-white/50 backdrop-blur-sm hover:bg-white/80 text-black border-black/20" aria-label="Switch Language">
+                <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white border-white/40" aria-label="Switch Language">
                 <span className="mr-2">🇮🇩</span> Bahasa
                 </Button>
-                <Button variant="ghost" asChild className="h-9 text-black hover:text-black hover:bg-white/20 bg-black/10 backdrop-blur-sm">
+                <Button variant="ghost" asChild className="h-9 text-white hover:text-white hover:bg-white/20 bg-black/10 backdrop-blur-sm">
                 <Link href="/auth/signin">
                     {t('signIn')}
                 </Link>
