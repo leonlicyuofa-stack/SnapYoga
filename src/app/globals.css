@@ -137,7 +137,7 @@
 @layer components {
   /* Bottom Navigation Bar Styles */
   .btm-nav {
-    @apply fixed bottom-0 left-0 right-0 z-40 flex h-16 items-stretch justify-around border-t bg-background shadow-[0_-1px_4px_rgba(0,0,0,0.05)];
+    @apply fixed bottom-0 left-0 right-0 z-40 flex h-16 items-stretch justify-around border-t bg-white shadow-[0_-1px_4px_rgba(0,0,0,0.05)];
   }
   .btm-nav-label {
     @apply text-xs transition-opacity duration-200 sm:text-sm;
