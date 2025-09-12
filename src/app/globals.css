@@ -5,91 +5,91 @@
 
 @layer base {
   :root {
-    --background: 40 33% 96%; /* Warm, off-white background */
-    --foreground: 240 10% 20%; /* Dark charcoal for text */
+    --background: 350 33% 95%; /* Blush - #F4E1E0 */
+    --foreground: 349 13% 44%; /* Prune - #7F6269 */
 
-    --card: 0 0% 100%; /* White for cards */
-    --card-foreground: 240 10% 15%;
+    --card: 0 100% 99%; /* Lighter Blush/White - #FFFCFC */
+    --card-foreground: 349 13% 44%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 15%;
+    --popover: 0 100% 99%;
+    --popover-foreground: 349 13% 44%;
 
-    --primary: 240 10% 15%; /* Dark charcoal for primary buttons */
-    --primary-foreground: 0 0% 98%;
+    --primary: 349 13% 44%; /* Prune - #7F6269 */
+    --primary-foreground: 350 33% 95%; /* Blush */
 
-    --secondary: 40 10% 95%; 
-    --secondary-foreground: 240 10% 20%;
+    --secondary: 353 24% 91%; /* Pink - #E5C5C1 */
+    --secondary-foreground: 349 13% 44%;
 
-    --muted: 40 10% 90%;
-    --muted-foreground: 240 5% 45%; 
+    --muted: 353 24% 91%;
+    --muted-foreground: 349 13% 55%; 
 
-    --accent: 35 25% 65%; /* Warm brown from 'members' badge */
-    --accent-foreground: 240 10% 15%;
+    --accent: 99 6% 64%; /* Pistachio - #A0A598 */
+    --accent-foreground: 349 13% 20%;
 
     --destructive: 0 84% 60%; 
     --destructive-foreground: 0 0% 98%;
 
-    --border: 40 10% 90%;
-    --input: 40 10% 92%;
-    --ring: 240 10% 15%;
+    --border: 353 24% 91%;
+    --input: 353 24% 93%;
+    --ring: 349 13% 44%;
     
-    --chart-1: 240 10% 15%;
-    --chart-2: 35 25% 65%;
-    --chart-3: 0 84% 60%;
-    --chart-4: 35 100% 58%;
-    --chart-5: 210 40% 98%;
+    --chart-1: 349 13% 44%;
+    --chart-2: 99 6% 64%;
+    --chart-3: 6 25% 64%; /* Mauve - #BD8E89 */
+    --chart-4: 353 24% 91%;
+    --chart-5: 350 33% 95%;
 
     --radius: 0.75rem;
     
-    /* Splash Screen colors - From reference image */
-    --splash-background: 0 0% 98%; /* Off-white from image */
-    --splash-foreground: 233 16% 23%; /* Dark blue/grey for text */
-    --splash-blob-1: 345 53% 92%; /* #EADADE - Pastel Pink */
-    --splash-blob-2: 257 26% 78%; /* #C8BAD3 - Light Lavender */
-    --splash-blob-3: 258 17% 62%; /* #A695B7 - Muted Purple */
+    /* Splash Screen colors */
+    --splash-background: 350 33% 95%;
+    --splash-foreground: 349 13% 44%;
+    --splash-blob-1: 353 24% 91%;
+    --splash-blob-2: 99 6% 80%;
+    --splash-blob-3: 6 25% 64%;
   }
 
   .dark {
-    --background: 240 10% 10%; 
-    --foreground: 40 10% 95%; 
+    --background: 349 15% 15%; 
+    --foreground: 350 33% 95%; 
 
-    --card: 240 10% 12%; 
-    --card-foreground: 40 10% 95%;
+    --card: 349 15% 18%; 
+    --card-foreground: 350 33% 95%;
 
-    --popover: 240 10% 10%;
-    --popover-foreground: 40 10% 95%;
+    --popover: 349 15% 15%;
+    --popover-foreground: 350 33% 95%;
 
-    --primary: 40 10% 95%; 
-    --primary-foreground: 240 10% 10%;
+    --primary: 350 33% 95%; 
+    --primary-foreground: 349 13% 25%;
 
-    --secondary: 240 10% 20%; 
-    --secondary-foreground: 40 10% 95%;
+    --secondary: 349 15% 25%; 
+    --secondary-foreground: 350 33% 95%;
 
-    --muted: 240 10% 25%;
-    --muted-foreground: 240 5% 65%; 
+    --muted: 349 15% 30%;
+    --muted-foreground: 350 20% 70%; 
 
-    --accent: 35 30% 70%; 
-    --accent-foreground: 240 10% 10%;
+    --accent: 99 10% 75%; 
+    --accent-foreground: 349 13% 15%;
 
     --destructive: 0 72% 51%; 
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 10% 25%;
-    --input: 240 10% 25%;
-    --ring: 40 10% 95%;
+    --border: 349 15% 30%;
+    --input: 349 15% 30%;
+    --ring: 350 33% 95%;
     
-    --chart-1: 40 10% 95%;
-    --chart-2: 35 30% 70%;
-    --chart-3: 0 72% 51%;
-    --chart-4: 35 100% 58%;
-    --chart-5: 210 40% 98%;
+    --chart-1: 350 33% 95%;
+    --chart-2: 99 10% 75%;
+    --chart-3: 6 30% 75%;
+    --chart-4: 353 24% 85%;
+    --chart-5: 350 33% 90%;
 
-    /* Splash Screen colors - Dark mode adaptation of reference */
-    --splash-background: 233 16% 15%; /* Dark blue/grey background */
-    --splash-foreground: 0 0% 95%; /* Off-white text */
-    --splash-blob-1: 345 33% 32%; /* Dark Pastel Pink */
-    --splash-blob-2: 257 16% 38%; /* Dark Light Lavender */
-    --splash-blob-3: 258 17% 62%; /* Muted Purple (can stay brighter) */
+    /* Splash Screen colors - Dark mode adaptation */
+    --splash-background: 349 15% 15%;
+    --splash-foreground: 350 33% 95%;
+    --splash-blob-1: 353 20% 35%;
+    --splash-blob-2: 99 10% 30%;
+    --splash-blob-3: 6 20% 40%;
   }
 }
 
