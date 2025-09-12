@@ -19,7 +19,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from 'next/navigation'; 
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { SmileyPebbleIcon } from '../icons/smiley-pebble-icon';
 
 interface AppShellProps {
   children: ReactNode;
@@ -65,7 +64,7 @@ export function AppShell({ children }: AppShellProps) {
   
   const noShellRoutes = ['/auth/signin', '/auth/signup', '/auth/verify-email', '/'];
   
-  if (noShellRoutes.includes(pathname)) {
+  if (noShellRoutes.includes(pathname) || pathname.startsWith('/home')) {
       return (
         <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
             {children}
@@ -75,9 +74,6 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-background to-accent/10 animate-breathing-bg overflow-hidden">
-            
-        </div>
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur-sm">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href={user ? "/dashboard" : "/"} className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm">
