@@ -48,7 +48,7 @@ export default function SignInPage() {
     <div className="relative flex min-h-screen items-center justify-center py-12 bg-background overflow-hidden">
         {/* Animated Background */}
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-background to-accent/10 animate-breathing-bg">
-            <SmileyPebbleIcon className="absolute top-1/3 left-1/2 w-20 h-20 text-accent/20 animate-float-4" />
+            
         </div>
         <Card className="relative z-10 w-full max-w-md shadow-xl border-border/60 bg-card/80 backdrop-blur-sm">
            <CardHeader className="text-center">

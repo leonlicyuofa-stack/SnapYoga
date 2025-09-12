@@ -76,9 +76,9 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-background to-accent/10 animate-breathing-bg overflow-hidden">
-            <SmileyPebbleIcon className="absolute top-1/3 left-1/2 w-20 h-20 text-accent/20 animate-float-4" />
+            
         </div>
-      <header className="sticky top-0 z-40 w-full border-b bg-background shadow-sm backdrop-blur-sm">
+      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur-sm">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href={user ? "/dashboard" : "/"} className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm">
             <SnapYogaLogo />
