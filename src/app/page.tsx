@@ -87,11 +87,11 @@ export default function HomePage() {
     )}>
         {/* Background Image and Overlay */}
         <Image
-            src="https://picsum.photos/seed/yogapose/1920/1080"
-            alt="Person doing yoga outdoors"
+            src="https://picsum.photos/seed/monsterayoga/1920/1080"
+            alt="Person doing yoga with monstera leaves"
             fill
             className="object-cover -z-10"
-            data-ai-hint="yoga nature"
+            data-ai-hint="monstera yoga"
             priority
         />
         <div className="absolute inset-0 bg-black/60 -z-10" />
