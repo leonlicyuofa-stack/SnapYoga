@@ -19,9 +19,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from 'next/navigation'; 
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { PenguinIcon } from '../icons/penguin-icon';
-import { LadybirdIcon } from '../icons/ladybird-icon';
-import { AvocadoIcon } from '../icons/avocado-icon';
 import { SmileyPebbleIcon } from '../icons/smiley-pebble-icon';
 
 interface AppShellProps {
@@ -79,12 +76,9 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-background to-accent/10 animate-breathing-bg overflow-hidden">
-            <PenguinIcon className="absolute top-1/4 left-1/4 w-32 h-32 text-foreground/10 animate-float-1" />
-            <LadybirdIcon className="absolute bottom-1/4 right-1/4 w-24 h-24 text-destructive/20 animate-float-2" />
-            <AvocadoIcon className="absolute bottom-1/2 right-1/3 w-28 h-28 text-primary/10 animate-float-3" />
             <SmileyPebbleIcon className="absolute top-1/3 left-1/2 w-20 h-20 text-accent/20 animate-float-4" />
         </div>
-      <header className="sticky top-0 z-40 w-full border-b bg-card/80 shadow-sm backdrop-blur-sm">
+      <header className="sticky top-0 z-40 w-full border-b bg-background shadow-sm backdrop-blur-sm">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href={user ? "/dashboard" : "/"} className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm">
             <SnapYogaLogo />
