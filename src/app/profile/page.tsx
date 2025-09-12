@@ -161,6 +161,26 @@ export default function ProfilePage() {
             </header>
 
             <dl className="divide-y divide-border/50">
+                {/* User Information */}
+                <div className="py-5">
+                    <dt className="text-xl font-semibold flex items-center gap-2 mb-4">
+                        <UserCircle className="h-6 w-6 text-primary" />
+                        Username
+                    </dt>
+                    <dd>
+                        <div className="space-y-2 mt-2">
+                            <Label htmlFor="username">Your current username</Label>
+                            <Input 
+                                id="username" 
+                                type="text" 
+                                value={user?.displayName || user?.email || ''} 
+                                readOnly 
+                                className="bg-muted/50 cursor-not-allowed"
+                            />
+                        </div>
+                    </dd>
+                </div>
+                
                 {/* Change Password */}
                 <div className="py-5">
                     <dt className="text-xl font-semibold flex items-center gap-2 mb-4">
@@ -226,3 +246,5 @@ export default function ProfilePage() {
     </AppShell>
   );
 }
+
+    
