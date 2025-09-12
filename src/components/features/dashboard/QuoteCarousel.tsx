@@ -11,6 +11,11 @@ interface DailyQuote {
   author: string;
 }
 
+interface CachedQuotes {
+  timestamp: number;
+  quotes: DailyQuote[];
+}
+
 const fallbackQuotes: DailyQuote[] = [
     { content: "The body benefits from movement, and the mind benefits from stillness.", author: "Sakyong Mipham" },
     { content: "Yoga is the journey of the self, through the self, to the self.", author: "The Bhagavad Gita" },
@@ -23,17 +28,27 @@ export function QuoteCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    const fetchQuotes = async () => {
+    const fetchAndCacheQuotes = async () => {
       setLoading(true);
       try {
         const response = await fetch('https://api.quotable.io/quotes/random?limit=5&tags=wisdom|inspiration|life|philosophy&maxLength=180', { cache: 'no-store' });
         if (!response.ok) throw new Error('Quotable API failed');
         const data = await response.json();
+        
+        let fetchedQuotes: DailyQuote[];
         if (data.length > 0) {
-            setQuotes(data.map((q: any) => ({ content: q.content, author: q.author })));
+            fetchedQuotes = data.map((q: any) => ({ content: q.content, author: q.author }));
         } else {
-            setQuotes(fallbackQuotes);
+            fetchedQuotes = fallbackQuotes;
         }
+
+        const newCache: CachedQuotes = {
+            timestamp: new Date().getTime(),
+            quotes: fetchedQuotes,
+        };
+        localStorage.setItem('dailyYogaQuotes', JSON.stringify(newCache));
+        setQuotes(fetchedQuotes);
+
       } catch (err) {
         console.error("Failed to fetch quotes, using fallbacks:", err);
         setQuotes(fallbackQuotes);
@@ -41,7 +56,30 @@ export function QuoteCarousel() {
         setLoading(false);
       }
     };
-    fetchQuotes();
+
+    const loadQuotes = () => {
+        const cachedData = localStorage.getItem('dailyYogaQuotes');
+        if (cachedData) {
+            try {
+                const parsedData: CachedQuotes = JSON.parse(cachedData);
+                const now = new Date().getTime();
+                const oneDay = 24 * 60 * 60 * 1000;
+
+                if (now - parsedData.timestamp < oneDay) {
+                    setQuotes(parsedData.quotes);
+                    setLoading(false);
+                    return; // Use cached quotes
+                }
+            } catch (e) {
+                console.error("Error parsing cached quotes, fetching new ones.", e);
+            }
+        }
+        // If no cache or cache is expired, fetch new quotes
+        fetchAndCacheQuotes();
+    };
+
+    loadQuotes();
+
   }, []);
 
   useEffect(() => {
