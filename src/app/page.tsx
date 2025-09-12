@@ -87,24 +87,23 @@ export default function HomePage() {
     )}>
         {/* Background Image and Overlay */}
         <Image
-            src="https://picsum.photos/seed/monsterayoga/1920/1080"
-            alt="Person doing yoga with monstera leaves"
+            src="https://storage.googleapis.com/project-os-frontend/images/i2i/88a26e10-c118-47d0-a0fa-71a7d65b9e59.jpeg"
+            alt="Woman in yoga pose with monstera leaves"
             fill
             className="object-cover -z-10"
-            data-ai-hint="monstera yoga"
+            data-ai-hint="yoga illustration leaves"
             priority
         />
-        <div className="absolute inset-0 bg-black/60 -z-10" />
         
          <div className="relative z-10 flex flex-col items-center justify-center text-center">
-            <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight mb-3 font-script">{t('snapYogaTitle')}</h2>
-            <div className="mt-2 text-sm text-white/80 max-w-md sm:text-base">
+            <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3 font-script">{t('snapYogaTitle')}</h2>
+            <div className="mt-2 text-sm text-splash-foreground/80 max-w-md sm:text-base">
                 <p>yoga feedback • progress tracking • mindful practice</p>
                 <p>Your AI companion</p>
             </div>
             <Button
                 onClick={handleGetStarted}
-                className="mt-8 rounded-full h-10 w-auto px-6 bg-white/30 hover:bg-white/50 text-white text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+                className="mt-8 rounded-full h-10 w-auto px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
                 aria-label={t('getStarted')}
                 disabled={isLoading}
             >
@@ -116,10 +115,10 @@ export default function HomePage() {
             <div className="container mx-auto flex justify-between items-center px-4 sm:px-8">
             <div></div>
             <div className="flex items-center gap-2">
-                <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white border-white/40" aria-label="Switch Language">
+                <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3 bg-white/50 backdrop-blur-sm hover:bg-white/80 text-black border-black/20" aria-label="Switch Language">
                 <span className="mr-2">🇮🇩</span> Bahasa
                 </Button>
-                <Button variant="ghost" asChild className="h-9 text-white hover:text-white hover:bg-white/20 bg-black/10 backdrop-blur-sm">
+                <Button variant="ghost" asChild className="h-9 text-black hover:text-black hover:bg-white/20 bg-black/10 backdrop-blur-sm">
                 <Link href="/auth/signin">
                     {t('signIn')}
                 </Link>
