@@ -9,7 +9,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, KeyRound, Save, Share2, Copy, MessageSquare, UserCircle, Ruler } from 'lucide-react'; 
 import { Separator } from '@/components/ui/separator';
@@ -21,6 +21,12 @@ import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { cn } from '@/lib/utils';
 
+
+const usernameChangeSchema = z.object({
+  username: z.string().min(2, { message: "Username must be at least 2 characters" }).max(30, { message: "Username cannot be longer than 30 characters" }),
+});
+
+type UsernameChangeFormValues = z.infer<typeof usernameChangeSchema>;
 
 const passwordChangeSchema = z.object({
   currentPassword: z.string().min(1, { message: "Current password is required" }),
@@ -50,11 +56,21 @@ type MeasurementsFormValues = z.infer<typeof measurementsSchema>;
 
 
 export default function ProfilePage() {
-  const { user, updateUserPassword, loading: authLoading } = useAuth();
+  const { user, updateUserPassword, updateUserDisplayName, loading: authLoading } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
   const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false);
+  const [isUsernameSubmitting, setIsUsernameSubmitting] = useState(false);
   const [inviteLink, setInviteLink] = useState('');
+
+  const { 
+    register: registerUsername, 
+    handleSubmit: handleSubmitUsername, 
+    formState: { errors: usernameErrors },
+    setValue: setUsernameValue,
+  } = useForm<UsernameChangeFormValues>({
+    resolver: zodResolver(usernameChangeSchema),
+  });
 
   const { 
     register: registerPassword, 
@@ -69,7 +85,17 @@ export default function ProfilePage() {
     if (typeof window !== 'undefined') {
       setInviteLink(window.location.origin);
     }
-  }, []);
+    if (user?.displayName) {
+        setUsernameValue('username', user.displayName);
+    }
+  }, [user, setUsernameValue]);
+
+
+  const onUsernameSubmit: SubmitHandler<UsernameChangeFormValues> = async (data) => {
+    setIsUsernameSubmitting(true);
+    const success = await updateUserDisplayName(data.username);
+    setIsUsernameSubmitting(false);
+  };
 
 
   const onPasswordSubmit: SubmitHandler<PasswordChangeFormValues> = async (data) => {
@@ -168,16 +194,23 @@ export default function ProfilePage() {
                         Username
                     </dt>
                     <dd>
-                        <div className="space-y-2 mt-2">
-                            <Label htmlFor="username">Your current username</Label>
-                            <Input 
-                                id="username" 
-                                type="text" 
-                                value={user?.displayName || user?.email || ''} 
-                                readOnly 
-                                className="bg-muted/50 cursor-not-allowed"
-                            />
-                        </div>
+                        <form onSubmit={handleSubmitUsername(onUsernameSubmit)} className="space-y-4 mt-2">
+                            <div className="space-y-2">
+                                <Label htmlFor="username">Your username</Label>
+                                <div className="flex items-center gap-2">
+                                    <Input 
+                                        id="username" 
+                                        type="text"
+                                        {...registerUsername("username")}
+                                        className={cn(usernameErrors.username ? "border-destructive" : "", "flex-grow")}
+                                    />
+                                    <Button type="submit" disabled={isUsernameSubmitting || authLoading}>
+                                        {isUsernameSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                                    </Button>
+                                </div>
+                                {usernameErrors.username && <p className="text-sm text-destructive">{usernameErrors.username.message}</p>}
+                            </div>
+                        </form>
                     </dd>
                 </div>
                 

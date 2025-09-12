@@ -18,6 +18,7 @@ import {
   reauthenticateWithCredential,
   updatePassword,
   sendEmailVerification,
+  updateProfile,
 } from 'firebase/auth';
 import { auth, firestore } from '@/lib/firebase/clientApp';
 import { doc, setDoc, getDoc, serverTimestamp, type DocumentData } from 'firebase/firestore';
@@ -34,6 +35,7 @@ interface AuthContextType {
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   signOutUser: () => Promise<void>;
   updateUserPassword: (currentPassword: string, newPassword: string) => Promise<boolean>;
+  updateUserDisplayName: (newDisplayName: string) => Promise<boolean>;
 }
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
@@ -298,6 +300,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const updateUserDisplayName = async (newDisplayName: string): Promise<boolean> => {
+    if (!checkFirebaseConfig() || !user) {
+      if (!user) toast({ title: "Error", description: "You must be logged in to update your username.", variant: "destructive" });
+      return false;
+    }
+    setLoading(true);
+    try {
+      // Update Firebase Auth display name
+      await updateProfile(user, { displayName: newDisplayName });
+      // Update Firestore display name
+      await createUserProfileDocument(user, { displayName: newDisplayName });
+      
+      // Manually update the local user object to reflect the change immediately
+      setUser({ ...user, displayName: newDisplayName });
+      
+      toast({ title: "Success", description: "Username updated successfully." });
+      return true;
+    } catch (error: any) {
+      handleAuthError(error, 'Failed to update username.');
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value = {
     user,
     loading,
@@ -307,6 +334,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     signInWithEmail,
     signOutUser,
     updateUserPassword,
+    updateUserDisplayName,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
