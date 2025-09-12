@@ -65,7 +65,7 @@ export default function DashboardPage() {
           <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
                   <div className="w-10 h-10 bg-card rounded-lg flex items-center justify-center font-bold text-primary text-lg shadow">88</div>
-                  <h1 className="font-semibold text-foreground">Home</h1>
+                  
               </div>
               <Button variant="ghost" size="icon">
                   <Bell className="h-6 w-6" />
