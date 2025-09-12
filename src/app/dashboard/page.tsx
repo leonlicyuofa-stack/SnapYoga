@@ -61,16 +61,6 @@ export default function DashboardPage() {
       <div className="bg-muted/40 min-h-screen">
         <div className="container mx-auto px-4 py-6 space-y-6">
 
-          {/* Header */}
-          <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                  
-                  
-              </div>
-              <Button variant="ghost" size="icon">
-                  <Bell className="h-6 w-6" />
-              </Button>
-          </div>
           
           {/* Greeting */}
           <div>
