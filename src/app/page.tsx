@@ -82,7 +82,7 @@ export default function HomePage() {
 
   return (
     <div className={cn(
-        "relative flex flex-col min-h-screen items-center justify-center p-4 bg-splash-background font-sans overflow-hidden"
+        "relative flex flex-col min-h-screen items-center justify-center p-4 bg-splash-background overflow-hidden"
     )}>
         {/* Animated Background */}
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-[hsl(var(--splash-blob-1))] via-background to-[hsl(var(--splash-blob-2))] animate-breathing-bg">

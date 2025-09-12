@@ -143,31 +143,31 @@ export function AppShell({ children }: AppShellProps) {
        <footer className="btm-nav">
           <Link href={homeLinkPath} className={navLinkClasses(homeLinkPath)}>
             <Home className="h-6 w-6" />
-            <span className="btm-nav-label font-sans">{t('navHome')}</span>
+            <span className="btm-nav-label">{t('navHome')}</span>
           </Link>
           
           {user && (
             <Link href="/practice-calendar" className={navLinkClasses("/practice-calendar")}>
                 <CalendarDays className="h-6 w-6" />
-                <span className="btm-nav-label font-sans">{t('navCalendar')}</span>
+                <span className="btm-nav-label">{t('navCalendar')}</span>
             </Link>
           )}
 
           <Link href="/snap-yoga" className={cn(navLinkClasses('/snap-yoga'), "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground scale-110 rounded-lg shadow-lg -translate-y-2 border-4 border-background")}>
             <Sparkles className="h-6 w-6" />
-            <span className="btm-nav-label font-sans">Analyze</span>
+            <span className="btm-nav-label">Analyze</span>
           </Link>
 
           {user && (
             <Link href="/challenges" className={navLinkClasses("/challenges")}>
                 <Trophy className="h-6 w-6" />
-                <span className="btm-nav-label font-sans">{t('navChallenges')}</span>
+                <span className="btm-nav-label">{t('navChallenges')}</span>
             </Link>
           )}
 
           <Link href="/profile" className={navLinkClasses("/profile")}>
             <UserCircle className="h-6 w-6" />
-            <span className="btm-nav-label font-sans">{t('profile')}</span>
+            <span className="btm-nav-label">{t('profile')}</span>
           </Link>
       </footer>
     </div>
