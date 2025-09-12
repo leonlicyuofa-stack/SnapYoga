@@ -12,6 +12,12 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { MoveUpRight, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Shadows_Into_Light } from 'next/font/google';
+
+const shadowsIntoLight = Shadows_Into_Light({
+  subsets: ['latin'],
+  weight: '400',
+});
 
 interface UserProfileData extends DocumentData {
   uid?: string;
@@ -102,7 +108,7 @@ export default function HomePage() {
         
          <div className="relative z-10 flex flex-col items-center justify-center text-center">
             <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3 font-script">{t('snapYogaTitle')}</h2>
-            <div className="mt-2 text-sm text-splash-foreground/80 max-w-md sm:text-base">
+            <div className={cn("mt-2 text-2xl text-splash-foreground/80 max-w-md sm:text-3xl", shadowsIntoLight.className)}>
                 <p>your AI companion for mindfulness</p>
             </div>
             <Button
