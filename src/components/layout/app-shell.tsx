@@ -49,10 +49,10 @@ export function AppShell({ children }: AppShellProps) {
 
   const navLinkClasses = (path: string) => 
     cn(
-      "flex flex-col items-center justify-center h-full w-full gap-1 p-2 rounded-md transition-colors",
+      "flex flex-col items-center justify-center h-full w-full gap-1 p-2 rounded-md transition-colors hover:bg-accent/50",
       pathname === path 
         ? "text-primary bg-primary/10" 
-        : "text-muted-foreground hover:bg-accent/50 hover:text-primary"
+        : "text-muted-foreground hover:text-primary"
     );
 
   const homeLinkPath = user ? "/dashboard" : "/";
@@ -74,7 +74,7 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
-      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur-sm">
+      <header className="sticky top-0 z-40 w-full border-b bg-background">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href={user ? "/dashboard" : "/"} className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm">
             <SnapYogaLogo />
@@ -143,31 +143,31 @@ export function AppShell({ children }: AppShellProps) {
        <footer className="btm-nav">
           <Link href={homeLinkPath} className={navLinkClasses(homeLinkPath)}>
             <Home className="h-6 w-6" />
-            <span className="btm-nav-label">{t('navHome')}</span>
+            <span className="btm-nav-label font-sans">{t('navHome')}</span>
           </Link>
           
           {user && (
             <Link href="/practice-calendar" className={navLinkClasses("/practice-calendar")}>
                 <CalendarDays className="h-6 w-6" />
-                <span className="btm-nav-label">{t('navCalendar')}</span>
+                <span className="btm-nav-label font-sans">{t('navCalendar')}</span>
             </Link>
           )}
 
           <Link href="/snap-yoga" className={cn(navLinkClasses('/snap-yoga'), "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground scale-110 rounded-lg shadow-lg -translate-y-2 border-4 border-background")}>
             <Sparkles className="h-6 w-6" />
-            <span className="btm-nav-label">Analyze</span>
+            <span className="btm-nav-label font-sans">Analyze</span>
           </Link>
 
           {user && (
             <Link href="/challenges" className={navLinkClasses("/challenges")}>
                 <Trophy className="h-6 w-6" />
-                <span className="btm-nav-label">{t('navChallenges')}</span>
+                <span className="btm-nav-label font-sans">{t('navChallenges')}</span>
             </Link>
           )}
 
           <Link href="/profile" className={navLinkClasses("/profile")}>
             <UserCircle className="h-6 w-6" />
-            <span className="btm-nav-label">{t('profile')}</span>
+            <span className="btm-nav-label font-sans">{t('profile')}</span>
           </Link>
       </footer>
     </div>
