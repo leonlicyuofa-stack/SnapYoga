@@ -5,13 +5,6 @@ import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import { Playfair_Display } from 'next/font/google';
-
-const playfairDisplay = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-  style: ['normal', 'italic'],
-});
 
 
 interface DailyQuote {
@@ -102,7 +95,7 @@ export function QuoteCarousel() {
 
   if (loading) {
     return (
-        <Card className="relative w-full max-w-lg h-16 md:h-20 shadow-none bg-transparent border-0 flex flex-col items-center justify-center p-8">
+        <Card className="relative w-full max-w-lg h-16 flex flex-col items-center justify-center p-8 bg-transparent border-0 shadow-none">
             <Skeleton className="h-4 w-3/4 mb-2" />
         </Card>
     );
@@ -110,7 +103,7 @@ export function QuoteCarousel() {
 
   return (
     <div className="relative w-full max-w-lg">
-        <div className="relative h-16 md:h-20 overflow-hidden">
+        <div className="relative h-16 overflow-hidden">
             {quotes.map((quote, index) => (
                 <div
                     key={index}
@@ -120,8 +113,8 @@ export function QuoteCarousel() {
                     )}
                     aria-hidden={index !== currentIndex}
                 >
-                    <Card className="w-full h-full flex flex-col items-center justify-center text-center p-6 md:p-12 bg-transparent border-0 shadow-none">
-                         <blockquote className={cn("text-lg md:text-xl text-foreground/90 italic leading-relaxed line-clamp-2", playfairDisplay.className)}>
+                    <Card className="w-full h-full flex flex-col items-center justify-center text-center p-6 bg-transparent border-0 shadow-none">
+                         <blockquote className="text-base md:text-lg text-foreground/90 leading-relaxed line-clamp-2">
                             &ldquo;{quote.content}&rdquo;
                         </blockquote>
                     </Card>
