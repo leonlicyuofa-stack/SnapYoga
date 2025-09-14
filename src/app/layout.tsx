@@ -21,6 +21,7 @@ const playfair = Playfair_Display({
 const chakraPetch = Chakra_Petch({
     subsets: ['latin'],
     weight: ['400', '700'],
+    style: 'normal',
     variable: '--font-chakra-petch',
 });
 
@@ -36,7 +37,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${lexend.className} ${playfair.variable} ${chakraPetch.variable} antialiased`}>
+      <body className={`${lexend.variable} ${playfair.variable} ${chakraPetch.variable} font-sans antialiased`}>
         <AuthProvider>
           <LanguageProvider>
             {children}

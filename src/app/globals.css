@@ -14,8 +14,8 @@
     --popover: 0 100% 99%;
     --popover-foreground: 349 13% 44%;
 
-    --primary: 0 0% 100%; /* White */
-    --primary-foreground: 349 13% 44%; /* Prune */
+    --primary: 84 39% 49%; /* Avocado Green */
+    --primary-foreground: 0 0% 100%; /* White */
 
     --secondary: 353 24% 91%; /* Pink - #E5C5C1 */
     --secondary-foreground: 349 13% 44%;
@@ -33,7 +33,7 @@
     --input: 353 24% 93%;
     --ring: 349 13% 44%;
     
-    --chart-1: 349 13% 44%;
+    --chart-1: 84 39% 49%;
     --chart-2: 99 6% 64%;
     --chart-3: 6 25% 64%; /* Mauve - #BD8E89 */
     --chart-4: 353 24% 91%;
@@ -62,8 +62,8 @@
     --popover: 349 15% 15%;
     --popover-foreground: 350 33% 95%;
 
-    --primary: 0 0% 100%; /* White */
-    --primary-foreground: 349 13% 44%; /* Prune */
+    --primary: 84 39% 49%; /* Avocado Green */
+    --primary-foreground: 0 0% 100%; /* White */
 
     --secondary: 349 15% 25%; 
     --secondary-foreground: 350 33% 95%;
@@ -81,7 +81,7 @@
     --input: 349 15% 30%;
     --ring: 350 33% 95%;
     
-    --chart-1: 350 33% 95%;
+    --chart-1: 84 39% 49%;
     --chart-2: 99 10% 75%;
     --chart-3: 6 30% 75%;
     --chart-4: 353 24% 85%;
