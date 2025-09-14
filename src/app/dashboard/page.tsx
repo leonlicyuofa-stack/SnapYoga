@@ -11,20 +11,10 @@ import { useState, useEffect } from 'react';
 import type { DocumentData } from 'firebase/firestore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { QuoteCarousel } from '@/components/features/dashboard/QuoteCarousel';
-import { Playfair_Display } from 'next/font/google';
 import { YogaPoseIllustration } from '@/components/icons/YogaPoseIllustration';
 import { cn } from '@/lib/utils';
-import { Shadows_Into_Light } from 'next/font/google';
-
-const shadowsIntoLight = Shadows_Into_Light({
-  subsets: ['latin'],
-  weight: '400',
-});
-
-const playfairDisplay = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-});
+import Image from 'next/image';
+import placeholderImages from '@/lib/placeholder-images.json';
 
 interface UserProfileData extends DocumentData {
   displayName?: string;
@@ -37,7 +27,8 @@ const projects = [
     category: "AI Feedback",
     bgColor: "bg-indigo-300",
     href: "/snap-yoga",
-    className: "col-span-1 row-span-1"
+    className: "col-span-1 row-span-1",
+    image: placeholderImages.poseAnalysisCard,
   },
   {
     icon: Sun,
@@ -138,8 +129,17 @@ export default function DashboardPage() {
                 const Icon = project.icon
                 return (
                   <Link href={project.href} key={index} className={cn("block hover:scale-105 transition-transform duration-200", project.className)}>
-                    <Card className={cn(project.bgColor, "rounded-xl shadow-sm p-4 flex flex-col h-full")}>
-                      <CardHeader className="flex-1 p-2">
+                    <Card className={cn(project.bgColor, "rounded-xl shadow-sm p-4 flex flex-col h-full relative overflow-hidden")}>
+                     {project.image && (
+                        <Image
+                            src={project.image.src}
+                            alt={project.title}
+                            fill
+                            className="object-cover"
+                            data-ai-hint={project.image.hint}
+                        />
+                     )}
+                      <CardHeader className="flex-1 p-2 z-10">
                         <CardTitle className="text-card-foreground font-semibold">{project.title}</CardTitle>
                         <p className="text-sm text-card-foreground/90">{project.category}</p>
                       </CardHeader>
