@@ -130,10 +130,10 @@ export default function DashboardPage() {
                         <Card className="rounded-xl shadow-sm p-4 flex flex-col h-full relative overflow-hidden bg-card">
                             <div className="absolute inset-0 z-0">
                                 <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M-10 180 Q 40 230, 100 180 T 220 150 L 220 220 L -10 220 Z" fill="#D2B48C80" stroke="#b08d57" strokeWidth="1.5" />
-                                    <path d="M 70 -20 Q 150 -30, 200 50 T 150 120 Q 80 140, 20 80 T 70 -20 Z" fill="#A1B5D880" stroke="#7e94b8" strokeWidth="1.5" />
-                                    <path d="M-20 40 Q 30 120, 80 80 T 100 40 Q 80 -20, 20 0 T -20 40 Z" fill="#FFC0CB80" stroke="#e6a0ac" strokeWidth="1.5" />
-                                    <path d="M130 60 Q 210 50, 210 130 T 130 160 Q 50 170, 70 100 T 130 60 Z" fill="#BDB76B80" stroke="#a39f5c" strokeWidth="1.5" />
+                                    <path d="M-10 180 Q 20 220, 80 180 T 150 150 L 150 220 L -10 220 Z" fill="#D2B48C80" stroke="#b08d57" strokeWidth="1.5" />
+                                    <path d="M 120 -20 Q 180 -30, 220 50 T 180 120 Q 130 140, 90 80 T 120 -20 Z" fill="#A1B5D880" stroke="#7e94b8" strokeWidth="1.5" />
+                                    <path d="M-20 40 Q 20 110, 70 70 T 80 30 Q 70 -20, 20 0 T -20 40 Z" fill="#FFC0CB80" stroke="#e6a0ac" strokeWidth="1.5" />
+                                    <path d="M160 80 Q 240 70, 230 150 T 150 180 Q 80 190, 100 120 T 160 80 Z" fill="#BDB76B80" stroke="#a39f5c" strokeWidth="1.5" />
                                 </svg>
                             </div>
                             <CardHeader className="flex-1 p-2 z-10">
