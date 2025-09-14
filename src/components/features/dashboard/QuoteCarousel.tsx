@@ -115,7 +115,7 @@ export function QuoteCarousel() {
                     )}
                     aria-hidden={index !== currentIndex}
                 >
-                    <Card className="w-full h-full shadow-2xl bg-gradient-to-br from-primary/10 via-background/80 to-secondary/10 border-primary/20 backdrop-blur-sm flex flex-col items-center justify-center text-center p-6 md:p-12">
+                    <Card className="w-full h-full flex flex-col items-center justify-center text-center p-6 md:p-12">
                          <PebbleTrioIcon className="h-16 w-16 mb-4 text-primary" />
                          <blockquote className="text-xl md:text-2xl font-script text-foreground/90 italic leading-relaxed">
                             &ldquo;{quote.content}&rdquo;
