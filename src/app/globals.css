@@ -5,7 +5,7 @@
 
 @layer base {
   :root {
-    --background: 99 6% 64%; /* Pistachio */
+    --background: 0 0% 100%; /* White */
     --foreground: 349 13% 44%; /* Prune */
 
     --card: 0 100% 99%; /* Lighter Blush/White - #FFFCFC */
@@ -14,8 +14,8 @@
     --popover: 0 100% 99%;
     --popover-foreground: 349 13% 44%;
 
-    --primary: 99 6% 64%; /* Pistachio */
-    --primary-foreground: 349 13% 20%; /* Darker Prune for contrast on Pistachio */
+    --primary: 240 5% 65%; /* Neutral Gray */
+    --primary-foreground: 349 13% 20%; 
 
     --secondary: 353 24% 91%; /* Pink - #E5C5C1 */
     --secondary-foreground: 349 13% 44%;
@@ -23,7 +23,7 @@
     --muted: 353 24% 91%;
     --muted-foreground: 349 13% 55%; 
 
-    --accent: 99 6% 64%; /* Pistachio */
+    --accent: 240 5% 65%; /* Neutral Gray */
     --accent-foreground: 349 13% 20%;
 
     --destructive: 0 84% 60%; 
