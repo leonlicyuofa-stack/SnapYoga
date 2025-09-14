@@ -92,10 +92,6 @@ export default function PracticeCalendarPage() {
     <AppShell>
       <div className="container mx-auto px-4 py-12">
         <header className="mb-8 text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight text-primary flex items-center justify-center gap-3">
-            <CalendarDays className="h-10 w-10" />
-            Your Practice Calendar
-          </h1>
           <p className="mt-3 text-lg text-muted-foreground max-w-xl mx-auto">
             View the days you've analyzed your yoga poses. Keep up the great work!
           </p>
