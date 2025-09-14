@@ -107,13 +107,10 @@ export default function DashboardPage() {
                       return (
                         <Link href={project.href} key={index} className="block hover:scale-105 transition-transform duration-200">
                           <Card className={`${project.bgColor} rounded-xl shadow-sm p-4 flex flex-col justify-between h-32`}>
-                              <div className="flex justify-between items-start">
+                              <div className="flex justify-end items-start">
                                   <div className="p-2 bg-card/20 rounded-lg">
                                       <Icon className="h-6 w-6" />
                                   </div>
-                                  <Button variant="ghost" size="icon" className="h-6 w-6">
-                                      <MoreHorizontal className="h-5 w-5" />
-                                  </Button>
                               </div>
                               <div>
                                   <p className="font-semibold">{project.title}</p>
