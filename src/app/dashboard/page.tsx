@@ -131,14 +131,12 @@ export default function DashboardPage() {
                             <div className="absolute inset-0 z-0">
                                 <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M -10,150 C 50,220 150,220 210,150 L 210,210 L -10,210 Z" fill="#D2B48C" fillOpacity="0.4"/>
-                                    <path d="M 80,-10 C 180,-10 220,90 150,110 C 80,130 0,60 80,-10 Z" fill="#a1b5d8" fillOpacity="0.4"/>
-                                    <path d="M -10,50 C 30,110 80,110 100,50 C 120,-10 40,-10 -10,50 Z" fill="#ffc0cb" fillOpacity="0.4"/>
-                                    <path d="M 120,50 C 200,50 200,150 120,150 C 40,150 40,50 120,50 Z" fill="#90ee90" fillOpacity="0.3"/>
-
+                                    <path d="M 80,-10 C 180,-10 220,90 150,110 C 80,130 0,60 80,-10 Z" fill="#A1B5D8" fillOpacity="0.4"/>
+                                    <path d="M -10,50 C 30,110 80,110 100,50 C 120,-10 40,-10 -10,50 Z" fill="#FFC0CB" fillOpacity="0.4"/>
+                                    <path d="M 120,50 C 200,50 200,150 120,150 C 40,150 40,50 120,50 Z" fill="#BDB76B" fillOpacity="0.3"/>
                                     <path d="M -10,150 Q 100,200 210,150" stroke="#800000" strokeWidth="1.5" fill="none" />
                                     <path d="M 80,-10 Q 100,150 200,180" stroke="#000080" strokeWidth="1.5" fill="none" />
-                                    <path d="M -10,50 Q 100,100 150,0" stroke="#228b22" strokeWidth="1.5" fill="none" />
-
+                                    <path d="M -10,50 Q 100,100 150,0" stroke="#228B22" strokeWidth="1.5" fill="none" />
                                 </svg>
                             </div>
                             <CardHeader className="flex-1 p-2 z-10">
