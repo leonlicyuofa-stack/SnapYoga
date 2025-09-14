@@ -152,24 +152,20 @@ export default function PracticeCalendarPage() {
             <div className="p-6 text-primary-foreground">
                 <TabsContent value="log" className="mt-0">
                     <div className="grid grid-cols-2 gap-4 mt-8">
-                        <Card className="bg-primary-foreground text-primary shadow-lg relative -rotate-3">
+                        <div className="bg-primary-foreground text-primary shadow-lg relative -rotate-3 p-4 rounded-lg">
                             <div className="absolute -bottom-2 -left-2 -right-2 h-full bg-white/40 rounded-lg -z-10 rotate-6"></div>
-                            <CardHeader>
-                                <CardDescription className="font-bold">POSES PRACTICED</CardDescription>
-                            </CardHeader>
-                            <CardContent className="text-center">
+                            <div className="font-bold text-sm">POSES PRACTICED</div>
+                            <div className="text-center mt-2">
                                 <p className="text-4xl font-bold font-chakra">{todaysAnalyses.length}</p>
-                            </CardContent>
-                        </Card>
-                        <Card className="bg-primary-foreground text-primary shadow-lg relative rotate-3">
+                            </div>
+                        </div>
+                        <div className="bg-primary-foreground text-primary shadow-lg relative rotate-3 p-4 rounded-lg">
                             <div className="absolute -bottom-2 -left-2 -right-2 h-full bg-white/40 rounded-lg -z-10 -rotate-6"></div>
-                            <CardHeader>
-                                <CardDescription className="font-bold">TIME SPENT</CardDescription>
-                            </CardHeader>
-                            <CardContent className="text-center">
+                            <div className="font-bold text-sm">TIME SPENT</div>
+                            <div className="text-center mt-2">
                                 <p className="text-4xl font-bold font-chakra">~{todaysAnalyses.length * 5} <span className="text-xl">min</span></p>
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="mt-8 space-y-4">
@@ -181,74 +177,64 @@ export default function PracticeCalendarPage() {
                             </>
                         ) : todaysAnalyses.length > 0 ? (
                             todaysAnalyses.map(analysis => (
-                                <Card key={analysis.id} className="bg-white/10 text-primary-foreground">
-                                    <CardContent className="p-4 flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <Dumbbell className="h-8 w-8" />
-                                            <div>
-                                                <p className="font-bold">{analysis.identifiedPose || 'Unknown Pose'}</p>
-                                                <p className="text-sm opacity-80">Score: {analysis.score || 'N/A'}</p>
-                                            </div>
+                                <div key={analysis.id} className="bg-white/10 text-primary-foreground rounded-lg p-4 flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <Dumbbell className="h-8 w-8" />
+                                        <div>
+                                            <p className="font-bold">{analysis.identifiedPose || 'Unknown Pose'}</p>
+                                            <p className="text-sm opacity-80">Score: {analysis.score || 'N/A'}</p>
                                         </div>
-                                        <div className="flex items-center gap-1 text-yellow-300">
-                                            <Star className="h-4 w-4" />
-                                            <span className="font-bold">{analysis.score || 0}</span>
-                                        </div>
-                                    </CardContent>
-                                </Card>
+                                    </div>
+                                    <div className="flex items-center gap-1 text-yellow-300">
+                                        <Star className="h-4 w-4" />
+                                        <span className="font-bold">{analysis.score || 0}</span>
+                                    </div>
+                                </div>
                             ))
                         ) : (
-                            <Card className="bg-white/10 text-primary-foreground">
-                                <CardContent className="p-4 text-center">
-                                    <p>No practice recorded for this day.</p>
-                                </CardContent>
-                            </Card>
+                            <div className="bg-white/10 text-primary-foreground rounded-lg p-4 text-center">
+                                <p>No practice recorded for this day.</p>
+                            </div>
                         )}
                     </div>
                 </TabsContent>
 
                 <TabsContent value="monthly-goal" className="mt-8">
-                     <Card className="bg-primary-foreground text-primary shadow-lg">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <Goal />
-                                Your Monthly Progress
-                            </CardTitle>
-                             <CardDescription>You're doing great! Here is a summary of your activity this month.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <ChartContainer config={chartConfig} className="mx-auto aspect-square h-[250px]">
-                                <PieChart>
-                                    <ChartTooltip
-                                    cursor={false}
-                                    content={<ChartTooltipContent hideLabel />}
-                                    />
-                                    <Pie
-                                        data={chartData}
-                                        dataKey="value"
-                                        nameKey="name"
-                                        innerRadius={60}
-                                        strokeWidth={5}
-                                    >
-                                        <Cell key="completed" fill="var(--color-progress)" />
-                                        <Cell key="remaining" fill="var(--color-remaining)" />
-                                    </Pie>
-                                     <text
-                                        x="50%"
-                                        y="50%"
-                                        textAnchor="middle"
-                                        dominantBaseline="middle"
-                                        className="fill-foreground text-3xl font-bold font-chakra"
-                                    >
-                                        {monthlyProgress}%
-                                    </text>
-                                </PieChart>
-                            </ChartContainer>
-                        </CardContent>
-                        <CardFooter>
-                            <p className="text-xs text-muted-foreground text-center w-full">Keep pushing, you're almost at 100%!</p>
-                        </CardFooter>
-                     </Card>
+                     <div className="bg-primary-foreground text-primary shadow-lg rounded-lg p-4">
+                        <div className="flex items-center gap-2">
+                            <Goal />
+                            <h3 className="text-lg font-bold">Your Monthly Progress</h3>
+                        </div>
+                         <p className="text-sm text-muted-foreground">You're doing great! Here is a summary of your activity this month.</p>
+                        <ChartContainer config={chartConfig} className="mx-auto aspect-square h-[250px]">
+                            <PieChart>
+                                <ChartTooltip
+                                cursor={false}
+                                content={<ChartTooltipContent hideLabel />}
+                                />
+                                <Pie
+                                    data={chartData}
+                                    dataKey="value"
+                                    nameKey="name"
+                                    innerRadius={60}
+                                    strokeWidth={5}
+                                >
+                                    <Cell key="completed" fill="var(--color-progress)" />
+                                    <Cell key="remaining" fill="var(--color-remaining)" />
+                                </Pie>
+                                 <text
+                                    x="50%"
+                                    y="50%"
+                                    textAnchor="middle"
+                                    dominantBaseline="middle"
+                                    className="fill-foreground text-3xl font-bold font-chakra"
+                                >
+                                    {monthlyProgress}%
+                                </text>
+                            </PieChart>
+                        </ChartContainer>
+                        <p className="text-xs text-muted-foreground text-center w-full">Keep pushing, you're almost at 100%!</p>
+                     </div>
                 </TabsContent>
             </div>
           </Tabs>
@@ -257,3 +243,5 @@ export default function PracticeCalendarPage() {
     </AppShell>
   );
 }
+
+    
