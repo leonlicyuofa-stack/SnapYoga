@@ -92,7 +92,7 @@ export default function PracticeCalendarPage() {
     <AppShell>
       <div className="container mx-auto px-4 py-12">
         <header className="mb-8 text-center">
-          <p className="mt-3 text-lg text-muted-foreground max-w-xl mx-auto">
+          <p className="mt-3 text-base text-muted-foreground max-w-xl mx-auto">
             See your progress and the days you’ve practiced your yoga poses — you’re doing amazing, keep going!
           </p>
         </header>
