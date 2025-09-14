@@ -15,7 +15,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, addDoc, serverTimestamp, doc } from 'firebase/firestore';
 import { ActiveChallengesSnapshotCard } from './active-challenges-snapshot-card';
-import { QuoteCarousel } from '@/components/features/dashboard/QuoteCarousel';
 
 export function SnapYogaPageClient() {
   const { user: currentUser } = useAuth();
@@ -153,8 +152,6 @@ export function SnapYogaPageClient() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-
-      <QuoteCarousel />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         <div className="space-y-8">

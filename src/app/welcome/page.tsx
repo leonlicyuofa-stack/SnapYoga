@@ -1,11 +1,10 @@
-
 "use client";
 
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { AppShell } from '@/components/layout/app-shell';
 import { QuoteCarousel } from '@/components/features/dashboard/QuoteCarousel';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { useEffect, useState } from 'react';
