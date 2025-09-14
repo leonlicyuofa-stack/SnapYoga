@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
-import { Loader2, ArrowRight, X, CalendarIcon } from 'lucide-react';
+import { Loader2, ArrowRight, ArrowLeft, CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FemaleAvatar } from '@/components/icons/FemaleAvatar';
 import { MaleAvatar } from '@/components/icons/MaleAvatar';
@@ -91,7 +91,7 @@ export default function GenderProfilePage() {
         <div className="relative z-10 w-full max-w-sm">
              <div className="flex justify-start mb-6">
                 <Button variant="ghost" size="icon" className="rounded-full bg-card/20 backdrop-blur-sm" onClick={() => router.back()}>
-                    <X className="h-5 w-5" />
+                    <ArrowLeft className="h-5 w-5" />
                 </Button>
             </div>
             <h1 className="text-2xl font-bold text-center">Who are you?</h1>
