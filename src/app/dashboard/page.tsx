@@ -124,10 +124,6 @@ export default function DashboardPage() {
           </div>
 
 
-          {/* Quote Carousel */}
-          <div className="flex justify-center">
-              <QuoteCarousel />
-          </div>
           
           {/* Ongoing Projects */}
             <div className="grid grid-cols-2 grid-rows-3 gap-4 h-[30rem]">
