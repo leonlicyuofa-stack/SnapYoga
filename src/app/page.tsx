@@ -89,23 +89,8 @@ export default function HomePage() {
 
   return (
     <div className={cn(
-        "relative flex flex-col min-h-screen items-center justify-center p-4 bg-splash-background overflow-hidden"
+        "relative flex flex-col min-h-screen items-center justify-center p-4 overflow-hidden"
     )}>
-        {/* Full-screen background illustration */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-[hsl(var(--splash-blob-1))] via-background to-[hsl(var(--splash-blob-2))] animate-breathing-bg">
-            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
-                <defs>
-                    <radialGradient id="blushGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                        <stop offset="0%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0.7 }} />
-                        <stop offset="100%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0 }} />
-                    </radialGradient>
-                </defs>
-                <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-blob-1))" />
-                <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
-                <path d="M 100,0 L 0,0 C 50,50 0,50 0,100 L 100,100 Z" fill="hsl(var(--splash-blob-2))" style={{ opacity: 0.5 }}/>
-            </svg>
-        </div>
-        
          <div className="relative z-10 flex flex-col items-center justify-center text-center">
             <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3 font-script">{t('snapYogaTitle')}</h2>
             <div className={cn("mt-2 text-2xl text-splash-foreground/80 max-w-md sm:text-3xl", shadowsIntoLight.className)}>

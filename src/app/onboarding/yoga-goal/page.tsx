@@ -170,38 +170,6 @@ export default function YogaGoalPage() {
     <AppShell>
       <AffirmationDialog isOpen={showAffirmation} onOpenChange={setShowAffirmation} />
       <div className="relative flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
-        <div className="absolute inset-0 z-0 bg-splash-background">
-            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
-                <defs>
-                    <radialGradient id="blushGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                        <stop offset="0%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0.7 }} />
-                        <stop offset="100%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0 }} />
-                    </radialGradient>
-                </defs>
-                <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-blob-1))" />
-                <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
-                
-                {/* Blue Cat */}
-                <g transform="translate(-80, 20) scale(1.1)">
-                    <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-blob-2))" />
-                    <ellipse cx="38" cy="78" rx="10" ry="7" fill="url(#blushGradient)" />
-                    <ellipse cx="62" cy="78" rx="10" ry="7" fill="url(#blushGradient)" />
-                    <ellipse cx="45" cy="70" rx="3" ry="6" fill="#2C3E50" />
-                    <ellipse cx="62" cy="70" rx="3" ry="6" fill="#2C3E50" />
-                    <path d="M 48,80 Q 52,85 56,80" stroke="#2C3E50" fill="none" strokeWidth="1.5" strokeLinecap="round" />
-                </g>
-                
-                {/* Green Cat */}
-                 <g transform="translate(-70, -10) scale(0.9)">
-                    <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-blob-3))" />
-                </g>
-
-                {/* Grey Cat */}
-                <g transform="translate(-60, -30) scale(0.7)">
-                    <path d="M 5,65 C 15,40 40,30 65,55 C 80,70 70,95 45,98 C 20,101 0,80 5,65 Z" fill="hsl(var(--splash-blob-3))" />
-                </g>
-            </svg>
-        </div>
         <div className="w-full max-w-2xl z-10 px-4">
             <div className="text-center mb-8">
                 <p className="text-muted-foreground mt-2">What do you hope to achieve with yoga?</p>
