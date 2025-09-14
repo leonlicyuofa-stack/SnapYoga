@@ -47,7 +47,6 @@ export default function WelcomePage() {
       <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4 text-center">
         
         <div className="relative z-10 flex flex-col items-center max-w-lg w-full">
-            <Sparkles className="mx-auto h-16 w-16 text-primary mb-6 animate-pulse" />
             <h1 className="text-4xl font-bold text-foreground animate-fade-in-up">Welcome to SnapYoga</h1>
             <p className="text-lg text-muted-foreground mt-2 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
                 Take a moment for a brief, reflective pause before we begin.
