@@ -105,7 +105,6 @@ export function QuoteCarousel() {
         <Card className="relative w-full max-w-lg h-20 md:h-24 shadow-none bg-transparent border-0 flex flex-col items-center justify-center p-8">
             <Skeleton className="h-4 w-3/4 mb-2" />
             <Skeleton className="h-3 w-1/2 mb-2" />
-            <Skeleton className="h-3 w-1/4" />
         </Card>
     );
   }
@@ -126,9 +125,6 @@ export function QuoteCarousel() {
                          <blockquote className={cn("text-lg md:text-xl text-foreground/90 italic leading-relaxed", playfairDisplay.className)}>
                             &ldquo;{quote.content}&rdquo;
                         </blockquote>
-                        <cite className="mt-4 block text-sm md:text-base text-muted-foreground not-italic">
-                            &ndash; {quote.author}
-                        </cite>
                     </Card>
                 </div>
             ))}
