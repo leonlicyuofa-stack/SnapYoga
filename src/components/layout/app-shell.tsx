@@ -110,7 +110,7 @@ export function AppShell({ children }: AppShellProps) {
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-2">
                 <Home className="h-5 w-5" />
-                <div className="font-semibold text-lg">Homepage</div>
+                <div className="font-semibold text-lg">Home</div>
             </div>
           
           <div className="flex items-center space-x-2">
