@@ -56,6 +56,24 @@ export default function DashboardPage() {
   
   const welcomeName = userProfile?.displayName || user?.displayName || user?.email?.split('@')[0] || 'User';
 
+  const getInitials = (email?: string | null, displayName?: string | null) => {
+    if (displayName) {
+      const names = displayName.split(' ');
+      if (names.length > 1) {
+        return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+      }
+      return displayName.substring(0, 2).toUpperCase();
+    }
+    if (email) {
+      const parts = email.split('@')[0].split(/[._-]/);
+      if (parts.length > 1) {
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+      }
+      return email.substring(0, 2).toUpperCase();
+    }
+    return 'U';
+  };
+
   return (
     <AppShell>
       <div className="bg-muted/40 min-h-screen">
@@ -63,9 +81,17 @@ export default function DashboardPage() {
 
           
           {/* Greeting */}
-          <div>
-              <h2 className="text-3xl font-bold text-foreground">Hi {welcomeName}!</h2>
-              <p className="text-muted-foreground">Good Morning</p>
+          <div className="flex items-center gap-4">
+              <Avatar className="h-14 w-14 border-2 border-primary/20">
+                <AvatarImage src={user?.photoURL || ''} alt={welcomeName} />
+                <AvatarFallback className="text-xl bg-primary/10 text-primary font-semibold">
+                    {getInitials(user?.email, user?.displayName)}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <h2 className="text-3xl font-bold text-foreground">Hi {welcomeName}!</h2>
+                <p className="text-muted-foreground">Good Morning</p>
+              </div>
           </div>
 
           {/* Search */}
