@@ -23,7 +23,7 @@ const projects = [
     icon: null,
     title: "Pose Analysis",
     category: "AI Feedback",
-    bgColor: "bg-pistachio-background",
+    bgColor: "", // Removed color to use custom SVG background
     href: "/snap-yoga",
     className: "col-span-1 row-span-1",
   },
@@ -124,6 +124,31 @@ export default function DashboardPage() {
             <div className="grid grid-cols-2 grid-rows-3 gap-4 h-[30rem]">
               {projects.map((project, index) => {
                 const Icon = project.icon
+                if (project.title === "Pose Analysis") {
+                  return (
+                     <Link href={project.href} key={index} className={cn("block hover:scale-105 transition-transform duration-200", project.className)}>
+                        <Card className="rounded-xl shadow-sm p-4 flex flex-col h-full relative overflow-hidden bg-card">
+                            <div className="absolute inset-0 z-0">
+                                <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M -10,150 C 50,220 150,220 210,150 L 210,210 L -10,210 Z" fill="#D2B48C" fillOpacity="0.4"/>
+                                    <path d="M 80,-10 C 180,-10 220,90 150,110 C 80,130 0,60 80,-10 Z" fill="#a1b5d8" fillOpacity="0.4"/>
+                                    <path d="M -10,50 C 30,110 80,110 100,50 C 120,-10 40,-10 -10,50 Z" fill="#ffc0cb" fillOpacity="0.4"/>
+                                    <path d="M 120,50 C 200,50 200,150 120,150 C 40,150 40,50 120,50 Z" fill="#90ee90" fillOpacity="0.3"/>
+
+                                    <path d="M -10,150 Q 100,200 210,150" stroke="#800000" strokeWidth="1.5" fill="none" />
+                                    <path d="M 80,-10 Q 100,150 200,180" stroke="#000080" strokeWidth="1.5" fill="none" />
+                                    <path d="M -10,50 Q 100,100 150,0" stroke="#228b22" strokeWidth="1.5" fill="none" />
+
+                                </svg>
+                            </div>
+                            <CardHeader className="flex-1 p-2 z-10">
+                                <CardTitle className="text-card-foreground font-semibold">{project.title}</CardTitle>
+                                <p className="text-sm text-card-foreground/90">{project.category}</p>
+                            </CardHeader>
+                        </Card>
+                     </Link>
+                  )
+                }
                 return (
                   <Link href={project.href} key={index} className={cn("block hover:scale-105 transition-transform duration-200", project.className)}>
                     <Card className={cn(project.bgColor, "rounded-xl shadow-sm p-4 flex flex-col h-full relative overflow-hidden")}>
