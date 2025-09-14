@@ -2,7 +2,6 @@
 "use client"; 
 
 import type { ReactNode } from 'react';
-import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from 'next/navigation'; 
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -115,7 +114,6 @@ export function AppShell({ children }: AppShellProps) {
                         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                             <Avatar className="h-9 w-9">
                             <AvatarImage src={user?.photoURL || undefined} alt={user?.displayName || user?.email || 'User'} />
-                            <AvatarFallback>{getInitials(user?.email, user?.displayName)}</AvatarFallback>
                             </Avatar>
                         </Button>
                     </DropdownMenuTrigger>
