@@ -4,7 +4,7 @@
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { AppShell } from '@/components/layout/app-shell';
-import { ArrowRight } from 'lucide-react';
+import { MoveUpRight, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { useEffect, useState } from 'react';
@@ -35,7 +35,7 @@ export default function WelcomePage() {
   if (authLoading || !user) {
     return (
         <AppShell>
-            <div className="flex justify-center items-center min-h-[calc(100vh-5rem)]">
+            <div className="flex justify-center items-center min-h-screen">
                 <SmileyRockLoader text="Loading your session..." />
             </div>
         </AppShell>
@@ -56,12 +56,10 @@ export default function WelcomePage() {
             <div className="mt-12 w-full max-w-xs animate-fade-in-up" style={{ animationDelay: '400ms' }}>
                 <Button 
                     onClick={handleContinue} 
-                    className="w-full"
-                    size="lg"
-                    isLoadingWithBar={isNavigating}
+                    className="rounded-full h-10 w-auto px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
                     disabled={isNavigating}
                 >
-                  Continue <ArrowRight className="ml-2 h-5 w-5" />
+                  {isNavigating ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Continue</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
                 </Button>
             </div>
         </div>
