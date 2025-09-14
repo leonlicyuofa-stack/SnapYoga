@@ -5,6 +5,14 @@ import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import { Playfair_Display } from 'next/font/google';
+
+const playfairDisplay = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  style: ['normal', 'italic'],
+});
+
 
 interface DailyQuote {
   content: string;
@@ -94,7 +102,7 @@ export function QuoteCarousel() {
 
   if (loading) {
     return (
-        <Card className="relative w-full max-w-lg h-24 md:h-28 shadow-2xl overflow-hidden bg-primary/10 border-primary/20 backdrop-blur-sm flex flex-col items-center justify-center p-8">
+        <Card className="relative w-full max-w-lg h-20 md:h-24 shadow-none bg-transparent border-0 flex flex-col items-center justify-center p-8">
             <Skeleton className="h-4 w-3/4 mb-2" />
             <Skeleton className="h-3 w-1/2 mb-2" />
             <Skeleton className="h-3 w-1/4" />
@@ -104,7 +112,7 @@ export function QuoteCarousel() {
 
   return (
     <div className="relative w-full max-w-lg">
-        <div className="relative h-24 md:h-28 overflow-hidden">
+        <div className="relative h-20 md:h-24 overflow-hidden">
             {quotes.map((quote, index) => (
                 <div
                     key={index}
@@ -115,7 +123,7 @@ export function QuoteCarousel() {
                     aria-hidden={index !== currentIndex}
                 >
                     <Card className="w-full h-full flex flex-col items-center justify-center text-center p-6 md:p-12 bg-transparent border-0 shadow-none">
-                         <blockquote className="text-lg md:text-xl font-script text-foreground/90 italic leading-relaxed">
+                         <blockquote className={cn("text-lg md:text-xl text-foreground/90 italic leading-relaxed", playfairDisplay.className)}>
                             &ldquo;{quote.content}&rdquo;
                         </blockquote>
                         <cite className="mt-4 block text-sm md:text-base text-muted-foreground not-italic">
