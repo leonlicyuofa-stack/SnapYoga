@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useRouter } from 'next/navigation';
@@ -46,9 +47,6 @@ export default function WelcomePage() {
         
         <div className="relative z-10 flex flex-col items-center max-w-lg w-full">
             <h1 className="text-4xl font-bold text-foreground animate-fade-in-up">Welcome to SnapYoga</h1>
-            <p className="text-lg text-muted-foreground mt-2 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                Let's get your profile set up in a few simple steps.
-            </p>
             
             <div className="mt-8 w-full max-w-xs animate-fade-in-up" style={{ animationDelay: '400ms' }}>
                 <Button 
