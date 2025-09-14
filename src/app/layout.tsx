@@ -1,6 +1,6 @@
 
 import type {Metadata} from 'next';
-import { Lexend, Playfair_Display } from 'next/font/google';
+import { Lexend, Playfair_Display, Chakra_Petch } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/contexts/AuthContext'; 
@@ -18,6 +18,12 @@ const playfair = Playfair_Display({
     variable: '--font-playfair-display',
 });
 
+const chakraPetch = Chakra_Petch({
+    subsets: ['latin'],
+    weight: ['400', '700'],
+    variable: '--font-chakra-petch',
+});
+
 export const metadata: Metadata = {
   title: 'SnapYoga',
   description: 'AI-powered yoga pose analysis and feedback.',
@@ -30,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${lexend.className} ${playfair.variable} antialiased`}>
+      <body className={`${lexend.className} ${playfair.variable} ${chakraPetch.variable} antialiased`}>
         <AuthProvider>
           <LanguageProvider>
             {children}

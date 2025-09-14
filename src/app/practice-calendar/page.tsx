@@ -8,136 +8,186 @@ import { collection, getDocs, query, where, type Timestamp, orderBy } from 'fire
 import { AppShell } from '@/components/layout/app-shell';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle, CalendarDays } from 'lucide-react';
+import { AlertCircle, CalendarDays, Dumbbell, Star } from 'lucide-react';
 import { startOfDay } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 interface StoredAnalysis {
   id: string;
   createdAt: Timestamp;
-  // other fields are not strictly necessary for the calendar view, but good to have
-  videoFileName?: string;
-  feedback?: string;
-  score?: number;
   identifiedPose?: string;
+  score?: number;
 }
 
 export default function PracticeCalendarPage() {
   const { user, loading: authLoading } = useAuth();
   const [practiceDates, setPracticeDates] = useState<Date[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [todaysAnalyses, setTodaysAnalyses] = useState<StoredAnalysis[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentMonth, setCurrentMonth] = useState<Date>(startOfDay(new Date()));
 
   useEffect(() => {
     if (authLoading) return;
-
     if (!user) {
       setError("Please log in to view your practice calendar.");
       setIsLoadingData(false);
       return;
     }
-
+    
     setIsLoadingData(true);
     setError(null);
 
     const analysesRef = collection(firestore, 'users', user.uid, 'poseAnalyses');
-    // Fetch all analyses for simplicity. For many entries, pagination or range-limiting would be needed.
     const q = query(analysesRef, orderBy('createdAt', 'desc'));
 
-    getDocs(q)
-      .then((querySnapshot) => {
+    getDocs(q).then((querySnapshot) => {
+        const allAnalyses: StoredAnalysis[] = [];
+        querySnapshot.forEach(doc => {
+            allAnalyses.push({ id: doc.id, ...doc.data() } as StoredAnalysis);
+        });
+
         const uniqueDates = new Set<string>();
-        querySnapshot.forEach((doc) => {
-          const data = doc.data() as StoredAnalysis;
-          if (data.createdAt) {
-            // Normalize to the start of the day to avoid timezone issues with highlighting
-            const date = startOfDay(data.createdAt.toDate());
-            uniqueDates.add(date.toISOString());
-          }
+        allAnalyses.forEach(analysis => {
+            if (analysis.createdAt) {
+                const date = startOfDay(analysis.createdAt.toDate());
+                uniqueDates.add(date.toISOString());
+            }
         });
         setPracticeDates(Array.from(uniqueDates).map(dateStr => new Date(dateStr)));
-      })
-      .catch((err) => {
+        
+        // Filter analyses for today's date initially
+        const today = startOfDay(new Date());
+        const filteredAnalyses = allAnalyses.filter(a => a.createdAt && startOfDay(a.createdAt.toDate()).getTime() === today.getTime());
+        setTodaysAnalyses(filteredAnalyses);
+    }).catch((err) => {
         console.error("Error fetching practice data:", err);
         setError("Failed to load practice data. Please try again.");
-      })
-      .finally(() => {
+    }).finally(() => {
         setIsLoadingData(false);
-      });
+    });
+
   }, [user, authLoading]);
 
-  const practicedDaysModifier = practiceDates.length > 0 ? { practiced: practiceDates } : {};
-  const practicedDaysClasses = practiceDates.length > 0 
-    ? { practiced: "bg-primary/20 text-primary-foreground rounded-md" } 
-    : {};
-
-
-  if (authLoading) {
-    return (
-      <AppShell>
-        <div className="container mx-auto px-4 py-12">
-          <Skeleton className="h-10 w-3/4 mb-4" />
-          <Skeleton className="h-6 w-1/2 mb-8" />
-          <div className="max-w-md mx-auto p-1 sm:p-2 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
-             <Skeleton className="h-[330px] sm:h-[350px] w-full max-w-xs sm:max-w-sm" />
-          </div>
-        </div>
-      </AppShell>
-    );
-  }
+  const practicedDaysModifier = { practiced: practiceDates };
+  const selectedDayModifier = { selected: selectedDate };
   
+  const modifiers = { ...practicedDaysModifier, ...selectedDayModifier };
+
+  const modifiersClassNames = {
+    practiced: "bg-primary/20 text-primary-foreground font-bold",
+    selected: "bg-primary text-primary-foreground rounded-md",
+  };
+
   return (
     <AppShell>
-      <div className="container mx-auto px-4 py-12">
-        <header className="mb-8 text-center">
-          <p className="mt-3 text-base text-muted-foreground max-w-xl mx-auto">
-            See your progress and the days you’ve practiced your yoga poses — you’re doing amazing, keep going!
-          </p>
-        </header>
+      <div className="bg-primary min-h-screen">
+        <div className="container mx-auto px-0 pt-4 pb-24">
 
-        {error && (
-          <Alert variant="destructive" className="max-w-xl mx-auto mb-8">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+          {error && (
+            <Alert variant="destructive" className="max-w-xl mx-auto m-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
-        <div className="max-w-md mx-auto p-1 sm:p-2 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl overflow-hidden">
-            {isLoadingData && !error ? (
-              <Skeleton className="h-[330px] sm:h-[350px] w-full max-w-xs sm:max-w-sm" />
-            ) : !error ? (
+          <div className="bg-background rounded-t-3xl shadow-xl pb-4">
+            <div className="relative">
               <Calendar
-                mode="single" // Using single to display one month, navigation handles month changes
+                mode="single"
+                selected={selectedDate}
+                onSelect={setSelectedDate}
                 month={currentMonth}
                 onMonthChange={setCurrentMonth}
-                selected={practiceDates} // Visually marks the dates
-                modifiers={practicedDaysModifier}
-                modifiersClassNames={practicedDaysClasses}
-                className="rounded-md w-full"
+                modifiers={modifiers}
+                modifiersClassNames={modifiersClassNames}
+                className="p-4"
                 classNames={{
-                  day_selected: "bg-primary text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-md",
-                  day_today: "text-accent font-bold rounded-md",
+                  caption_label: "font-bold text-lg",
+                  head_cell: "text-muted-foreground font-semibold w-10",
+                  cell: "h-10 w-10 text-center",
+                  day: "h-10 w-10 rounded-md",
+                  day_today: "font-bold text-primary",
                 }}
-                showOutsideDays
-                disabled={isLoadingData} // Prevent interaction while loading (though not strictly needed for display)
               />
-            ) : null}
+              <div className="absolute bottom-0 left-0 right-0 h-16 bg-background -mb-16 rounded-b-3xl">
+                 <div className="absolute top-0 right-0 h-16 w-1/2 bg-primary rounded-tl-3xl"></div>
+                 <div className="absolute top-0 right-1/2 h-16 w-1/2 bg-background rounded-br-3xl"></div>
+              </div>
+            </div>
+
+            <Tabs defaultValue="log" className="relative -mt-16">
+              <TabsList className="grid w-full grid-cols-2 bg-transparent h-16 p-0">
+                  <TabsTrigger value="events" className="h-full rounded-none data-[state=inactive]:bg-background data-[state=active]:bg-background text-muted-foreground data-[state=active]:text-foreground font-bold text-base">Practice Log</TabsTrigger>
+                  <TabsTrigger value="log" className="h-full rounded-none data-[state=inactive]:bg-primary data-[state=active]:bg-primary text-primary-foreground font-bold text-base">Upcoming Events</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
           
-           <div className="bg-muted/50 p-4 text-center">
-              {practiceDates.length > 0 && !isLoadingData && !error && (
-                <p className="text-sm text-muted-foreground w-full">
-                  Highlighted days indicate completed pose analyses.
-                </p>
-              )}
-               {practiceDates.length === 0 && !isLoadingData && !error && (
-                <p className="text-sm text-muted-foreground w-full">
-                  No practices recorded yet. Analyze a pose to see it here!
-                </p>
-              )}
-           </div>
+          <div className="p-6 text-primary-foreground">
+            <h2 className="text-3xl font-bold tracking-tight text-center font-chakra">Monthly Yoga Challenge</h2>
+            <p className="text-5xl font-bold text-center mt-2 font-chakra">$0</p>
+            
+            <div className="grid grid-cols-2 gap-4 mt-8">
+                <Card className="bg-primary-foreground text-primary shadow-lg relative -rotate-3">
+                     <div className="absolute -bottom-2 -left-2 -right-2 h-full bg-white/40 rounded-lg -z-10 rotate-6"></div>
+                    <CardHeader>
+                        <CardDescription className="font-bold">POSES PRACTICED</CardDescription>
+                    </CardHeader>
+                    <CardContent className="text-center">
+                        <p className="text-4xl font-bold font-chakra">{todaysAnalyses.length}</p>
+                    </CardContent>
+                </Card>
+                 <Card className="bg-primary-foreground text-primary shadow-lg relative rotate-3">
+                     <div className="absolute -bottom-2 -left-2 -right-2 h-full bg-white/40 rounded-lg -z-10 -rotate-6"></div>
+                    <CardHeader>
+                        <CardDescription className="font-bold">TIME SPENT</CardDescription>
+                    </CardHeader>
+                    <CardContent className="text-center">
+                        <p className="text-4xl font-bold font-chakra">~{todaysAnalyses.length * 5} <span className="text-xl">min</span></p>
+                    </CardContent>
+                </Card>
+            </div>
+
+            <div className="mt-8 space-y-4">
+                <h3 className="font-bold text-lg">Today's Log</h3>
+                {isLoadingData ? (
+                    <>
+                        <Skeleton className="h-16 w-full bg-white/20" />
+                        <Skeleton className="h-16 w-full bg-white/20" />
+                    </>
+                ) : todaysAnalyses.length > 0 ? (
+                    todaysAnalyses.map(analysis => (
+                        <Card key={analysis.id} className="bg-white/10 text-primary-foreground">
+                            <CardContent className="p-4 flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <Dumbbell className="h-8 w-8" />
+                                    <div>
+                                        <p className="font-bold">{analysis.identifiedPose || 'Unknown Pose'}</p>
+                                        <p className="text-sm opacity-80">Score: {analysis.score || 'N/A'}</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-1 text-yellow-300">
+                                    <Star className="h-4 w-4" />
+                                    <span className="font-bold">{analysis.score || 0}</span>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))
+                ) : (
+                    <Card className="bg-white/10 text-primary-foreground">
+                        <CardContent className="p-4 text-center">
+                            <p>No practice recorded for this day.</p>
+                        </CardContent>
+                    </Card>
+                )}
+            </div>
+          </div>
         </div>
       </div>
     </AppShell>
