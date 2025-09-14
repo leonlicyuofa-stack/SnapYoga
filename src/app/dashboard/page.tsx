@@ -150,11 +150,6 @@ export default function DashboardPage() {
                 )
               })}
             </div>
-             <div className="text-center">
-                <Button variant="link" asChild>
-                    <Link href="#" className="text-muted-foreground">See all &gt;</Link>
-                </Button>
-            </div>
 
         </div>
       </div>
