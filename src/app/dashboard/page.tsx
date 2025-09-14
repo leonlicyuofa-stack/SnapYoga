@@ -23,7 +23,7 @@ const projects = [
     icon: null,
     title: "Pose Analysis",
     category: "AI Feedback",
-    bgColor: "", // Removed color to use custom SVG background
+    bgColor: "bg-pistachio-background", 
     href: "/snap-yoga",
     className: "col-span-1 row-span-1",
   },
@@ -127,15 +127,7 @@ export default function DashboardPage() {
                 if (project.title === "Pose Analysis") {
                   return (
                      <Link href={project.href} key={index} className={cn("block hover:scale-105 transition-transform duration-200", project.className)}>
-                        <Card className="rounded-xl shadow-sm p-4 flex flex-col h-full relative overflow-hidden bg-card">
-                            <div className="absolute inset-0 z-0">
-                                <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M-10 180 Q 20 220, 80 180 T 150 150 L 150 220 L -10 220 Z" fill="#D2B48C80" stroke="#b08d57" strokeWidth="1.5" />
-                                    <path d="M 120 -20 Q 180 -30, 220 50 T 180 120 Q 130 140, 90 80 T 120 -20 Z" fill="#A1B5D880" stroke="#7e94b8" strokeWidth="1.5" />
-                                    <path d="M-20 40 Q 20 110, 70 70 T 80 30 Q 70 -20, 20 0 T -20 40 Z" fill="#FFC0CB80" stroke="#e6a0ac" strokeWidth="1.5" />
-                                    <path d="M160 80 Q 240 70, 230 150 T 150 180 Q 80 190, 100 120 T 160 80 Z" fill="#BDB76B80" stroke="#a39f5c" strokeWidth="1.5" />
-                                </svg>
-                            </div>
+                        <Card className={cn(project.bgColor, "rounded-xl shadow-sm p-4 flex flex-col h-full relative overflow-hidden")}>
                             <CardHeader className="flex-1 p-2 z-10">
                                 <CardTitle className="text-card-foreground font-semibold">{project.title}</CardTitle>
                                 <p className="text-sm text-card-foreground/90">{project.category}</p>
@@ -147,15 +139,7 @@ export default function DashboardPage() {
                 return (
                   <Link href={project.href} key={index} className={cn("block hover:scale-105 transition-transform duration-200", project.className)}>
                     <Card className={cn(project.bgColor, "rounded-xl shadow-sm p-4 flex flex-col h-full relative overflow-hidden")}>
-                     {project.image && (
-                        <Image
-                            src={project.image.src}
-                            alt={project.title}
-                            fill
-                            className="object-cover"
-                            data-ai-hint={project.image.hint}
-                        />
-                     )}
+                     
                       <CardHeader className="flex-1 p-2 z-10">
                         <CardTitle className="text-card-foreground font-semibold">{project.title}</CardTitle>
                         <p className="text-sm text-card-foreground/90">{project.category}</p>
