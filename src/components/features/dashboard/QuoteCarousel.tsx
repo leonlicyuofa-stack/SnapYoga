@@ -39,7 +39,7 @@ export function QuoteCarousel() {
     const fetchAndCacheQuotes = async () => {
       setLoading(true);
       try {
-        const response = await fetch('https://api.quotable.io/quotes/random?limit=5&tags=wisdom|inspiration|life|philosophy&maxLength=180', { cache: 'no-store' });
+        const response = await fetch('https://api.quotable.io/quotes/random?limit=5&tags=wisdom|inspiration|life|philosophy&maxLength=120', { cache: 'no-store' });
         if (!response.ok) throw new Error('Quotable API failed');
         const data = await response.json();
         
@@ -102,16 +102,15 @@ export function QuoteCarousel() {
 
   if (loading) {
     return (
-        <Card className="relative w-full max-w-lg h-20 md:h-24 shadow-none bg-transparent border-0 flex flex-col items-center justify-center p-8">
+        <Card className="relative w-full max-w-lg h-16 md:h-20 shadow-none bg-transparent border-0 flex flex-col items-center justify-center p-8">
             <Skeleton className="h-4 w-3/4 mb-2" />
-            <Skeleton className="h-3 w-1/2 mb-2" />
         </Card>
     );
   }
 
   return (
     <div className="relative w-full max-w-lg">
-        <div className="relative h-20 md:h-24 overflow-hidden">
+        <div className="relative h-16 md:h-20 overflow-hidden">
             {quotes.map((quote, index) => (
                 <div
                     key={index}
