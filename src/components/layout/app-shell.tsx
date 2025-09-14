@@ -108,21 +108,9 @@ export function AppShell({ children }: AppShellProps) {
     <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
       <header className="sticky top-0 z-40 w-full border-b bg-card">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-4">
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                            
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56" align="start" forceMount>
-                        {userMenuItems}
-                    </DropdownMenuContent>
-                </DropdownMenu>
-                <div className="flex items-center gap-2 font-semibold text-lg">
-                    <Home className="h-5 w-5" />
-                    Homepage
-                </div>
+            <div className="flex items-center gap-2">
+                <Home className="h-5 w-5" />
+                <div className="font-semibold text-lg">Homepage</div>
             </div>
           
           <div className="flex items-center space-x-2">
