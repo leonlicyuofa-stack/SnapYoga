@@ -200,7 +200,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         router.push('/dashboard');
       } else {
         toast({ title: 'Success', description: `${providerName} sign-in successful. Let's get you set up.` });
-        router.push('/onboarding/gender-profile');
+        router.push('/welcome');
       }
     } catch (error) {
       handleAuthError(error, `Failed to sign in with ${providerName}.`);
@@ -227,7 +227,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await createUserProfileDocument(userCredential.user, { email }); 
       
       toast({ title: 'Account Created!', description: 'Welcome! Let\'s get your profile set up.' });
-      router.push('/onboarding/gender-profile'); // Redirect directly to onboarding
+      router.push('/welcome'); // Redirect to the new welcome page
     } catch (error) {
       handleAuthError(error, 'Failed to create account.');
     } finally {
@@ -255,7 +255,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
          router.push('/dashboard');
       } else {
         toast({ title: 'Success', description: 'Signed in successfully. Let\'s complete your profile.' });
-        router.push('/onboarding/gender-profile');
+        router.push('/welcome');
       }
     } catch (error) {
       handleAuthError(error, 'Failed to sign in.');
