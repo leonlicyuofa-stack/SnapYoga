@@ -112,9 +112,7 @@ export function AppShell({ children }: AppShellProps) {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                            <Avatar className="h-9 w-9">
-                            <AvatarImage src={user?.photoURL || undefined} alt={user?.displayName || user?.email || 'User'} />
-                            </Avatar>
+                            
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56" align="start" forceMount>
