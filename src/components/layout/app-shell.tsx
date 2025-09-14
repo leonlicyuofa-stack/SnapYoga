@@ -6,7 +6,7 @@ import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogIn, LogOut, UserCircle, Loader2, Home, Settings, CalendarDays, Trophy, Languages, Sparkles } from 'lucide-react';
+import { LogIn, LogOut, UserCircle, Loader2, Home, Settings, CalendarDays, Trophy, Languages, Sparkles, MoreHorizontal, Search } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -76,63 +76,59 @@ export function AppShell({ children }: AppShellProps) {
     <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
       <header className="sticky top-0 z-40 w-full border-b bg-card">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href={user ? "/dashboard" : "/"} className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm">
-            <SnapYogaLogo />
-          </Link>
-          
-          <div className="flex items-center space-x-2">
-            {loading ? (
-              <Loader2 className="h-6 w-6 animate-spin text-primary" />
-            ) : user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                    <Avatar className="h-9 w-9">
-                      <AvatarImage src={user.photoURL || undefined} alt={user.displayName || user.email || 'User'} />
-                      <AvatarFallback>{getInitials(user.email, user.displayName)}</AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        {user.displayName || t('welcome')}
-                      </p>
-                      <p className="text-xs leading-none text-muted-foreground">
-                        {user.email}
-                      </p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild className="cursor-pointer">
-                    <Link href="/profile">
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>{t('profile')}</span>
-                    </Link>
-                  </DropdownMenuItem>
-                   <DropdownMenuItem asChild className="cursor-pointer">
-                     <a onClick={handleLanguageSwitch}>
-                       <Languages className="mr-2 h-4 w-4" />
-                       <span>Bahasa Indonesia</span>
-                    </a>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={signOutUser} className="cursor-pointer">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>{t('signOut')}</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-               <Button asChild className="h-9 px-4 py-2">
-                  <Link href="/auth/signup">
-                    <UserCircle className="mr-2 h-5 w-5" />
-                    {t('signUp')}
-                  </Link>
-                </Button>
-            )}
+            <div className="flex items-center gap-4">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                            <Avatar className="h-9 w-9">
+                            <AvatarImage src={user?.photoURL || undefined} alt={user?.displayName || user?.email || 'User'} />
+                            <AvatarFallback>{getInitials(user?.email, user?.displayName)}</AvatarFallback>
+                            </Avatar>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56" align="start" forceMount>
+                        <DropdownMenuLabel className="font-normal">
+                            <div className="flex flex-col space-y-1">
+                            <p className="text-sm font-medium leading-none">
+                                {user?.displayName || t('welcome')}
+                            </p>
+                            <p className="text-xs leading-none text-muted-foreground">
+                                {user?.email}
+                            </p>
+                            </div>
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild className="cursor-pointer">
+                            <Link href="/profile">
+                            <Settings className="mr-2 h-4 w-4" />
+                            <span>{t('profile')}</span>
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild className="cursor-pointer">
+                            <a onClick={handleLanguageSwitch}>
+                            <Languages className="mr-2 h-4 w-4" />
+                            <span>Bahasa Indonesia</span>
+                            </a>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={signOutUser} className="cursor-pointer">
+                            <LogOut className="mr-2 h-4 w-4" />
+                            <span>{t('signOut')}</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
+          
+          <div className="font-semibold text-lg">Homepage</div>
+
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="icon">
+                <Search />
+            </Button>
+            <Button variant="ghost" size="icon">
+                <MoreHorizontal />
+            </Button>
+          </div>
         </div>
       </header>
 
