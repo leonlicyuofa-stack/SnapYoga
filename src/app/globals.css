@@ -14,8 +14,8 @@
     --popover: 0 100% 99%;
     --popover-foreground: 349 13% 44%;
 
-    --primary: 340 82% 52%; /* Magenta */
-    --primary-foreground: 0 0% 100%; 
+    --primary: 0 0% 100%; /* White */
+    --primary-foreground: 349 13% 44%; /* Prune */
 
     --secondary: 353 24% 91%; /* Pink - #E5C5C1 */
     --secondary-foreground: 349 13% 44%;
@@ -62,8 +62,8 @@
     --popover: 349 15% 15%;
     --popover-foreground: 350 33% 95%;
 
-    --primary: 340 82% 52%; /* Magenta */
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 0% 100%; /* White */
+    --primary-foreground: 349 13% 44%; /* Prune */
 
     --secondary: 349 15% 25%; 
     --secondary-foreground: 350 33% 95%;
