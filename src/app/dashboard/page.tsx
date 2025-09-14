@@ -14,6 +14,12 @@ import { QuoteCarousel } from '@/components/features/dashboard/QuoteCarousel';
 import { Playfair_Display } from 'next/font/google';
 import { YogaPoseIllustration } from '@/components/icons/YogaPoseIllustration';
 import { cn } from '@/lib/utils';
+import { Shadows_Into_Light } from 'next/font/google';
+
+const shadowsIntoLight = Shadows_Into_Light({
+  subsets: ['latin'],
+  weight: '400',
+});
 
 const playfairDisplay = Playfair_Display({
   subsets: ['latin'],
@@ -108,6 +114,10 @@ export default function DashboardPage() {
                 <h2 className="text-xl font-bold text-foreground">Welcome back!</h2>
                 <p className="text-muted-foreground">{welcomeName}</p>
               </div>
+          </div>
+
+          <div className="flex justify-center">
+            <QuoteCarousel />
           </div>
           
           {/* Mood Tracker */}
