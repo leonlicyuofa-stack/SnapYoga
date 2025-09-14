@@ -1,6 +1,6 @@
 
 import type {Metadata} from 'next';
-import { Lexend } from 'next/font/google';
+import { Lexend, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/contexts/AuthContext'; 
@@ -8,7 +8,14 @@ import { LanguageProvider } from '@/contexts/LanguageContext';
 
 const lexend = Lexend({
   subsets: ['latin'],
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900']
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-lexend',
+});
+
+const playfair = Playfair_Display({
+    subsets: ['latin'],
+    weight: ['400', '700'],
+    variable: '--font-playfair-display',
 });
 
 export const metadata: Metadata = {
@@ -23,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${lexend.className} antialiased`}>
+      <body className={`${lexend.className} ${playfair.variable} antialiased`}>
         <AuthProvider>
           <LanguageProvider>
             {children}

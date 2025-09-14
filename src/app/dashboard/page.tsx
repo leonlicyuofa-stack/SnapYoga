@@ -5,15 +5,18 @@ import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Search, Bell, MoreHorizontal, Sparkles, Trophy, Megaphone, Users, CalendarDays } from 'lucide-react';
+import { Sparkles, Trophy, Users, CalendarDays } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState, useEffect } from 'react';
 import type { DocumentData } from 'firebase/firestore';
-import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import Image from 'next/image';
 import { QuoteCarousel } from '@/components/features/dashboard/QuoteCarousel';
+import { Playfair_Display } from 'next/font/google';
+
+const playfairDisplay = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+});
 
 interface UserProfileData extends DocumentData {
   displayName?: string;
@@ -48,6 +51,13 @@ const projects = [
     bgColor: "bg-card text-card-foreground",
     href: "/practice-calendar",
   },
+]
+
+const moods = [
+    { name: 'Angry', emoji: '😠' },
+    { name: 'Happy', emoji: '😊' },
+    { name: 'Sad', emoji: '😢' },
+    { name: 'Relaxed', emoji: '😌' },
 ]
 
 export default function DashboardPage() {
@@ -93,6 +103,23 @@ export default function DashboardPage() {
                 <p className="text-muted-foreground">{welcomeName}</p>
               </div>
           </div>
+          
+          {/* Mood Tracker */}
+          <div className="space-y-4">
+              <div className={playfairDisplay.className}>
+                  <h2 className="text-3xl font-bold text-foreground">Good morning <span className="italic">{welcomeName}</span></h2>
+              </div>
+              <p className="text-muted-foreground">How do you feel today?</p>
+              <div className="grid grid-cols-4 gap-4">
+                  {moods.map((mood) => (
+                      <button key={mood.name} className="flex flex-col items-center justify-center gap-2 p-4 bg-card border rounded-lg shadow-sm hover:bg-accent/50 hover:border-primary transition-all">
+                          <span className="text-4xl">{mood.emoji}</span>
+                          <span className="text-sm font-medium text-muted-foreground">{mood.name}</span>
+                      </button>
+                  ))}
+              </div>
+          </div>
+
 
           {/* Quote Carousel */}
           <div className="flex justify-center">
