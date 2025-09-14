@@ -130,7 +130,6 @@ export default function PracticeCalendarPage() {
           </div>
           
           <div className="p-6 text-primary-foreground">
-            <h2 className="text-3xl font-bold tracking-tight text-center font-chakra">Monthly Yoga Challenge</h2>
             <p className="text-5xl font-bold text-center mt-2 font-chakra">$0</p>
             
             <div className="grid grid-cols-2 gap-4 mt-8">
