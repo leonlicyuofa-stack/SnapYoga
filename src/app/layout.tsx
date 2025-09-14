@@ -47,8 +47,13 @@ export default function RootLayout({
                         <stop offset="100%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0 }} />
                     </radialGradient>
                 </defs>
+                {/* BLOB 1: Main pink shape from Top-Right to Bottom-Left */}
                 <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-blob-1))" />
+                
+                {/* BLOB 2: Curve on the left edge, filled with background color for layering effect */}
                 <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
+                
+                {/* BLOB 3: Semi-transparent gray shape from Top-Left to Bottom-Right, adding depth */}
                 <path d="M 100,0 L 0,0 C 50,50 0,50 0,100 L 100,100 Z" fill="hsl(var(--splash-blob-2))" style={{ opacity: 0.5 }}/>
             </svg>
         </div>
