@@ -115,7 +115,7 @@ export function QuoteCarousel() {
                     aria-hidden={index !== currentIndex}
                 >
                     <Card className="w-full h-full flex flex-col items-center justify-center text-center p-6 md:p-12 bg-transparent border-0 shadow-none">
-                         <blockquote className="text-xl md:text-2xl font-script text-foreground/90 italic leading-relaxed">
+                         <blockquote className="text-lg md:text-xl font-script text-foreground/90 italic leading-relaxed">
                             &ldquo;{quote.content}&rdquo;
                         </blockquote>
                         <cite className="mt-4 block text-sm md:text-base text-muted-foreground not-italic">
