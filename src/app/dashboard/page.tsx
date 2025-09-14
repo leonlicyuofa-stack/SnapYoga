@@ -89,7 +89,7 @@ export default function DashboardPage() {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h2 className="text-3xl font-bold text-foreground">Welcome back!</h2>
+                <h2 className="text-xl font-bold text-foreground">Welcome back!</h2>
                 <p className="text-muted-foreground">{welcomeName}</p>
               </div>
           </div>
