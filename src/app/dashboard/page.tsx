@@ -5,13 +5,15 @@ import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Sparkles, Trophy, Users, CalendarDays } from 'lucide-react';
+import { Sparkles, Trophy, Users, CalendarDays, Moon, Sun, Flower, BarChart2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState, useEffect } from 'react';
 import type { DocumentData } from 'firebase/firestore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { QuoteCarousel } from '@/components/features/dashboard/QuoteCarousel';
 import { Playfair_Display } from 'next/font/google';
+import { YogaPoseIllustration } from '@/components/icons/YogaPoseIllustration';
+import { cn } from '@/lib/utils';
 
 const playfairDisplay = Playfair_Display({
   subsets: ['latin'],
@@ -24,32 +26,36 @@ interface UserProfileData extends DocumentData {
 
 const projects = [
   {
-    icon: Sparkles,
+    icon: Moon,
     title: "Pose Analysis",
     category: "AI Feedback",
-    bgColor: "bg-primary text-primary-foreground",
+    bgColor: "bg-indigo-300",
     href: "/snap-yoga",
+    className: "col-span-1 row-span-1"
   },
   {
-    icon: Trophy,
+    icon: Sun,
     title: "Dashboard",
     category: "Challenges",
-    bgColor: "bg-card text-card-foreground",
+    bgColor: "bg-rose-200",
     href: "/homepage",
+    className: "col-span-1 row-span-2"
   },
   {
-    icon: Users,
+    icon: Flower,
     title: "Friends Challenges",
     category: "Community",
-    bgColor: "bg-card text-card-foreground",
+    bgColor: "bg-fuchsia-200",
     href: "/challenges",
+    className: "col-span-1 row-span-2"
   },
   {
-    icon: CalendarDays,
+    icon: YogaPoseIllustration,
     title: "Practice Calendar",
     category: "Tracking",
-    bgColor: "bg-card text-card-foreground",
+    bgColor: "bg-violet-200",
     href: "/practice-calendar",
+    className: "col-span-1 row-span-1"
   },
 ]
 
@@ -124,28 +130,31 @@ export default function DashboardPage() {
           </div>
           
           {/* Ongoing Projects */}
-          <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                  {projects.map((project, index) => {
-                      const Icon = project.icon;
-                      return (
-                        <Link href={project.href} key={index} className="block hover:scale-105 transition-transform duration-200">
-                          <Card className={`${project.bgColor} rounded-xl shadow-sm p-4 flex flex-col justify-between h-32`}>
-                              <div className="flex justify-end items-start">
-                                  <div className="p-2 bg-card/20 rounded-lg">
-                                      <Icon className="h-6 w-6" />
-                                  </div>
-                              </div>
-                              <div>
-                                  <p className="font-semibold">{project.title}</p>
-                                  <p className="text-sm opacity-80">{project.category}</p>
-                              </div>
-                          </Card>
-                        </Link>
-                      )
-                  })}
-              </div>
-          </div>
+            <div className="grid grid-cols-2 grid-rows-3 gap-4 h-[30rem]">
+              {projects.map((project, index) => {
+                const Icon = project.icon
+                return (
+                  <Link href={project.href} key={index} className={cn("block hover:scale-105 transition-transform duration-200", project.className)}>
+                    <Card className={cn(project.bgColor, "rounded-xl shadow-sm p-4 flex flex-col h-full")}>
+                      <CardHeader className="flex-1 p-2">
+                        <CardTitle className="text-card-foreground font-semibold">{project.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-2 flex justify-center items-center flex-1">
+                        <Icon className="h-12 w-12 text-card-foreground/80" />
+                      </CardContent>
+                      <CardFooter className="p-2">
+                         <p className="text-sm text-card-foreground/90">{project.category}</p>
+                      </CardFooter>
+                    </Card>
+                  </Link>
+                )
+              })}
+            </div>
+             <div className="text-center">
+                <Button variant="link" asChild>
+                    <Link href="#" className="text-muted-foreground">See all &gt;</Link>
+                </Button>
+            </div>
 
         </div>
       </div>
