@@ -109,7 +109,7 @@ export default function PracticeCalendarPage() {
 
   return (
     <AppShell>
-      <div className="bg-primary min-h-screen px-0 pt-4 pb-24">
+      <div className="min-h-screen px-0 pt-4 pb-24">
         {error && (
           <Alert variant="destructive" className="max-w-xl mx-auto m-4">
             <AlertCircle className="h-4 w-4" />
@@ -240,5 +240,3 @@ export default function PracticeCalendarPage() {
     </AppShell>
   );
 }
-
-    
