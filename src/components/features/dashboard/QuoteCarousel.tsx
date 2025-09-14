@@ -95,7 +95,7 @@ export function QuoteCarousel() {
 
   if (loading) {
     return (
-        <Card className="relative w-full max-w-lg h-16 flex flex-col items-center justify-center p-8 bg-transparent border-0 shadow-none">
+        <Card className="relative w-full max-w-lg h-24 flex flex-col items-center justify-center p-8 bg-transparent border-0 shadow-none">
             <Skeleton className="h-4 w-3/4 mb-2" />
         </Card>
     );
@@ -103,7 +103,7 @@ export function QuoteCarousel() {
 
   return (
     <div className="relative w-full max-w-lg">
-        <div className="relative h-16 overflow-hidden">
+        <div className="relative h-24 overflow-hidden">
             {quotes.map((quote, index) => (
                 <div
                     key={index}
@@ -114,7 +114,7 @@ export function QuoteCarousel() {
                     aria-hidden={index !== currentIndex}
                 >
                     <Card className="w-full h-full flex flex-col items-center justify-center text-center p-6 bg-transparent border-0 shadow-none">
-                         <blockquote className="text-base md:text-lg text-foreground/90 leading-relaxed line-clamp-2">
+                         <blockquote className="text-lg md:text-xl text-foreground/90 leading-relaxed">
                             &ldquo;{quote.content}&rdquo;
                         </blockquote>
                     </Card>
