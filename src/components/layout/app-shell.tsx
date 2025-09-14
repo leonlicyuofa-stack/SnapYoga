@@ -50,7 +50,7 @@ export function AppShell({ children }: AppShellProps) {
     cn(
       "flex flex-col items-center justify-center h-full w-full gap-1 p-2 rounded-md transition-colors hover:bg-accent/50",
       pathname === path 
-        ? "text-primary bg-primary/10" 
+        ? "text-primary bg-primary/10 font-bold" 
         : "text-muted-foreground hover:text-primary"
     );
 
