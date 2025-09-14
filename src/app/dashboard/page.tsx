@@ -116,9 +116,6 @@ export default function DashboardPage() {
               </div>
           </div>
 
-          <div className="flex justify-center">
-            <QuoteCarousel />
-          </div>
           
           {/* Mood Tracker */}
           <div className="space-y-4">
@@ -149,9 +146,6 @@ export default function DashboardPage() {
                       <CardContent className="p-2 flex justify-center items-center flex-1">
                         
                       </CardContent>
-                      <CardFooter className="p-2">
-                         
-                      </CardFooter>
                     </Card>
                   </Link>
                 )
