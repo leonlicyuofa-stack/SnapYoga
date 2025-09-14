@@ -121,10 +121,12 @@ export function AppShell({ children }: AppShellProps) {
                         {userMenuItems}
                     </DropdownMenuContent>
                 </DropdownMenu>
+                <div className="flex items-center gap-2 font-semibold text-lg">
+                    <Home className="h-5 w-5" />
+                    Homepage
+                </div>
             </div>
           
-          <div className="font-semibold text-lg">Homepage</div>
-
           <div className="flex items-center space-x-2">
             <Button variant="ghost" size="icon">
                 <Search />
