@@ -94,7 +94,7 @@ export function LuckyWheelDialog({ isOpen, onClose }: LuckyWheelDialogProps) {
              {/* This container crops the wheel */}
             <div className="absolute inset-y-0 left-0 w-1/2 overflow-hidden">
                 <div
-                className="w-[200%] h-full rounded-full border-4 border-primary shadow-lg flex items-center justify-center transition-transform duration-4000 ease-out origin-center"
+                className="w-[200%] h-full rounded-full border-4 border-primary shadow-lg flex items-center justify-center transition-transform duration-[4000ms] ease-out origin-center"
                 style={{ 
                     transform: `translateX(-25%) rotate(${rotation}deg)`,
                     background: `conic-gradient(
