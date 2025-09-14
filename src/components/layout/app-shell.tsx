@@ -104,13 +104,25 @@ export function AppShell({ children }: AppShellProps) {
     </>
   )
 
+  const renderHeaderContent = () => {
+    if (pathname === '/practice-calendar') {
+      return <div className="w-1/3"></div>; // Empty div for spacing
+    }
+    if (pathname === '/dashboard') {
+      return <div className="font-semibold text-lg">Welcome!</div>;
+    }
+    // You can add more conditions for other pages here
+    // Default empty state to balance flexbox
+    return <div className="w-1/3"></div>;
+  };
+
+
   return (
     <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
       <header className="sticky top-0 z-40 w-full border-b bg-card/80 backdrop-blur-sm">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-2">
-                <CalendarDays className="h-5 w-5" />
-                <div className="font-semibold text-lg">Calendar</div>
+                {renderHeaderContent()}
             </div>
           
           <div className="flex items-center space-x-2">
