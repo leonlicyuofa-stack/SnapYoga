@@ -106,9 +106,6 @@ export default function DashboardPage() {
           
           {/* Mood Tracker */}
           <div className="space-y-4">
-              <div className={playfairDisplay.className}>
-                  <h2 className="text-3xl font-bold text-foreground">Good morning <span className="italic">{welcomeName}</span></h2>
-              </div>
               <p className="text-muted-foreground">How do you feel today?</p>
               <div className="grid grid-cols-4 gap-4">
                   {moods.map((mood) => (
