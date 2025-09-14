@@ -5,8 +5,8 @@
 
 @layer base {
   :root {
-    --background: 17 20% 33%; /* Cocoa - Set as main background */
-    --foreground: 350 33% 95%; /* White - For contrast on cocoa */
+    --background: 0 0% 100%;
+    --foreground: 349 13% 44%;
 
     --card: 0 0% 100%;
     --card-foreground: 349 13% 44%;

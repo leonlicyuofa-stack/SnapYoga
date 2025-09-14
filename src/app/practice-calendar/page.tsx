@@ -7,7 +7,6 @@ import { firestore } from '@/lib/firebase/clientApp';
 import { collection, getDocs, query, where, type Timestamp, orderBy } from 'firebase/firestore';
 import { AppShell } from '@/components/layout/app-shell';
 import { Calendar } from '@/components/ui/calendar';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -109,9 +108,23 @@ export default function PracticeCalendarPage() {
 
   return (
     <AppShell>
-      <div className="min-h-screen px-0 pt-4 pb-24">
+      <div className="relative min-h-screen">
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-[hsl(var(--splash-blob-1))] via-background to-[hsl(var(--splash-blob-2))] animate-breathing-bg">
+            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
+                <defs>
+                    <radialGradient id="blushGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                        <stop offset="0%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0.7 }} />
+                        <stop offset="100%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0 }} />
+                    </radialGradient>
+                </defs>
+                <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-blob-1))" />
+                <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
+                <path d="M 100,0 L 0,0 C 50,50 0,50 0,100 L 100,100 Z" fill="hsl(var(--splash-blob-2))" style={{ opacity: 0.5 }}/>
+            </svg>
+        </div>
+        <div className="relative z-10 container mx-auto px-0 pt-4 pb-24">
         {error && (
-          <Alert variant="destructive" className="max-w-xl mx-auto m-4">
+          <Alert variant="destructive" className="max-w-xl mx-auto m-4 bg-white/80 backdrop-blur-sm">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
@@ -119,7 +132,7 @@ export default function PracticeCalendarPage() {
         )}
         
         <Tabs defaultValue="log" className="w-full">
-          <div className="bg-background rounded-t-3xl shadow-xl pb-4">
+          <div className="bg-card/80 backdrop-blur-sm rounded-t-3xl shadow-xl pb-4">
               <Calendar
                   mode="single"
                   selected={selectedDate}
@@ -138,26 +151,26 @@ export default function PracticeCalendarPage() {
                   }}
               />
           </div>
-          <div className="relative bg-background">
+          <div className="relative bg-transparent">
               <div className="absolute -top-16 right-0 h-16 w-1/2 bg-primary rounded-bl-3xl"></div>
-              <div className="absolute -top-16 left-0 h-16 w-1/2 bg-background rounded-tr-3xl"></div>
+              <div className="absolute -top-16 left-0 h-16 w-1/2 bg-card/80 backdrop-blur-sm rounded-tr-3xl"></div>
                <TabsList className="grid w-full grid-cols-2 bg-transparent h-16 p-0">
-                  <TabsTrigger value="log" className="h-full rounded-none data-[state=inactive]:bg-background data-[state=active]:bg-background text-muted-foreground data-[state=active]:text-foreground font-bold text-base">Practice Log</TabsTrigger>
+                  <TabsTrigger value="log" className="h-full rounded-none data-[state=inactive]:bg-card/80 data-[state=active]:bg-card/80 backdrop-blur-sm text-muted-foreground data-[state=active]:text-foreground font-bold text-base">Practice Log</TabsTrigger>
                   <TabsTrigger value="monthly-goal" className="h-full rounded-none data-[state=inactive]:bg-primary data-[state=active]:bg-primary text-primary-foreground font-bold text-base">Monthly Goal</TabsTrigger>
               </TabsList>
           </div>
           
-          <div className="p-6 text-primary-foreground">
+          <div className="p-6 text-foreground">
               <TabsContent value="log" className="mt-0">
                   <div className="grid grid-cols-2 gap-4 mt-8">
-                      <div className="bg-primary-foreground text-primary shadow-lg relative -rotate-3 p-4 rounded-lg">
+                      <div className="bg-card/80 backdrop-blur-sm text-primary shadow-lg relative -rotate-3 p-4 rounded-lg">
                           <div className="absolute -bottom-2 -left-2 -right-2 h-full bg-white/40 rounded-lg -z-10 rotate-6"></div>
                           <div className="font-bold text-sm">POSES PRACTICED</div>
                           <div className="text-center mt-2">
                               <p className="text-4xl font-bold font-chakra">{todaysAnalyses.length}</p>
                           </div>
                       </div>
-                      <div className="bg-primary-foreground text-primary shadow-lg relative rotate-3 p-4 rounded-lg">
+                      <div className="bg-card/80 backdrop-blur-sm text-primary shadow-lg relative rotate-3 p-4 rounded-lg">
                           <div className="absolute -bottom-2 -left-2 -right-2 h-full bg-white/40 rounded-lg -z-10 -rotate-6"></div>
                           <div className="font-bold text-sm">TIME SPENT</div>
                           <div className="text-center mt-2">
@@ -190,7 +203,7 @@ export default function PracticeCalendarPage() {
                               </div>
                           ))
                       ) : (
-                          <div className="bg-white/10 text-primary-foreground rounded-lg p-4 text-center">
+                          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
                               <p>No practice recorded for this day.</p>
                           </div>
                       )}
@@ -198,7 +211,7 @@ export default function PracticeCalendarPage() {
               </TabsContent>
 
               <TabsContent value="monthly-goal" className="mt-8">
-                   <div className="bg-primary-foreground text-primary shadow-lg rounded-lg p-4">
+                   <div className="bg-card/80 backdrop-blur-sm text-primary shadow-lg rounded-lg p-4">
                       <div className="flex items-center gap-2">
                           <Goal />
                           <h3 className="text-lg font-bold">Your Monthly Progress</h3>
@@ -236,6 +249,7 @@ export default function PracticeCalendarPage() {
               </TabsContent>
           </div>
         </Tabs>
+        </div>
       </div>
     </AppShell>
   );
