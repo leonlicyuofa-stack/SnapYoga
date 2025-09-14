@@ -111,7 +111,7 @@ export default function DashboardPage() {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h2 className="text-xl font-bold text-foreground">Welcome back!</h2>
+                
                 <p className="text-muted-foreground">{welcomeName}</p>
               </div>
           </div>
@@ -147,7 +147,7 @@ export default function DashboardPage() {
                         <p className="text-sm text-card-foreground/90">{project.category}</p>
                       </CardHeader>
                       <CardContent className="p-2 flex justify-center items-center flex-1">
-                        <Icon className="h-12 w-12 text-card-foreground/80" />
+                        {project.title !== "Pose Analysis" && <Icon className="h-12 w-12 text-card-foreground/80" />}
                       </CardContent>
                       <CardFooter className="p-2">
                          
