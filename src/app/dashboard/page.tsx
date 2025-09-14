@@ -84,7 +84,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-4">
               <Avatar className="h-14 w-14 border-2 border-primary/20">
                 <AvatarImage src={user?.photoURL || ''} alt={welcomeName} />
-                <AvatarFallback className="text-xl bg-primary/10 text-primary font-semibold">
+                <AvatarFallback className="text-xl bg-card text-primary font-semibold">
                     {getInitials(user?.email, user?.displayName)}
                 </AvatarFallback>
               </Avatar>
