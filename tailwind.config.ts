@@ -56,6 +56,7 @@ export default {
             'splash-blob-1': 'hsl(var(--splash-blob-1))',
             'splash-blob-2': 'hsl(var(--splash-blob-2))',
             'splash-blob-3': 'hsl(var(--splash-blob-3))',
+            'pistachio-background': 'hsl(var(--pistachio-background))',
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
   				foreground: 'hsl(var(--sidebar-foreground))',

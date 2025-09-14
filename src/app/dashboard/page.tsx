@@ -10,11 +10,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useState, useEffect } from 'react';
 import type { DocumentData } from 'firebase/firestore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { QuoteCarousel } from '@/components/features/dashboard/QuoteCarousel';
 import { YogaPoseIllustration } from '@/components/icons/YogaPoseIllustration';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import placeholderImages from '@/lib/placeholder-images.json';
 
 interface UserProfileData extends DocumentData {
   displayName?: string;
@@ -22,13 +20,12 @@ interface UserProfileData extends DocumentData {
 
 const projects = [
   {
-    icon: Moon,
+    icon: null,
     title: "Pose Analysis",
     category: "AI Feedback",
-    bgColor: "bg-indigo-300",
+    bgColor: "bg-pistachio-background",
     href: "/snap-yoga",
     className: "col-span-1 row-span-1",
-    image: placeholderImages.poseAnalysisCard,
   },
   {
     icon: Sun,
@@ -144,7 +141,7 @@ export default function DashboardPage() {
                         <p className="text-sm text-card-foreground/90">{project.category}</p>
                       </CardHeader>
                       <CardContent className="p-2 flex justify-center items-center flex-1">
-                        
+                        {Icon && <Icon className="h-12 w-12 text-card-foreground/80" />}
                       </CardContent>
                     </Card>
                   </Link>

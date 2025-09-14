@@ -47,6 +47,9 @@
     --splash-blob-1: 353 24% 91%;
     --splash-blob-2: 99 6% 80%;
     --splash-blob-3: 6 25% 64%;
+
+    /* Pistachio color */
+    --pistachio-background: 99 14% 88%;
   }
 
   .dark {
@@ -90,6 +93,9 @@
     --splash-blob-1: 353 20% 35%;
     --splash-blob-2: 99 10% 30%;
     --splash-blob-3: 6 20% 40%;
+    
+    /* Pistachio color */
+    --pistachio-background: 99 10% 30%;
   }
 }
 
