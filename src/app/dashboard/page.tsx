@@ -5,12 +5,11 @@ import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Sparkles, Trophy, Users, CalendarDays, Moon, Sun, Flower, BarChart2 } from 'lucide-react';
+import { Sparkles, Trophy, Users, CalendarDays, Moon, BarChart2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState, useEffect } from 'react';
 import type { DocumentData } from 'firebase/firestore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { YogaPoseIllustration } from '@/components/icons/YogaPoseIllustration';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 
@@ -28,7 +27,7 @@ const projects = [
     className: "col-span-1 row-span-1",
   },
   {
-    icon: Sun,
+    icon: null,
     title: "Dashboard",
     category: "Challenges",
     bgColor: "bg-rose-200",
@@ -36,7 +35,7 @@ const projects = [
     className: "col-span-1 row-span-2"
   },
   {
-    icon: Flower,
+    icon: null,
     title: "Friends Challenges",
     category: "Community",
     bgColor: "bg-fuchsia-200",
@@ -44,7 +43,7 @@ const projects = [
     className: "col-span-1 row-span-2"
   },
   {
-    icon: YogaPoseIllustration,
+    icon: null,
     title: "Practice Calendar",
     category: "Tracking",
     bgColor: "bg-violet-200",
