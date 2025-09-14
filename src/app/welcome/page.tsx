@@ -44,13 +44,13 @@ export default function WelcomePage() {
 
   return (
     <AppShell>
-      <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center py-12 px-4 text-center">
+      <div className="relative flex flex-col min-h-screen items-center justify-center py-12 px-4 text-center">
         
         <div className="relative z-10 flex flex-col items-center max-w-lg w-full">
             <div className="text-center text-primary animate-fade-in-up font-serif">
-                <p className="text-3xl tracking-widest">YOUR</p>
+                <p className="text-4xl tracking-widest">YOUR</p>
                 <h1 className="text-6xl font-bold tracking-tighter my-2 font-playfair">yoga journey</h1>
-                <p className="text-3xl tracking-widest">BEGINS</p>
+                <p className="text-4xl tracking-widest">BEGINS</p>
             </div>
             
             <div className="mt-12 w-full max-w-xs animate-fade-in-up" style={{ animationDelay: '400ms' }}>
