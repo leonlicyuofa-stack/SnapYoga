@@ -251,7 +251,7 @@ export default function PracticeCalendarPage() {
                      </Card>
                 </TabsContent>
             </div>
-          </div>
+          </Tabs>
         </div>
       </div>
     </AppShell>
