@@ -64,13 +64,46 @@ export function AppShell({ children }: AppShellProps) {
   
   const noShellRoutes = ['/auth/signin', '/auth/signup', '/auth/verify-email', '/'];
   
-  if (noShellRoutes.includes(pathname) || pathname.startsWith('/home')) {
+  if (noShellRoutes.includes(pathname) || pathname.startsWith('/home') || pathname === '/page') {
       return (
         <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
             {children}
         </div>
       );
   }
+
+  const userMenuItems = (
+    <>
+      <DropdownMenuLabel className="font-normal">
+        <div className="flex flex-col space-y-1">
+        <p className="text-sm font-medium leading-none">
+            {user?.displayName || t('welcome')}
+        </p>
+        <p className="text-xs leading-none text-muted-foreground">
+            {user?.email}
+        </p>
+        </div>
+      </DropdownMenuLabel>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem asChild className="cursor-pointer">
+          <Link href="/profile">
+          <Settings className="mr-2 h-4 w-4" />
+          <span>{t('profile')}</span>
+          </Link>
+      </DropdownMenuItem>
+      <DropdownMenuItem asChild className="cursor-pointer">
+          <a onClick={handleLanguageSwitch}>
+          <Languages className="mr-2 h-4 w-4" />
+          <span>Bahasa Indonesia</span>
+          </a>
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem onClick={signOutUser} className="cursor-pointer">
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>{t('signOut')}</span>
+      </DropdownMenuItem>
+    </>
+  )
 
   return (
     <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
@@ -87,34 +120,7 @@ export function AppShell({ children }: AppShellProps) {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56" align="start" forceMount>
-                        <DropdownMenuLabel className="font-normal">
-                            <div className="flex flex-col space-y-1">
-                            <p className="text-sm font-medium leading-none">
-                                {user?.displayName || t('welcome')}
-                            </p>
-                            <p className="text-xs leading-none text-muted-foreground">
-                                {user?.email}
-                            </p>
-                            </div>
-                        </DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild className="cursor-pointer">
-                            <Link href="/profile">
-                            <Settings className="mr-2 h-4 w-4" />
-                            <span>{t('profile')}</span>
-                            </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild className="cursor-pointer">
-                            <a onClick={handleLanguageSwitch}>
-                            <Languages className="mr-2 h-4 w-4" />
-                            <span>Bahasa Indonesia</span>
-                            </a>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={signOutUser} className="cursor-pointer">
-                            <LogOut className="mr-2 h-4 w-4" />
-                            <span>{t('signOut')}</span>
-                        </DropdownMenuItem>
+                        {userMenuItems}
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
@@ -125,9 +131,16 @@ export function AppShell({ children }: AppShellProps) {
             <Button variant="ghost" size="icon">
                 <Search />
             </Button>
-            <Button variant="ghost" size="icon">
-                <MoreHorizontal />
-            </Button>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                        <MoreHorizontal />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end">
+                    {userMenuItems}
+                </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
