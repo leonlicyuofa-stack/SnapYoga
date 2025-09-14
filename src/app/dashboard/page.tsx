@@ -144,12 +144,13 @@ export default function DashboardPage() {
                     <Card className={cn(project.bgColor, "rounded-xl shadow-sm p-4 flex flex-col h-full")}>
                       <CardHeader className="flex-1 p-2">
                         <CardTitle className="text-card-foreground font-semibold">{project.title}</CardTitle>
+                        <p className="text-sm text-card-foreground/90">{project.category}</p>
                       </CardHeader>
                       <CardContent className="p-2 flex justify-center items-center flex-1">
                         <Icon className="h-12 w-12 text-card-foreground/80" />
                       </CardContent>
                       <CardFooter className="p-2">
-                         <p className="text-sm text-card-foreground/90">{project.category}</p>
+                         
                       </CardFooter>
                     </Card>
                   </Link>
