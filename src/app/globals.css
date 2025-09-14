@@ -44,7 +44,7 @@
     /* Splash Screen colors */
     --splash-background: 350 33% 95%;
     --splash-foreground: 349 13% 44%;
-    --splash-blob-1: 353 24% 91%;
+    --splash-blob-1: 270 90% 95%; /* Pastel Purple */
     --splash-blob-2: 99 6% 80%;
     --splash-blob-3: 6 25% 64%;
 
@@ -90,7 +90,7 @@
     /* Splash Screen colors - Dark mode adaptation */
     --splash-background: 349 15% 15%;
     --splash-foreground: 350 33% 95%;
-    --splash-blob-1: 353 20% 35%;
+    --splash-blob-1: 270 30% 35%; /* Dark Pastel Purple */
     --splash-blob-2: 99 10% 30%;
     --splash-blob-3: 6 20% 40%;
     
@@ -104,7 +104,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-splash-background text-foreground;
+    @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
