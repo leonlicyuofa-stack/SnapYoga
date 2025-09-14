@@ -44,8 +44,8 @@
     /* Splash Screen colors */
     --splash-background: 350 33% 95%;
     --splash-foreground: 349 13% 44%;
-    --splash-blob-1: 353 24% 91%; /* Reverted from Pastel Purple */
-    --splash-blob-2: 99 6% 80%;
+    --splash-blob-1: 353 24% 91%;
+    --splash-blob-2: 38 41% 94%;
     --splash-blob-3: 6 25% 64%;
 
     /* Pistachio color */
@@ -90,8 +90,8 @@
     /* Splash Screen colors - Dark mode adaptation */
     --splash-background: 349 15% 15%;
     --splash-foreground: 350 33% 95%;
-    --splash-blob-1: 353 15% 25%; /* Reverted from Dark Pastel Purple */
-    --splash-blob-2: 99 10% 30%;
+    --splash-blob-1: 353 15% 25%;
+    --splash-blob-2: 38 15% 20%;
     --splash-blob-3: 6 20% 40%;
     
     /* Pistachio color */
