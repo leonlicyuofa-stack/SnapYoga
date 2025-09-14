@@ -122,7 +122,7 @@ export function QuoteCarousel() {
                     aria-hidden={index !== currentIndex}
                 >
                     <Card className="w-full h-full flex flex-col items-center justify-center text-center p-6 md:p-12 bg-transparent border-0 shadow-none">
-                         <blockquote className={cn("text-lg md:text-xl text-foreground/90 italic leading-relaxed", playfairDisplay.className)}>
+                         <blockquote className={cn("text-lg md:text-xl text-foreground/90 italic leading-relaxed line-clamp-2", playfairDisplay.className)}>
                             &ldquo;{quote.content}&rdquo;
                         </blockquote>
                     </Card>
