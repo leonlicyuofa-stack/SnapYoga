@@ -76,7 +76,7 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <div className="bg-muted/40 min-h-screen">
+      <div className="bg-card min-h-screen">
         <div className="container mx-auto px-4 py-6 space-y-6">
 
           
