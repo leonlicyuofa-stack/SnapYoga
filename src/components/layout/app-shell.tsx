@@ -148,7 +148,7 @@ export function AppShell({ children }: AppShellProps) {
             </Link>
           )}
 
-          <Link href="/snap-yoga" className={cn(navLinkClasses('/snap-yoga'), "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground scale-110 rounded-lg shadow-lg -translate-y-2 border-4 border-background")}>
+          <Link href="/snap-yoga" className={navLinkClasses('/snap-yoga')}>
             <Sparkles className="h-6 w-6" />
             <span className="btm-nav-label">Analyze</span>
           </Link>
