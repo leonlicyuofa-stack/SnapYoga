@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { AppShell } from '@/components/layout/app-shell';
-import { QuoteCarousel } from '@/components/features/dashboard/QuoteCarousel';
 import { ArrowRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
@@ -48,14 +47,10 @@ export default function WelcomePage() {
         <div className="relative z-10 flex flex-col items-center max-w-lg w-full">
             <h1 className="text-4xl font-bold text-foreground animate-fade-in-up">Welcome to SnapYoga</h1>
             <p className="text-lg text-muted-foreground mt-2 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                Take a moment for a brief, reflective pause before we begin.
+                Let's get your profile set up in a few simple steps.
             </p>
             
-            <div className="h-48 flex items-center justify-center w-full animate-fade-in-up" style={{ animationDelay: '400ms' }}>
-                <QuoteCarousel />
-            </div>
-
-            <div className="mt-6 w-full max-w-xs animate-fade-in-up" style={{ animationDelay: '600ms' }}>
+            <div className="mt-8 w-full max-w-xs animate-fade-in-up" style={{ animationDelay: '400ms' }}>
                 <Button 
                     onClick={handleContinue} 
                     className="w-full"
