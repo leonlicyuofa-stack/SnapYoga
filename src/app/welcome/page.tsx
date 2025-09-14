@@ -35,7 +35,7 @@ export default function WelcomePage() {
   if (authLoading || !user) {
     return (
         <AppShell>
-            <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
+            <div className="flex justify-center items-center min-h-[calc(100vh-5rem)]">
                 <SmileyRockLoader text="Loading your session..." />
             </div>
         </AppShell>
@@ -44,7 +44,7 @@ export default function WelcomePage() {
 
   return (
     <AppShell>
-      <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4 text-center">
+      <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center py-12 px-4 text-center">
         
         <div className="relative z-10 flex flex-col items-center max-w-lg w-full">
             <div className="text-center text-primary animate-fade-in-up font-serif">
