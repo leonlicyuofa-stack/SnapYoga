@@ -9,6 +9,9 @@ export function WavingMascot(props: SVGProps<SVGSVGElement>) {
         {/* Body */}
         <circle cx="105" cy="95" r="50" fill="#FFB6C1" />
 
+        {/* Waving Arm */}
+        <path d="M65 85 C 55 75, 45 85, 55 95" fill="#FFB6C1" stroke="black" strokeWidth="2" strokeLinecap="round" />
+
         {/* Face */}
         <g stroke="black" strokeWidth="2" fill="black" strokeLinecap="round">
             {/* Eyes */}
