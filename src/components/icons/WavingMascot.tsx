@@ -26,14 +26,6 @@ export function WavingMascot(props: SVGProps<SVGSVGElement>) {
         {/* Yoga Pose Arms */}
         <path d="M75,80 C70,60 80,40 102,35 C124,40 135,60 130,80" stroke="black" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
         
-
-        {/* Feet */}
-        <line x1="95" y1="145" x2="95" y2="155" stroke="black" strokeWidth="2" strokeLinecap="round" />
-        <line x1="115" y1="145" x2="115" y2="155" stroke="black" strokeWidth="2" strokeLinecap="round" />
-
-        {/* Antenna */}
-        <line x1="130" y1="48" x2="130" y2="40" stroke="black" strokeWidth="2" strokeLinecap="round" />
-        <circle cx="130" cy="38" r="2" fill="black" />
       </g>
     </svg>
   );
