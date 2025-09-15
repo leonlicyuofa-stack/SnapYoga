@@ -93,7 +93,7 @@ export default function HomePage() {
     )}>
          <div className="relative z-10 flex flex-col items-center justify-center text-center">
             <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3 font-script">{t('snapYogaTitle')}</h2>
-            <div className={cn("mt-2 text-2xl text-splash-foreground/80 max-w-md sm:text-3xl", shadowsIntoLight.className)}>
+            <div className={cn("mt-2 text-xl text-splash-foreground/80 max-w-md sm:text-2xl", shadowsIntoLight.className)}>
                 <p>your AI companion for mindfulness</p>
             </div>
             <Button
