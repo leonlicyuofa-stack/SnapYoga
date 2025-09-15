@@ -113,7 +113,7 @@ export default function CurrentBodyShapePage() {
                     {bodyShapeOptions.map((option) => {
                       const Icon = option.icon;
                       // A simple way to slightly vary the icon for visual distinction
-                      const femaleIcon = <FemaleAvatar className="h-10 w-10 mb-2 opacity-70" />;
+                      const femaleIcon = <FemaleAvatar className="h-20 w-20 mb-2 opacity-70" />;
                       const maleIcon = <MaleAvatar className="h-10 w-10 mb-2 opacity-70" />;
                       
                       let displayIcon;
@@ -169,5 +169,3 @@ export default function CurrentBodyShapePage() {
     </AppShell>
   );
 }
-
-    

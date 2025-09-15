@@ -99,13 +99,13 @@ export default function GenderProfilePage() {
               <div className="flex justify-around items-center">
                   <div 
                     className={cn(
-                        "cursor-pointer p-4 border-2 rounded-2xl transition-all w-32 h-32 flex flex-col items-center justify-center space-y-2 bg-card/20 backdrop-blur-sm",
+                        "cursor-pointer p-4 border-2 rounded-2xl transition-all w-32 h-auto flex flex-col items-center justify-center space-y-2 bg-card/20 backdrop-blur-sm",
                         selectedGender === 'female' ? 'border-primary' : 'border-transparent'
                     )}
                     onClick={() => setValue('gender', 'female', { shouldValidate: true })}
                   >
                     <span className={cn("font-semibold", selectedGender === 'female' ? 'text-primary' : 'text-muted-foreground')}>Female</span>
-                    <FemaleAvatar className="w-16 h-16"/>
+                    <FemaleAvatar className="w-32 h-32"/>
                   </div>
                    <div 
                     className={cn(
@@ -171,5 +171,3 @@ export default function GenderProfilePage() {
     </AppShell>
   );
 }
-
-    
