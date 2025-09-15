@@ -89,11 +89,9 @@ export default function GenderProfilePage() {
     <AppShell>
       <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden">
         
-        <div className="relative z-10 w-full max-w-sm">
-            <div className="flex justify-center">
-              <OnboardingHeader />
-            </div>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="relative z-10 w-full max-w-sm flex flex-col items-center">
+            <OnboardingHeader />
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full -mt-8">
               <div className="flex justify-around items-center">
                   <div 
                     className={cn(
