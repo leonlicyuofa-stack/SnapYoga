@@ -145,19 +145,23 @@ export function AppShell({ children }: AppShellProps) {
                 </div>
             
                 <div className="flex items-center space-x-2">
-                    <Button variant="ghost" size="icon">
-                        <Search />
-                    </Button>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+                    {!showOnboardingHeader && (
+                        <>
                             <Button variant="ghost" size="icon">
-                                <MoreHorizontal />
+                                <Search />
                             </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-56" align="end">
-                            {userMenuItems}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon">
+                                        <MoreHorizontal />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56" align="end">
+                                    {userMenuItems}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </>
+                    )}
                 </div>
             </div>
         </header>
