@@ -91,12 +91,12 @@ export default function GenderProfilePage() {
         
         <div className="relative z-10 w-full max-w-sm flex flex-col items-center">
             <OnboardingHeader />
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full -mt-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full -mt-16">
               <div className="flex justify-around items-center">
                   <div 
                     className={cn(
-                        "cursor-pointer p-4 border-2 rounded-2xl transition-all w-48 h-auto flex flex-col items-center justify-center space-y-2 bg-card/20 backdrop-blur-sm",
-                        selectedGender === 'female' ? 'border-primary' : 'border-transparent'
+                        "cursor-pointer p-4 rounded-2xl transition-all w-48 h-auto flex flex-col items-center justify-center space-y-2 bg-card/20 backdrop-blur-sm",
+                        selectedGender === 'female' ? 'bg-white/50' : 'border-transparent'
                     )}
                     onClick={() => setValue('gender', 'female', { shouldValidate: true })}
                   >
@@ -105,8 +105,8 @@ export default function GenderProfilePage() {
                   </div>
                    <div 
                     className={cn(
-                        "cursor-pointer p-4 border-2 rounded-2xl transition-all w-48 h-auto flex flex-col items-center justify-center space-y-2 bg-card/20 backdrop-blur-sm",
-                        selectedGender === 'male' ? 'border-primary' : 'border-transparent'
+                        "cursor-pointer p-4 rounded-2xl transition-all w-48 h-auto flex flex-col items-center justify-center space-y-2 bg-card/20 backdrop-blur-sm",
+                        selectedGender === 'male' ? 'bg-white/50' : 'border-transparent'
                     )}
                     onClick={() => setValue('gender', 'male', { shouldValidate: true })}
                   >
@@ -122,7 +122,7 @@ export default function GenderProfilePage() {
                     <Input
                         id="nickname"
                         {...register("nickname")}
-                        className="w-1/2 text-right border-0 border-b-2 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary bg-transparent"
+                        className="w-1/2 text-right border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary bg-transparent"
                         placeholder="e.g. Chahua"
                     />
                 </div>
@@ -135,7 +135,7 @@ export default function GenderProfilePage() {
                         control={control}
                         render={({ field }) => (
                             <Select onValueChange={field.onChange} value={field.value}>
-                                <SelectTrigger className="w-1/2 justify-end text-right font-normal border-0 border-b-2 rounded-none bg-transparent hover:bg-card/20">
+                                <SelectTrigger className="w-1/2 justify-end text-right font-normal border-0 rounded-none bg-transparent hover:bg-card/20">
                                     <SelectValue placeholder="Select age" />
                                 </SelectTrigger>
                                 <SelectContent>
