@@ -90,11 +90,11 @@ export default function GenderProfilePage() {
         
         <div className="relative z-10 w-full max-w-sm">
             <h1 className="text-2xl font-bold text-center mb-8">Who are you?</h1>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 mt-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-8">
               <div className="flex justify-around items-center">
                   <div 
                     className={cn(
-                        "cursor-pointer p-4 border-2 rounded-2xl transition-all w-32 h-auto flex flex-col items-center justify-center space-y-2 bg-card/20 backdrop-blur-sm",
+                        "cursor-pointer p-4 border-2 rounded-2xl transition-all w-48 h-auto flex flex-col items-center justify-center space-y-2 bg-card/20 backdrop-blur-sm",
                         selectedGender === 'female' ? 'border-primary' : 'border-transparent'
                     )}
                     onClick={() => setValue('gender', 'female', { shouldValidate: true })}
