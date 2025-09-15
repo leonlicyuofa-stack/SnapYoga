@@ -9,19 +9,14 @@ export function WavingMascot(props: SVGProps<SVGSVGElement>) {
         {/* Body */}
         <circle cx="105" cy="95" r="50" fill="#FFB6C1" />
 
-        {/* Glasses */}
-        <g stroke="white" strokeWidth="3" fill="none">
-          <circle cx="85" cy="70" r="12" />
-          <circle cx="120" cy="70" r="12" />
-          <line x1="97" y1="70" x2="108" y2="70" />
+        {/* New Smiley Face */}
+        <g stroke="black" strokeWidth="2" fill="none" strokeLinecap="round">
+            {/* Eyes */}
+            <path d="M90 70 q 5 8 10 0" />
+            <path d="M110 70 q 5 8 10 0" />
+            {/* Smile */}
+            <path d="M100 85 q 5 5 10 0" />
         </g>
-        
-        {/* Eyes */}
-        <circle cx="85" cy="70" r="2" fill="black" />
-        <circle cx="120" cy="70" r="2" fill="black" />
-
-        {/* Smile */}
-        <path d="M 98 85 Q 102 90 106 85" stroke="black" strokeWidth="1.5" fill="none" strokeLinecap="round" />
 
         {/* Namaste Hands */}
         <g stroke="black" strokeWidth="2" fill="#FFD1DC" strokeLinecap="round" strokeLinejoin="round">
