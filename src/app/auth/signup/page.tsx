@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { useAuth } from '@/contexts/AuthContext';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon';
-import { Mail, ArrowLeft } from 'lucide-react';
+import { Mail, ArrowLeft, Sun } from 'lucide-react';
 import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { AppShell } from '@/components/layout/app-shell';
@@ -23,7 +23,7 @@ export default function SignUpPage() {
     <AppShell>
         <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden">
             <div className="relative z-10 w-full max-w-sm text-center">
-                <SmileyBlobMascot className="mx-auto h-32 w-32 mb-8" />
+                <Sun className="mx-auto h-32 w-32 mb-8 text-primary" />
                 <h1 className="text-4xl font-bold font-playfair mb-8">Create an Account</h1>
                 
                 <div className="space-y-3">
