@@ -170,7 +170,7 @@ export default function ProfileSummaryPage() {
                 </Button>
                 <Button 
                   onClick={handleNext} 
-                  className="w-full rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+                  className="w-full flex-grow rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
                   disabled={isNavigatingBack || isNavigatingNext}
                 >
                   {isNavigatingNext ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Next: Subscription Options</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
