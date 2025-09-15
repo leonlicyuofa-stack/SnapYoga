@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
 import { Loader2, ArrowRight, ArrowLeft, CheckCircle, MoveUpRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 
 const interestedPosesSchema = z.object({
   interestedPoses: z.array(z.string()).min(1, { message: "Please select at least one category" }),
@@ -103,14 +104,15 @@ export default function InterestedPosesPage() {
   return (
     <AppShell>
       <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12">
-        <div className="w-full max-w-2xl z-10 px-4">
+        <div className="w-full max-w-2xl z-10 px-4 flex flex-col items-center">
+            <OnboardingHeader />
             <div className="text-center mb-8">
                 
                 <h1 className="text-3xl font-bold text-foreground">Interested Yoga Poses</h1>
                 <p className="text-muted-foreground mt-2">Select the categories of poses you're interested in learning or improving.</p>
             </div>
         
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full">
               <Controller
                 name="interestedPoses"
                 control={control}

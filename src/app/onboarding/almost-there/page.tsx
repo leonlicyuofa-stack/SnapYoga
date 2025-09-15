@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { Progress } from '@/components/ui/progress';
 import { useEffect, useState } from 'react';
+import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 
 export default function OnboardingAlmostTherePage() {
   const router = useRouter();
@@ -57,6 +58,7 @@ export default function OnboardingAlmostTherePage() {
       <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4 text-center">
         
         <div className="relative z-10 flex flex-col items-center max-w-md w-full">
+            <OnboardingHeader />
             <CheckCircle className="mx-auto h-16 w-16 text-primary mb-6 animate-scale-in" />
             <h1 className="text-4xl font-bold text-foreground animate-fade-in-up" style={{ animationDelay: '200ms' }}>You are almost there!</h1>
             

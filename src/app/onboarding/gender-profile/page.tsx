@@ -19,6 +19,7 @@ import { FemaleAvatar } from '@/components/icons/FemaleAvatar';
 import { MaleAvatar } from '@/components/icons/MaleAvatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 
 const profileSchema = z.object({
   gender: z.string().min(1, { message: "Please select a gender" }),
@@ -89,7 +90,9 @@ export default function GenderProfilePage() {
       <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden">
         
         <div className="relative z-10 w-full max-w-sm">
-            <h1 className="text-2xl font-bold text-center mb-8">Who are you?</h1>
+            <div className="flex justify-center">
+              <OnboardingHeader />
+            </div>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-8">
               <div className="flex justify-around items-center">
                   <div 

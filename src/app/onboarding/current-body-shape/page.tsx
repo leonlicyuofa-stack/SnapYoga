@@ -17,6 +17,7 @@ import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { FemaleAvatar } from '@/components/icons/FemaleAvatar';
 import { MaleAvatar } from '@/components/icons/MaleAvatar';
+import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 
 
 const currentBodyShapeSchema = z.object({
@@ -91,16 +92,17 @@ export default function CurrentBodyShapePage() {
 
   return (
     <AppShell>
-      <div className="relative flex min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4 overflow-hidden">
+      <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4 overflow-hidden">
         
-        <div className="w-full max-w-2xl z-10">
+        <div className="w-full max-w-2xl z-10 flex flex-col items-center">
+          <OnboardingHeader />
           <div className="text-center mb-8">
             <PersonStanding className="mx-auto h-12 w-12 text-primary mb-4" />
             <h1 className="text-3xl font-bold">Current Body Shape</h1>
             <p className="text-muted-foreground mt-2">How would you describe your current body shape? (Optional)</p>
           </div>
           
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full">
              <Controller
                 name="currentBodyShape"
                 control={control}

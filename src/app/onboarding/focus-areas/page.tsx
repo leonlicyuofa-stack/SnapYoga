@@ -17,6 +17,7 @@ import { Loader2, Crosshair, ArrowRight, ArrowLeft, MoveUpRight } from 'lucide-r
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 
 const focusAreasSchema = z.object({
   focusBodyParts: z.array(z.string()).min(1, { message: "Please select at least one focus area" }),
@@ -155,14 +156,15 @@ export default function FocusAreasPage() {
     <AppShell>
       <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4 text-center">
         
-        <div className="relative z-10 w-full max-w-2xl">
+        <div className="relative z-10 w-full max-w-2xl flex flex-col items-center">
+          <OnboardingHeader />
           <div className="text-center mb-4">
             <Crosshair className="mx-auto h-12 w-12 text-primary mb-4" />
             <h1 className="text-3xl font-bold">Focus Areas</h1>
             <p className="text-muted-foreground mt-2">Select body parts from the figure or choose a goal below.</p>
           </div>
           
-          <div className="bg-card/50 backdrop-blur-sm p-4 rounded-lg">
+          <div className="bg-card/50 backdrop-blur-sm p-4 rounded-lg w-full">
              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <BodyFigure selectedParts={selectedParts} onPartToggle={handlePartToggle} />
               

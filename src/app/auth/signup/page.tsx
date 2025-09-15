@@ -8,11 +8,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { useAuth } from '@/contexts/AuthContext';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon';
-import { Mail, ArrowLeft, Sun } from 'lucide-react';
+import { Mail, ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { AppShell } from '@/components/layout/app-shell';
-import { WavingMascot } from '@/components/icons/WavingMascot';
+import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -24,19 +24,7 @@ export default function SignUpPage() {
         <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden">
             <div className="relative z-10 w-full max-w-sm text-center">
                 
-                <Card className="bg-[#414869] text-white p-6 rounded-2xl shadow-lg mb-8 overflow-hidden relative">
-                    <div className="flex flex-col items-start">
-                        <div className="flex space-x-1 mb-4">
-                           <div className="w-2 h-2 rounded-full bg-[#FFB6C1]"></div>
-                           <div className="w-2 h-2 rounded-full bg-[#FFB6C1]"></div>
-                           <div className="w-2 h-2 rounded-full bg-[#FFB6C1]"></div>
-                           <div className="w-2 h-2 rounded-full bg-[#FFB6C1]"></div>
-                        </div>
-                        <h2 className="text-4xl font-playfair font-bold">Welcome!</h2>
-                        <p className="text-lg opacity-80">Let's get you set up.</p>
-                    </div>
-                    <WavingMascot className="absolute -right-4 -bottom-4 opacity-90 h-48 w-48" />
-                </Card>
+                <OnboardingHeader />
                 
                 <h1 className="text-4xl font-bold font-playfair mb-8">Create an Account</h1>
                 

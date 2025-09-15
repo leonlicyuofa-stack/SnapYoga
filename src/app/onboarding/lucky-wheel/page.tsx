@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 
 export default function OnboardingLuckyWheelPage() {
   const { user, loading: authLoading } = useAuth();
@@ -49,23 +50,25 @@ export default function OnboardingLuckyWheelPage() {
 
   return (
     <AppShell>
-      <div className="relative flex min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4">
-        
-        <Card className="w-full max-w-md shadow-xl text-center z-10 bg-card/80 backdrop-blur-sm">
-          <CardHeader>
-            <Gift className="mx-auto h-12 w-12 text-primary mb-4" />
-            <CardTitle className="text-3xl font-bold">Lucky Draw!</CardTitle>
-            <CardDescription>Spin the wheel for a chance to win a discount or free trial extension!</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-6">
-              Click the button below or wait for the wheel to appear.
-            </p>
-             <Button onClick={() => setShowWheelDialog(true)} size="lg" className="bg-accent hover:bg-accent/80">
-                Spin the Wheel!
-             </Button>
-          </CardContent>
-        </Card>
+      <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4">
+        <div className="flex flex-col items-center w-full max-w-md">
+            <OnboardingHeader />
+            <Card className="w-full shadow-xl text-center z-10 bg-card/80 backdrop-blur-sm">
+            <CardHeader>
+                <Gift className="mx-auto h-12 w-12 text-primary mb-4" />
+                <CardTitle className="text-3xl font-bold">Lucky Draw!</CardTitle>
+                <CardDescription>Spin the wheel for a chance to win a discount or free trial extension!</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <p className="text-muted-foreground mb-6">
+                Click the button below or wait for the wheel to appear.
+                </p>
+                <Button onClick={() => setShowWheelDialog(true)} size="lg" className="bg-accent hover:bg-accent/80">
+                    Spin the Wheel!
+                </Button>
+            </CardContent>
+            </Card>
+        </div>
       </div>
       {user && <LuckyWheelDialog isOpen={showWheelDialog} onClose={handleWheelCloseAndSaveResult} />}
     </AppShell>

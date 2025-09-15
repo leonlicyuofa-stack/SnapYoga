@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
 import { Loader2, HeartPulse, ArrowRight, ArrowLeft, Dumbbell, Spline, Anchor, HelpCircle, Mountain, Zap, Activity, MoveUpRight } from 'lucide-react';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 
 const desiredBodyShapeSchema = z.object({
   desiredBodyShape: z.string().min(1, { message: "Please select your desired body shape or goal" }),
@@ -83,15 +84,16 @@ export default function DesiredBodyShapePage() {
 
   return (
     <AppShell>
-      <div className="relative flex min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4 overflow-hidden">
+      <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4 overflow-hidden">
         
-        <div className="w-full max-w-3xl z-10">
+        <div className="w-full max-w-3xl z-10 flex flex-col items-center">
+            <OnboardingHeader />
             <div className="text-center mb-8">
                 <HeartPulse className="mx-auto h-12 w-12 text-primary mb-4" />
                 <h1 className="text-3xl font-bold">Desired Body Shape</h1>
                 <p className="text-muted-foreground mt-2">What are your aspirations for your body?</p>
             </div>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full">
               <Controller
                 name="desiredBodyShape"
                 control={control}

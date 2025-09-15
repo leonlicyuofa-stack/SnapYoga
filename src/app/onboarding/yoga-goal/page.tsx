@@ -17,6 +17,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 
 const yogaGoalSchema = z.object({
   mainGoal: z.string().min(1, { message: "Please select your main yoga goal" }),
@@ -169,13 +170,14 @@ export default function YogaGoalPage() {
   return (
     <AppShell>
       <AffirmationDialog isOpen={showAffirmation} onOpenChange={setShowAffirmation} />
-      <div className="relative flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
-        <div className="w-full max-w-2xl z-10 px-4">
+      <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12">
+        <div className="w-full max-w-2xl z-10 px-4 flex flex-col items-center">
+            <OnboardingHeader />
             <div className="text-center mb-8">
                 <p className="text-muted-foreground mt-2">What do you hope to achieve with yoga?</p>
             </div>
             
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full">
                 <Controller
                     name="mainGoal"
                     control={control}

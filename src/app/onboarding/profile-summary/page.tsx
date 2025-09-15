@@ -13,6 +13,7 @@ import { UserCheck, ArrowRight, ArrowLeft, Edit3, MoveUpRight, Loader2 } from 'l
 import { Badge } from '@/components/ui/badge';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { format } from 'date-fns';
+import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 
 interface UserProfile extends DocumentData {
   displayName?: string;
@@ -131,47 +132,50 @@ export default function ProfileSummaryPage() {
 
   return (
     <AppShell>
-      <div className="relative flex min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4">
+      <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4">
         
-        <Card className="w-full max-w-2xl shadow-xl z-10 bg-card/80 backdrop-blur-sm">
-          <CardHeader className="text-center">
-            <UserCheck className="mx-auto h-12 w-12 text-primary mb-4" />
-            <CardTitle className="text-3xl font-bold">Your Profile Summary</CardTitle>
-            <CardDescription>Please review your selections. You can edit any item if needed.</CardDescription>
-          </CardHeader>
-          <CardContent className="px-4 sm:px-6">
-            {profileData ? (
-              <dl className="divide-y divide-border">
-                {renderDetailItem("Nickname", profileData.displayName, '/onboarding/gender-profile')}
-                {renderDetailItem("Email", user.email)}
-                {renderDetailItem("Gender", profileData.gender, '/onboarding/gender-profile')}
-                {renderDetailItem("Age", profileData.age, '/onboarding/gender-profile')}
-                {renderDetailItem("Main Yoga Goal", profileData.mainGoal, '/onboarding/yoga-goal')}
-                {renderDetailItem("Interested Pose Types", profileData.interestedPoses, '/onboarding/yoga-type')}
-                {renderDetailItem("Current Body Shape", profileData.currentBodyShape, '/onboarding/current-body-shape')}
-                {renderDetailItem("Desired Body Shape", profileData.desiredBodyShape, '/onboarding/desired-body-shape')}
-                {renderDetailItem("Focus Areas", profileData.focusBodyParts, '/onboarding/focus-areas')}
-              </dl>
-            ) : (
-              <p className="text-muted-foreground text-center">Could not load profile data.</p>
-            )}
-             <div className="flex flex-col sm:flex-row gap-2 mt-8 justify-center">
-                
-                <Button 
-                  onClick={handleNext} 
-                  className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
-                  disabled={isNavigatingBack || isNavigatingNext}
-                >
-                  {isNavigatingNext ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Next: Subscription Options</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
-                </Button>
-              </div>
-          </CardContent>
-          <CardFooter>
-            <p className="text-xs text-muted-foreground text-center w-full">
-              Ensure all details are correct before proceeding.
-            </p>
-          </CardFooter>
-        </Card>
+        <div className="w-full max-w-2xl flex flex-col items-center">
+            <OnboardingHeader />
+            <Card className="w-full shadow-xl z-10 bg-card/80 backdrop-blur-sm">
+            <CardHeader className="text-center">
+                <UserCheck className="mx-auto h-12 w-12 text-primary mb-4" />
+                <CardTitle className="text-3xl font-bold">Your Profile Summary</CardTitle>
+                <CardDescription>Please review your selections. You can edit any item if needed.</CardDescription>
+            </CardHeader>
+            <CardContent className="px-4 sm:px-6">
+                {profileData ? (
+                <dl className="divide-y divide-border">
+                    {renderDetailItem("Nickname", profileData.displayName, '/onboarding/gender-profile')}
+                    {renderDetailItem("Email", user.email)}
+                    {renderDetailItem("Gender", profileData.gender, '/onboarding/gender-profile')}
+                    {renderDetailItem("Age", profileData.age, '/onboarding/gender-profile')}
+                    {renderDetailItem("Main Yoga Goal", profileData.mainGoal, '/onboarding/yoga-goal')}
+                    {renderDetailItem("Interested Pose Types", profileData.interestedPoses, '/onboarding/yoga-type')}
+                    {renderDetailItem("Current Body Shape", profileData.currentBodyShape, '/onboarding/current-body-shape')}
+                    {renderDetailItem("Desired Body Shape", profileData.desiredBodyShape, '/onboarding/desired-body-shape')}
+                    {renderDetailItem("Focus Areas", profileData.focusBodyParts, '/onboarding/focus-areas')}
+                </dl>
+                ) : (
+                <p className="text-muted-foreground text-center">Could not load profile data.</p>
+                )}
+                <div className="flex flex-col sm:flex-row gap-2 mt-8 justify-center">
+                    
+                    <Button 
+                    onClick={handleNext} 
+                    className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+                    disabled={isNavigatingBack || isNavigatingNext}
+                    >
+                    {isNavigatingNext ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Next: Subscription Options</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
+                    </Button>
+                </div>
+            </CardContent>
+            <CardFooter>
+                <p className="text-xs text-muted-foreground text-center w-full">
+                Ensure all details are correct before proceeding.
+                </p>
+            </CardFooter>
+            </Card>
+        </div>
       </div>
     </AppShell>
   );
