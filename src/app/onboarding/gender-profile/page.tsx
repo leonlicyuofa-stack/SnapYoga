@@ -93,7 +93,7 @@ export default function GenderProfilePage() {
             <div className="flex justify-center">
               <OnboardingHeader />
             </div>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="flex justify-around items-center">
                   <div 
                     className={cn(
