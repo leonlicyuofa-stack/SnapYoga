@@ -12,7 +12,7 @@ export function MaleAvatar(props: SVGProps<SVGSVGElement>) {
       <circle cx="45" cy="50" r="4" fill="#2C3E50" />
       <circle cx="65" cy="50" r="4" fill="#2C3E50" />
       {/* Smile */}
-      <path d="M 40 65 C 45 80, 65 80, 70 65" stroke="#2C3E50" strokeWidth="3" fill="#E57373" strokeLinecap="round" />
+      <path d="M 40 65 C 45 80, 65 80, 70 65" stroke="#2C3E50" strokeWidth="3" fill="none" strokeLinecap="round" />
     </svg>
   );
 }
