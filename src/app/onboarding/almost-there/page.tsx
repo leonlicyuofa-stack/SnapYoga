@@ -67,7 +67,7 @@ export default function OnboardingAlmostTherePage() {
                 </p>
             </div>
 
-            <div className="mt-10 w-full max-w-xs flex flex-col gap-3 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
+            <div className="mt-10 w-full max-w-xs flex flex-col gap-3 animate-fade-in-up items-center" style={{ animationDelay: '600ms' }}>
                 <Button 
                     onClick={handleBack} 
                     className="w-full"
@@ -78,7 +78,7 @@ export default function OnboardingAlmostTherePage() {
                 </Button>
                 <Button 
                     onClick={handleNext} 
-                    className="w-full rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+                    className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
                     disabled={isNavigating}
                 >
                   {isNavigating ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
@@ -89,3 +89,5 @@ export default function OnboardingAlmostTherePage() {
     </AppShell>
   );
 }
+
+    
