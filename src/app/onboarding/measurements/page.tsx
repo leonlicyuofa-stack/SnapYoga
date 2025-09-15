@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
 import { Loader2, Ruler, Scale, ArrowRight, ArrowLeft, MoveUpRight } from 'lucide-react';
@@ -94,96 +93,92 @@ export default function MeasurementsPage() {
 
   return (
     <AppShell>
-      <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12">
-        <Card className="w-full max-w-lg shadow-xl">
-          <CardHeader className="text-center">
+      <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4">
+        <div className="w-full max-w-lg">
+          <div className="text-center mb-8">
             <Ruler className="mx-auto h-10 w-10 text-primary mb-2" />
             <Scale className="mx-auto h-10 w-10 text-primary mb-4" />
-            <CardTitle className="text-3xl font-bold">Your Measurements</CardTitle>
-            <CardDescription>Provide your height and weight (optional).</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Height */}
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <Label htmlFor="height">Height ({heightUnit})</Label>
-                  <div className="flex items-center space-x-2">
-                    <Label htmlFor="heightUnitCm" className="text-sm">cm</Label>
-                    <Switch
-                      id="heightUnitSwitch"
-                      checked={heightUnit === 'in'}
-                      onCheckedChange={(checked) => setValue('heightUnit', checked ? 'in' : 'cm')}
-                    />
-                    <Label htmlFor="heightUnitIn" className="text-sm">inches</Label>
-                  </div>
+            <h1 className="text-3xl font-bold">Your Measurements</h1>
+            <p className="text-muted-foreground mt-2">Provide your height and weight (optional).</p>
+          </div>
+          
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {/* Height */}
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <Label htmlFor="height">Height ({heightUnit})</Label>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="heightUnitCm" className="text-sm">cm</Label>
+                  <Switch
+                    id="heightUnitSwitch"
+                    checked={heightUnit === 'in'}
+                    onCheckedChange={(checked) => setValue('heightUnit', checked ? 'in' : 'cm')}
+                  />
+                  <Label htmlFor="heightUnitIn" className="text-sm">inches</Label>
                 </div>
-                <Input
-                  id="height"
-                  type="number"
-                  step="any"
-                  placeholder={heightUnit === 'cm' ? "e.g., 170" : "e.g., 67"}
-                  {...register("height")}
-                />
-                {errors.height && <p className="text-sm text-destructive">{errors.height.message}</p>}
               </div>
+              <Input
+                id="height"
+                type="number"
+                step="any"
+                placeholder={heightUnit === 'cm' ? "e.g., 170" : "e.g., 67"}
+                {...register("height")}
+              />
+              {errors.height && <p className="text-sm text-destructive">{errors.height.message}</p>}
+            </div>
 
-              {/* Weight */}
-              <div className="space-y-2">
-                 <div className="flex justify-between items-center">
-                  <Label htmlFor="weight">Weight ({weightUnit})</Label>
-                  <div className="flex items-center space-x-2">
-                    <Label htmlFor="weightUnitKg" className="text-sm">kg</Label>
-                    <Switch
-                      id="weightUnitSwitch"
-                      checked={weightUnit === 'lbs'}
-                      onCheckedChange={(checked) => setValue('weightUnit', checked ? 'lbs' : 'kg')}
-                    />
-                    <Label htmlFor="weightUnitLbs" className="text-sm">lbs</Label>
-                  </div>
+            {/* Weight */}
+            <div className="space-y-2">
+               <div className="flex justify-between items-center">
+                <Label htmlFor="weight">Weight ({weightUnit})</Label>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="weightUnitKg" className="text-sm">kg</Label>
+                  <Switch
+                    id="weightUnitSwitch"
+                    checked={weightUnit === 'lbs'}
+                    onCheckedChange={(checked) => setValue('weightUnit', checked ? 'lbs' : 'kg')}
+                  />
+                  <Label htmlFor="weightUnitLbs" className="text-sm">lbs</Label>
                 </div>
-                <Input
-                  id="weight"
-                  type="number"
-                  step="any"
-                  placeholder={weightUnit === 'kg' ? "e.g., 65" : "e.g., 143"}
-                  {...register("weight")}
-                />
-                {errors.weight && <p className="text-sm text-destructive">{errors.weight.message}</p>}
               </div>
+              <Input
+                id="weight"
+                type="number"
+                step="any"
+                placeholder={weightUnit === 'kg' ? "e.g., 65" : "e.g., 143"}
+                {...register("weight")}
+              />
+              {errors.weight && <p className="text-sm text-destructive">{errors.weight.message}</p>}
+            </div>
 
-              <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={handleBackNavigation} 
-                  className="w-full sm:w-auto flex-grow"
-                  isLoadingWithBar={isNavigatingBack}
-                  loadingBarDirection="rtl"
-                  disabled={isSubmitting || isNavigatingBack}
-                >
-                    <ArrowLeft className="mr-2 h-5 w-5" />
-                    Back
-                </Button>
-                <Button 
-                  type="submit" 
-                  className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40" 
-                  disabled={isSubmitting || authLoading || isNavigatingBack}
-                >
-                    {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-           <CardFooter>
-            <p className="text-xs text-muted-foreground text-center w-full">
-              This data helps in providing more relevant suggestions if you choose to share it.
-            </p>
-          </CardFooter>
-        </Card>
+            <div className="flex flex-col sm:flex-row gap-2 justify-center">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={handleBackNavigation} 
+                className="w-full sm:w-auto flex-grow"
+                isLoadingWithBar={isNavigatingBack}
+                loadingBarDirection="rtl"
+                disabled={isSubmitting || isNavigatingBack}
+              >
+                  <ArrowLeft className="mr-2 h-5 w-5" />
+                  Back
+              </Button>
+              <Button 
+                type="submit" 
+                className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40" 
+                disabled={isSubmitting || authLoading || isNavigatingBack}
+              >
+                  {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
+              </Button>
+            </div>
+          </form>
+
+          <p className="text-xs text-muted-foreground text-center w-full mt-6">
+            This data helps in providing more relevant suggestions if you choose to share it.
+          </p>
+        </div>
       </div>
     </AppShell>
   );
 }
-
-    
