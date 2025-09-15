@@ -104,13 +104,13 @@ export default function GenderProfilePage() {
                   </div>
                    <div 
                     className={cn(
-                        "cursor-pointer p-4 border-2 rounded-2xl transition-all w-32 h-32 flex flex-col items-center justify-center space-y-2 bg-card/20 backdrop-blur-sm",
+                        "cursor-pointer p-4 border-2 rounded-2xl transition-all w-48 h-auto flex flex-col items-center justify-center space-y-2 bg-card/20 backdrop-blur-sm",
                         selectedGender === 'male' ? 'border-primary' : 'border-transparent'
                     )}
                     onClick={() => setValue('gender', 'male', { shouldValidate: true })}
                   >
                     <span className={cn("font-semibold", selectedGender === 'male' ? 'text-primary' : 'text-muted-foreground')}>Male</span>
-                    <MaleAvatar className="w-16 h-16"/>
+                    <MaleAvatar className="w-32 h-32"/>
                   </div>
               </div>
               {errors.gender && <p className="text-sm text-destructive text-center -mt-4">{errors.gender.message}</p>}
