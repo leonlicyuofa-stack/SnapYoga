@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
-import { Loader2, Check, Star, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Loader2, Check, Star, ArrowRight, ArrowLeft, MoveUpRight } from 'lucide-react';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 export default function SubscriptionPage() {
@@ -113,12 +113,10 @@ export default function SubscriptionPage() {
                 </Button>
                 <Button 
                   onClick={handleProceedToLuckyWheel} 
-                  className="w-full flex-grow bg-accent hover:bg-accent/90 text-accent-foreground" 
-                  isLoadingWithBar={isNavigatingNext}
+                  className="w-full flex-grow rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
                   disabled={anyLoading}
                 >
-                   <ArrowRight className="mr-2 h-5 w-5" />
-                    Next: Try the Lucky Wheel!
+                   {isNavigatingNext ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Next: Try the Lucky Wheel!</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
                 </Button>
               </div>
           </CardContent>

@@ -4,7 +4,7 @@
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { AppShell } from '@/components/layout/app-shell';
-import { ArrowRight, ArrowLeft, CheckCircle } from 'lucide-react';
+import { ArrowRight, ArrowLeft, CheckCircle, MoveUpRight, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { Progress } from '@/components/ui/progress';
@@ -14,6 +14,7 @@ export default function OnboardingAlmostTherePage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [progress, setProgress] = useState(0);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   // Define total steps in your onboarding flow
   const totalOnboardingSteps = 7;
@@ -28,6 +29,7 @@ export default function OnboardingAlmostTherePage() {
   }, []);
 
   const handleNext = () => {
+    setIsNavigating(true);
     router.push('/onboarding/focus-areas');
   };
 
@@ -76,10 +78,10 @@ export default function OnboardingAlmostTherePage() {
                 </Button>
                 <Button 
                     onClick={handleNext} 
-                    className="w-full"
-                    size="lg"
+                    className="w-full rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+                    disabled={isNavigating}
                 >
-                  Next <ArrowRight className="ml-2 h-5 w-5" />
+                  {isNavigating ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
                 </Button>
             </div>
         </div>

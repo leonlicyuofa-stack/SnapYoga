@@ -9,7 +9,7 @@ import { doc, getDoc, type DocumentData } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { AppShell } from '@/components/layout/app-shell';
-import { UserCheck, ArrowRight, ArrowLeft, Edit3 } from 'lucide-react';
+import { UserCheck, ArrowRight, ArrowLeft, Edit3, MoveUpRight, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { format } from 'date-fns';
@@ -170,12 +170,10 @@ export default function ProfileSummaryPage() {
                 </Button>
                 <Button 
                   onClick={handleNext} 
-                  className="w-full"
-                  isLoadingWithBar={isNavigatingNext}
+                  className="w-full rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
                   disabled={isNavigatingBack || isNavigatingNext}
                 >
-                    <ArrowRight className="mr-2 h-5 w-5" />
-                    Next: Subscription Options
+                  {isNavigatingNext ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Next: Subscription Options</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
                 </Button>
               </div>
           </CardContent>
