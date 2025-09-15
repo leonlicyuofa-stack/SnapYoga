@@ -29,12 +29,6 @@ export function WavingMascot(props: SVGProps<SVGSVGElement>) {
             <path d="M 110 95 C 115 105, 115 115, 110 120 L 105 105 Z" />
         </g>
         
-        {/* Heart */}
-        <path d="M 105 85 
-                 C 100 80, 95 85, 100 90 
-                 L 105 95 
-                 L 110 90 
-                 C 115 85, 110 80, 105 85 Z" fill="#E53935"/>
 
       </g>
     </svg>
