@@ -85,8 +85,8 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <div className="min-h-screen">
-        <div className="container mx-auto px-4 py-6 space-y-6">
+      <div className="h-full">
+        <div className="container mx-auto px-4 py-6 space-y-4">
 
           
           {/* Greeting */}
