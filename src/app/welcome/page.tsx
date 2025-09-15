@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useRouter } from 'next/navigation';
@@ -20,7 +19,7 @@ export default function WelcomePage() {
   useEffect(() => {
     // If user is not logged in and we are done loading, redirect to signin
     if (!authLoading && !user) {
-      router.replace('/auth/signin');
+      router.replace('/auth/signup');
     }
   }, [user, authLoading, router]);
 
@@ -28,7 +27,7 @@ export default function WelcomePage() {
     setIsNavigating(true);
     // Add a small delay for transition effect before navigating
     setTimeout(() => {
-        router.push('/onboarding/gender-profile');
+        router.push('/auth/signup');
     }, 500);
   };
 
