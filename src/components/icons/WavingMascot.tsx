@@ -23,9 +23,19 @@ export function WavingMascot(props: SVGProps<SVGSVGElement>) {
         {/* Smile */}
         <path d="M 98 85 Q 102 90 106 85" stroke="black" strokeWidth="1.5" fill="none" strokeLinecap="round" />
 
-        {/* Yoga Pose Arms */}
-        <path d="M 60 110 C 80 90, 90 90, 102 80 L 108 80 C 120 90, 130 90, 150 110" stroke="black" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Namaste Hands */}
+        <g stroke="black" strokeWidth="2" fill="#FFD1DC" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M 100 95 C 95 105, 95 115, 100 120 L 105 105 Z" />
+            <path d="M 110 95 C 115 105, 115 115, 110 120 L 105 105 Z" />
+        </g>
         
+        {/* Heart */}
+        <path d="M 105 85 
+                 C 100 80, 95 85, 100 90 
+                 L 105 95 
+                 L 110 90 
+                 C 115 85, 110 80, 105 85 Z" fill="#E53935"/>
+
       </g>
     </svg>
   );
