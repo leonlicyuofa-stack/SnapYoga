@@ -18,6 +18,8 @@ export function WavingMascot(props: SVGProps<SVGSVGElement>) {
             <path d="M100 85 q 5 5 10 0" />
         </g>
         
+        {/* Waving Arm */}
+        <path d="M55 95 C 45 85, 40 70, 50 60" fill="none" stroke="#FFB6C1" strokeWidth="12" strokeLinecap="round" />
       </g>
     </svg>
   );
