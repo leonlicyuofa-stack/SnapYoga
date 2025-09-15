@@ -3,7 +3,7 @@ import type { SVGProps } from 'react';
 
 export function WavingMascot(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg width="150" height="150" viewBox="50 30 100 120" xmlns="http://www.w3.org/2000/svg" {...props}>
       <g>
         <title>Waving Mascot</title>
         {/* Body */}
@@ -23,10 +23,8 @@ export function WavingMascot(props: SVGProps<SVGSVGElement>) {
         {/* Smile */}
         <path d="M 98 85 Q 102 90 106 85" stroke="black" strokeWidth="1.5" fill="none" strokeLinecap="round" />
 
-        {/* Waving Arm */}
-        <path d="M 65,80 C 55,70 50,55 60,50" stroke="black" strokeWidth="2" fill="none" strokeLinecap="round">
-          <animateTransform attributeName="transform" type="rotate" from="-10" to="10" dur="1s" repeatCount="indefinite" additive="sum" transform-origin="65 80"/>
-        </path>
+        {/* Static Arm */}
+        <path d="M 65,80 C 55,70 50,55 60,50" stroke="black" strokeWidth="2" fill="none" strokeLinecap="round" />
 
         {/* Feet */}
         <line x1="95" y1="145" x2="95" y2="155" stroke="black" strokeWidth="2" strokeLinecap="round" />

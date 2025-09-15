@@ -12,7 +12,6 @@ import { Mail, ArrowLeft, Sun } from 'lucide-react';
 import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { AppShell } from '@/components/layout/app-shell';
-import { SmileyBlobMascot } from '@/components/icons/SmileyBlobMascot';
 import { WavingMascot } from '@/components/icons/WavingMascot';
 
 export default function SignUpPage() {
@@ -36,7 +35,7 @@ export default function SignUpPage() {
                         <h2 className="text-4xl font-playfair font-bold">Welcome!</h2>
                         <p className="text-lg opacity-80">Let's get you set up.</p>
                     </div>
-                    <WavingMascot className="absolute -right-8 -bottom-8 opacity-90" />
+                    <WavingMascot className="absolute -right-4 -bottom-4 opacity-90 h-48 w-48" />
                 </Card>
                 
                 <h1 className="text-4xl font-bold font-playfair mb-8">Create an Account</h1>
