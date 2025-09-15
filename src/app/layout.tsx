@@ -1,6 +1,6 @@
 
 import type {Metadata} from 'next';
-import { Lexend, Playfair_Display, Chakra_Petch } from 'next/font/google';
+import { Lexend, Playfair_Display, Chakra_Petch, Shadows_Into_Light } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/contexts/AuthContext'; 
@@ -26,6 +26,12 @@ const chakraPetch = Chakra_Petch({
     variable: '--font-chakra-petch',
 });
 
+const shadowsIntoLight = Shadows_Into_Light({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-shadows-into-light',
+});
+
 export const metadata: Metadata = {
   title: 'SnapYoga',
   description: 'AI-powered yoga pose analysis and feedback.',
@@ -38,7 +44,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${lexend.variable} ${playfair.variable} ${chakraPetch.variable} font-sans antialiased`}>
+      <body className={`${lexend.variable} ${playfair.variable} ${chakraPetch.variable} ${shadowsIntoLight.variable} font-sans antialiased`}>
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-[hsl(var(--splash-blob-1))] via-splash-background to-[hsl(var(--splash-blob-2))] animate-breathing-bg">
             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
                 <defs>
