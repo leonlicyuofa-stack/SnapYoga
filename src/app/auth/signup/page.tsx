@@ -23,7 +23,7 @@ export default function SignUpPage() {
     <AppShell>
         <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden">
             <div className="relative z-10 w-full max-w-sm text-center">
-                <SmileyBlobMascot className="mx-auto h-48 w-48 mb-8" />
+                <SmileyBlobMascot className="mx-auto h-32 w-32 mb-8" />
                 <h1 className="text-4xl font-bold font-playfair mb-8">Create an Account</h1>
                 
                 <div className="space-y-3">
