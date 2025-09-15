@@ -3,11 +3,19 @@ import type { SVGProps } from 'react';
 
 export function MaleAvatar(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg width="64" height="64" viewBox="0 0 80 100" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-        <path d="M40 98.5C28.5 98.5 17.5 95 12 85C6.5 75 1 55.5 1 40L1.5 22.5L15 21.5L23.5 1.5H56.5L65 21.5L79 22.5V40C79 55.5 73.5 75 68 85C62.5 95 51.5 98.5 40 98.5Z" stroke="black" stroke-width="2"/>
-        <path d="M40 1V22" stroke="black" stroke-width="2"/>
-        <path d="M33 91H31" stroke="black" stroke-width="2" stroke-linecap="round"/>
-        <path d="M49 91H47" stroke="black" stroke-width="2" stroke-linecap="round"/>
+    <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+      <g>
+        <path 
+          d="M 85,75 C 95,60 90,30 70,25 C 50,20 30,30 20,50 C 10,70 25,85 45,85 C 65,85 80,85 85,75 Z"
+          fill="#A7C7E7"
+          stroke="hsl(var(--foreground))"
+          strokeWidth="1.5"
+        />
+        {/* Smiley Face */}
+        <circle cx="68" cy="48" r="1.5" fill="hsl(var(--foreground))" />
+        <circle cx="78" cy="48" r="1.5" fill="hsl(var(--foreground))" />
+        <path d="M 70 56 Q 74 60 78 56" stroke="hsl(var(--foreground))" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+      </g>
     </svg>
   );
 }
