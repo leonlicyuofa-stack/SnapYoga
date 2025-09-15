@@ -9,7 +9,7 @@ export function WavingMascot(props: SVGProps<SVGSVGElement>) {
         {/* Body */}
         <circle cx="105" cy="95" r="50" fill="#FFB6C1" />
 
-        {/* New Smiley Face */}
+        {/* Smiley Face */}
         <g stroke="black" strokeWidth="2" fill="none" strokeLinecap="round">
             {/* Eyes */}
             <path d="M90 70 q 5 8 10 0" />
@@ -19,7 +19,7 @@ export function WavingMascot(props: SVGProps<SVGSVGElement>) {
         </g>
         
         {/* Waving Arm */}
-        <path d="M55 95 C 45 85, 40 70, 50 60" fill="none" stroke="#FFB6C1" strokeWidth="12" strokeLinecap="round" />
+        <path d="M65 85 C 45 85, 40 70, 50 60" fill="none" stroke="#FFB6C1" strokeWidth="12" strokeLinecap="round" />
       </g>
     </svg>
   );
