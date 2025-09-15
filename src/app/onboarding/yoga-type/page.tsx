@@ -165,7 +165,7 @@ export default function InterestedPosesPage() {
                   type="button" 
                   variant="outline" 
                   onClick={handleBackNavigation} 
-                  className="w-full sm:w-auto flex-grow"
+                  className="w-auto flex-grow"
                   isLoadingWithBar={isNavigatingBack}
                   loadingBarDirection="rtl"
                   disabled={isSubmitting || isNavigatingBack}
@@ -191,5 +191,3 @@ export default function InterestedPosesPage() {
     </AppShell>
   );
 }
-
-    

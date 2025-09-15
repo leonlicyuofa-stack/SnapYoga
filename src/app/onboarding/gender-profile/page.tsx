@@ -89,12 +89,7 @@ export default function GenderProfilePage() {
       <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden">
         
         <div className="relative z-10 w-full max-w-sm">
-             <div className="flex justify-start mb-6">
-                <Button variant="ghost" size="icon" className="rounded-full bg-card/20 backdrop-blur-sm" onClick={() => router.back()}>
-                    <ArrowLeft className="h-5 w-5" />
-                </Button>
-            </div>
-            <h1 className="text-2xl font-bold text-center">Who are you?</h1>
+            <h1 className="text-2xl font-bold text-center mb-8">Who are you?</h1>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 mt-8">
               <div className="flex justify-around items-center">
                   <div 

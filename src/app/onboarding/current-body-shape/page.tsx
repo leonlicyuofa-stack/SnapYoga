@@ -144,7 +144,7 @@ export default function CurrentBodyShapePage() {
                   type="button" 
                   variant="outline" 
                   onClick={handleBackNavigation} 
-                  className="w-full sm:w-auto flex-grow bg-card/80 backdrop-blur-sm"
+                  className="w-auto flex-grow bg-card/80 backdrop-blur-sm"
                   isLoadingWithBar={isNavigatingBack}
                   loadingBarDirection="rtl"
                   disabled={isSubmitting || isNavigatingBack}

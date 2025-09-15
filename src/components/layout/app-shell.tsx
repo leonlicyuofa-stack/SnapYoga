@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogIn, LogOut, UserCircle, Loader2, Home, Settings, CalendarDays, Trophy, Languages, Sparkles, MoreHorizontal, Search } from 'lucide-react';
+import { LogIn, LogOut, UserCircle, Loader2, Home, Settings, CalendarDays, Trophy, Languages, Sparkles, MoreHorizontal, Search, ArrowLeft } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { usePathname } from 'next/navigation'; 
+import { usePathname, useRouter } from 'next/navigation'; 
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -26,6 +26,7 @@ interface AppShellProps {
 export function AppShell({ children }: AppShellProps) {
   const { user, signOutUser, loading } = useAuth();
   const pathname = usePathname(); 
+  const router = useRouter();
   const { language, setLanguage, t } = useLanguage();
 
   const getInitials = (email?: string | null, displayName?: string | null) => {
@@ -64,6 +65,7 @@ export function AppShell({ children }: AppShellProps) {
   const noShellRoutes = ['/auth/signin', '/auth/signup', '/auth/verify-email', '/'];
   const noHeaderRoutes = ['/welcome'];
   const noFooterRoutes = ['/welcome'];
+  const showOnboardingHeader = pathname.startsWith('/onboarding/');
   
   if (noShellRoutes.includes(pathname) || pathname.startsWith('/home') || pathname === '/page') {
       return (
@@ -106,12 +108,26 @@ export function AppShell({ children }: AppShellProps) {
     </>
   )
 
-  const renderHeaderContent = () => {
+  const renderHeaderLeft = () => {
+    if (showOnboardingHeader) {
+        return (
+            <Button variant="ghost" size="icon" className="rounded-full bg-card/20 backdrop-blur-sm" onClick={() => router.back()}>
+                <ArrowLeft className="h-5 w-5" />
+            </Button>
+        );
+    }
+    return <div className="w-10"></div>; // Placeholder to keep balance
+  }
+
+  const renderHeaderCenter = () => {
     if (pathname === '/dashboard') {
       return <div className="font-semibold text-lg">Welcome!</div>;
     }
+    if (showOnboardingHeader) {
+        return <div className="font-semibold text-lg"></div>; // Can add titles here later
+    }
     // Default empty state to balance flexbox
-    return <div className="w-1/3"></div>;
+    return <div></div>;
   };
 
 
@@ -121,24 +137,28 @@ export function AppShell({ children }: AppShellProps) {
         <header className="sticky top-0 z-40 w-full border-b bg-card/80 backdrop-blur-sm">
             <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center gap-2">
-                    {renderHeaderContent()}
+                    {renderHeaderLeft()}
+                </div>
+                
+                <div className="absolute left-1/2 -translate-x-1/2">
+                   {renderHeaderCenter()}
                 </div>
             
-            <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="icon">
-                    <Search />
-                </Button>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <MoreHorizontal />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56" align="end">
-                        {userMenuItems}
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
+                <div className="flex items-center space-x-2">
+                    <Button variant="ghost" size="icon">
+                        <Search />
+                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                                <MoreHorizontal />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-56" align="end">
+                            {userMenuItems}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </div>
         </header>
       )}

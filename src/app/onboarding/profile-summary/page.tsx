@@ -156,18 +156,7 @@ export default function ProfileSummaryPage() {
               <p className="text-muted-foreground text-center">Could not load profile data.</p>
             )}
              <div className="flex flex-col sm:flex-row gap-2 mt-8 justify-center">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={handleBackNavigation} 
-                  className="w-full sm:w-auto"
-                  isLoadingWithBar={isNavigatingBack}
-                  loadingBarDirection="rtl"
-                  disabled={isNavigatingBack || isNavigatingNext}
-                >
-                    <ArrowLeft className="mr-2 h-5 w-5" />
-                    Back
-                </Button>
+                
                 <Button 
                   onClick={handleNext} 
                   className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
@@ -187,5 +176,3 @@ export default function ProfileSummaryPage() {
     </AppShell>
   );
 }
-
-    

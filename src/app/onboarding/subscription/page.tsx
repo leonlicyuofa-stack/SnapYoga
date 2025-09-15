@@ -99,18 +99,7 @@ export default function SubscriptionPage() {
             </Button>
             
              <div className="flex flex-col sm:flex-row gap-2 mt-4 justify-center">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={handleBackNavigation} 
-                  className="w-full sm:w-auto flex-grow"
-                  isLoadingWithBar={isNavigatingBack}
-                  loadingBarDirection="rtl"
-                  disabled={anyLoading}
-                >
-                    <ArrowLeft className="mr-2 h-5 w-5" />
-                    Back
-                </Button>
+                
                 <Button 
                   onClick={handleProceedToLuckyWheel} 
                   className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
@@ -130,5 +119,3 @@ export default function SubscriptionPage() {
     </AppShell>
   );
 }
-
-    
