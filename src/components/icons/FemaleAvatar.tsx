@@ -7,8 +7,8 @@ export function FemaleAvatar(props: SVGProps<SVGSVGElement>) {
       <g>
         <rect x="15" y="15" width="70" height="70" rx="15" fill="hsl(var(--splash-blob-1))"/>
         {/* Eyes */}
-        <circle cx="43" cy="50" r="2" fill="#2C3E50" />
-        <circle cx="57" cy="50" r="2" fill="#2C3E50" />
+        <circle cx="43" cy="50" r="3" fill="#1A202C" />
+        <circle cx="57" cy="50" r="3" fill="#1A202C" />
       </g>
     </svg>
   );
