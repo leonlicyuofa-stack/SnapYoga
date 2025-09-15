@@ -36,7 +36,7 @@ export function OnboardingHeader() {
                 <h2 className="text-4xl font-playfair font-bold">{title}</h2>
                 <p className="text-lg opacity-80">{subtitle}</p>
             </div>
-            <WavingMascot className="absolute -right-4 -bottom-12 h-48 w-48" />
+            <WavingMascot className="absolute -right-10 -bottom-10 h-48 w-48" />
         </Card>
     );
 }
