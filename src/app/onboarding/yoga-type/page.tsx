@@ -108,7 +108,7 @@ export default function InterestedPosesPage() {
       <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12">
         <div className="w-full max-w-2xl z-10 px-4 flex flex-col items-center">
             <OnboardingHeader />
-            <div className="text-center mb-8">
+            <div className="text-center mb-2">
                 
             </div>
         

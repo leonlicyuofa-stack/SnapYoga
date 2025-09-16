@@ -91,7 +91,7 @@ export default function GenderProfilePage() {
         
         <div className="relative z-10 w-full max-w-sm flex flex-col items-center">
             <OnboardingHeader />
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full mt-[-4rem]">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full mt-[-2rem]">
               <div className="flex justify-around items-center pt-8">
                   <div 
                     className={cn(
@@ -124,7 +124,7 @@ export default function GenderProfilePage() {
                     <Input
                         id="nickname"
                         {...register("nickname")}
-                        className="w-1/2 text-right border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary bg-transparent"
+                        className="w-1/2 text-right border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent"
                         placeholder="e.g. Chahua"
                     />
                 </div>
@@ -139,7 +139,7 @@ export default function GenderProfilePage() {
                         control={control}
                         render={({ field }) => (
                             <Select onValueChange={field.onChange} value={field.value}>
-                                <SelectTrigger className="w-1/2 justify-end text-right font-normal border-0 rounded-none bg-transparent hover:bg-card/20">
+                                <SelectTrigger className="w-1/2 justify-end text-right font-normal border-0 rounded-none bg-transparent hover:bg-card/20 focus:ring-0 focus:ring-offset-0">
                                     <SelectValue placeholder="Select age" />
                                 </SelectTrigger>
                                 <SelectContent>
