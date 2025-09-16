@@ -219,7 +219,7 @@ export default function YogaGoalPage() {
                 />
                 {errors.mainGoal && <p className="text-sm text-destructive text-center">{errors.mainGoal.message}</p>}
                 <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center items-center">
-                <div className="w-full sm:w-1/2">
+                <div className="w-full sm:w-1/4">
                     <Progress value={progress} className="w-full h-2" />
                     <p className="text-xs text-muted-foreground mt-1 text-center sm:text-left">
                         {Math.round(progress)}% Complete
