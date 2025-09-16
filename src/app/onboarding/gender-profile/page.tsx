@@ -114,8 +114,7 @@ export default function GenderProfilePage() {
                     
                   </div>
               </div>
-              {errors.gender && <p className="text-sm text-destructive text-center -mt-4">{errors.gender.message}</p>}
-
+              
               <div className="space-y-6 p-4 bg-card/20 rounded-2xl mt-[-1rem]">
                 <div className="flex justify-between items-start">
                     <div>
