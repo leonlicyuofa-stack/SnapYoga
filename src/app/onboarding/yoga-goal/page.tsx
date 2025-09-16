@@ -17,6 +17,7 @@ import { firestore } from '@/lib/firebase/clientApp';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
+import { Progress } from '@/components/ui/progress';
 
 const yogaGoalSchema = z.object({
   mainGoal: z.string().min(1, { message: "Please select your main yoga goal" }),
@@ -90,12 +91,23 @@ export default function YogaGoalPage() {
   const [isNavigatingBack, setIsNavigatingBack] = useState(false);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [showAffirmation, setShowAffirmation] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  // Define total steps in your onboarding flow
+  const totalOnboardingSteps = 7;
+  // This page is roughly step 2
+  const currentStep = 2;
+
 
   const { control, handleSubmit, formState: { errors }, reset } = useForm<YogaGoalFormValues>({
     resolver: zodResolver(yogaGoalSchema),
   });
 
   useEffect(() => {
+    // Calculate progress and animate it
+    const calculatedProgress = (currentStep / totalOnboardingSteps) * 100;
+    const timer = setTimeout(() => setProgress(calculatedProgress), 100);
+
     // Show affirmation dialog on first load of this page
     const hasSeenAffirmation = sessionStorage.getItem('seenOnboardingAffirmation');
     if (!hasSeenAffirmation) {
@@ -120,6 +132,7 @@ export default function YogaGoalPage() {
     } else if (!authLoading) {
       setIsLoadingProfile(false);
     }
+     return () => clearTimeout(timer);
   }, [user, authLoading, reset]);
 
 
@@ -204,22 +217,16 @@ export default function YogaGoalPage() {
                     )}
                 />
                 {errors.mainGoal && <p className="text-sm text-destructive text-center">{errors.mainGoal.message}</p>}
-                <div className="flex flex-col sm:flex-row gap-2 pt-4 justify-center">
-                <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={handleBackNavigation} 
-                    className="w-auto flex-grow bg-card/80 backdrop-blur-sm"
-                    isLoadingWithBar={isNavigatingBack}
-                    loadingBarDirection="rtl"
-                    disabled={isSubmitting || isNavigatingBack}
-                >
-                    <ArrowLeft className="mr-2 h-5 w-5" />
-                    Back
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center items-center">
+                <div className="w-full sm:w-1/2">
+                    <Progress value={progress} className="w-full h-2" />
+                    <p className="text-xs text-muted-foreground mt-1 text-center sm:text-left">
+                        {Math.round(progress)}% Complete
+                    </p>
+                </div>
                 <Button 
                   type="submit" 
-                  className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40" 
+                  className="w-full sm:w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40" 
                   disabled={isSubmitting || authLoading || isNavigatingBack}
                 >
                     {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
