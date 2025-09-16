@@ -9,6 +9,7 @@ import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { Progress } from '@/components/ui/progress';
 import { useEffect, useState } from 'react';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
+import { PushingUpGraphic } from '@/components/icons/PushingUpGraphic';
 
 
 export default function OnboardingAlmostTherePage() {
@@ -61,12 +62,12 @@ export default function OnboardingAlmostTherePage() {
         
         <div className="relative z-10 flex flex-col items-center max-w-md w-full">
             <OnboardingHeader />
-            
-            <div className="my-8">
-                
+
+            <div className="mt-[-2rem] z-20">
+              <PushingUpGraphic />
             </div>
 
-            <div className="w-full mt-6 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
+            <div className="w-full mt-2 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
                 <Progress value={progress} className="w-full h-3" />
                 <p className="text-sm text-muted-foreground mt-2 font-semibold">
                     {Math.round(progress)}% Complete
