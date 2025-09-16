@@ -7,7 +7,7 @@ import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { AppShell } from '@/components/layout/app-shell';
-import { Loader2, CheckCircle, XCircle, Gift, ArrowRight } from 'lucide-react';
+import { Loader2, CheckCircle, XCircle, Gift, ArrowRight, MoveUpRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
@@ -113,13 +113,11 @@ export default function DrawResultPage() {
                 {prize ? `Your prize will be applied to your account (mock feature).` : `You've completed the main setup steps.`}
                 </p>
                 <Button 
-                onClick={handleCompleteOnboarding} 
-                className="w-full bg-primary hover:bg-primary/90"
-                isLoadingWithBar={isFinalizing}
-                disabled={isFinalizing}
+                    onClick={handleCompleteOnboarding} 
+                    className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+                    disabled={isFinalizing}
                 >
-                <ArrowRight className="mr-2 h-5 w-5" />
-                Go to Dashboard
+                    {isFinalizing ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Go to Dashboard</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
                 </Button>
             </CardContent>
             <CardFooter>

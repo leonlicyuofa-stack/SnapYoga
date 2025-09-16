@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useRouter } from 'next/navigation';
@@ -27,7 +28,7 @@ export default function WelcomePage() {
     setIsNavigating(true);
     // Add a small delay for transition effect before navigating
     setTimeout(() => {
-        router.push('/auth/signup');
+        router.push('/onboarding/gender-profile');
     }, 500);
   };
 
@@ -55,7 +56,7 @@ export default function WelcomePage() {
             <div className="mt-12 w-full max-w-xs animate-fade-in-up" style={{ animationDelay: '400ms' }}>
                 <Button 
                     onClick={handleContinue} 
-                    className="rounded-full h-10 w-auto px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+                    className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
                     disabled={isNavigating}
                 >
                   {isNavigating ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Continue</span><MoveUpRight className="ml-2 h-5 w-5" /></>}

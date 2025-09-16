@@ -92,7 +92,7 @@ export default function GenderProfilePage() {
         <div className="relative z-10 w-full max-w-sm flex flex-col items-center">
             <OnboardingHeader />
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full mt-[-4rem]">
-              <div className="flex justify-around items-center pt-24">
+              <div className="flex justify-around items-center pt-8">
                   <div 
                     className={cn(
                         "cursor-pointer p-4 rounded-2xl transition-all w-48 h-auto flex flex-col items-center justify-center space-y-2 bg-card/20",
@@ -115,7 +115,7 @@ export default function GenderProfilePage() {
                   </div>
               </div>
               
-              <div className="space-y-6 p-4 bg-card/20 rounded-2xl mt-[-1rem]">
+              <div className="space-y-6 p-4 bg-card/20 rounded-2xl -mt-4">
                 <div className="flex justify-between items-start">
                     <div>
                         <Label htmlFor="nickname" className="font-semibold text-base">Nickname</Label>
