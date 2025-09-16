@@ -101,7 +101,7 @@ export default function CurrentBodyShapePage() {
           <OnboardingHeader />
           <div className="text-center mb-8">
             
-            <p className="text-muted-foreground mt-2">How would you describe your current body shape? (Optional)</p>
+            
           </div>
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full">
