@@ -100,7 +100,7 @@ export default function CurrentBodyShapePage() {
         <div className="w-full max-w-2xl z-10 flex flex-col items-center">
           <OnboardingHeader />
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold">Current Body Shape</h1>
+            
             <p className="text-muted-foreground mt-2">How would you describe your current body shape? (Optional)</p>
           </div>
           
