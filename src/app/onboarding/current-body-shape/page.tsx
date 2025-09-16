@@ -59,8 +59,8 @@ export default function CurrentBodyShapePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const totalOnboardingSteps = 7;
-  const currentStep = 4;
+  const totalOnboardingSteps = 6;
+  const currentStep = 3;
 
   useEffect(() => {
     const calculatedProgress = (currentStep / totalOnboardingSteps) * 100;

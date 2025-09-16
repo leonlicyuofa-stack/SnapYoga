@@ -93,8 +93,8 @@ export default function FocusAreasPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const totalOnboardingSteps = 7;
-  const currentStep = 6;
+  const totalOnboardingSteps = 6;
+  const currentStep = 5;
 
   useEffect(() => {
     const calculatedProgress = (currentStep / totalOnboardingSteps) * 100;

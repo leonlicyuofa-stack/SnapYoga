@@ -57,8 +57,8 @@ export default function InterestedPosesPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const totalOnboardingSteps = 7;
-  const currentStep = 3;
+  const totalOnboardingSteps = 6;
+  const currentStep = 2;
 
   useEffect(() => {
     const calculatedProgress = (currentStep / totalOnboardingSteps) * 100;

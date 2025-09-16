@@ -95,9 +95,9 @@ export default function YogaGoalPage() {
   const [progress, setProgress] = useState(0);
 
   // Define total steps in your onboarding flow
-  const totalOnboardingSteps = 7;
-  // This page is roughly step 2
-  const currentStep = 2;
+  const totalOnboardingSteps = 6;
+  // This page is roughly step 1
+  const currentStep = 1;
 
 
   const { control, handleSubmit, formState: { errors }, reset } = useForm<YogaGoalFormValues>({
