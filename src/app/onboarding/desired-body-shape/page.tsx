@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -91,11 +90,7 @@ export default function DesiredBodyShapePage() {
         
         <div className="w-full max-w-3xl z-10 flex flex-col items-center">
             <OnboardingHeader />
-            <div className="text-center mb-8">
-                <HeartPulse className="mx-auto h-12 w-12 text-primary mb-4" />
-                <h1 className="text-3xl font-bold">Desired Body Shape</h1>
-                <p className="text-muted-foreground mt-2">What are your aspirations for your body?</p>
-            </div>
+            
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full">
               <Controller
                 name="desiredBodyShape"
