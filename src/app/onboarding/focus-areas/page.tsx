@@ -93,8 +93,8 @@ export default function FocusAreasPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const totalOnboardingSteps = 6;
-  const currentStep = 5;
+  const totalOnboardingSteps = 5;
+  const currentStep = 4;
 
   useEffect(() => {
     const calculatedProgress = (currentStep / totalOnboardingSteps) * 100;
@@ -161,11 +161,6 @@ export default function FocusAreasPage() {
         
         <div className="relative z-10 w-full max-w-2xl flex flex-col items-center">
           <OnboardingHeader />
-          <div className="text-center mb-4">
-            <Crosshair className="mx-auto h-12 w-12 text-primary mb-4" />
-            <h1 className="text-3xl font-bold">Focus Areas</h1>
-            <p className="text-muted-foreground mt-2">Select body parts from the figure or choose a goal below.</p>
-          </div>
           
           <div className="bg-card/50 backdrop-blur-sm p-4 rounded-lg w-full">
              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
