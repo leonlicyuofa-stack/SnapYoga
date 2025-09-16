@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -111,7 +110,6 @@ export default function InterestedPosesPage() {
             <OnboardingHeader />
             <div className="text-center mb-8">
                 
-                <h1 className="text-3xl font-bold text-foreground">Interested Yoga Poses</h1>
             </div>
         
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full">
