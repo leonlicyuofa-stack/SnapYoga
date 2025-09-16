@@ -48,7 +48,6 @@ export default function GenderProfilePage() {
 
   const selectedGender = watch('gender');
   const ageValue = watch('age');
-  const nicknameValue = watch('nickname');
 
 
   if (authLoading) {
@@ -123,9 +122,7 @@ export default function GenderProfilePage() {
                     <Input
                         id="nickname"
                         {...register("nickname")}
-                        className={cn("w-1/2 text-right border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary bg-transparent",
-                           nicknameValue ? "text-accent" : ""
-                        )}
+                        className="w-1/2 text-right border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary bg-transparent"
                         placeholder="e.g. Chahua"
                     />
                 </div>
