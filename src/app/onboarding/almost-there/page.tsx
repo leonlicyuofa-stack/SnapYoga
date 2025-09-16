@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useRouter } from 'next/navigation';
@@ -59,7 +58,7 @@ export default function OnboardingAlmostTherePage() {
         
         <div className="relative z-10 flex flex-col items-center max-w-md w-full">
             <OnboardingHeader />
-            <CheckCircle className="mx-auto h-16 w-16 text-primary mb-6 animate-scale-in" />
+            
             <h1 className="text-4xl font-bold text-foreground animate-fade-in-up" style={{ animationDelay: '200ms' }}>You are almost there!</h1>
             
             <div className="w-full mt-6 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
