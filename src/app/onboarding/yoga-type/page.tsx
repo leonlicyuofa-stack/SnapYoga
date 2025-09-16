@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,6 +15,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Loader2, ArrowRight, ArrowLeft, CheckCircle, MoveUpRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
+import { Progress } from '@/components/ui/progress';
 
 const interestedPosesSchema = z.object({
   interestedPoses: z.array(z.string()).min(1, { message: "Please select at least one category" }),
@@ -55,7 +56,16 @@ export default function InterestedPosesPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isNavigatingBack, setIsNavigatingBack] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  const totalOnboardingSteps = 7;
+  const currentStep = 3;
+
+  useEffect(() => {
+    const calculatedProgress = (currentStep / totalOnboardingSteps) * 100;
+    const timer = setTimeout(() => setProgress(calculatedProgress), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const { control, handleSubmit, formState: { errors } } = useForm<InterestedPosesFormValues>({
     resolver: zodResolver(interestedPosesSchema),
@@ -92,13 +102,6 @@ export default function InterestedPosesPage() {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleBackNavigation = () => {
-    setIsNavigatingBack(true);
-    setTimeout(() => {
-      router.back();
-    }, 500); 
   };
 
   return (
@@ -162,23 +165,17 @@ export default function InterestedPosesPage() {
 
               {errors.interestedPoses && <p className="text-sm text-destructive text-center">{errors.interestedPoses.message}</p>}
               
-              <div className="flex flex-col sm:flex-row gap-2 pt-4 justify-center">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={handleBackNavigation} 
-                  className="w-auto flex-grow"
-                  isLoadingWithBar={isNavigatingBack}
-                  loadingBarDirection="rtl"
-                  disabled={isSubmitting || isNavigatingBack}
-                >
-                    <ArrowLeft className="mr-2 h-5 w-5" />
-                    Back
-                </Button>
+              <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center items-center">
+                <div className="w-full sm:w-1/4">
+                    <Progress value={progress} className="w-full h-2" />
+                    <p className="text-xs text-muted-foreground mt-1 text-center sm:text-left">
+                        {Math.round(progress)}% Complete
+                    </p>
+                </div>
                 <Button 
                   type="submit" 
                   className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40" 
-                  disabled={isSubmitting || authLoading || isNavigatingBack}
+                  disabled={isSubmitting || authLoading}
                 >
                     {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
                 </Button>

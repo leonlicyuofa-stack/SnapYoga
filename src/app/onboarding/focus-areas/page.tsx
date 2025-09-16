@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
+import { Progress } from '@/components/ui/progress';
 
 const focusAreasSchema = z.object({
   focusBodyParts: z.array(z.string()).min(1, { message: "Please select at least one focus area" }),
@@ -90,7 +91,16 @@ export default function FocusAreasPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isNavigatingBack, setIsNavigatingBack] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  const totalOnboardingSteps = 7;
+  const currentStep = 6;
+
+  useEffect(() => {
+    const calculatedProgress = (currentStep / totalOnboardingSteps) * 100;
+    const timer = setTimeout(() => setProgress(calculatedProgress), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm<FocusAreasFormValues>({
     resolver: zodResolver(focusAreasSchema),
@@ -145,13 +155,6 @@ export default function FocusAreasPage() {
     }
   };
 
-  const handleBackNavigation = () => {
-    setIsNavigatingBack(true);
-    setTimeout(() => {
-      router.back();
-    }, 500); 
-  };
-
   return (
     <AppShell>
       <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4 text-center">
@@ -182,12 +185,17 @@ export default function FocusAreasPage() {
 
               {errors.focusBodyParts && <p className="text-sm text-destructive text-center">{errors.focusBodyParts.message}</p>}
               
-              <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <div className="w-full sm:w-1/4">
+                    <Progress value={progress} className="w-full h-2" />
+                    <p className="text-xs text-muted-foreground mt-1 text-center sm:text-left">
+                        {Math.round(progress)}% Complete
+                    </p>
+                </div>
                 <Button 
                   type="submit" 
                   className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
-                  disabled={isSubmitting || authLoading || isNavigatingBack}
+                  disabled={isSubmitting || authLoading}
                 >
                     {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
                 </Button>
