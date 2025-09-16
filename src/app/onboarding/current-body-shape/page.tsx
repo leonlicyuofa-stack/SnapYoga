@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -26,12 +27,29 @@ const currentBodyShapeSchema = z.object({
 
 type CurrentBodyShapeFormValues = z.infer<typeof currentBodyShapeSchema>;
 
+const InvertedTriangleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 100 100" {...props}><path d="M10 10 H 90 L 50 90 Z" fill="currentColor" /></svg>
+);
+const HourglassIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 100 100" {...props}><path d="M10 10 H 90 L 10 90 H 90 L 10 10 Z" fill="currentColor" /></svg>
+);
+const TriangleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 100 100" {...props}><path d="M50 10 L 10 90 H 90 Z" fill="currentColor" /></svg>
+);
+const RoundIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 100 100" {...props}><circle cx="50" cy="50" r="40" fill="currentColor" /></svg>
+);
+const RectangleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg viewBox="0 0 100 100" {...props}><rect x="20" y="10" width="60" height="80" fill="currentColor" /></svg>
+);
+
+
 const bodyShapeOptions = [
-  { value: "inverted-triangle", label: "Inverted Triangle", icon: PersonStanding },
-  { value: "hourglass", label: "Hourglass", icon: PersonStanding },
-  { value: "triangle", label: "Triangle", icon: PersonStanding },
-  { value: "round", label: "Round", icon: PersonStanding },
-  { value: "rectangle", label: "Rectangle", icon: PersonStanding },
+  { value: "inverted-triangle", label: "Inverted Triangle", icon: InvertedTriangleIcon },
+  { value: "hourglass", label: "Hourglass", icon: HourglassIcon },
+  { value: "triangle", label: "Triangle", icon: TriangleIcon },
+  { value: "round", label: "Round", icon: RoundIcon },
+  { value: "rectangle", label: "Rectangle", icon: RectangleIcon },
   { value: "prefer-not-to-say", label: "Prefer not to say", icon: HelpCircle },
 ];
 
@@ -115,17 +133,7 @@ export default function CurrentBodyShapePage() {
                   >
                     {bodyShapeOptions.map((option) => {
                       const Icon = option.icon;
-                      // A simple way to slightly vary the icon for visual distinction
-                      const femaleIcon = <FemaleAvatar className="h-20 w-20 mb-2 opacity-70" />;
-                      const maleIcon = <MaleAvatar className="h-10 w-10 mb-2 opacity-70" />;
                       
-                      let displayIcon;
-                      if(option.value === 'slim') displayIcon = femaleIcon;
-                      else if(option.value === 'athletic') displayIcon = maleIcon;
-                      else if(option.value === 'curvy') displayIcon = femaleIcon;
-                      else if(option.value === 'full-figured') displayIcon = femaleIcon;
-                      else displayIcon = <Icon className="mb-2 h-10 w-10 opacity-70" />;
-
                       return (
                         <Label
                           key={option.value}
@@ -133,7 +141,7 @@ export default function CurrentBodyShapePage() {
                           className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card/80 backdrop-blur-sm p-4 h-32 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/10 cursor-pointer transition-all shadow-md"
                         >
                           <RadioGroupItem value={option.value} id={`shape-${option.value}`} className="sr-only" />
-                          {displayIcon}
+                          <Icon className="mb-2 h-10 w-10 opacity-70 text-foreground" />
                           <span className="text-center font-semibold">{option.label}</span>
                         </Label>
                       );
