@@ -9,7 +9,7 @@ import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { Progress } from '@/components/ui/progress';
 import { useEffect, useState } from 'react';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
-import { PushingUpGraphic } from '@/components/icons/PushingUpGraphic';
+import { HalfFullGlass } from '@/components/icons/HalfFullGlass';
 
 
 export default function OnboardingAlmostTherePage() {
@@ -64,7 +64,7 @@ export default function OnboardingAlmostTherePage() {
             <OnboardingHeader />
 
             <div className="mt-[-2rem] z-20">
-              <PushingUpGraphic />
+              <HalfFullGlass />
             </div>
 
             <div className="w-full mt-2 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
