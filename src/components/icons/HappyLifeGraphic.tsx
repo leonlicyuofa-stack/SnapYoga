@@ -1,3 +1,4 @@
+
 import type { SVGProps } from 'react';
 
 export function HappyLifeGraphic(props: SVGProps<SVGSVGElement>) {
@@ -5,17 +6,19 @@ export function HappyLifeGraphic(props: SVGProps<SVGSVGElement>) {
     <svg width="300" height="120" viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg" {...props}>
       <g fontFamily="sans-serif" fontSize="14" fontWeight="bold" textAnchor="middle">
 
-        {/* Healthy Body */}
+        {/* Healthy Body -> Move with Purpose */}
         <g transform="translate(50, 50)">
-          <circle cx="0" cy="-15" r="15" fill="#FCEE21" stroke="#231F20" strokeWidth="1.5" />
-          <path d="M0,0 C-15,25 15,25 0,0 L-12,35 L0,25 L12,35 Z" fill="#FCEE21" stroke="#231F20" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
-          <path d="M-10,0 C-20,-10 -15, -25 0,-15 C15,-25 20,-10 10,0" fill="none" stroke="#231F20" strokeWidth="1.5" />
+          <circle cx="0" cy="-15" r="15" fill="hsl(var(--primary))" stroke="#231F20" strokeWidth="1.5" />
+          <path d="M0,0 L-12,35 L12,35 Z" fill="hsl(var(--primary))" stroke="#231F20" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
+          <path d="M-10,0 C-20,10 -15,25 -10,35" fill="none" stroke="#231F20" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M10,0 C20,10 15,25 10,35" fill="none" stroke="#231F20" strokeWidth="1.5" strokeLinecap="round" />
           <path d="M-5,-18 L-2,-20 L-5,-22" stroke="#231F20" strokeWidth="1.5" strokeLinecap="round" />
           <path d="M5,-18 L2,-20 L5,-22" stroke="#231F20" strokeWidth="1.5" strokeLinecap="round" />
           <path d="M-5,-12 Q0,-8 5,-12" stroke="#231F20" strokeWidth="1.5" fill="none" />
         </g>
-        <text x="50" y="100">healthy</text>
-        <text x="50" y="115">body</text>
+        <text x="50" y="100">move</text>
+        <text x="50" y="115">with purpose</text>
+
 
         {/* Plus */}
         <text x="110" y="70" fontSize="20">+</text>
