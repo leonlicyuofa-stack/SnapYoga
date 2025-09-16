@@ -5,12 +5,18 @@ export function HalfFullGlass(props: SVGProps<SVGSVGElement>) {
     <svg width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <g>
         <title>Half Full Glass of Water</title>
-        {/* Glass outline */}
-        <path d="M 40 20 L 45 130 H 105 L 110 20 H 40 Z" stroke="#1F2937" strokeWidth="3" fill="none" />
         {/* Water */}
-        <path d="M 47.5 75 L 102.5 75 L 105 130 H 45 L 47.5 75 Z" fill="#60A5FA" opacity="0.5" />
-        {/* Water surface */}
-        <path d="M 47.5 75 C 65 70, 85 80, 102.5 75" stroke="#60A5FA" strokeWidth="2" fill="none" />
+        <path d="M35 80 C35 115, 115 115, 115 80 V130 C115 130, 35 130, 35 130 V80 Z" fill="#A8D5FF"/>
+        
+        {/* Glass */}
+        <path d="M30 20 Q30 30, 40 30 H110 Q120 30, 120 20 V135 C120 145, 110 145, 100 145 H50 C40 145, 30 145, 30 135 V20 Z" 
+              stroke="#D1E9FF" strokeWidth="4" fill="#D1E9FF" fillOpacity="0.4"/>
+        
+        {/* Water Surface */}
+        <ellipse cx="75" cy="80" rx="80" ry="10" fill="#A8D5FF" transform="scale(0.55 1) translate(61, 0)"/>
+
+         {/* Rim */}
+        <ellipse cx="75" cy="25" rx="45" ry="8" stroke="#D1E9FF" strokeWidth="4" fill="none"/>
       </g>
     </svg>
   );
