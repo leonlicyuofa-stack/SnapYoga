@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -28,11 +27,11 @@ const currentBodyShapeSchema = z.object({
 type CurrentBodyShapeFormValues = z.infer<typeof currentBodyShapeSchema>;
 
 const bodyShapeOptions = [
-  { value: "slim", label: "Slim", icon: PersonStanding },
-  { value: "athletic", label: "Athletic", icon: PersonStanding },
-  { value: "average", label: "Average", icon: PersonStanding },
-  { value: "curvy", label: "Curvy", icon: PersonStanding },
-  { value: "full-figured", label: "Full-figured", icon: PersonStanding },
+  { value: "inverted-triangle", label: "Inverted Triangle", icon: PersonStanding },
+  { value: "hourglass", label: "Hourglass", icon: PersonStanding },
+  { value: "triangle", label: "Triangle", icon: PersonStanding },
+  { value: "round", label: "Round", icon: PersonStanding },
+  { value: "rectangle", label: "Rectangle", icon: PersonStanding },
   { value: "prefer-not-to-say", label: "Prefer not to say", icon: HelpCircle },
 ];
 
