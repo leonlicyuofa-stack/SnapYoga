@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -174,7 +173,7 @@ export default function YogaGoalPage() {
         <div className="w-full max-w-2xl z-10 px-4 flex flex-col items-center">
             <OnboardingHeader />
             <div className="text-center mb-8">
-                <p className="text-muted-foreground mt-2">What do you hope to achieve with yoga?</p>
+                
             </div>
             
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full">
