@@ -9,7 +9,7 @@ import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { Progress } from '@/components/ui/progress';
 import { useEffect, useState } from 'react';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
-import { PebbleStackLoader } from '@/components/icons/pebble-stack-loader';
+
 
 export default function OnboardingAlmostTherePage() {
   const router = useRouter();
@@ -61,7 +61,7 @@ export default function OnboardingAlmostTherePage() {
             <OnboardingHeader />
             
             <div className="h-24 my-4">
-              <PebbleStackLoader />
+              
             </div>
 
             <div className="w-full mt-6 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
