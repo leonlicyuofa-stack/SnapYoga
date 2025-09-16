@@ -137,12 +137,7 @@ export default function ProfileSummaryPage() {
         <div className="w-full max-w-2xl flex flex-col items-center">
             <OnboardingHeader />
             <Card className="w-full shadow-xl z-10 bg-card/80 backdrop-blur-sm">
-            <CardHeader className="text-center">
-                <UserCheck className="mx-auto h-12 w-12 text-primary mb-4" />
-                <CardTitle className="text-3xl font-bold">Your Profile Summary</CardTitle>
-                <CardDescription>Please review your selections. You can edit any item if needed.</CardDescription>
-            </CardHeader>
-            <CardContent className="px-4 sm:px-6">
+            <CardContent className="px-4 sm:px-6 pt-6">
                 {profileData ? (
                 <dl className="divide-y divide-border">
                     {renderDetailItem("Nickname", profileData.displayName, '/onboarding/gender-profile')}
