@@ -112,7 +112,6 @@ export default function InterestedPosesPage() {
             <div className="text-center mb-8">
                 
                 <h1 className="text-3xl font-bold text-foreground">Interested Yoga Poses</h1>
-                <p className="text-muted-foreground mt-2">Select the categories of poses you're interested in learning or improving.</p>
             </div>
         
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full">
