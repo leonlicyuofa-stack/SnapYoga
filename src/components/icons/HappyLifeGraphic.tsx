@@ -8,8 +8,8 @@ export function HappyLifeGraphic(props: SVGProps<SVGSVGElement>) {
 
         {/* Healthy Body -> Move with Purpose */}
         <g transform="translate(50, 50)">
-          <circle cx="0" cy="-15" r="15" fill="hsl(var(--primary))" stroke="#231F20" strokeWidth="1.5" />
-          <path d="M0,0 L-12,35 L12,35 Z" fill="hsl(var(--primary))" stroke="#231F20" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
+          <circle cx="0" cy="-15" r="15" fill="#E5D2B8" stroke="#231F20" strokeWidth="1.5" />
+          <path d="M0,0 L-12,35 L12,35 Z" fill="#E5D2B8" stroke="#231F20" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
           <path d="M-10,0 C-20,10 -15,25 -10,35" fill="none" stroke="#231F20" strokeWidth="1.5" strokeLinecap="round" />
           <path d="M10,0 C20,10 15,25 10,35" fill="none" stroke="#231F20" strokeWidth="1.5" strokeLinecap="round" />
           <path d="M-5,-18 L-2,-20 L-5,-22" stroke="#231F20" strokeWidth="1.5" strokeLinecap="round" />
