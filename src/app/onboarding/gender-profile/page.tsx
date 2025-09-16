@@ -92,7 +92,7 @@ export default function GenderProfilePage() {
         <div className="relative z-10 w-full max-w-sm flex flex-col items-center">
             <OnboardingHeader />
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full -mt-16">
-              <div className="flex justify-around items-center pt-24">
+              <div className="flex justify-around items-center pt-8">
                   <div 
                     className={cn(
                         "cursor-pointer p-4 rounded-2xl transition-all w-48 h-auto flex flex-col items-center justify-center space-y-2 bg-card/20",
@@ -101,7 +101,7 @@ export default function GenderProfilePage() {
                     onClick={() => setValue('gender', 'female', { shouldValidate: true })}
                   >
                     <FemaleAvatar className="w-32 h-32"/>
-                    <span>Female</span>
+                    
                   </div>
                    <div 
                     className={cn(
@@ -111,7 +111,7 @@ export default function GenderProfilePage() {
                     onClick={() => setValue('gender', 'male', { shouldValidate: true })}
                   >
                     <MaleAvatar className="w-32 h-32"/>
-                    <span>Male</span>
+                    
                   </div>
               </div>
               {errors.gender && <p className="text-sm text-destructive text-center -mt-4">{errors.gender.message}</p>}
