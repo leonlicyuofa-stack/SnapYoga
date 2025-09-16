@@ -48,6 +48,7 @@ export default function GenderProfilePage() {
 
   const selectedGender = watch('gender');
   const ageValue = watch('age');
+  const nicknameValue = watch('nickname');
 
 
   if (authLoading) {
@@ -91,8 +92,8 @@ export default function GenderProfilePage() {
         
         <div className="relative z-10 w-full max-w-sm flex flex-col items-center">
             <OnboardingHeader />
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full -mt-16">
-              <div className="flex justify-around items-center pt-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full -mt-24">
+              <div className="flex justify-around items-center pt-24">
                   <div 
                     className={cn(
                         "cursor-pointer p-4 rounded-2xl transition-all w-48 h-auto flex flex-col items-center justify-center space-y-2 bg-card/20",
@@ -122,7 +123,9 @@ export default function GenderProfilePage() {
                     <Input
                         id="nickname"
                         {...register("nickname")}
-                        className="w-1/2 text-right border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary bg-transparent"
+                        className={cn("w-1/2 text-right border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary bg-transparent",
+                           nicknameValue ? "text-accent" : ""
+                        )}
                         placeholder="e.g. Chahua"
                     />
                 </div>
