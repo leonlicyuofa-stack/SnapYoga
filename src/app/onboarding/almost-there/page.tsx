@@ -9,7 +9,6 @@ import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { Progress } from '@/components/ui/progress';
 import { useEffect, useState } from 'react';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
-import { PebbleTrioIcon } from '@/components/icons/PebbleTrioIcon';
 
 export default function OnboardingAlmostTherePage() {
   const router = useRouter();
@@ -60,8 +59,6 @@ export default function OnboardingAlmostTherePage() {
         <div className="relative z-10 flex flex-col items-center max-w-md w-full">
             <OnboardingHeader />
             
-            <PebbleTrioIcon className="h-24 w-24 text-primary mb-4 animate-fade-in-up" style={{ animationDelay: '300ms' }} />
-
             <div className="w-full mt-6 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
                 <Progress value={progress} className="w-full h-3" />
                 <p className="text-sm text-muted-foreground mt-2 font-semibold">
