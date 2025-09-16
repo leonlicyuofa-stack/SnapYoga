@@ -19,27 +19,11 @@ export function HappyLifeGraphic(props: SVGProps<SVGSVGElement>) {
         <text x="50" y="100">move</text>
         <text x="50" y="115">with purpose</text>
 
-
         {/* Plus */}
         <text x="110" y="70" fontSize="20">+</text>
 
-        {/* Happy Life (now in the middle) */}
+        {/* Healthy Mind -> breathe with peace (now in the middle) */}
         <g transform="translate(160, 50)">
-          <circle cx="0" cy="-15" r="15" fill="#FFF7A0" stroke="#231F20" strokeWidth="1.5" />
-          <path d="M0,0 C-15,25 15,25 0,0 L-12,35 L0,25 L12,35 Z" fill="#FFF7A0" stroke="#231F20" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
-          <path d="M-15,5 C-20,-15 -5,-25 0,-15 C5,-25 20,-15 15,5" fill="none" stroke="#231F20" strokeWidth="1.5" />
-          <path d="M-7,-20 l3,3 l-3,3" stroke="#231F20" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M7,-20 l-3,3 l3,3" stroke="#231F20" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M-5,-10 Q0,-5 5,-10" stroke="#231F20" strokeWidth="1.5" fill="none" />
-        </g>
-        <text x="160" y="100">happy</text>
-        <text x="160" y="115">life</text>
-
-        {/* Equals */}
-        <text x="220" y="70" fontSize="20">=</text>
-
-        {/* Healthy Mind -> breathe with peace (now on the right) */}
-        <g transform="translate(270, 50)">
           <circle cx="0" cy="-15" r="15" fill="#C4E8F7" stroke="#231F20" strokeWidth="1.5" />
           <path d="M0,0 C-15,25 15,25 0,0 M-20,30 L-10,20 L0,30 L10,20 L20,30" fill="none" stroke="#231F20" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
           <path d="M-15,-5 L-5,10 L0,0 L5,10 L15,-5" fill="none" stroke="#231F20" strokeWidth="1.5" />
@@ -47,8 +31,23 @@ export function HappyLifeGraphic(props: SVGProps<SVGSVGElement>) {
           <path d="M7,-20 q-2.5,-2.5 -5,0" stroke="#231F20" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
           <path d="M-5,-12 Q0,-10 5,-12" stroke="#231F20" strokeWidth="1.5" fill="none" />
         </g>
-        <text x="270" y="100">breathe</text>
-        <text x="270" y="115">with peace</text>
+        <text x="160" y="100">breathe</text>
+        <text x="160" y="115">with peace</text>
+
+        {/* Equals */}
+        <text x="220" y="70" fontSize="20">=</text>
+
+        {/* Happy Life (now on the right) */}
+        <g transform="translate(270, 50)">
+          <circle cx="0" cy="-15" r="15" fill="#FFF7A0" stroke="#231F20" strokeWidth="1.5" />
+          <path d="M0,0 C-15,25 15,25 0,0 L-12,35 L0,25 L12,35 Z" fill="#FFF7A0" stroke="#231F20" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
+          <path d="M-15,5 C-20,-15 -5,-25 0,-15 C5,-25 20,-15 15,5" fill="none" stroke="#231F20" strokeWidth="1.5" />
+          <path d="M-7,-20 l3,3 l-3,3" stroke="#231F20" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M7,-20 l-3,3 l3,3" stroke="#231F20" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M-5,-10 Q0,-5 5,-10" stroke="#231F20" strokeWidth="1.5" fill="none" />
+        </g>
+        <text x="270" y="100">happy</text>
+        <text x="270" y="115">life</text>
 
       </g>
     </svg>
