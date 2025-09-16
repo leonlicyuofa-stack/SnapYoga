@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -97,7 +96,7 @@ export default function CurrentBodyShapePage() {
     setIsSubmitting(true);
     try {
       await createUserProfileDocument(user, { currentBodyShape: data.currentBodyShape });
-      router.push('/onboarding/desired-body-shape');
+      router.push('/onboarding/almost-there');
     } catch (error) {
       console.error("Error saving current body shape:", error);
       toast({
