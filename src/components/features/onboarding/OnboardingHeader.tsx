@@ -9,7 +9,7 @@ const pageTitles: Record<string, { title: string; subtitle: string; optionalText
     '/onboarding/gender-profile': { title: 'Who are you?', subtitle: "Let's start with the basics." },
     '/onboarding/yoga-goal': { title: 'Your Yoga Goal', subtitle: "What do you want to achieve?" },
     '/onboarding/yoga-type': { title: 'Pose Interests', subtitle: "What poses excite you?" },
-    '/onboarding/current-body-shape': { title: 'Current Shape', subtitle: "How do you see yourself now?", optionalText: "optional" },
+    '/onboarding/current-body-shape': { title: 'Current Shape', subtitle: "How do you see yourself now?", optionalText: "(optional)" },
     '/onboarding/desired-body-shape': { title: 'Desired Shape', subtitle: "What are your body goals?" },
     '/onboarding/almost-there': { title: 'Almost There!', subtitle: "Just a few more steps." },
     '/onboarding/focus-areas': { title: 'Focus Areas', subtitle: "Where do you want to improve?" },
