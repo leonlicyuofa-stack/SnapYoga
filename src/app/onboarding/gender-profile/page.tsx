@@ -95,7 +95,7 @@ export default function GenderProfilePage() {
               <div className="flex justify-around items-center">
                   <div 
                     className={cn(
-                        "cursor-pointer p-4 rounded-2xl transition-all w-48 h-auto flex flex-col items-center justify-center space-y-2 bg-card/20 backdrop-blur-sm",
+                        "cursor-pointer p-4 rounded-2xl transition-all w-48 h-auto flex flex-col items-center justify-center space-y-2 bg-card/20",
                         selectedGender === 'female' ? 'bg-white/50' : 'border-transparent'
                     )}
                     onClick={() => setValue('gender', 'female', { shouldValidate: true })}
@@ -104,7 +104,7 @@ export default function GenderProfilePage() {
                   </div>
                    <div 
                     className={cn(
-                        "cursor-pointer p-4 rounded-2xl transition-all w-48 h-auto flex flex-col items-center justify-center space-y-2 bg-card/20 backdrop-blur-sm",
+                        "cursor-pointer p-4 rounded-2xl transition-all w-48 h-auto flex flex-col items-center justify-center space-y-2 bg-card/20",
                         selectedGender === 'male' ? 'bg-white/50' : 'border-transparent'
                     )}
                     onClick={() => setValue('gender', 'male', { shouldValidate: true })}
