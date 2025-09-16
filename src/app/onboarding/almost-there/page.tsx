@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useRouter } from 'next/navigation';
@@ -9,6 +10,7 @@ import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { Progress } from '@/components/ui/progress';
 import { useEffect, useState } from 'react';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
+import { InteractivePebble } from '@/components/icons/InteractivePebble';
 
 
 export default function OnboardingAlmostTherePage() {
@@ -16,6 +18,7 @@ export default function OnboardingAlmostTherePage() {
   const { user, loading: authLoading } = useAuth();
   const [progress, setProgress] = useState(0);
   const [isNavigating, setIsNavigating] = useState(false);
+  const [isPebbleRevealed, setIsPebbleRevealed] = useState(false);
 
   // Define total steps in your onboarding flow
   const totalOnboardingSteps = 5;
@@ -31,7 +34,10 @@ export default function OnboardingAlmostTherePage() {
 
   const handleNext = () => {
     setIsNavigating(true);
-    router.push('/onboarding/focus-areas');
+    setIsPebbleRevealed(true);
+    setTimeout(() => {
+        router.push('/onboarding/focus-areas');
+    }, 800);
   };
 
   const handleBack = () => {
@@ -60,6 +66,9 @@ export default function OnboardingAlmostTherePage() {
         <div className="relative z-10 flex flex-col items-center max-w-md w-full">
             <OnboardingHeader />
             
+            <div className="my-8">
+                <InteractivePebble isRevealed={isPebbleRevealed} />
+            </div>
 
             <div className="w-full mt-6 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
                 <Progress value={progress} className="w-full h-3" />
