@@ -63,7 +63,7 @@ export default function OnboardingAlmostTherePage() {
         <div className="relative z-10 flex flex-col items-center max-w-md w-full">
             <OnboardingHeader />
 
-            <div className="mt-[-2rem] z-20">
+            <div className="mt-4 z-20">
               <HalfFullGlass />
             </div>
 
