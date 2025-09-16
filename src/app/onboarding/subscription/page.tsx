@@ -74,8 +74,6 @@ export default function SubscriptionPage() {
             <OnboardingHeader />
             <Card className="w-full shadow-xl z-10 bg-card/80 backdrop-blur-sm">
             <CardHeader className="text-center">
-                <Star className="mx-auto h-12 w-12 text-yellow-400 mb-4" />
-                <CardTitle className="text-3xl font-bold">Unlock SnapYoga Premium</CardTitle>
                 <CardDescription>Choose your plan or try our lucky wheel!</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
