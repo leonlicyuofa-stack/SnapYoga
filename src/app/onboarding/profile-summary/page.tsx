@@ -152,7 +152,6 @@ export default function ProfileSummaryPage() {
                     {renderDetailItem("Main Yoga Goal", profileData.mainGoal, '/onboarding/yoga-goal')}
                     {renderDetailItem("Interested Pose Types", profileData.interestedPoses, '/onboarding/yoga-type')}
                     {renderDetailItem("Current Body Shape", profileData.currentBodyShape, '/onboarding/current-body-shape')}
-                    {renderDetailItem("Desired Body Shape", profileData.desiredBodyShape, '/onboarding/desired-body-shape')}
                     {renderDetailItem("Focus Areas", profileData.focusBodyParts, '/onboarding/focus-areas')}
                 </dl>
                 ) : (
