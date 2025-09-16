@@ -8,17 +8,11 @@ export function PushingUpGraphic(props: SVGProps<SVGSVGElement>) {
         {/* Mat */}
         <path d="M 0 150 H 200 V 140 H 0 Z" fill="#F3F4F6" />
 
-        {/* Figure */}
+        {/* Figure in standing backbend pose */}
         <g fill="#1F2937">
-          {/* Back Leg */}
-          <path d="M125 140 C 120 120, 115 100, 110 85 L 115 85 C 120 100, 125 120, 135 140 Z" />
-          {/* Front Leg */}
-          <path d="M110 85 L 80 85 C 75 110, 75 125, 70 140 L 85 140 C 90 120, 100 100, 110 85 Z" />
-          {/* Torso & Head */}
-          <path d="M110 85 C 120 60, 120 30, 105 10 L 95 15 C 100 40, 100 65, 110 85 Z" />
-          {/* Arms */}
-          <path d="M105 10 L 90 0 L 85 15 L 100 20 Z" />
-          <path d="M100 20 L 115 10 L 120 25 L 105 30 Z" />
+            <path d="M100 140 V 110 C 100 90, 95 70, 110 50 C 120 35, 130 25, 120 15 L 110 25 C 110 50, 105 70, 100 110" />
+            <path d="M120 15 C 115 10, 105 10, 100 15 L 110 25 Z" />
+            <path d="M100 140 L 98 140 L 95 110 C 95 90, 90 70, 105 50 C 115 35, 125 25, 115 15 L 105 25 C 105 50, 100 70, 95 110 Z" />
         </g>
       </g>
     </svg>
