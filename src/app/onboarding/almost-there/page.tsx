@@ -9,7 +9,6 @@ import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { Progress } from '@/components/ui/progress';
 import { useEffect, useState } from 'react';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
-import { PebbleStackMascot } from '@/components/icons/PebbleStackMascot';
 
 
 export default function OnboardingAlmostTherePage() {
@@ -19,7 +18,7 @@ export default function OnboardingAlmostTherePage() {
   const [isNavigating, setIsNavigating] = useState(false);
 
   // Define total steps in your onboarding flow
-  const totalOnboardingSteps = 6;
+  const totalOnboardingSteps = 5;
   // This page is roughly step 4
   const currentStep = 4;
 
@@ -61,7 +60,6 @@ export default function OnboardingAlmostTherePage() {
         <div className="relative z-10 flex flex-col items-center max-w-md w-full">
             <OnboardingHeader />
             
-            <PebbleStackMascot className="h-48 w-48" />
 
             <div className="w-full mt-6 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
                 <Progress value={progress} className="w-full h-3" />
