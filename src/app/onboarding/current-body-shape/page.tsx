@@ -21,8 +21,9 @@ import { Progress } from '@/components/ui/progress';
 
 
 const currentBodyShapeSchema = z.object({
-  currentBodyShape: z.string().min(1, { message: "Please select your current body shape" }),
+  currentBodyShape: z.string().optional(),
 });
+
 
 type CurrentBodyShapeFormValues = z.infer<typeof currentBodyShapeSchema>;
 
@@ -49,7 +50,6 @@ const bodyShapeOptions = [
   { value: "triangle", label: "Triangle", icon: TriangleIcon },
   { value: "round", label: "Round", icon: RoundIcon },
   { value: "rectangle", label: "Rectangle", icon: RectangleIcon },
-  { value: "prefer-not-to-say", label: "Prefer not to say", icon: HelpCircle },
 ];
 
 export default function CurrentBodyShapePage() {
@@ -95,13 +95,17 @@ export default function CurrentBodyShapePage() {
     }
     setIsSubmitting(true);
     try {
-      await createUserProfileDocument(user, { currentBodyShape: data.currentBodyShape });
+      if (data.currentBodyShape && data.currentBodyShape !== 'prefer-not-to-say') {
+        await createUserProfileDocument(user, { currentBodyShape: data.currentBodyShape });
+      } else {
+        await createUserProfileDocument(user, { currentBodyShape: 'not-provided' });
+      }
       router.push('/onboarding/almost-there');
     } catch (error) {
       console.error("Error saving current body shape:", error);
       toast({
         title: "Save Failed",
-        description: "Could not save your current body shape. Please try again.",
+        description: "Could not save your selection. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -145,6 +149,14 @@ export default function CurrentBodyShapePage() {
                         </Label>
                       );
                     })}
+                     <Label
+                        htmlFor="shape-prefer-not-to-say"
+                        className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card/80 backdrop-blur-sm p-4 h-32 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/10 cursor-pointer transition-all shadow-md"
+                      >
+                        <RadioGroupItem value="prefer-not-to-say" id="shape-prefer-not-to-say" className="sr-only" />
+                        <HelpCircle className="mb-2 h-10 w-10 opacity-70 text-foreground" />
+                        <span className="text-center font-semibold">Prefer not to say</span>
+                    </Label>
                   </RadioGroup>
                 )}
               />
@@ -162,6 +174,15 @@ export default function CurrentBodyShapePage() {
                   disabled={isSubmitting || authLoading}
                 >
                     {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
+                </Button>
+                <Button 
+                  type="button"
+                  variant="ghost"
+                  onClick={() => handleSubmit(onSubmit)()}
+                  className="text-muted-foreground hover:text-foreground"
+                  disabled={isSubmitting || authLoading}
+                >
+                  Skip for now
                 </Button>
               </div>
           </form>
