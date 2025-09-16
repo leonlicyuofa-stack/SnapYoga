@@ -91,12 +91,12 @@ export default function GenderProfilePage() {
         
         <div className="relative z-10 w-full max-w-sm flex flex-col items-center">
             <OnboardingHeader />
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full -mt-24">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full mt-[-4rem]">
               <div className="flex justify-around items-center pt-24">
                   <div 
                     className={cn(
                         "cursor-pointer p-4 rounded-2xl transition-all w-48 h-auto flex flex-col items-center justify-center space-y-2 bg-card/20",
-                        selectedGender === 'female' ? 'bg-white/50' : 'border-transparent'
+                        selectedGender === 'female' ? 'bg-white/50' : ''
                     )}
                     onClick={() => setValue('gender', 'female', { shouldValidate: true })}
                   >
@@ -106,7 +106,7 @@ export default function GenderProfilePage() {
                    <div 
                     className={cn(
                         "cursor-pointer p-4 rounded-2xl transition-all w-48 h-auto flex flex-col items-center justify-center space-y-2 bg-card/20",
-                        selectedGender === 'male' ? 'bg-white/50' : 'border-transparent'
+                        selectedGender === 'male' ? 'bg-white/50' : ''
                     )}
                     onClick={() => setValue('gender', 'male', { shouldValidate: true })}
                   >
@@ -116,9 +116,12 @@ export default function GenderProfilePage() {
               </div>
               {errors.gender && <p className="text-sm text-destructive text-center -mt-4">{errors.gender.message}</p>}
 
-              <div className="space-y-6 p-4 bg-card/20 rounded-2xl -mt-4">
-                <div className="flex justify-between items-center">
-                    <Label htmlFor="nickname" className="font-semibold text-base">Nickname</Label>
+              <div className="space-y-6 p-4 bg-card/20 rounded-2xl mt-[-1rem]">
+                <div className="flex justify-between items-start">
+                    <div>
+                        <Label htmlFor="nickname" className="font-semibold text-base">Nickname</Label>
+                        <p className="text-xs italic text-muted-foreground mt-2">required</p>
+                    </div>
                     <Input
                         id="nickname"
                         {...register("nickname")}
@@ -126,10 +129,12 @@ export default function GenderProfilePage() {
                         placeholder="e.g. Chahua"
                     />
                 </div>
-                 {errors.nickname && <p className="text-sm text-destructive text-right -mt-4">{errors.nickname.message}</p>}
 
-                 <div className="flex justify-between items-center w-full">
-                    <Label className="font-semibold text-base">Age</Label>
+                 <div className="flex justify-between items-start w-full">
+                    <div>
+                        <Label className="font-semibold text-base">Age</Label>
+                        <p className="text-xs italic text-muted-foreground mt-2">required</p>
+                    </div>
                     <Controller
                         name="age"
                         control={control}
@@ -149,7 +154,6 @@ export default function GenderProfilePage() {
                         )}
                     />
                 </div>
-                {errors.age && <p className="text-sm text-destructive text-right -mt-4">{errors.age.message}</p>}
               </div>
 
               <div className="flex justify-center">
