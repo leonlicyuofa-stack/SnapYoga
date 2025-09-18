@@ -42,44 +42,30 @@ const BodyFigure = ({ selectedParts, onPartToggle }: { selectedParts: string[]; 
 
   const partClasses = (partId: string) => cn(
     "cursor-pointer transition-all duration-200 ease-in-out",
-    "stroke-background stroke-2",
+    "stroke-black stroke-[10]", // Use a thicker stroke for the sketch-like feel
+    "stroke-linejoin-round stroke-linecap-round",
     isSelected(partId)
-      ? "fill-accent hover:fill-accent/80"
+      ? "fill-accent"
       : "fill-muted-foreground/20 hover:fill-accent/70"
   );
   
   return (
     <div className="flex justify-center items-center py-4">
-      <svg width="150" height="300" viewBox="0 0 150 300" xmlns="http://www.w3.org/2000/svg" aria-label="Interactive body figure for selecting focus areas">
-        {/* Head (non-interactive) */}
-        <circle cx="75" cy="40" r="20" fill="hsl(var(--muted))" />
-        {/* Neck (non-interactive) */}
-        <rect x="68" y="60" width="14" height="15" rx="4" fill="hsl(var(--muted))" />
-
-        {/* Shoulders */}
-        <path d="M45,75 h60 v15 h-60 z" rx="5" className={partClasses('shoulders')} onClick={() => onPartToggle('shoulders')}><title>Shoulders</title></path>
-        
-        {/* Arms */}
-        <g onClick={() => onPartToggle('arms')} className="cursor-pointer" aria-label="Arms">
-          <title>Arms</title>
-          <path d="M25,80 l-10,80 h25 l-5,-80 z" className={partClasses('arms')} />
-          <path d="M125,80 l10,80 h-25 l5,-80 z" className={partClasses('arms')} />
-        </g>
-        
-        {/* Back (overlaying torso) */}
-        <path d="M55,90 h40 v65 h-40 z" rx="5" className={partClasses('back')} onClick={() => onPartToggle('back')}><title>Back</title></path>
-        {/* Core */}
-        <path d="M50,90 h50 v65 h-50 z" rx="5" className={partClasses('core')} onClick={() => onPartToggle('core')}><title>Core</title></path>
-
-        {/* Hips */}
-        <path d="M48,155 l-5,25 h64 l-5,-25 z" rx="5" className={partClasses('hips')} onClick={() => onPartToggle('hips')}><title>Hips</title></path>
-
-        {/* Legs */}
-        <g onClick={() => onPartToggle('legs')} className="cursor-pointer" aria-label="Legs">
-          <title>Legs</title>
-          <path d="M43,180 l-15,110 h32 l5,-110 z" className={partClasses('legs')} />
-          <path d="M107,180 l15,110 h-32 l-5,-110 z" className={partClasses('legs')} />
-        </g>
+      <svg width="150" height="300" viewBox="0 0 200 350" xmlns="http://www.w3.org/2000/svg" aria-label="Interactive body figure for selecting focus areas">
+          {/* Non-interactive Face */}
+          <g fill="hsl(var(--foreground))" stroke="none">
+              <path d="M92 110 C 90 115, 92 117, 94 117" stroke="hsl(var(--foreground))" strokeWidth="3" strokeLinecap="round" />
+              <path d="M108 110 C 110 115, 108 117, 106 117" stroke="hsl(var(--foreground))" strokeWidth="3" strokeLinecap="round" />
+              <path d="M95 125 Q 100 130, 105 125" stroke="hsl(var(--foreground))" strokeWidth="3" fill="none" strokeLinecap="round" />
+          </g>
+          
+          {/* Interactive Body Parts */}
+          <g onClick={() => onPartToggle('shoulders')} className={partClasses('shoulders')}><title>Shoulders</title><path d="M100 140 Q 80 140, 70 120" fill="none" /><path d="M100 140 Q 120 140, 130 120" fill="none" /></g>
+          <g onClick={() => onPartToggle('arms')} className={partClasses('arms')}><title>Arms</title><path d="M130 120 V 50 L 100 30" fill="none" /><path d="M70 120 V 50 L 100 30" fill="none" /></g>
+          <g onClick={() => onPartToggle('back')} className={partClasses('back')}><title>Back</title><path d="M100 140 V 250" fill="none" /></g>
+          <g onClick={() => onPartToggle('core')} className={partClasses('core')}><title>Core</title><path d="M100 160 V 230" fill="none" /></g>
+          <g onClick={() => onPartToggle('hips')} className={partClasses('hips')}><title>Hips</title><path d="M100 250 C 80 250, 70 260, 70 260" fill="none" /></g>
+          <g onClick={() => onPartToggle('legs')} className={partClasses('legs')}><title>Legs</title><path d="M100 250 V 340" fill="none" /><path d="M70 260 L 100 280 V 300" fill="none"/></g>
       </svg>
     </div>
   );
