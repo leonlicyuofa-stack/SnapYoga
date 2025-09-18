@@ -4,7 +4,7 @@ import type { SVGProps } from 'react';
 export function HappyLifeGraphic(props: SVGProps<SVGSVGElement>) {
   return (
     <svg width="300" height="120" viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg" {...props}>
-      <g fontSize="14" fontWeight="bold" textAnchor="middle" fill="hsl(var(--foreground))" stroke="hsl(var(--foreground))">
+      <g fontSize="14" textAnchor="middle" fill="hsl(var(--foreground))" stroke="hsl(var(--foreground))">
 
         {/* Healthy Body -> Move with Purpose */}
         <g transform="translate(50, 50)">
