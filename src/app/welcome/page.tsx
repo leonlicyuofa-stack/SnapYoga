@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useRouter } from 'next/navigation';
@@ -36,7 +35,7 @@ export default function WelcomePage() {
     return (
         <AppShell>
             <div className="flex justify-center items-center min-h-screen">
-                <SmileyRockLoader text="Loading your session..." />
+                <SmileyRockLoader />
             </div>
         </AppShell>
     );
