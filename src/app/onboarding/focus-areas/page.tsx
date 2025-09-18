@@ -42,30 +42,31 @@ const BodyFigure = ({ selectedParts, onPartToggle }: { selectedParts: string[]; 
 
   const partClasses = (partId: string) => cn(
     "cursor-pointer transition-all duration-200 ease-in-out",
-    "stroke-black stroke-[10]", // Use a thicker stroke for the sketch-like feel
+    "stroke-black/50 stroke-[10]",
     "stroke-linejoin-round stroke-linecap-round",
     isSelected(partId)
-      ? "fill-accent"
-      : "fill-muted-foreground/20 hover:fill-accent/70"
+      ? "fill-accent stroke-accent"
+      : "fill-muted-foreground/20 hover:fill-accent/70 hover:stroke-accent/70"
   );
-  
+
   return (
     <div className="flex justify-center items-center py-4">
       <svg width="150" height="300" viewBox="0 0 200 350" xmlns="http://www.w3.org/2000/svg" aria-label="Interactive body figure for selecting focus areas">
-          {/* Non-interactive Face */}
-          <g fill="hsl(var(--foreground))" stroke="none">
-              <path d="M92 110 C 90 115, 92 117, 94 117" stroke="hsl(var(--foreground))" strokeWidth="3" strokeLinecap="round" />
-              <path d="M108 110 C 110 115, 108 117, 106 117" stroke="hsl(var(--foreground))" strokeWidth="3" strokeLinecap="round" />
-              <path d="M95 125 Q 100 130, 105 125" stroke="hsl(var(--foreground))" strokeWidth="3" fill="none" strokeLinecap="round" />
-          </g>
-          
-          {/* Interactive Body Parts */}
-          <g onClick={() => onPartToggle('shoulders')} className={partClasses('shoulders')}><title>Shoulders</title><path d="M100 140 Q 80 140, 70 120" fill="none" /><path d="M100 140 Q 120 140, 130 120" fill="none" /></g>
-          <g onClick={() => onPartToggle('arms')} className={partClasses('arms')}><title>Arms</title><path d="M130 120 V 50 L 100 30" fill="none" /><path d="M70 120 V 50 L 100 30" fill="none" /></g>
-          <g onClick={() => onPartToggle('back')} className={partClasses('back')}><title>Back</title><path d="M100 140 V 250" fill="none" /></g>
-          <g onClick={() => onPartToggle('core')} className={partClasses('core')}><title>Core</title><path d="M100 160 V 230" fill="none" /></g>
-          <g onClick={() => onPartToggle('hips')} className={partClasses('hips')}><title>Hips</title><path d="M100 250 C 80 250, 70 260, 70 260" fill="none" /></g>
-          <g onClick={() => onPartToggle('legs')} className={partClasses('legs')}><title>Legs</title><path d="M100 250 V 340" fill="none" /><path d="M70 260 L 100 280 V 300" fill="none"/></g>
+        {/* Non-interactive Head */}
+        <g fill="hsl(var(--foreground))" opacity="0.6">
+          <circle cx="100" cy="65" r="20" fill="hsl(var(--muted))" />
+          <path d="M90 62 C 92 60, 96 60, 98 62" stroke="hsl(var(--foreground))" strokeWidth="1.5" fill="none" />
+          <path d="M110 62 C 112 60, 116 60, 118 62" stroke="hsl(var(--foreground))" strokeWidth="1.5" fill="none" />
+          <path d="M100 75 Q 105 80, 110 75" stroke="hsl(var(--foreground))" strokeWidth="1.5" fill="none" />
+        </g>
+        
+        {/* Interactive Body Parts */}
+        <g onClick={() => onPartToggle('back')} className={partClasses('back')}><title>Back</title><path d="M100 85 V 200" fill="none" /></g>
+        <g onClick={() => onPartToggle('shoulders')} className={partClasses('shoulders')}><title>Shoulders</title><path d="M100 110 C 80 110, 70 90, 70 90 M100 110 C 120 110, 130 90, 130 90" fill="none" /></g>
+        <g onClick={() => onPartToggle('arms')} className={partClasses('arms')}><title>Arms</title><path d="M70 90 L 40 180 M130 90 L 160 180" fill="none" /></g>
+        <g onClick={() => onPartToggle('core')} className={partClasses('core')}><title>Core</title><path d="M100 120 V 180" fill="none" strokeWidth="20" /></g>
+        <g onClick={() => onPartToggle('hips')} className={partClasses('hips')}><title>Hips</title><path d="M100 200 C 80 200, 70 210, 70 210 M100 200 C 120 200, 130 210, 130 210" fill="none" /></g>
+        <g onClick={() => onPartToggle('legs')} className={partClasses('legs')}><title>Legs</title><path d="M70 210 L 80 320 M130 210 L 120 320" fill="none" /></g>
       </svg>
     </div>
   );
