@@ -35,6 +35,93 @@ const physicalBodyParts = [
   { id: "back", label: "Back" },
 ];
 
+// Interactive SVG Body Figure Component
+const BodyFigure = ({ selectedParts, onPartToggle }: { selectedParts: string[], onPartToggle: (part: string) => void }) => {
+    
+    const bodyPartsConfig = {
+        back: {
+            path: "M 80 145 L 80 200 L 120 200 L 120 145 Z",
+            labelPos: { x: 100, y: 172.5 }
+        },
+        shoulders: {
+            path: "M 75,130 C 70,125 70,115 75,110 L 125,110 C 130,115 130,125 125,130 Z",
+            labelPos: { x: 100, y: 120 }
+        },
+        arms: {
+            path: "M 50 115 L 70 115 L 70 210 L 50 210 Z M 130 115 L 150 115 L 150 210 L 130 210 Z",
+            labelPos: { x: 60, y: 162.5 }
+        },
+        core: {
+            path: "M 80 145 L 120 145 L 120 200 L 80 200", // This is part of the back, for selection logic
+            labelPos: { x: 100, y: 172.5 }
+        },
+        hips: {
+            path: "M 80 200 L 120 200 L 120 230 L 80 230 Z",
+            labelPos: { x: 100, y: 215 }
+        },
+        legs: {
+            path: "M 80 230 L 120 230 L 120 300 L 80 300 Z", // Simplified
+            labelPos: { x: 100, y: 265 }
+        }
+    };
+
+
+    return (
+        <div className="flex justify-center items-start gap-4">
+             <svg width="150" height="300" viewBox="0 0 200 350" xmlns="http://www.w3.org/2000/svg" aria-label="Interactive body figure for selecting focus areas">
+                <g strokeWidth="2" className="text-foreground/80">
+                     {/* Head - Not interactive */}
+                    <circle cx="100" cy="80" r="25" fill="hsl(var(--muted))" stroke="none" />
+                    
+                    {Object.entries(bodyPartsConfig).map(([part, config]) => {
+                        const isSelected = selectedParts.includes(part);
+                        return (
+                            <g
+                                key={part}
+                                data-part={part}
+                                onClick={() => onPartToggle(part)}
+                                className={cn(
+                                    "cursor-pointer transition-all duration-200",
+                                    isSelected ? "text-primary" : "text-muted-foreground"
+                                )}
+                            >
+                                <path
+                                    d={config.path}
+                                    strokeDasharray={isSelected ? "none" : "4 4"}
+                                    className={cn(
+                                        "stroke-current",
+                                        isSelected ? "fill-primary/20 stroke-2" : "fill-muted-foreground/20 stroke-1"
+                                    )}
+                                />
+                                {part !== 'arms' &&
+                                  <text
+                                    x={config.labelPos.x}
+                                    y={config.labelPos.y}
+                                    textAnchor="middle"
+                                    alignmentBaseline="middle"
+                                    className={cn(
+                                        "text-sm font-semibold pointer-events-none",
+                                        isSelected ? "fill-primary" : "fill-muted-foreground"
+                                    )}
+                                  >
+                                    {part.charAt(0).toUpperCase() + part.slice(1)}
+                                  </text>
+                                }
+                                {part === 'arms' &&
+                                <>
+                                 <text x={60} y={162.5} textAnchor="middle" alignmentBaseline="middle" className={cn( "text-sm font-semibold pointer-events-none", isSelected ? "fill-primary" : "fill-muted-foreground" )}>Arm</text>
+                                 <text x={140} y={162.5} textAnchor="middle" alignmentBaseline="middle" className={cn( "text-sm font-semibold pointer-events-none", isSelected ? "fill-primary" : "fill-muted-foreground" )}>Arm</text>
+                                </>
+                                }
+                            </g>
+                        );
+                    })}
+                </g>
+            </svg>
+        </div>
+    );
+};
+
 
 export default function FocusAreasPage() {
   const { user, loading: authLoading } = useAuth();
@@ -114,35 +201,7 @@ export default function FocusAreasPage() {
           
           <div className="bg-card/50 backdrop-blur-sm p-4 rounded-lg w-full">
              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <Controller
-                name="focusBodyParts"
-                control={control}
-                render={({ field }) => (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                    {physicalBodyParts.map((item) => (
-                      <div key={item.id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={item.id}
-                          checked={field.value?.includes(item.id)}
-                          onCheckedChange={(checked) => {
-                            const currentValue = field.value || [];
-                            const updatedValue = checked
-                              ? [...currentValue, item.id]
-                              : currentValue.filter((value) => value !== item.id);
-                            field.onChange(updatedValue);
-                          }}
-                        />
-                        <Label
-                          htmlFor={item.id}
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          {item.label}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              />
+               <BodyFigure selectedParts={selectedParts} onPartToggle={handlePartToggle} />
               
               {selectedParts.length > 0 && (
                 <div className="space-y-2">
