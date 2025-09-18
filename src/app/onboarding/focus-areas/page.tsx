@@ -46,7 +46,7 @@ const BodyFigure = ({ selectedParts, onPartToggle }: { selectedParts: string[]; 
     "stroke-linejoin-round stroke-linecap-round",
     isSelected(partId)
       ? "fill-accent stroke-accent"
-      : "fill-muted-foreground/20 hover:fill-accent/70 hover:stroke-accent/70"
+      : "fill-none hover:fill-accent/70 hover:stroke-accent/70"
   );
 
   return (
@@ -61,12 +61,12 @@ const BodyFigure = ({ selectedParts, onPartToggle }: { selectedParts: string[]; 
         </g>
         
         {/* Interactive Body Parts */}
-        <g onClick={() => onPartToggle('back')} className={partClasses('back')}><title>Back</title><path d="M100 85 V 200" fill="none" /></g>
-        <g onClick={() => onPartToggle('shoulders')} className={partClasses('shoulders')}><title>Shoulders</title><path d="M100 110 C 80 110, 70 90, 70 90 M100 110 C 120 110, 130 90, 130 90" fill="none" /></g>
-        <g onClick={() => onPartToggle('arms')} className={partClasses('arms')}><title>Arms</title><path d="M70 90 L 40 180 M130 90 L 160 180" fill="none" /></g>
-        <g onClick={() => onPartToggle('core')} className={partClasses('core')}><title>Core</title><path d="M100 120 V 180" fill="none" strokeWidth="20" /></g>
-        <g onClick={() => onPartToggle('hips')} className={partClasses('hips')}><title>Hips</title><path d="M100 200 C 80 200, 70 210, 70 210 M100 200 C 120 200, 130 210, 130 210" fill="none" /></g>
-        <g onClick={() => onPartToggle('legs')} className={partClasses('legs')}><title>Legs</title><path d="M70 210 L 80 320 M130 210 L 120 320" fill="none" /></g>
+        <g onClick={() => onPartToggle('back')} className={partClasses('back')}><title>Back</title><path d="M100 85 V 200" /></g>
+        <g onClick={() => onPartToggle('shoulders')} className={partClasses('shoulders')}><title>Shoulders</title><path d="M100 110 C 80 110, 70 90, 70 90 M100 110 C 120 110, 130 90, 130 90" /></g>
+        <g onClick={() => onPartToggle('arms')} className={partClasses('arms')}><title>Arms</title><path d="M70 90 L 40 180 M130 90 L 160 180" /></g>
+        <g onClick={() => onPartToggle('core')} className={partClasses('core')}><title>Core</title><path d="M100 120 V 180" strokeWidth="20" /></g>
+        <g onClick={() => onPartToggle('hips')} className={partClasses('hips')}><title>Hips</title><path d="M100 200 C 80 200, 70 210, 70 210 M100 200 C 120 200, 130 210, 130 210" /></g>
+        <g onClick={() => onPartToggle('legs')} className={partClasses('legs')}><title>Legs</title><path d="M70 210 L 80 320 M130 210 L 120 320" /></g>
       </svg>
     </div>
   );
