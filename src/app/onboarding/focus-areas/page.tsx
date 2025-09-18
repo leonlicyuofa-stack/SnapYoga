@@ -36,43 +36,6 @@ const physicalBodyParts = [
 ];
 
 
-// Interactive Body Figure Component
-const BodyFigure = ({ selectedParts, onPartToggle }: { selectedParts: string[]; onPartToggle: (partId: string) => void }) => {
-  const isSelected = (partId: string) => selectedParts.includes(partId);
-
-  const partClasses = (partId: string) => cn(
-    "cursor-pointer transition-all duration-200 ease-in-out",
-    "stroke-black/50 stroke-[10]",
-    "stroke-linejoin-round stroke-linecap-round",
-    isSelected(partId)
-      ? "fill-accent stroke-accent"
-      : "fill-none hover:fill-accent/70 hover:stroke-accent/70"
-  );
-
-  return (
-    <div className="flex justify-center items-center py-4">
-      <svg width="150" height="300" viewBox="0 0 200 350" xmlns="http://www.w3.org/2000/svg" aria-label="Interactive body figure for selecting focus areas">
-        {/* Non-interactive Head */}
-        <g fill="hsl(var(--foreground))" opacity="0.6">
-          <circle cx="100" cy="65" r="20" fill="hsl(var(--muted))" />
-          <path d="M90 62 C 92 60, 96 60, 98 62" stroke="hsl(var(--foreground))" strokeWidth="1.5" fill="none" />
-          <path d="M110 62 C 112 60, 116 60, 118 62" stroke="hsl(var(--foreground))" strokeWidth="1.5" fill="none" />
-          <path d="M100 75 Q 105 80, 110 75" stroke="hsl(var(--foreground))" strokeWidth="1.5" fill="none" />
-        </g>
-        
-        {/* Interactive Body Parts */}
-        <g onClick={() => onPartToggle('back')} className={partClasses('back')}><title>Back</title><path d="M100 85 V 200" /></g>
-        <g onClick={() => onPartToggle('shoulders')} className={partClasses('shoulders')}><title>Shoulders</title><path d="M100 110 C 80 110, 70 90, 70 90 M100 110 C 120 110, 130 90, 130 90" /></g>
-        <g onClick={() => onPartToggle('arms')} className={partClasses('arms')}><title>Arms</title><path d="M70 90 L 40 180 M130 90 L 160 180" /></g>
-        <g onClick={() => onPartToggle('core')} className={partClasses('core')}><title>Core</title><path d="M100 120 V 180" strokeWidth="20" /></g>
-        <g onClick={() => onPartToggle('hips')} className={partClasses('hips')}><title>Hips</title><path d="M100 200 C 80 200, 70 210, 70 210 M100 200 C 120 200, 130 210, 130 210" /></g>
-        <g onClick={() => onPartToggle('legs')} className={partClasses('legs')}><title>Legs</title><path d="M70 210 L 80 320 M130 210 L 120 320" /></g>
-      </svg>
-    </div>
-  );
-};
-
-
 export default function FocusAreasPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -151,7 +114,35 @@ export default function FocusAreasPage() {
           
           <div className="bg-card/50 backdrop-blur-sm p-4 rounded-lg w-full">
              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <BodyFigure selectedParts={selectedParts} onPartToggle={handlePartToggle} />
+              <Controller
+                name="focusBodyParts"
+                control={control}
+                render={({ field }) => (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {physicalBodyParts.map((item) => (
+                      <div key={item.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={item.id}
+                          checked={field.value?.includes(item.id)}
+                          onCheckedChange={(checked) => {
+                            const currentValue = field.value || [];
+                            const updatedValue = checked
+                              ? [...currentValue, item.id]
+                              : currentValue.filter((value) => value !== item.id);
+                            field.onChange(updatedValue);
+                          }}
+                        />
+                        <Label
+                          htmlFor={item.id}
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          {item.label}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              />
               
               {selectedParts.length > 0 && (
                 <div className="space-y-2">
