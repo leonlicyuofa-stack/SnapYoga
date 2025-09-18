@@ -3,7 +3,7 @@
 
 import type { SVGProps } from 'react';
 import { cn } from '@/lib/utils';
-import { SmileyPebbleIcon } from '../icons/smiley-pebble-icon';
+import { YogaMatMascot } from '../icons/YogaMatMascot';
 
 
 interface SmileyRockLoaderProps {
@@ -25,7 +25,7 @@ export function SmileyRockLoader({ className, text }: SmileyRockLoaderProps) {
         <LoadingDot delay="0s" />
         <LoadingDot delay="0.1s" />
         <LoadingDot delay="0.2s" />
-        <SmileyPebbleIcon className="h-16 w-16" />
+        <YogaMatMascot className="h-16 w-16" />
         <LoadingDot delay="0s" />
         <LoadingDot delay="0.1s" />
         <LoadingDot delay="0.2s" />
