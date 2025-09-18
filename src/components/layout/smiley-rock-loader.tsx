@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { SVGProps } from 'react';
@@ -24,7 +25,7 @@ export function SmileyRockLoader({ className, text }: SmileyRockLoaderProps) {
         <LoadingDot delay="0s" />
         <LoadingDot delay="0.1s" />
         <LoadingDot delay="0.2s" />
-        <SmileyPebbleIcon className="h-8 w-8" />
+        <SmileyPebbleIcon className="h-16 w-16" />
         <LoadingDot delay="0s" />
         <LoadingDot delay="0.1s" />
         <LoadingDot delay="0.2s" />
