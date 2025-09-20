@@ -68,10 +68,10 @@ const BodyFigure = ({ selectedParts, onPartToggle }: { selectedParts: string[], 
 
     return (
         <div className="flex justify-center items-start gap-4">
-             <svg width="150" height="300" viewBox="0 0 200 350" xmlns="http://www.w3.org/2000/svg" aria-label="Interactive body figure for selecting focus areas">
+             <svg width="150" height="300" viewBox="0 70 200 250" xmlns="http://www.w3.org/2000/svg" aria-label="Interactive body figure for selecting focus areas">
                 <g strokeWidth="2" className="text-foreground/80">
                      {/* Head - Not interactive */}
-                    <circle cx="100" cy="80" r="25" fill="hsl(var(--muted))" stroke="none" />
+                    <circle cx="100" cy="80" r="15" fill="hsl(var(--muted))" stroke="none" />
                     
                     {Object.entries(bodyPartsConfig).map(([part, config]) => {
                         const isSelected = selectedParts.includes(part);
