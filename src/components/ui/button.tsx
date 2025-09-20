@@ -79,8 +79,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             )}
             style={{ width: `${progress}%` }}
           ></div>
-          <span className="relative z-10 text-primary-foreground/90 text-sm flex items-center justify-center">
-            Loading...
+          <span className="relative z-10 opacity-70 flex items-center justify-center">
+            {children}
           </span>
         </Comp>
       );
