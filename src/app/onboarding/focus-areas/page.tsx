@@ -39,29 +39,29 @@ const physicalBodyParts = [
 const BodyFigure = ({ selectedParts, onPartToggle }: { selectedParts: string[], onPartToggle: (part: string) => void }) => {
     
     const bodyPartsConfig = {
-        back: {
-            path: "M 80 145 L 80 200 L 120 200 L 120 145 Z",
-            labelPos: { x: 100, y: 172.5 }
-        },
         shoulders: {
-            path: "M 75,130 C 70,125 70,115 75,110 L 125,110 C 130,115 130,125 125,130 Z",
-            labelPos: { x: 100, y: 120 }
+            path: "M 70 125 C 60 125 60 115 70 115 L 130 115 C 140 115 140 125 130 125 Z",
+            labelPos: { x: 100, y: 118 }
         },
         arms: {
-            path: "M 75 120 L 75 50 L 55 50 L 55 120 Z M 125 120 L 125 190 L 145 190 L 145 120 Z",
-            labelPos: { x: 65, y: 85 }
+            path: "M 50 130 L 68 128 L 68 190 L 50 190 Z M 150 130 L 132 128 L 132 190 L 150 190 Z",
+            labelPos: { x: 58, y: 160 }
+        },
+        back: {
+            path: "M 70 130 L 130 130 L 130 190 L 70 190 Z",
+            labelPos: { x: 100, y: 160 }
         },
         core: {
-            path: "M 80 145 L 120 145 L 120 200 L 80 200", // This is part of the back, for selection logic
-            labelPos: { x: 100, y: 172.5 }
+            path: "M 75 135 L 125 135 L 125 185 L 75 185 Z",
+            labelPos: { x: 100, y: 160 }
         },
         hips: {
-            path: "M 80 200 L 120 200 L 120 230 L 80 230 Z",
-            labelPos: { x: 100, y: 215 }
+            path: "M 70 192 L 130 192 L 120 220 L 80 220 Z",
+            labelPos: { x: 100, y: 206 }
         },
         legs: {
-            path: "M 80 230 L 120 230 L 120 300 L 80 300 Z", // Simplified
-            labelPos: { x: 100, y: 265 }
+            path: "M 78 222 L 70 300 L 95 300 L 90 222 Z M 122 222 L 130 300 L 105 300 L 110 222 Z",
+            labelPos: { x: 100, y: 261 }
         }
     };
 
@@ -75,6 +75,36 @@ const BodyFigure = ({ selectedParts, onPartToggle }: { selectedParts: string[], 
                     
                     {Object.entries(bodyPartsConfig).map(([part, config]) => {
                         const isSelected = selectedParts.includes(part);
+                        // Hide core for selection, only toggle with back
+                        const partId = (part === 'back' && selectedParts.includes('core')) ? 'core' : part;
+                        const isPartSelected = selectedParts.includes(partId);
+
+                        // Special rendering for arms label
+                        if (part === 'arms') {
+                            return (
+                                <g
+                                    key={part}
+                                    data-part={part}
+                                    onClick={() => onPartToggle(part)}
+                                    className={cn(
+                                        "cursor-pointer transition-all duration-200",
+                                        isSelected ? "text-primary" : "text-muted-foreground"
+                                    )}
+                                >
+                                    <path
+                                        d={config.path}
+                                        strokeDasharray={isSelected ? "none" : "4 4"}
+                                        className={cn(
+                                            "stroke-current",
+                                            isSelected ? "fill-primary/20 stroke-2" : "fill-transparent stroke-1"
+                                        )}
+                                    />
+                                    <text x={58} y={160} textAnchor="middle" alignmentBaseline="middle" className={cn("text-sm font-semibold pointer-events-none", isSelected ? "fill-primary" : "fill-muted-foreground")}>Arm</text>
+                                    <text x={142} y={160} textAnchor="middle" alignmentBaseline="middle" className={cn("text-sm font-semibold pointer-events-none", isSelected ? "fill-primary" : "fill-muted-foreground")}>Arm</text>
+                                </g>
+                            )
+                        }
+                        
                         return (
                             <g
                                 key={part}
@@ -82,37 +112,30 @@ const BodyFigure = ({ selectedParts, onPartToggle }: { selectedParts: string[], 
                                 onClick={() => onPartToggle(part)}
                                 className={cn(
                                     "cursor-pointer transition-all duration-200",
-                                    isSelected ? "text-primary" : "text-muted-foreground"
+                                    isPartSelected ? "text-primary" : "text-muted-foreground"
                                 )}
                             >
                                 <path
                                     d={config.path}
-                                    strokeDasharray={isSelected ? "none" : "4 4"}
+                                    strokeDasharray={isPartSelected ? "none" : "4 4"}
                                     className={cn(
                                         "stroke-current",
-                                        isSelected ? "fill-primary/20 stroke-2" : "fill-none stroke-1"
+                                        isPartSelected ? "fill-primary/20 stroke-2" : "fill-transparent stroke-1",
+                                        part === 'core' && 'fill-primary/30'
                                     )}
                                 />
-                                {part !== 'arms' &&
-                                  <text
+                                <text
                                     x={config.labelPos.x}
                                     y={config.labelPos.y}
                                     textAnchor="middle"
                                     alignmentBaseline="middle"
                                     className={cn(
                                         "text-sm font-semibold pointer-events-none",
-                                        isSelected ? "fill-primary" : "fill-muted-foreground"
+                                        isPartSelected ? "fill-primary" : "fill-muted-foreground"
                                     )}
-                                  >
+                                >
                                     {part.charAt(0).toUpperCase() + part.slice(1)}
-                                  </text>
-                                }
-                                {part === 'arms' &&
-                                <>
-                                 <text x={65} y={85} textAnchor="middle" alignmentBaseline="middle" className={cn( "text-sm font-semibold pointer-events-none", isSelected ? "fill-primary" : "fill-muted-foreground" )}>Arm</text>
-                                 <text x={135} y={155} textAnchor="middle" alignmentBaseline="middle" className={cn( "text-sm font-semibold pointer-events-none", isSelected ? "fill-primary" : "fill-muted-foreground" )}>Arm</text>
-                                </>
-                                }
+                                </text>
                             </g>
                         );
                     })}
@@ -150,9 +173,23 @@ export default function FocusAreasPage() {
 
   const handlePartToggle = (partId: string) => {
     const currentSelection = selectedParts || [];
-    const newSelection = currentSelection.includes(partId)
-      ? currentSelection.filter(p => p !== partId)
-      : [...currentSelection, partId];
+    let newSelection = currentSelection;
+    
+    // Toggle 'back' and 'core' together
+    if (partId === 'back' || partId === 'core') {
+        const hasBack = currentSelection.includes('back');
+        const hasCore = currentSelection.includes('core');
+        if (hasBack || hasCore) {
+            newSelection = currentSelection.filter(p => p !== 'back' && p !== 'core');
+        } else {
+            newSelection = [...currentSelection, 'back', 'core'];
+        }
+    } else {
+        newSelection = currentSelection.includes(partId)
+          ? currentSelection.filter(p => p !== partId)
+          : [...currentSelection, partId];
+    }
+    
     setValue('focusBodyParts', newSelection, { shouldValidate: true });
   };
 
