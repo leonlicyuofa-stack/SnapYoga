@@ -113,21 +113,21 @@ export default function ProfileSummaryPage() {
     setFieldValue(null);
   };
   
-  const handleSave = async () => {
-    if (!user || editingField === null) return;
+  const handleSave = async (fieldName: string | null, value: any) => {
+    if (!user || fieldName === null) return;
     
     setIsSaving(true);
     try {
-        await createUserProfileDocument(user, { [editingField]: fieldValue });
+        await createUserProfileDocument(user, { [fieldName]: value });
 
         // Special handling for displayName as it exists in Auth and Firestore
-        if (editingField === 'displayName') {
-            await updateUserDisplayName(fieldValue);
+        if (fieldName === 'displayName') {
+            await updateUserDisplayName(value);
         }
 
         toast({
             title: "Profile Updated",
-            description: `${editingField.charAt(0).toUpperCase() + editingField.slice(1)} has been successfully updated.`,
+            description: `${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)} has been successfully updated.`,
         });
         
         // Refetch data to show the latest state
@@ -141,14 +141,21 @@ export default function ProfileSummaryPage() {
         setIsSaving(false);
     }
   };
+
+  const handleFieldChange = (value: any) => {
+    setFieldValue(value);
+    if (editingField) {
+      handleSave(editingField, value);
+    }
+  }
   
   const renderEditComponent = (fieldName: string) => {
     switch(fieldName) {
       case 'displayName':
-        return <Input value={fieldValue} onChange={(e) => setFieldValue(e.target.value)} className="max-w-xs" />;
+        return <Input value={fieldValue} onChange={(e) => setFieldValue(e.target.value)} onBlur={() => handleSave(fieldName, fieldValue)} className="max-w-xs" />;
       case 'gender':
         return (
-          <Select value={fieldValue} onValueChange={setFieldValue}>
+          <Select value={fieldValue} onValueChange={handleFieldChange}>
             <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="male">Male</SelectItem>
@@ -158,7 +165,7 @@ export default function ProfileSummaryPage() {
         );
       case 'age':
          return (
-            <Select value={fieldValue.toString()} onValueChange={(val) => setFieldValue(parseInt(val, 10))}>
+            <Select value={fieldValue.toString()} onValueChange={(val) => handleFieldChange(parseInt(val, 10))}>
                 <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
                 <SelectContent>
                     {ageOptions.map(age => <SelectItem key={age} value={age}>{age}</SelectItem>)}
@@ -167,7 +174,7 @@ export default function ProfileSummaryPage() {
         );
       case 'mainGoal':
         return (
-            <Select value={fieldValue} onValueChange={setFieldValue}>
+            <Select value={fieldValue} onValueChange={handleFieldChange}>
                 <SelectTrigger className="w-full sm:w-[240px]"><SelectValue placeholder="Select a goal" /></SelectTrigger>
                 <SelectContent>
                     {mainGoalOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
@@ -185,6 +192,7 @@ export default function ProfileSummaryPage() {
                                 const current = fieldValue || [];
                                 const newValue = checked ? [...current, opt.id] : current.filter((p: string) => p !== opt.id);
                                 setFieldValue(newValue);
+                                handleSave(fieldName, newValue);
                             }}
                         />
                         {opt.label}
@@ -194,7 +202,7 @@ export default function ProfileSummaryPage() {
         );
        case 'currentBodyShape':
         return (
-            <Select value={fieldValue} onValueChange={setFieldValue}>
+            <Select value={fieldValue} onValueChange={handleFieldChange}>
                 <SelectTrigger className="w-full sm:w-[240px]"><SelectValue placeholder="Select a shape" /></SelectTrigger>
                 <SelectContent>
                     {bodyShapeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
@@ -237,16 +245,6 @@ export default function ProfileSummaryPage() {
           {isCurrentlyEditing ? (
             <div className="flex-grow space-y-2">
                 {renderEditComponent(fieldName)}
-                <div className="flex items-center gap-2">
-                    <Button size="sm" onClick={handleSave} disabled={isSaving}>
-                        {isSaving ? <Loader2 className="animate-spin" /> : <Save className="h-4 w-4" />}
-                        <span className="ml-2">Save</span>
-                    </Button>
-                     <Button size="sm" variant="ghost" onClick={handleCancelEdit}>
-                        <X className="h-4 w-4" />
-                        <span className="ml-2">Cancel</span>
-                    </Button>
-                </div>
             </div>
           ) : (
             <>
@@ -319,5 +317,3 @@ export default function ProfileSummaryPage() {
     </AppShell>
   );
 }
-
-    
