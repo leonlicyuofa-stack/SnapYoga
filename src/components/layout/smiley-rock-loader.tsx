@@ -30,7 +30,6 @@ export function SmileyRockLoader({ className, text }: SmileyRockLoaderProps) {
         <LoadingDot delay="0.1s" />
         <LoadingDot delay="0.2s" />
       </div>
-      {text && <p className="text-sm text-muted-foreground">{text}</p>}
     </div>
   );
 }
