@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
-import { Ruler, Scale, ArrowRight, ArrowLeft, MoveUpRight } from 'lucide-react';
+import { Ruler, Scale, ArrowRight, ArrowLeft, MoveUpRight, Loader2 } from 'lucide-react';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 const measurementsSchema = z.object({
@@ -170,7 +170,7 @@ export default function MeasurementsPage() {
                 className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40" 
                 disabled={isSubmitting || authLoading || isNavigatingBack}
               >
-                  {isSubmitting ? <SmileyRockLoader /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
+                  {isSubmitting ? <Loader2 className="animate-spin" /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
               </Button>
             </div>
           </form>

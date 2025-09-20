@@ -7,7 +7,7 @@ import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { AppShell } from '@/components/layout/app-shell';
-import { CheckCircle, XCircle, Gift, ArrowRight, MoveUpRight } from 'lucide-react';
+import { CheckCircle, XCircle, Gift, ArrowRight, MoveUpRight, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
@@ -117,7 +117,7 @@ export default function DrawResultPage() {
                     className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
                     disabled={isFinalizing}
                 >
-                    {isFinalizing ? <SmileyRockLoader /> : <><span>Go to Dashboard</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
+                    {isFinalizing ? <Loader2 className="animate-spin" /> : <><span>Go to Dashboard</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
                 </Button>
             </CardContent>
             <CardFooter>

@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
-import { ArrowRight, ArrowLeft, CheckCircle, MoveUpRight } from 'lucide-react';
+import { ArrowRight, ArrowLeft, CheckCircle, MoveUpRight, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { Progress } from '@/components/ui/progress';
@@ -176,7 +176,7 @@ export default function InterestedPosesPage() {
                   className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40" 
                   disabled={isSubmitting || authLoading}
                 >
-                    {isSubmitting ? <SmileyRockLoader /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
+                    {isSubmitting ? <Loader2 className="animate-spin" /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
                 </Button>
               </div>
             </form>
