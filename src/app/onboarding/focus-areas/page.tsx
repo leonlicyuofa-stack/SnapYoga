@@ -48,8 +48,8 @@ const BodyFigure = ({ selectedParts, onPartToggle }: { selectedParts: string[], 
             labelPos: { x: 100, y: 120 }
         },
         arms: {
-            path: "M 50 115 L 70 115 L 70 210 L 50 210 Z M 130 115 L 150 115 L 150 210 L 130 210 Z",
-            labelPos: { x: 60, y: 162.5 }
+            path: "M 75 120 L 75 50 L 55 50 L 55 120 Z M 125 120 L 125 190 L 145 190 L 145 120 Z",
+            labelPos: { x: 65, y: 85 }
         },
         core: {
             path: "M 80 145 L 120 145 L 120 200 L 80 200", // This is part of the back, for selection logic
@@ -90,7 +90,7 @@ const BodyFigure = ({ selectedParts, onPartToggle }: { selectedParts: string[], 
                                     strokeDasharray={isSelected ? "none" : "4 4"}
                                     className={cn(
                                         "stroke-current",
-                                        isSelected ? "fill-primary/20 stroke-2" : "fill-muted-foreground/20 stroke-1"
+                                        isSelected ? "fill-primary/20 stroke-2" : "fill-none stroke-1"
                                     )}
                                 />
                                 {part !== 'arms' &&
@@ -109,8 +109,8 @@ const BodyFigure = ({ selectedParts, onPartToggle }: { selectedParts: string[], 
                                 }
                                 {part === 'arms' &&
                                 <>
-                                 <text x={60} y={162.5} textAnchor="middle" alignmentBaseline="middle" className={cn( "text-sm font-semibold pointer-events-none", isSelected ? "fill-primary" : "fill-muted-foreground" )}>Arm</text>
-                                 <text x={140} y={162.5} textAnchor="middle" alignmentBaseline="middle" className={cn( "text-sm font-semibold pointer-events-none", isSelected ? "fill-primary" : "fill-muted-foreground" )}>Arm</text>
+                                 <text x={65} y={85} textAnchor="middle" alignmentBaseline="middle" className={cn( "text-sm font-semibold pointer-events-none", isSelected ? "fill-primary" : "fill-muted-foreground" )}>Arm</text>
+                                 <text x={135} y={155} textAnchor="middle" alignmentBaseline="middle" className={cn( "text-sm font-semibold pointer-events-none", isSelected ? "fill-primary" : "fill-muted-foreground" )}>Arm</text>
                                 </>
                                 }
                             </g>
