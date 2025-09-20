@@ -115,7 +115,7 @@ export default function GenderProfilePage() {
                   </div>
               </div>
               
-              <div className="space-y-6 p-4 bg-card/20 rounded-2xl -mt-4">
+              <div className="space-y-6 p-4 rounded-2xl -mt-4">
                 <div className="flex justify-between items-start">
                     <div>
                         <Label htmlFor="nickname" className="font-semibold text-base">Nickname</Label>
