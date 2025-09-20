@@ -23,7 +23,6 @@ import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHea
 
 const profileSchema = z.object({
   gender: z.string().min(1, { message: "Please select a gender" }),
-  nickname: z.string().min(2, { message: "Nickname must be at least 2 characters" }),
   age: z.string().refine(val => !isNaN(parseInt(val, 10)), {
       message: "Age is required"
   }),
@@ -40,10 +39,7 @@ export default function GenderProfilePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { control, register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileSchema),
-     defaultValues: {
-      nickname: "",
-    },
+    resolver: zodResolver(profileSchema)
   });
 
   const selectedGender = watch('gender');
@@ -69,7 +65,6 @@ export default function GenderProfilePage() {
       // We are using 'nickname' for the 'displayName' field in Firestore
       await createUserProfileDocument(user, { 
           gender: data.gender,
-          displayName: data.nickname,
           age: parseInt(data.age, 10),
       });
       router.push('/onboarding/yoga-goal');
@@ -116,19 +111,6 @@ export default function GenderProfilePage() {
               </div>
               
               <div className="space-y-6 p-4 rounded-2xl -mt-4">
-                <div className="flex justify-between items-start">
-                    <div>
-                        <Label htmlFor="nickname" className="font-semibold text-base">Nickname</Label>
-                        <p className="text-xs italic text-muted-foreground mt-2">required</p>
-                    </div>
-                    <Input
-                        id="nickname"
-                        {...register("nickname")}
-                        className="w-1/2 text-right border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent"
-                        placeholder="e.g. Chahua"
-                    />
-                </div>
-
                  <div className="flex justify-between items-start w-full">
                     <div>
                         <Label className="font-semibold text-base">Age</Label>
