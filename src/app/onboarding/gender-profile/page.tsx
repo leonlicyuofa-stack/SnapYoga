@@ -124,7 +124,7 @@ export default function GenderProfilePage() {
                     <Input
                         id="nickname"
                         {...register("nickname")}
-                        className="w-1/2 text-right border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className="w-1/2 text-right border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent"
                         placeholder="e.g. Chahua"
                     />
                 </div>
