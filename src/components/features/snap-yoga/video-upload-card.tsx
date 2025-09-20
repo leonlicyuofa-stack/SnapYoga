@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { ChangeEvent } from 'react';
@@ -6,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, UploadCloud } from 'lucide-react';
+import { UploadCloud } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 interface VideoUploadCardProps {
   onVideoUpload: (videoDataUri: string, fileName: string) => void;
@@ -94,7 +96,7 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
           aria-label="Analyze Pose"
         >
           {isLoading ? (
-            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+            <SmileyRockLoader />
           ) : (
             <UploadCloud className="mr-2 h-5 w-5" />
           )}

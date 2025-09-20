@@ -1,9 +1,10 @@
+
 "use client";
 
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { AppShell } from '@/components/layout/app-shell';
-import { MoveUpRight, Loader2 } from 'lucide-react';
+import { MoveUpRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { useEffect, useState } from 'react';
@@ -58,7 +59,7 @@ export default function WelcomePage() {
                     className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
                     disabled={isNavigating}
                 >
-                  {isNavigating ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Continue</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
+                  {isNavigating ? <SmileyRockLoader /> : <><span>Continue</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
                 </Button>
             </div>
         </div>

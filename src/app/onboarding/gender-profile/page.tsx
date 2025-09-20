@@ -13,13 +13,14 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
-import { Loader2, ArrowRight, ArrowLeft, CalendarIcon, MoveUpRight } from 'lucide-react';
+import { ArrowRight, ArrowLeft, CalendarIcon, MoveUpRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FemaleAvatar } from '@/components/icons/FemaleAvatar';
 import { MaleAvatar } from '@/components/icons/MaleAvatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 const profileSchema = z.object({
   gender: z.string().min(1, { message: "Please select a gender" }),
@@ -48,7 +49,7 @@ export default function GenderProfilePage() {
 
 
   if (authLoading) {
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div></AppShell>;
+    return <AppShell><div className="flex justify-center items-center min-h-screen"><SmileyRockLoader /></div></AppShell>;
   }
 
   if (!user && !authLoading) {
@@ -112,20 +113,20 @@ export default function GenderProfilePage() {
                   </div>
               </div>
               
-              <div className="space-y-6 p-4 rounded-2xl bg-card/20 -mt-4">
-                 <div className="flex justify-between items-start w-full">
-                    <div>
-                        <Label className="font-semibold text-base">Username</Label>
-                        <p className="text-xs italic text-muted-foreground mt-2">required</p>
-                    </div>
-                    <Input 
-                      id="username" 
-                      {...register("username")} 
-                      className="w-1/2 text-right border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent"
-                      placeholder="e.g. Chahua"
-                    />
-                 </div>
-                 {errors.username && <p className="text-sm text-destructive -mt-4 text-right">{errors.username.message}</p>}
+              <div className="space-y-6 bg-card/20 p-4 rounded-2xl">
+                <div className="flex justify-between items-start w-full">
+                  <div>
+                      <Label className="font-semibold text-base">Username</Label>
+                      <p className="text-xs italic text-muted-foreground mt-2">required</p>
+                  </div>
+                  <Input 
+                    id="username" 
+                    {...register("username")} 
+                    className="w-1/2 text-right border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent hover:bg-card/20"
+                    placeholder="e.g. Chahua"
+                  />
+                </div>
+                {errors.username && <p className="text-sm text-destructive -mt-4 text-right">{errors.username.message}</p>}
 
                  <div className="flex justify-between items-start w-full">
                     <div>
@@ -159,7 +160,7 @@ export default function GenderProfilePage() {
                   className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
                   disabled={isSubmitting || authLoading}
                 >
-                  {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
+                  {isSubmitting ? <SmileyRockLoader /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
                 </Button>
               </div>
             </form>

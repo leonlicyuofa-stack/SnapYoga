@@ -13,7 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
-import { Loader2, Crosshair, ArrowRight, ArrowLeft, MoveUpRight } from 'lucide-react';
+import { Crosshair, ArrowRight, ArrowLeft, MoveUpRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
@@ -160,7 +160,7 @@ export default function FocusAreasPage() {
       return (
           <AppShell>
               <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
-                  <SmileyRockLoader text="Loading..." />
+                  <SmileyRockLoader />
               </div>
           </AppShell>
       );
@@ -229,7 +229,7 @@ export default function FocusAreasPage() {
                   className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
                   disabled={isSubmitting || authLoading}
                 >
-                    {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
+                    {isSubmitting ? <SmileyRockLoader /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
                 </Button>
               </div>
             </form>

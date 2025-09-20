@@ -13,12 +13,13 @@ import { RecommendedVideosCard, type YouTubeVideo } from '@/components/features/
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Loader2, ArrowLeft, AlertCircle, FileText, YoutubeIcon, Share2, Copy } from 'lucide-react';
+import { ArrowLeft, AlertCircle, FileText, YoutubeIcon, Share2, Copy } from 'lucide-react';
 import type { AnalyzeYogaPoseOutput } from '@/ai/flows/analyze-yoga-pose';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 
 interface StoredAnalysisData {
@@ -141,18 +142,8 @@ export default function PastAnalysisPage() {
   if (authLoading || loadingData) {
     return (
       <AppShell>
-        <div className="container mx-auto px-4 py-12">
-          <Skeleton className="h-10 w-1/4 mb-8" />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            <div className="p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
-                <Skeleton className="h-8 w-3/4" /><Skeleton className="h-4 w-1/2 mt-2" />
-                <Skeleton className="aspect-video w-full rounded-md mt-4" /><Skeleton className="h-24 w-full mt-4" />
-            </div>
-            <div className="p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
-                <Skeleton className="h-8 w-3/4" /><Skeleton className="h-4 w-1/2 mt-2" />
-                <Skeleton className="h-40 w-full mt-4" />
-            </div>
-          </div>
+        <div className="container mx-auto px-4 py-12 flex items-center justify-center min-h-[calc(100vh-10rem)]">
+          <SmileyRockLoader />
         </div>
       </AppShell>
     );

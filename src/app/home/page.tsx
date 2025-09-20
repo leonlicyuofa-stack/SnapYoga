@@ -9,8 +9,9 @@ import { doc, getDoc, type DocumentData } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { MoveUpRight, Loader2 } from 'lucide-react';
+import { MoveUpRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 interface UserProfileData extends DocumentData {
   uid?: string;
@@ -110,7 +111,7 @@ export default function HomePage() {
                 aria-label={t('getStarted')}
                 disabled={isLoading}
             >
-                {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>{t('getStarted')}</span><MoveUpRight className="h-5 w-5 ml-2" /></>}
+                {isLoading ? <SmileyRockLoader /> : <><span>{t('getStarted')}</span><MoveUpRight className="h-5 w-5 ml-2" /></>}
             </Button>
         </div>
 

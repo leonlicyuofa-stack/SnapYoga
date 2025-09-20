@@ -7,9 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import type { SummarizeFeedbackOutput } from '@/ai/flows/summarize-feedback';
-import { Loader2, Send, MessageCircleQuestion, Sparkles } from 'lucide-react';
+import { Send, MessageCircleQuestion, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 interface FeedbackSubmissionCardProps {
   onFeedbackSubmit: (feedback: string) => void;
@@ -88,7 +89,7 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
           aria-label="Submit Feedback"
         >
           {isLoading ? (
-            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+            <SmileyRockLoader />
           ) : (
             <Send className="mr-2 h-5 w-5" />
           )}

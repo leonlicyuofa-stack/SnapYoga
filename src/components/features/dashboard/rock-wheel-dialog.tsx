@@ -4,8 +4,9 @@
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Loader2, Gift, RotateCw, X } from 'lucide-react';
+import { Gift, RotateCw, X } from 'lucide-react';
 import { allRocks, type Rock } from './rock-data';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 interface RockWheelDialogProps {
   isOpen: boolean;
@@ -107,7 +108,7 @@ export function RockWheelDialog({ isOpen, onClose, onReward }: RockWheelDialogPr
                 size="lg"
                 className="px-8 py-6 text-lg bg-accent hover:bg-accent/90 text-accent-foreground shadow-md w-full max-w-xs rounded-md"
             >
-                {isSpinning && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+                {isSpinning && <SmileyRockLoader />}
                 {hasSpun ? 'Spun!' : isSpinning ? 'Spinning...' : 'Spin the Wheel!'}
             </Button>
         </div>
@@ -135,5 +136,3 @@ export function RockWheelDialog({ isOpen, onClose, onReward }: RockWheelDialogPr
     </Dialog>
   );
 }
-
-    

@@ -13,7 +13,8 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
-import { Loader2, Ruler, Scale, ArrowRight, ArrowLeft, MoveUpRight } from 'lucide-react';
+import { Ruler, Scale, ArrowRight, ArrowLeft, MoveUpRight } from 'lucide-react';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 const measurementsSchema = z.object({
   height: z.preprocess(
@@ -49,7 +50,7 @@ export default function MeasurementsPage() {
   const weightUnit = watch('weightUnit');
 
   if (authLoading) {
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div></AppShell>;
+    return <AppShell><div className="flex justify-center items-center min-h-screen"><SmileyRockLoader /></div></AppShell>;
   }
 
   if (!user && !authLoading) {
@@ -169,7 +170,7 @@ export default function MeasurementsPage() {
                 className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40" 
                 disabled={isSubmitting || authLoading || isNavigatingBack}
               >
-                  {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
+                  {isSubmitting ? <SmileyRockLoader /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
               </Button>
             </div>
           </form>

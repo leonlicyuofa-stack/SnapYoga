@@ -5,7 +5,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowLeft, Link2, Copy, Mail, Share2, Search, Users, Send, Loader2, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Link2, Copy, Mail, Share2, Search, Users, Send, MessageSquare } from 'lucide-react';
 import { usePathname } from 'next/navigation'; 
 import { useToast } from '@/hooks/use-toast'; 
 import { Input } from '@/components/ui/input';
@@ -20,6 +20,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 
 interface UserProfile {
@@ -315,7 +316,7 @@ export default function HeadstandInvitePage() {
                       disabled={isSearching || sendingInvites}
                     />
                     <Button variant="outline" onClick={handleSearchFriends} disabled={!friendSearchQuery.trim() || isSearching || sendingInvites}>
-                      {isSearching ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
+                      {isSearching ? <SmileyRockLoader /> : <Search className="mr-2 h-4 w-4" />}
                        Search
                     </Button>
                   </div>
@@ -323,7 +324,7 @@ export default function HeadstandInvitePage() {
 
                 {isSearching && (
                   <div className="p-4 border border-dashed rounded-md bg-muted/50 min-h-[80px] flex items-center justify-center">
-                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                    <SmileyRockLoader />
                     <p className="ml-2 text-sm text-muted-foreground">Searching...</p>
                   </div>
                 )}
@@ -373,7 +374,7 @@ export default function HeadstandInvitePage() {
                   onClick={handleSendInvitations} 
                   disabled={selectedFriends.length === 0 || sendingInvites || !currentUser}
                 >
-                  {sendingInvites ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
+                  {sendingInvites ? <SmileyRockLoader /> : <Send className="mr-2 h-4 w-4" />}
                   {sendingInvites ? 'Sending...' : `Send In-App Invitations (${selectedFriends.length})`}
                 </Button>
               </div>

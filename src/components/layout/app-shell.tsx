@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogIn, LogOut, UserCircle, Loader2, Home, Settings, CalendarDays, Trophy, Languages, Sparkles, MoreHorizontal, Search, ArrowLeft } from 'lucide-react';
+import { LogIn, LogOut, UserCircle, Home, Settings, CalendarDays, Trophy, Languages, Sparkles, MoreHorizontal, Search, ArrowLeft } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +18,7 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { usePathname, useRouter } from 'next/navigation'; 
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { SmileyRockLoader } from './smiley-rock-loader';
 
 interface AppShellProps {
   children: ReactNode;

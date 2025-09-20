@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, KeyRound, Save, Share2, Copy, MessageSquare, UserCircle, Ruler } from 'lucide-react'; 
+import { KeyRound, Save, Share2, Copy, MessageSquare, UserCircle, Ruler } from 'lucide-react'; 
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { firestore } from '@/lib/firebase/clientApp';
@@ -20,6 +20,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { cn } from '@/lib/utils';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 
 const usernameChangeSchema = z.object({
@@ -166,7 +167,7 @@ export default function ProfilePage() {
   };
   
   if (authLoading && !user) {
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div></AppShell>;
+    return <AppShell><div className="flex justify-center items-center min-h-screen"><SmileyRockLoader /></div></AppShell>;
   }
 
   if (!user) {
@@ -205,7 +206,7 @@ export default function ProfilePage() {
                                         className={cn(usernameErrors.username ? "border-destructive" : "", "flex-grow")}
                                     />
                                     <Button type="submit" disabled={isUsernameSubmitting || authLoading}>
-                                        {isUsernameSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                                        {isUsernameSubmitting ? <SmileyRockLoader /> : <Save className="h-4 w-4" />}
                                     </Button>
                                 </div>
                                 {usernameErrors.username && <p className="text-sm text-destructive">{usernameErrors.username.message}</p>}
@@ -238,7 +239,7 @@ export default function ProfilePage() {
                             {passwordErrors.confirmNewPassword && <p className="text-sm text-destructive">{passwordErrors.confirmNewPassword.message}</p>}
                           </div>
                           <Button type="submit" className="w-full" disabled={isPasswordSubmitting || authLoading}>
-                            {isPasswordSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                            {isPasswordSubmitting ? <SmileyRockLoader /> : <Save className="mr-2 h-4 w-4" />}
                             {isPasswordSubmitting ? "Updating..." : "Update Password"}
                           </Button>
                         </form>
@@ -279,5 +280,3 @@ export default function ProfilePage() {
     </AppShell>
   );
 }
-
-    
