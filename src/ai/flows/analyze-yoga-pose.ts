@@ -89,13 +89,13 @@ const analyzeYogaPoseFlow = ai.defineFlow(
     if (!baseUrl) {
         throw new Error("ANALYSIS_SERVICE_URL environment variable is not set.");
     }
-    // Revert to simple string concatenation to isolate the issue to the env var.
-    const analysisServiceUrl = `${baseUrl.replace(/\/$/, '')}/analyze`;
+    
+    // Construct the URL safely
+    const analysisServiceUrl = new URL('/analyze', baseUrl).toString();
     
     console.log(`Calling analysis service at: ${analysisServiceUrl} for video: ${videoUrl}`);
 
     // Generate an identity token to authenticate to the private Cloud Run service.
-    // The audience for the token should be the base URL, not the full endpoint.
     const authToken = await getAuthToken(baseUrl);
 
     const response = await fetch(analysisServiceUrl, {
