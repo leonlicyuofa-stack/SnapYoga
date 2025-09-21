@@ -43,7 +43,7 @@ const AnalysisServiceRawOutputSchema = z.object({
     pose_distribution: z.record(z.number()),
     total_frames: z.number(),
   }),
-}).passthrough(); // Allow extra fields not defined in the schema
+});
 
 // This is the clean output format that the frontend components will use
 const AnalysisServiceOutputSchema = z.object({
