@@ -104,7 +104,7 @@ const analyzeYogaPoseFlow = ai.defineFlow(
             'Content-Type': 'application/json',
             'Authorization': authToken,
         },
-        body: JSON.stringify({ storage_url: videoUrl }),
+        body: JSON.stringify({ videoUrl: videoUrl }),
     });
 
     if (!response.ok) {
