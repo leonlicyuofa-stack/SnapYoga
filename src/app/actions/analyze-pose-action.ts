@@ -23,7 +23,7 @@ const AnalyzePoseInputSchema = z.object({
   userId: z.string().describe("The UID of the user uploading the video."),
 });
 
-export type AnalyzePoseInput = z.infer<typeof typeof AnalyzePoseInputSchema>;
+export type AnalyzePoseInput = z.infer<typeof AnalyzePoseInputSchema>;
 
 // Define the expected output from the analysis service
 const AnalysisServiceOutputSchema = z.object({
