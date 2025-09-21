@@ -49,11 +49,10 @@ const AnalysisServiceOutputSchema = z.object({
   feedback: z.string(),
   score: z.number(),
   identifiedPose: z.string(),
+  videoUrl: z.string(),
 });
 
-export type AnalysisServiceOutput = z.infer<typeof AnalysisServiceOutputSchema> & {
-    videoUrl: string;
-};
+export type AnalysisServiceOutput = z.infer<typeof AnalysisServiceOutputSchema>;
 
 
 // Helper to upload video to Firebase Storage
@@ -136,6 +135,7 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
   };
 
   // 5. Validate and return the simplified result
-  return AnalysisServiceOutputSchema.extend({ videoUrl: z.string() }).parse(finalResult);
+  return AnalysisServiceOutputSchema.parse(finalResult);
 }
+
 
