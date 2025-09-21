@@ -89,8 +89,8 @@ const analyzeYogaPoseFlow = ai.defineFlow(
     if (!baseUrl) {
         throw new Error("ANALYSIS_SERVICE_URL environment variable is not set.");
     }
-    // Ensure the full endpoint path is constructed correctly
-    const analysisServiceUrl = `${baseUrl.replace(/\/$/, '')}/analyze`;
+    // Use the URL constructor for robust path joining.
+    const analysisServiceUrl = new URL('/analyze', baseUrl).href;
     
     console.log(`Calling analysis service at: ${analysisServiceUrl} for video: ${videoUrl}`);
 
