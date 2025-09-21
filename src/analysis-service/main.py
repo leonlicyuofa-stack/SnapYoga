@@ -5,6 +5,7 @@
 
 from flask import Flask, request, jsonify
 import os
+import uuid
 
 app = Flask(__name__)
 
@@ -12,7 +13,7 @@ app = Flask(__name__)
 def analyze_video():
     """
     This endpoint receives a URL to a video, would perform analysis,
-    and returns feedback and a score.
+    and returns feedback and a score in the new detailed format.
     """
     data = request.get_json()
     video_url = data.get('videoUrl')
@@ -22,22 +23,41 @@ def analyze_video():
 
     print(f"Received request to analyze video: {video_url}")
 
-    # --- MOCK ANALYSIS ---
-    # In a real application, you would:
-    # 1. Download the video from the video_url.
-    # 2. Process it with OpenCV to extract frames.
-    # 3. Use MediaPipe Pose to detect landmarks on each frame.
-    # 4. Calculate angles and compare them to ideal pose models.
-    # 5. Generate feedback and a score based on the analysis.
-    # For this example, we'll just return a mock response.
+    # --- MOCK ANALYSIS (New Structure) ---
+    result_id = str(uuid.uuid4())
+    primary_pose = "Warrior II"
+    score = 87.5
+    grade = "B+"
 
     mock_analysis = {
-        "feedback": "This is mock feedback from the Python service. Your right knee looks great, but try to straighten your back more.",
-        "score": 85,
-        "identifiedPose": "Warrior II (Python-Validated)"
+        "message": "Analysis completed successfully",
+        "result_id": result_id,
+        "local_file": f"/app/local_results/{result_id}.json",
+        "download_url": f"/results/{result_id}/download",
+        "view_url": f"/results/{result_id}",
+        "landmarks_local_file": f"/app/local_results/{result_id}_landmarks.json",
+        "landmarks_view_url": f"/results/{result_id}/landmarks",
+        "landmarks_download_url": f"/results/{result_id}/landmarks/download",
+        "summary": {
+            "total_frames_analyzed": 180,
+            "primary_pose_detected": primary_pose,
+            "average_performance_score": score,
+            "performance_grade": grade
+        },
+        "overall_performance": {
+            "average_score": score,
+            "overall_grade": grade,
+            "primary_pose": primary_pose,
+            "pose_distribution": {
+                "Warrior II": 150,
+                "Mountain Pose": 30
+            },
+            "total_frames": 180
+        }
     }
 
-    print("Returning mock analysis.")
+
+    print("Returning mock analysis with new structure.")
     return jsonify(mock_analysis)
 
 if __name__ == "__main__":

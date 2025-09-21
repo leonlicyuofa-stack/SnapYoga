@@ -25,7 +25,26 @@ const AnalyzePoseInputSchema = z.object({
 
 export type AnalyzePoseInput = z.infer<typeof AnalyzePoseInputSchema>;
 
-// Define the expected output from the analysis service
+// Define the NEW expected output from the analysis service
+const AnalysisServiceRawOutputSchema = z.object({
+  message: z.string(),
+  result_id: z.string(),
+  summary: z.object({
+    total_frames_analyzed: z.number(),
+    primary_pose_detected: z.string(),
+    average_performance_score: z.number(),
+    performance_grade: z.string(),
+  }),
+  overall_performance: z.object({
+    average_score: z.number(),
+    overall_grade: z.string(),
+    primary_pose: z.string(),
+    pose_distribution: z.record(z.number()),
+    total_frames: z.number(),
+  }),
+});
+
+// This is the clean output format that the frontend components will use
 const AnalysisServiceOutputSchema = z.object({
   feedback: z.string(),
   score: z.number(),
@@ -100,13 +119,23 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
       throw new Error(`Analysis service failed with status ${response.status}: ${errorBody}`);
   }
 
-  const analysisResult = await response.json();
+  const rawAnalysisResult = await response.json();
   
-  // 3. Validate and return the combined result
+  // 3. Parse the new, complex structure
+  const parsedResult = AnalysisServiceRawOutputSchema.parse(rawAnalysisResult);
+
+  // 4. Transform the complex result into the simple format our app uses
+  const { summary } = parsedResult;
+  const feedback = `Analysis complete for ${summary.primary_pose_detected}. Your average performance score was ${summary.average_performance_score.toFixed(1)} with a grade of ${summary.performance_grade}. A total of ${summary.total_frames_analyzed} frames were analyzed.`;
+  
   const finalResult = {
-      ...analysisResult,
+      feedback: feedback,
+      score: summary.average_performance_score,
+      identifiedPose: summary.primary_pose_detected,
       videoUrl: videoUrl,
   };
 
+  // 5. Validate and return the simplified result
   return AnalysisServiceOutputSchema.extend({ videoUrl: z.string() }).parse(finalResult);
 }
+
