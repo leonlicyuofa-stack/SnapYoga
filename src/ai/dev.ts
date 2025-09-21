@@ -1,5 +1,7 @@
+
 import { config } from 'dotenv';
 config();
 
-import '@/ai/flows/analyze-yoga-pose.ts';
-// import '@/ai/flows/summarize-feedback.ts';
+// The analyze-yoga-pose flow is no longer used, so we can remove the import.
+// import '@/ai/flows/analyze-yoga-pose.ts';
+import '@/ai/flows/summarize-feedback.ts';

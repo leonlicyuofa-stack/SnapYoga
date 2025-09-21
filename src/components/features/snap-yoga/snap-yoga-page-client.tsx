@@ -1,7 +1,9 @@
+
 "use client";
 
-import { useState, useEffect } from 'react';
-import { analyzeYogaPose, type AnalyzeYogaPoseInput, type AnalyzeYogaPoseOutput } from '@/ai/flows/analyze-yoga-pose';
+import { useState } from 'react';
+// Import the new server action
+import { performPoseAnalysis, type AnalysisServiceOutput } from '@/app/actions/analyze-pose-action';
 import { summarizeFeedback, type SummarizeFeedbackInput, type SummarizeFeedbackOutput } from '@/ai/flows/summarize-feedback';
 import { VideoUploadCard } from './video-upload-card';
 import { PoseAnalysisCard } from './pose-analysis-card';
@@ -13,14 +15,14 @@ import { Terminal } from "lucide-react";
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
-import { collection, addDoc, serverTimestamp, doc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ActiveChallengesSnapshotCard } from './active-challenges-snapshot-card';
 
 export function SnapYogaPageClient() {
   const { user: currentUser } = useAuth();
   const [videoDataUri, setVideoDataUri] = useState<string | null>(null);
   const [videoFileName, setVideoFileName] = useState<string | null>(null);
-  const [analysisResult, setAnalysisResult] = useState<AnalyzeYogaPoseOutput | null>(null);
+  const [analysisResult, setAnalysisResult] = useState<AnalysisServiceOutput | null>(null);
   const [summaryResult, setSummaryResult] = useState<SummarizeFeedbackOutput | null>(null);
   const [recommendedVideos, setRecommendedVideos] = useState<YouTubeVideo[]>([]);
   
@@ -45,57 +47,55 @@ export function SnapYogaPageClient() {
     setVideoFileName(fileName);
     setAnalysisResult(null); 
     setSummaryResult(null); 
-    setRecommendedVideos([]); // Clear previous recommendations
+    setRecommendedVideos([]);
     setError(null);
     setIsLoadingAnalysis(true);
-    setIsLoadingRecommendations(true); // Start loading recommendations immediately
+    setIsLoadingRecommendations(true);
 
     try {
-      const input: AnalyzeYogaPoseInput = { 
+      // Call the new server action directly
+      const result = await performPoseAnalysis({ 
           videoDataUri: dataUri,
           userId: currentUser.uid,
-      };
+      });
       
-      const result = await analyzeYogaPose(input);
       setAnalysisResult(result);
       toast({
         title: "Analysis Complete",
         description: `Your yoga pose has been analyzed. Score: ${result.score !== undefined ? result.score + '/100' : 'N/A'}`,
       });
 
-      if (currentUser && result) {
-          try {
-            // Now we also save the public URL of the video
-            const analysisDataToSave = {
-              videoFileName: fileName,
-              feedback: result.feedback,
-              score: result.score,
-              identifiedPose: result.identifiedPose,
-              videoUrl: result.videoUrl, // Save the video URL for review
-              createdAt: serverTimestamp(),
-            };
-            const userAnalysesCollectionRef = collection(firestore, 'users', currentUser.uid, 'poseAnalyses');
-            await addDoc(userAnalysesCollectionRef, analysisDataToSave);
-            console.log("Analysis metadata saved successfully to Firestore.");
-            toast({
-              title: "Analysis Saved",
-              description: "Your pose analysis results have been saved to your profile.",
-            });
-          } catch (saveError: any) {
-            console.error("Error saving analysis to Firestore:", saveError);
-            toast({
-              title: "Firestore Save Error",
-              description: "Could not save your analysis results.",
-              variant: "destructive",
-            });
-          }
+      // Save the analysis result to Firestore
+      try {
+        const analysisDataToSave = {
+          videoFileName: fileName,
+          feedback: result.feedback,
+          score: result.score,
+          identifiedPose: result.identifiedPose,
+          videoUrl: result.videoUrl,
+          createdAt: serverTimestamp(),
+        };
+        const userAnalysesCollectionRef = collection(firestore, 'users', currentUser.uid, 'poseAnalyses');
+        await addDoc(userAnalysesCollectionRef, analysisDataToSave);
+        console.log("Analysis metadata saved successfully to Firestore.");
+        toast({
+          title: "Analysis Saved",
+          description: "Your pose analysis results have been saved to your profile.",
+        });
+      } catch (saveError: any) {
+        console.error("Error saving analysis to Firestore:", saveError);
+        toast({
+          title: "Firestore Save Error",
+          description: "Could not save your analysis results.",
+          variant: "destructive",
+        });
       }
 
-      // Simulate fetching recommended videos
+      // Simulate fetching recommended videos based on the result
       setTimeout(() => {
           setRecommendedVideos([
-            { id: 'vid1', title: 'Improve Your Warrior Pose Alignment', embedUrl: 'https://www.youtube.com/embed/tKAs69_N3aE' },
-            { id: 'vid2', title: '5 Tips for a Better Downward Dog', embedUrl: 'https://www.youtube.com/embed/jK0arm2R2gU' },
+            { id: 'vid1', title: `Tips for ${result.identifiedPose}`, embedUrl: 'https://www.youtube.com/embed/tKAs69_N3aE' },
+            { id: 'vid2', title: `Common Mistakes in ${result.identifiedPose}`, embedUrl: 'https://www.youtube.com/embed/jK0arm2R2gU' },
           ]);
           setIsLoadingRecommendations(false);
       }, 1500);
@@ -106,11 +106,12 @@ export function SnapYogaPageClient() {
       setError(`Failed to analyze pose: ${errorMessage}`);
       toast({
         title: "Analysis Failed",
-        description: `${errorMessage}${e.code ? ` (Code: ${e.code})` : ''}`,
+        description: `${errorMessage}`,
         variant: "destructive",
       });
+      // Set a failed state for the card to display
       setAnalysisResult({ feedback: "Analysis failed. Please try again.", score: 0, identifiedPose: "Unknown", videoUrl: "" });
-      setIsLoadingRecommendations(false); // Also stop loading recommendations on error
+      setIsLoadingRecommendations(false);
     } finally {
       setIsLoadingAnalysis(false);
     }
@@ -135,7 +136,7 @@ export function SnapYogaPageClient() {
       setError(`Failed to submit feedback: ${errorMessage}`);
       toast({
         title: "Feedback Submission Failed",
-        description: `${errorMessage}${e.code ? ` (Code: ${e.code})` : ''}`,
+        description: `${errorMessage}`,
         variant: "destructive",
       });
     } finally {
