@@ -29,15 +29,10 @@ def analyze_video():
     score = 87.5
     grade = "B+"
 
+    # This mock_analysis now ONLY contains the fields defined in the Zod schema.
     mock_analysis = {
         "message": "Analysis completed successfully",
         "result_id": result_id,
-        "local_file": f"/app/local_results/{result_id}.json",
-        "download_url": f"/results/{result_id}/download",
-        "view_url": f"/results/{result_id}",
-        "landmarks_local_file": f"/app/local_results/{result_id}_landmarks.json",
-        "landmarks_view_url": f"/results/{result_id}/landmarks",
-        "landmarks_download_url": f"/results/{result_id}/landmarks/download",
         "summary": {
             "total_frames_analyzed": 180,
             "primary_pose_detected": primary_pose,
