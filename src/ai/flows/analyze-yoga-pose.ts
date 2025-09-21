@@ -85,15 +85,18 @@ const analyzeYogaPoseFlow = ai.defineFlow(
     const videoUrl = await uploadVideoToStorage(input.videoDataUri, input.userId);
     
     // Step 2: Call the external Python service on Cloud Run
-    const analysisServiceUrl = process.env.ANALYSIS_SERVICE_URL;
-    if (!analysisServiceUrl) {
+    const baseUrl = process.env.ANALYSIS_SERVICE_URL;
+    if (!baseUrl) {
         throw new Error("ANALYSIS_SERVICE_URL environment variable is not set.");
     }
+    // Ensure the full endpoint path is constructed correctly
+    const analysisServiceUrl = `${baseUrl.replace(/\/$/, '')}/analyze`;
     
     console.log(`Calling analysis service at: ${analysisServiceUrl} for video: ${videoUrl}`);
 
     // Generate an identity token to authenticate to the private Cloud Run service.
-    const authToken = await getAuthToken(analysisServiceUrl);
+    // The audience for the token should be the base URL, not the full endpoint.
+    const authToken = await getAuthToken(baseUrl);
 
     const response = await fetch(analysisServiceUrl, {
         method: 'POST',
