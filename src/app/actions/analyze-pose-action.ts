@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -9,7 +10,8 @@
 import { z } from 'zod';
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
-import { app } from '@/lib/firebase/clientApp';
+import { app, firestore } from '@/lib/firebase/clientApp'; // Import firestore
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore'; // Import firestore functions
 import { GoogleAuth } from 'google-auth-library';
 
 // Define the schema for the action's input
@@ -41,7 +43,7 @@ const AnalysisServiceRawOutputSchema = z.object({
     pose_distribution: z.record(z.number()),
     total_frames: z.number(),
   }),
-}); // Removed .passthrough() for stricter validation
+});
 
 // This is the clean output format that the frontend components will use
 const AnalysisServiceOutputSchema = z.object({
@@ -73,9 +75,10 @@ async function uploadVideoToStorage(videoDataUri: string, userId: string): Promi
 export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<AnalysisServiceOutput> {
   // Validate input
   const validatedInput = AnalyzePoseInputSchema.parse(input);
+  const { userId, videoDataUri } = validatedInput;
 
   // 1. Upload video to Firebase Storage
-  const videoUrl = await uploadVideoToStorage(validatedInput.videoDataUri, validatedInput.userId);
+  const videoUrl = await uploadVideoToStorage(videoDataUri, userId);
   
   // 2. Call the external Python service on Cloud Run
   const baseUrl = process.env.ANALYSIS_SERVICE_URL;
@@ -95,13 +98,29 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
       body: JSON.stringify({ videoUrl: videoUrl }),
   });
 
+  const rawAnalysisResult = await response.json();
+  
+  // NEW: Save the raw JSON to Firestore for review
+  try {
+    const logCollectionRef = collection(firestore, 'users', userId, 'poseAnalysisRawLogs');
+    await addDoc(logCollectionRef, {
+      rawResponse: rawAnalysisResult,
+      videoUrl: videoUrl,
+      createdAt: serverTimestamp(),
+      isError: !response.ok,
+      responseStatus: response.status,
+    });
+    console.log("Successfully logged raw API response to Firestore.");
+  } catch (logError) {
+    console.error("Failed to log raw API response to Firestore:", logError);
+    // We don't throw here, as logging is a secondary concern.
+  }
+
   if (!response.ok) {
       const errorBody = await response.text();
       console.error("Error from analysis service:", errorBody);
       throw new Error(`Analysis service failed with status ${response.status}: ${errorBody}`);
   }
-
-  const rawAnalysisResult = await response.json();
   
   // 3. Parse the new, complex structure
   const parsedResult = AnalysisServiceRawOutputSchema.parse(rawAnalysisResult);
