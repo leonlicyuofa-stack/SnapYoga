@@ -8,7 +8,7 @@ import os
 
 app = Flask(__name__)
 
-@app.route('/analyze', methods=['POST'])
+@app.route('/analyze-video-comprehensive/', methods=['POST'])
 def analyze_video():
     """
     This endpoint receives a URL to a video, would perform analysis,

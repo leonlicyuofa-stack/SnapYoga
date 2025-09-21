@@ -91,7 +91,7 @@ const analyzeYogaPoseFlow = ai.defineFlow(
     }
     
     // Construct the URL safely
-    const analysisServiceUrl = new URL('/analyze', baseUrl).toString();
+    const analysisServiceUrl = new URL('/analyze-video-comprehensive/', baseUrl).toString();
     
     console.log(`Calling analysis service at: ${analysisServiceUrl} for video: ${videoUrl}`);
 
