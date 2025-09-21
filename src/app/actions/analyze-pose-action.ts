@@ -42,7 +42,7 @@ const AnalysisServiceRawOutputSchema = z.object({
     pose_distribution: z.record(z.number()),
     total_frames: z.number(),
   }),
-});
+}).passthrough(); // Allow other fields from the API response
 
 // This is the clean output format that the frontend components will use
 const AnalysisServiceOutputSchema = z.object({
@@ -66,18 +66,18 @@ async function uploadVideoToStorage(videoDataUri: string, userId: string): Promi
     return getDownloadURL(storageRef);
 }
 
-// Helper to get an auth token for Cloud Run
-async function getAuthToken(audience: string): Promise<string> {
-    const auth = new GoogleAuth({
-        scopes: 'https://www.googleapis.com/auth/cloud-platform'
-    });
-    const client = await auth.getIdTokenClient(audience);
-    const res = await client.getRequestHeaders();
-    if (!res.Authorization) {
-        throw new Error('Could not generate authorization token for Cloud Run service.');
-    }
-    return res.Authorization;
-}
+// Helper to get an auth token for Cloud Run - No longer needed as the service is public for now.
+// async function getAuthToken(audience: string): Promise<string> {
+//     const auth = new GoogleAuth({
+//         scopes: 'https://www.googleapis.com/auth/cloud-platform'
+//     });
+//     const client = await auth.getIdTokenClient(audience);
+//     const res = await client.getRequestHeaders();
+//     if (!res.Authorization) {
+//         throw new Error('Could not generate authorization token for Cloud Run service.');
+//     }
+//     return res.Authorization;
+// }
 
 /**
  * The main server action to analyze a yoga pose.
@@ -101,13 +101,14 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
   
   console.log(`Calling analysis service at: ${analysisServiceUrl} for video: ${videoUrl}`);
 
-  const authToken = await getAuthToken(baseUrl);
+  // If the service were private, we would generate a token like this.
+  // const authToken = await getAuthToken(baseUrl);
 
   const response = await fetch(analysisServiceUrl, {
       method: 'POST',
       headers: { 
           'Content-Type': 'application/json',
-          'Authorization': authToken,
+          // 'Authorization': authToken, // Not needed for a public service
       },
       body: JSON.stringify({ videoUrl: videoUrl }),
   });
@@ -137,7 +138,3 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
   // 5. Validate and return the simplified result
   return AnalysisServiceOutputSchema.parse(finalResult);
 }
-
-
-
-
