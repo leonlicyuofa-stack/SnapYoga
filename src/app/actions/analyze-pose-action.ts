@@ -58,7 +58,11 @@ export type AnalysisServiceOutput = z.infer<typeof AnalysisServiceOutputSchema>;
 
 // Helper to upload video to Firebase Storage
 async function uploadVideoToStorage(videoDataUri: string, userId: string): Promise<string> {
-    const storage = getStorage(app);
+    const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+    if (!storageBucket) {
+        throw new Error("Firebase Storage bucket name is not configured in environment variables.");
+    }
+    const storage = getStorage(app, storageBucket);
     const videoId = uuidv4();
     const mimeType = videoDataUri.match(/data:(.*);base64,/)?.[1] || 'video/mp4';
     const storageRef = ref(storage, `user-videos/${userId}/${videoId}.${mimeType.split('/')[1]}`);
@@ -105,10 +109,10 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
       response = await fetch(analysisServiceUrl, {
           method: 'POST',
           headers: {
+              ...headers,
               'Content-Type': 'application/json',
-              'Authorization': headers.Authorization,
           },
-          body: JSON.stringify({ videoUrl: videoUrl }),
+          body: JSON.stringify({ videoUrl }),
       });
 
       responseStatus = response.status;
