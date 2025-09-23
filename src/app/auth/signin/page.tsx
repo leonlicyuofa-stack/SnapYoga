@@ -59,10 +59,10 @@ export default function SignInPage() {
           <CardContent className="space-y-6">
              <div className="grid grid-cols-2 gap-4">
               <Button variant="outline" onClick={signInWithGoogle} disabled={isLoading} className="py-6 text-base h-auto">
-                {isLoading ? <SmileyRockLoader /> : <><GoogleIcon className="mr-2 h-5 w-5" /> {t('authGoogle')}</>}
+                <GoogleIcon className="mr-2 h-5 w-5" /> {t('authGoogle')}
               </Button>
               <Button variant="outline" onClick={signInWithApple} disabled={isLoading} className="py-6 text-base h-auto">
-                 {isLoading ? <SmileyRockLoader /> : <><AppleIcon className="mr-2 h-5 w-5" /> {t('authApple')}</>}
+                 <AppleIcon className="mr-2 h-5 w-5" /> {t('authApple')}
               </Button>
             </div>
             <div className="relative">
