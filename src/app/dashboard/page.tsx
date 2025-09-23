@@ -113,6 +113,11 @@ export default function DashboardPage() {
             title: "A Little Note for You",
             description: "Inhale the good vibes, exhale the drama.",
         });
+      } else if (mood.name === 'Happy') {
+        toast({
+            title: "Rise, stretch, breathe, smile — it's Yoga Day!",
+            description: `Your mood for today is set to: ${mood.emoji} ${mood.name}`,
+        });
       } else {
         toast({
             title: "Mood Saved!",
