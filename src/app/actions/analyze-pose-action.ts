@@ -57,14 +57,8 @@ export type AnalysisServiceOutput = z.infer<typeof AnalysisServiceOutputSchema>;
 
 
 // Helper to upload video to Firebase Storage
-async function uploadVideoToStorage(videoDataUri: string, userId: string): Promise<string> {
-    const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
-    if (!storageBucket) {
-        throw new Error("Firebase Storage bucket name is not configured in environment variables.");
-    }
-    const storage = getStorage(app, storageBucket);
-    const videoId = uuidv4();
-    const mimeType = videoDataUri.match(/data:(.*);base64,/)?.[1] || 'video/mp4';
+async function uploadVideoToStorage(videoDataUri: string, userId: string, videoId: string, mimeType: string): Promise<string> {
+    const storage = getStorage(app);
     const storageRef = ref(storage, `user-videos/${userId}/${videoId}.${mimeType.split('/')[1]}`);
     
     await uploadString(storageRef, videoDataUri, 'data_url', { contentType: mimeType });
@@ -81,10 +75,19 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
   const validatedInput = AnalyzePoseInputSchema.parse(input);
   const { userId, videoDataUri } = validatedInput;
 
-  // 1. Upload video to Firebase Storage
-  const videoUrl = await uploadVideoToStorage(videoDataUri, userId);
+  // 1. Generate videoId and mimeType once
+  const videoId = uuidv4();
+  const mimeType = videoDataUri.match(/data:(.*);base64,/)?.[1] || 'video/mp4';
   
-  // 2. Call the external Python service on Cloud Run
+  // 2. Upload video to Firebase Storage
+  const videoUrl = await uploadVideoToStorage(videoDataUri, userId, videoId, mimeType);
+  
+  // 3. Get the gs:// path for the API call (using same videoId)
+  const storage = getStorage(app);
+  const storageRef = ref(storage, `user-videos/${userId}/${videoId}.${mimeType.split('/')[1]}`);
+  const gsPath = `gs://${storageRef.bucket}/${storageRef.fullPath}`;
+  
+  // 3. Call the external Python service on Cloud Run
   const baseUrl = process.env.ANALYSIS_SERVICE_URL;
   if (!baseUrl) {
       throw new Error("ANALYSIS_SERVICE_URL environment variable is not set.");
@@ -92,7 +95,7 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
   
   const analysisServiceUrl = new URL('/analyze-video-comprehensive/', baseUrl).toString();
   
-  console.log(`Calling analysis service at: ${analysisServiceUrl} for video: ${videoUrl}`);
+  console.log(`Calling analysis service at: ${analysisServiceUrl} for video: ${gsPath}`);
 
   let response: Response;
   let rawAnalysisResult: any = {};
@@ -106,13 +109,18 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
       const client = await auth.getIdTokenClient(analysisServiceUrl);
       const headers = await client.getRequestHeaders();
 
+      // Create form data instead of JSON
+      const formData = new FormData();
+      formData.append('storage_url', gsPath);
+      formData.append('filename', `video_${videoId}.mp4`);
+
       response = await fetch(analysisServiceUrl, {
           method: 'POST',
           headers: {
-              ...headers,
-              'Content-Type': 'application/json',
+              'Authorization': headers.Authorization,
+              // Don't set Content-Type - let browser set it with boundary for FormData
           },
-          body: JSON.stringify({ videoUrl }),
+          body: formData,
       });
 
       responseStatus = response.status;
@@ -135,6 +143,7 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
         await addDoc(logCollectionRef, {
           rawResponse: rawAnalysisResult,
           videoUrl: videoUrl,
+          gsPath: gsPath, // Add gsPath for debugging
           createdAt: serverTimestamp(),
           isError: !responseOk,
           responseStatus: responseStatus,

@@ -103,7 +103,7 @@ export default function HomePage() {
                 aria-label={t('getStarted')}
                 disabled={isLoading}
             >
-                {isLoading ? <SmileyRockLoader /> : <><span>{t('getStarted')}</span><MoveUpRight className="h-5 w-5 ml-2" /></>}
+                {isLoading ? <><span>{t('getStarted')}</span><MoveUpRight className="h-5 w-5 ml-2" /></> : <><span>{t('getStarted')}</span><MoveUpRight className="h-5 w-5 ml-2" /></>}
             </Button>
         </div>
 
