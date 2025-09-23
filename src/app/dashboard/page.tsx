@@ -179,7 +179,7 @@ export default function DashboardPage() {
                         onClick={() => handleMoodSelection(mood)}
                         className={cn(
                           "flex flex-col items-center justify-center gap-2 p-4 bg-card border rounded-lg shadow-sm hover:bg-accent/50 hover:border-primary transition-all",
-                          selectedMood?.name === mood.name && "bg-primary/10 border-primary ring-2 ring-primary"
+                          selectedMood?.name === mood.name && "bg-accent/80 border-primary"
                         )}
                       >
                           <span className="text-4xl">{mood.emoji}</span>
