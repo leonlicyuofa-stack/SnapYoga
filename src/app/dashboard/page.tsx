@@ -31,7 +31,7 @@ const projects = [
     title: "Dashboard",
     category: "Challenges",
     bgColor: "bg-rose-200",
-    href: "/homepage",
+    href: "/challenges",
     className: "col-span-1 row-span-2"
   },
   {
