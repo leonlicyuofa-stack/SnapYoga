@@ -123,18 +123,6 @@ export default function DashboardPage() {
             <div className="grid grid-cols-2 grid-rows-3 gap-4 h-[30rem]">
               {projects.map((project, index) => {
                 const Icon = project.icon
-                if (project.title === "Pose Analysis") {
-                  return (
-                     <Link href={project.href} key={index} className={cn("block hover:scale-105 transition-transform duration-200", project.className)}>
-                        <Card className={cn(project.bgColor, "rounded-xl shadow-sm p-4 flex flex-col h-full relative overflow-hidden")}>
-                            <CardHeader className="flex-1 p-2 z-10">
-                                <CardTitle className="text-card-foreground font-semibold">{project.title}</CardTitle>
-                                <p className="text-sm text-card-foreground/90">{project.category}</p>
-                            </CardHeader>
-                        </Card>
-                     </Link>
-                  )
-                }
                 return (
                   <Link href={project.href} key={index} className={cn("block hover:scale-105 transition-transform duration-200", project.className)}>
                     <Card className={cn(project.bgColor, "rounded-xl shadow-sm p-4 flex flex-col h-full relative overflow-hidden")}>
