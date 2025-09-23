@@ -29,7 +29,7 @@ export default function WelcomePage() {
     setIsNavigating(true);
     // Add a small delay for transition effect before navigating
     setTimeout(() => {
-        router.push('/home');
+        router.push('/dashboard');
     }, 500);
   };
 
