@@ -51,7 +51,7 @@ export default function WelcomePage() {
             <div className="text-center text-primary animate-fade-in-up font-serif">
                 <p className="text-4xl tracking-widest">FIND</p>
                 <h1 className="text-6xl font-bold tracking-tighter mt-2 font-playfair">your peace</h1>
-                <p className="text-4xl tracking-widest mt-2">WITHIN</p>
+                <p className="text-4xl tracking-widest mt-4">WITHIN</p>
             </div>
             
             <div className="mt-12 w-full max-w-xs animate-fade-in-up" style={{ animationDelay: '400ms' }}>
