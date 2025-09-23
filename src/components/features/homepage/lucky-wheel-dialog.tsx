@@ -84,12 +84,11 @@ export function LuckyWheelDialog({ isOpen, onClose }: LuckyWheelDialogProps) {
         
         <Button 
             variant="ghost" 
-            size="icon" 
             onClick={handleDialogClose} 
-            className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"
-            aria-label="Close dialog"
+            className="absolute top-3 right-3 text-muted-foreground hover:text-foreground text-xs"
+            aria-label="Skip and continue"
         >
-            <X className="h-5 w-5" />
+            Skip & Continue
         </Button>
 
         <div className="py-6 sm:py-8 px-4 sm:px-6 flex flex-col items-center justify-center space-y-6 sm:space-y-8">
@@ -117,21 +116,19 @@ export function LuckyWheelDialog({ isOpen, onClose }: LuckyWheelDialogProps) {
               border-r-[12px] sm:border-r-[14px] border-r-transparent
               border-b-[18px] sm:border-b-[22px] border-b-destructive drop-shadow-md z-10">
             </div>
-             <div className="absolute w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-card border-2 border-primary flex items-center justify-center text-primary shadow-inner top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                <Gift className="w-8 h-8 sm:w-10 sm:h-10" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+                <Button
+                    onClick={handleSpin}
+                    disabled={isSpinning || hasSpun || !isClient}
+                    size="lg"
+                    className="w-32 h-32 rounded-full text-lg bg-accent hover:bg-accent/90 text-accent-foreground shadow-md flex flex-col"
+                >
+                    {isSpinning ? <SmileyRockLoader /> : (hasSpun ? "Spun!" : "Spin!")}
+                </Button>
             </div>
           </div>
           
-          <div className="flex flex-col items-center justify-center flex-grow text-center">
-            <Button
-                onClick={handleSpin}
-                disabled={isSpinning || hasSpun || !isClient}
-                size="lg"
-                className="px-8 py-6 text-lg bg-accent hover:bg-accent/90 text-accent-foreground shadow-md w-full max-w-xs rounded-md"
-            >
-                {isSpinning && <SmileyRockLoader />}
-                {hasSpun ? 'Spun!' : isSpinning ? 'Spinning...' : 'Spin Now!'}
-            </Button>
+          <div className="flex flex-col items-center justify-center flex-grow text-center h-24">
             {result && hasSpun && (
                 <div className="mt-6 p-4 bg-primary/10 border border-primary/20 rounded-lg space-y-2 w-full max-w-xs animate-in fade-in-50 duration-500">
                 <h3 className="text-base font-semibold text-primary">
@@ -147,10 +144,9 @@ export function LuckyWheelDialog({ isOpen, onClose }: LuckyWheelDialogProps) {
 
         </div>
 
-
         <DialogFooter className="px-6 pb-6 pt-4 sm:pt-2">
-            <Button onClick={handleProceed} className="w-full" variant={result && hasSpun ? "default" : "outline"}>
-                {hasSpun ? "Continue to Next Step" : "Skip & Continue"}
+            <Button onClick={handleProceed} className="w-full" disabled={!hasSpun}>
+                Continue to Next Step
             </Button>
         </DialogFooter>
       </DialogContent>
