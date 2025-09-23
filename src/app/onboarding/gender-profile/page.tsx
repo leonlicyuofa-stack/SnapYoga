@@ -112,45 +112,41 @@ export default function GenderProfilePage() {
                     
                   </div>
               </div>
+              {errors.gender && <p className="text-sm text-destructive text-center -mt-4">{errors.gender.message}</p>}
               
-              <div className="space-y-6">
-                <div className="flex justify-between items-start w-full">
-                  <div>
-                      <Label className="font-semibold text-base">Username</Label>
-                      <p className="text-xs italic text-muted-foreground mt-2">required</p>
-                  </div>
+              <div className="space-y-4">
+                 <div className="space-y-2">
+                  <Label htmlFor="username">Username</Label>
                   <Input 
                     id="username" 
-                    {...register("username")} 
-                    className="w-1/2 text-right border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent hover:bg-card/20"
-                    placeholder="e.g. Chahua"
+                    placeholder="e.g. Chahua" 
+                    {...register("username")}
+                    className="bg-card/50"
                   />
+                  {errors.username && <p className="text-sm text-destructive">{errors.username.message}</p>}
                 </div>
-                {errors.username && <p className="text-sm text-destructive -mt-4 text-right">{errors.username.message}</p>}
-
-                 <div className="flex justify-between items-start w-full">
-                    <div>
-                        <Label className="font-semibold text-base">Age</Label>
-                        <p className="text-xs italic text-muted-foreground mt-2">required</p>
-                    </div>
-                    <Controller
-                        name="age"
-                        control={control}
-                        render={({ field }) => (
-                            <Select onValueChange={field.onChange} value={field.value}>
-                                <SelectTrigger className="w-1/2 justify-end text-right font-normal border-0 rounded-none bg-transparent hover:bg-card/20 focus:ring-0 focus:ring-offset-0">
-                                    <SelectValue placeholder="Select age" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <ScrollArea className="h-72">
-                                        {ageOptions.map(age => (
-                                            <SelectItem key={age} value={age}>{age}</SelectItem>
-                                        ))}
-                                    </ScrollArea>
-                                </SelectContent>
-                            </Select>
-                        )}
-                    />
+                
+                <div className="space-y-2">
+                  <Label htmlFor="age">Age</Label>
+                   <Controller
+                      name="age"
+                      control={control}
+                      render={({ field }) => (
+                          <Select onValueChange={field.onChange} value={field.value}>
+                              <SelectTrigger className="w-full bg-card/50">
+                                  <SelectValue placeholder="Select your age" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                  <ScrollArea className="h-72">
+                                      {ageOptions.map(age => (
+                                          <SelectItem key={age} value={age}>{age}</SelectItem>
+                                      ))}
+                                  </ScrollArea>
+                              </SelectContent>
+                          </Select>
+                      )}
+                  />
+                  {errors.age && <p className="text-sm text-destructive">{errors.age.message}</p>}
                 </div>
               </div>
 
