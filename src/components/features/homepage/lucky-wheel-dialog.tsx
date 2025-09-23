@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogOverlay } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Award, Gift, RotateCw, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -73,7 +73,8 @@ export function LuckyWheelDialog({ isOpen, onClose }: LuckyWheelDialogProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) handleDialogClose(); }}>
-      <DialogContent className="sm:max-w-2xl bg-card shadow-xl rounded-lg p-0 overflow-hidden">
+       <DialogOverlay className="bg-black/60" />
+      <DialogContent className="sm:max-w-2xl bg-card shadow-xl rounded-t-2xl p-0 overflow-hidden w-full fixed bottom-0 left-0 right-0 translate-y-0 data-[state=open]:slide-in-from-bottom-full data-[state=closed]:slide-out-to-bottom-full duration-500 border-t-2 border-border max-w-full md:max-w-lg mx-auto top-auto rounded-b-none">
         <DialogHeader className="text-center pt-6 px-6">
           <DialogTitle className="text-2xl sm:text-3xl font-bold text-primary">Spin the Lucky Wheel!</DialogTitle>
           <DialogDescription className="text-muted-foreground text-sm sm:text-base">
@@ -91,14 +92,14 @@ export function LuckyWheelDialog({ isOpen, onClose }: LuckyWheelDialogProps) {
             <X className="h-5 w-5" />
         </Button>
 
-        <div className="py-6 sm:py-8 px-4 sm:px-6 flex flex-col md:flex-row items-center justify-center space-y-6 md:space-y-0 md:space-x-8">
-          <div className="relative w-72 h-72 sm:w-80 sm:h-80 md:w-96 md:h-96 flex-shrink-0">
-             {/* This container crops the wheel */}
-            <div className="absolute inset-y-0 left-0 w-1/2 overflow-hidden">
+        <div className="py-6 sm:py-8 px-4 sm:px-6 flex flex-col items-center justify-center space-y-6 sm:space-y-8">
+          <div className="relative w-80 h-80 sm:w-96 sm:h-96 flex-shrink-0">
+             {/* This container crops the wheel to show half */}
+            <div className="absolute inset-x-0 bottom-0 h-1/2 overflow-hidden">
                 <div
-                className="w-[200%] h-full rounded-full border-4 border-primary shadow-lg flex items-center justify-center transition-transform duration-[4000ms] ease-out origin-center"
+                className="w-full h-[200%] rounded-full border-4 border-primary shadow-lg flex items-center justify-center transition-transform duration-[4000ms] ease-out origin-center"
                 style={{ 
-                    transform: `translateX(-25%) rotate(${rotation}deg)`,
+                    transform: `translateY(-25%) rotate(${rotation}deg)`,
                     background: `conic-gradient(
                         hsl(var(--splash-blob-1)/0.8) 0deg 60deg, 
                         hsl(var(--splash-blob-2)/0.8) 60deg 120deg, 
@@ -111,10 +112,10 @@ export function LuckyWheelDialog({ isOpen, onClose }: LuckyWheelDialogProps) {
                 >
                 </div>
             </div>
-             <div className="absolute top-1/2 -translate-y-1/2 -right-1 w-0 h-0 
-              border-t-[12px] sm:border-t-[14px] border-t-transparent
-              border-b-[12px] sm:border-b-[14px] border-b-transparent
-              border-l-[18px] sm:border-l-[22px] border-l-destructive drop-shadow-md z-10 -rotate-90">
+             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0 h-0 
+              border-l-[12px] sm:border-l-[14px] border-l-transparent
+              border-r-[12px] sm:border-r-[14px] border-r-transparent
+              border-b-[18px] sm:border-b-[22px] border-b-destructive drop-shadow-md z-10">
             </div>
              <div className="absolute w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-card border-2 border-primary flex items-center justify-center text-primary shadow-inner top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                 <Gift className="w-8 h-8 sm:w-10 sm:h-10" />
