@@ -1,17 +1,17 @@
 
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
-import { collection, getDocs, query, where, type Timestamp, orderBy } from 'firebase/firestore';
+import { collection, getDocs, query, where, type Timestamp, orderBy, doc, getDoc } from 'firebase/firestore';
 import { AppShell } from '@/components/layout/app-shell';
 import { Calendar } from '@/components/ui/calendar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle, CalendarDays, Dumbbell, Star, Goal } from 'lucide-react';
-import { startOfDay } from 'date-fns';
+import { AlertCircle, CalendarDays, Dumbbell, Star, Goal, Smile } from 'lucide-react';
+import { startOfDay, format, isSameDay } from 'date-fns';
 import { cn } from '@/lib/utils';
 import {
   ChartContainer,
@@ -28,11 +28,21 @@ interface StoredAnalysis {
   score?: number;
 }
 
+interface StoredMood {
+  id: string;
+  loggedAt: Timestamp;
+  name: string;
+  emoji: string;
+}
+
 export default function PracticeCalendarPage() {
   const { user, loading: authLoading } = useAuth();
   const [practiceDates, setPracticeDates] = useState<Date[]>([]);
+  const [moodsByDate, setMoodsByDate] = useState<Record<string, StoredMood>>({});
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [todaysAnalyses, setTodaysAnalyses] = useState<StoredAnalysis[]>([]);
+  const [analysesForSelectedDay, setAnalysesForSelectedDay] = useState<StoredAnalysis[]>([]);
+  const [allAnalyses, setAllAnalyses] = useState<StoredAnalysis[]>([]);
+  
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentMonth, setCurrentMonth] = useState<Date>(startOfDay(new Date()));
@@ -65,28 +75,37 @@ export default function PracticeCalendarPage() {
     setIsLoadingData(true);
     setError(null);
 
-    const analysesRef = collection(firestore, 'users', user.uid, 'poseAnalyses');
-    const q = query(analysesRef, orderBy('createdAt', 'desc'));
+    const fetchAnalyses = getDocs(query(collection(firestore, 'users', user.uid, 'poseAnalyses'), orderBy('createdAt', 'desc')));
+    const fetchMoods = getDocs(query(collection(firestore, 'users', user.uid, 'moods'), orderBy('loggedAt', 'desc')));
 
-    getDocs(q).then((querySnapshot) => {
-        const allAnalyses: StoredAnalysis[] = [];
-        querySnapshot.forEach(doc => {
-            allAnalyses.push({ id: doc.id, ...doc.data() } as StoredAnalysis);
+    Promise.all([fetchAnalyses, fetchMoods]).then(([analysesSnapshot, moodsSnapshot]) => {
+        // Process Analyses
+        const fetchedAnalyses: StoredAnalysis[] = [];
+        analysesSnapshot.forEach(doc => {
+            fetchedAnalyses.push({ id: doc.id, ...doc.data() } as StoredAnalysis);
         });
+        setAllAnalyses(fetchedAnalyses);
 
-        const uniqueDates = new Set<string>();
-        allAnalyses.forEach(analysis => {
+        const uniquePracticeDates = new Set<string>();
+        fetchedAnalyses.forEach(analysis => {
             if (analysis.createdAt) {
                 const date = startOfDay(analysis.createdAt.toDate());
-                uniqueDates.add(date.toISOString());
+                uniquePracticeDates.add(date.toISOString());
             }
         });
-        setPracticeDates(Array.from(uniqueDates).map(dateStr => new Date(dateStr)));
-        
-        // Filter analyses for today's date initially
-        const today = startOfDay(new Date());
-        const filteredAnalyses = allAnalyses.filter(a => a.createdAt && startOfDay(a.createdAt.toDate()).getTime() === today.getTime());
-        setTodaysAnalyses(filteredAnalyses);
+        setPracticeDates(Array.from(uniquePracticeDates).map(dateStr => new Date(dateStr)));
+
+        // Process Moods
+        const fetchedMoods: Record<string, StoredMood> = {};
+        moodsSnapshot.forEach(doc => {
+            const mood = { id: doc.id, ...doc.data() } as StoredMood;
+            if(mood.loggedAt) {
+                 const dateStr = format(mood.loggedAt.toDate(), 'yyyy-MM-dd');
+                 fetchedMoods[dateStr] = mood;
+            }
+        });
+        setMoodsByDate(fetchedMoods);
+
     }).catch((err) => {
         console.error("Error fetching practice data:", err);
         setError("Failed to load practice data. Please try again.");
@@ -95,6 +114,22 @@ export default function PracticeCalendarPage() {
     });
 
   }, [user, authLoading]);
+  
+  useEffect(() => {
+    if (selectedDate) {
+        const startOfSelected = startOfDay(selectedDate);
+        const filtered = allAnalyses.filter(a => a.createdAt && isSameDay(a.createdAt.toDate(), startOfSelected));
+        setAnalysesForSelectedDay(filtered);
+    } else {
+        setAnalysesForSelectedDay([]);
+    }
+  }, [selectedDate, allAnalyses]);
+
+  const moodForSelectedDay = useMemo(() => {
+    if (!selectedDate) return null;
+    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+    return moodsByDate[dateStr] || null;
+  }, [selectedDate, moodsByDate]);
 
   const practicedDaysModifier = { practiced: practiceDates };
   const selectedDayModifier = { selected: selectedDate };
@@ -141,8 +176,9 @@ export default function PracticeCalendarPage() {
           <div className="relative bg-transparent">
               <div className="absolute -top-16 right-0 h-16 w-1/2 bg-primary rounded-bl-3xl"></div>
               <div className="absolute -top-16 left-0 h-16 w-1/2 bg-card/80 backdrop-blur-sm rounded-tr-3xl"></div>
-               <TabsList className="grid w-full grid-cols-2 bg-transparent h-16 p-0">
+               <TabsList className="grid w-full grid-cols-3 bg-transparent h-16 p-0">
                   <TabsTrigger value="log" className="h-full rounded-none data-[state=inactive]:bg-card/80 data-[state=active]:bg-card/80 backdrop-blur-sm text-muted-foreground data-[state=active]:text-foreground font-bold text-base">Practice Log</TabsTrigger>
+                  <TabsTrigger value="moods" className="h-full rounded-none data-[state=inactive]:bg-card/80 data-[state=active]:bg-card/80 backdrop-blur-sm text-muted-foreground data-[state=active]:text-foreground font-bold text-base">Moods</TabsTrigger>
                   <TabsTrigger value="monthly-goal" className="h-full rounded-none data-[state=inactive]:bg-primary data-[state=active]:bg-primary text-primary-foreground font-bold text-base">Monthly Goal</TabsTrigger>
               </TabsList>
           </div>
@@ -154,27 +190,27 @@ export default function PracticeCalendarPage() {
                           <div className="absolute -bottom-2 -left-2 -right-2 h-full bg-white/40 rounded-lg -z-10 rotate-6"></div>
                           <div className="font-bold text-sm">POSES PRACTICED</div>
                           <div className="text-center mt-2">
-                              <p className="text-4xl font-bold font-chakra">{todaysAnalyses.length}</p>
+                              <p className="text-4xl font-bold font-chakra">{analysesForSelectedDay.length}</p>
                           </div>
                       </div>
                       <div className="bg-card/80 backdrop-blur-sm text-primary shadow-lg relative rotate-3 p-4 rounded-lg">
                           <div className="absolute -bottom-2 -left-2 -right-2 h-full bg-white/40 rounded-lg -z-10 -rotate-6"></div>
                           <div className="font-bold text-sm">TIME SPENT</div>
                           <div className="text-center mt-2">
-                              <p className="text-4xl font-bold font-chakra">~{todaysAnalyses.length * 5} <span className="text-xl">min</span></p>
+                              <p className="text-4xl font-bold font-chakra">~{analysesForSelectedDay.length * 5} <span className="text-xl">min</span></p>
                           </div>
                       </div>
                   </div>
 
                   <div className="mt-8 space-y-4">
-                      <h3 className="font-bold text-lg">Today's Log</h3>
+                      <h3 className="font-bold text-lg">Practice Log for {selectedDate ? format(selectedDate, 'PPP') : 'Today'}</h3>
                       {isLoadingData ? (
                           <>
                               <Skeleton className="h-16 w-full bg-white/20" />
                               <Skeleton className="h-16 w-full bg-white/20" />
                           </>
-                      ) : todaysAnalyses.length > 0 ? (
-                          todaysAnalyses.map(analysis => (
+                      ) : analysesForSelectedDay.length > 0 ? (
+                          analysesForSelectedDay.map(analysis => (
                               <div key={analysis.id} className="bg-white/10 text-primary-foreground rounded-lg p-4 flex items-center justify-between">
                                   <div className="flex items-center gap-3">
                                       <Dumbbell className="h-8 w-8" />
@@ -196,6 +232,24 @@ export default function PracticeCalendarPage() {
                       )}
                   </div>
               </TabsContent>
+
+               <TabsContent value="moods" className="mt-8">
+                  <h3 className="font-bold text-lg mb-4">Mood for {selectedDate ? format(selectedDate, 'PPP') : 'Today'}</h3>
+                  {isLoadingData ? (
+                    <Skeleton className="h-24 w-full bg-white/20" />
+                  ) : moodForSelectedDay ? (
+                     <div className="bg-card/80 backdrop-blur-sm text-primary shadow-lg rounded-lg p-6 flex flex-col items-center justify-center gap-4">
+                        <span className="text-6xl">{moodForSelectedDay.emoji}</span>
+                        <p className="text-2xl font-semibold">{moodForSelectedDay.name}</p>
+                        <p className="text-sm text-muted-foreground">Logged on {format(moodForSelectedDay.loggedAt.toDate(), 'p')}</p>
+                    </div>
+                  ) : (
+                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-center">
+                        <p>No mood recorded for this day.</p>
+                    </div>
+                  )}
+              </TabsContent>
+
 
               <TabsContent value="monthly-goal" className="mt-8">
                    <div className="bg-card/80 backdrop-blur-sm text-primary shadow-lg rounded-lg p-4">

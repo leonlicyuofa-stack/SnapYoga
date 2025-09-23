@@ -8,6 +8,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Sparkles, Trophy, Users, CalendarDays, Moon, BarChart2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState, useEffect } from 'react';
+import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
+import { firestore } from '@/lib/firebase/clientApp';
+import { useToast } from '@/hooks/use-toast';
+import { format } from 'date-fns';
 import type { DocumentData } from 'firebase/firestore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
@@ -62,8 +66,60 @@ const moods = [
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth();
   const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
+  const [selectedMood, setSelectedMood] = useState<{ name: string; emoji: string } | null>(null);
+  const { toast } = useToast();
   
   const welcomeName = userProfile?.displayName || user?.displayName || user?.email?.split('@')[0] || 'User';
+
+  useEffect(() => {
+    // Fetch today's mood when the component mounts
+    if (user) {
+      const todayStr = format(new Date(), 'yyyy-MM-dd');
+      const moodDocRef = doc(firestore, `users/${user.uid}/moods/${todayStr}`);
+      getDoc(moodDocRef).then(docSnap => {
+        if (docSnap.exists()) {
+          const moodData = docSnap.data();
+          const foundMood = moods.find(m => m.name === moodData.name);
+          if(foundMood) {
+            setSelectedMood(foundMood);
+          }
+        }
+      });
+    }
+  }, [user]);
+
+  const handleMoodSelection = async (mood: { name: string; emoji: string }) => {
+    if (!user) {
+      toast({
+        title: "Not Logged In",
+        description: "You must be logged in to track your mood.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setSelectedMood(mood);
+    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    const moodDocRef = doc(firestore, `users/${user.uid}/moods/${todayStr}`);
+    try {
+      await setDoc(moodDocRef, { 
+        name: mood.name,
+        emoji: mood.emoji,
+        loggedAt: serverTimestamp() 
+      }, { merge: true });
+      toast({
+        title: "Mood Saved!",
+        description: `Your mood for today has been set to: ${mood.emoji} ${mood.name}`,
+      });
+    } catch (error) {
+      console.error("Error saving mood:", error);
+      toast({
+        title: "Error",
+        description: "Could not save your mood. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
 
   const getInitials = (email?: string | null, displayName?: string | null) => {
     if (displayName) {
@@ -109,7 +165,14 @@ export default function DashboardPage() {
               <p className="text-muted-foreground">How do you feel today?</p>
               <div className="grid grid-cols-4 gap-4">
                   {moods.map((mood) => (
-                      <button key={mood.name} className="flex flex-col items-center justify-center gap-2 p-4 bg-card border rounded-lg shadow-sm hover:bg-accent/50 hover:border-primary transition-all">
+                      <button 
+                        key={mood.name} 
+                        onClick={() => handleMoodSelection(mood)}
+                        className={cn(
+                          "flex flex-col items-center justify-center gap-2 p-4 bg-card border rounded-lg shadow-sm hover:bg-accent/50 hover:border-primary transition-all",
+                          selectedMood?.name === mood.name && "bg-primary/10 border-primary ring-2 ring-primary"
+                        )}
+                      >
                           <span className="text-4xl">{mood.emoji}</span>
                           <span className="text-sm font-medium text-muted-foreground">{mood.name}</span>
                       </button>
