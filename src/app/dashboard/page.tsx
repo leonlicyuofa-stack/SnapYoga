@@ -107,10 +107,19 @@ export default function DashboardPage() {
         emoji: mood.emoji,
         loggedAt: serverTimestamp() 
       }, { merge: true });
-      toast({
-        title: "Mood Saved!",
-        description: `Your mood for today has been set to: ${mood.emoji} ${mood.name}`,
-      });
+      
+      if (mood.name === 'Sad') {
+        toast({
+            title: "A Little Note for You",
+            description: "Inhale the good vibes, exhale the drama.",
+        });
+      } else {
+        toast({
+            title: "Mood Saved!",
+            description: `Your mood for today has been set to: ${mood.emoji} ${mood.name}`,
+        });
+      }
+
     } catch (error) {
       console.error("Error saving mood:", error);
       toast({
