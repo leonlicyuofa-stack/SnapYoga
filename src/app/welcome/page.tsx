@@ -49,7 +49,7 @@ export default function WelcomePage() {
         
         <div className="relative z-10 flex flex-col items-center max-w-lg w-full">
             <div className="text-center text-primary animate-fade-in-up font-serif">
-                <p className="text-4xl tracking-widest">YOUR</p>
+                <p className="text-4xl tracking-widest">find</p>
                 <h1 className="text-6xl font-bold tracking-tighter my-2 font-playfair">yoga journey</h1>
                 <p className="text-4xl tracking-widest mt-2">BEGINS</p>
             </div>
