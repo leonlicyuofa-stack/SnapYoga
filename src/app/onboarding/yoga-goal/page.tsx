@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -223,22 +222,7 @@ export default function YogaGoalPage() {
 
                           let Icon = option.icon as React.ElementType;
                           let iconClassName = "mb-2 h-16 w-16";
-                           if (option.value === 'mindfulness') {
-                              Icon = PracticeMindfulnessIcon;
-                              iconClassName = "mb-2 h-16 w-16";
-                          }
-                          if (option.value === 'fitness') {
-                              Icon = StayFitIcon;
-                              iconClassName = "mb-2 h-12 w-12";
-                          }
-                          if (option.value === 'stress-relief') {
-                              Icon = StressReliefIcon;
-                              iconClassName = "mb-2 h-16 w-16";
-                          }
-                           if (option.value === 'flexibility') {
-                              Icon = StressReliefIcon;
-                              iconClassName = "mb-2 h-16 w-16";
-                          }
+                          
                           return (
                               <Label
                               key={option.value}
