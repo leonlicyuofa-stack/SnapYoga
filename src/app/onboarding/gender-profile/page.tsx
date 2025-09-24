@@ -130,14 +130,20 @@ export default function GenderProfilePage() {
         age--;
       }
 
-      await signUpWithEmail(data.email, data.password, {
+      const userCredential = await signUpWithEmail(data.email, data.password, {
           gender: data.gender,
           displayName: data.username,
           birthday: data.birthday,
           age: age,
       });
+
+      if (userCredential) {
+          router.push('/onboarding/yoga-goal');
+      }
+      
     } catch (error) {
       console.error("Error during sign up from profile page:", error);
+      // The signUpWithEmail function already shows a toast on error
     } finally {
       setIsSubmitting(false);
     }
@@ -263,5 +269,3 @@ export default function GenderProfilePage() {
     </AppShell>
   );
 }
-
-    

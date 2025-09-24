@@ -19,6 +19,7 @@ import {
   updatePassword,
   sendEmailVerification,
   updateProfile,
+  type UserCredential,
 } from 'firebase/auth';
 import { auth, firestore } from '@/lib/firebase/clientApp';
 import { doc, setDoc, getDoc, serverTimestamp, type DocumentData } from 'firebase/firestore';
@@ -31,7 +32,7 @@ interface AuthContextType {
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithApple: () => Promise<void>;
-  signUpWithEmail: (email: string, pass: string, profileData: DocumentData) => Promise<void>;
+  signUpWithEmail: (email: string, pass: string, profileData: DocumentData) => Promise<UserCredential | null>;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   signOutUser: () => Promise<void>;
   updateUserPassword: (currentPassword: string, newPassword: string) => Promise<boolean>;
@@ -221,29 +222,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return socialSignIn(provider, 'Apple');
   };
 
-  const signUpWithEmail = async (email: string, pass: string, profileData: DocumentData) => {
+  const signUpWithEmail = async (email: string, pass: string, profileData: DocumentData): Promise<UserCredential | null> => {
     if (!checkFirebaseConfig()) {
-        throw new Error("Firebase not configured");
-    };
+      throw new Error("Firebase not configured");
+    }
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
       await recordDailyLogin(userCredential.user.uid);
-      await createUserProfileDocument(userCredential.user, { ...profileData, email }); 
+      await createUserProfileDocument(userCredential.user, { ...profileData, email });
       
       toast({ title: 'Account Created!', description: 'Welcome! Let\'s continue setting up your profile.' });
-      router.push('/onboarding/yoga-goal');
+      return userCredential;
     } catch (error: any) {
       if (error.code === 'auth/email-already-in-use') {
         toast({
-            title: "Email Already in Use",
-            description: "Signing you in instead.",
+          title: "Email Already in Use",
+          description: "Signing you in instead.",
         });
-        await signInWithEmail(email, pass);
-        // signInWithEmail handles redirection, so we don't need to do it here.
+        // Attempt to sign in and return the credential
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+          await recordDailyLogin(userCredential.user.uid);
+          return userCredential;
+        } catch (signInError) {
+           handleAuthError(signInError, 'Failed to sign in with existing email.');
+           throw signInError;
+        }
       } else {
         handleAuthError(error, 'Failed to create account.');
-        throw error; // Re-throw to be caught by the calling component
+        throw error;
       }
     }
   };
