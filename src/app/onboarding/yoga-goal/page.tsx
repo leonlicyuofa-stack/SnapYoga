@@ -32,7 +32,7 @@ const yogaGoalSchema = z.object({
 type YogaGoalFormValues = z.infer<typeof yogaGoalSchema>;
 
 const mainGoalOptions = [
-  { value: "fitness", label: "Stay Fit", icon: 'image', imagePath: '/images/stay-fit.png' },
+  { value: "fitness", label: "Stay Fit", icon: StressReliefIcon },
   { value: "stress-relief", label: "Stress Relief", icon: StressReliefIcon },
   { value: "flexibility", label: "Improve Flexibility", icon: StressReliefIcon },
   { value: "strength", label: "Build Strength", icon: StressReliefIcon },
