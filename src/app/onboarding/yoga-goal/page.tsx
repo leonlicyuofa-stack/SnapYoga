@@ -23,6 +23,7 @@ import { BuildStrengthIcon } from '@/components/icons/BuildStrengthIcon';
 import { PracticeMindfulnessIcon } from '@/components/icons/PracticeMindfulnessIcon';
 import { StayFitIcon } from '@/components/icons/StayFitIcon';
 import { StressReliefIcon } from '@/components/icons/StressReliefIcon';
+import { ImproveFlexibilityIcon } from '@/components/icons/ImproveFlexibilityIcon';
 
 const yogaGoalSchema = z.object({
   mainGoal: z.string().min(1, { message: "Please select your main yoga goal" }),
@@ -33,7 +34,7 @@ type YogaGoalFormValues = z.infer<typeof yogaGoalSchema>;
 const mainGoalOptions = [
   { value: "fitness", label: "Stay Fit", icon: StayFitIcon },
   { value: "stress-relief", label: "Stress Relief", icon: StressReliefIcon },
-  { value: "flexibility", label: "Improve Flexibility", icon: Spline },
+  { value: "flexibility", label: "Improve Flexibility", icon: ImproveFlexibilityIcon },
   { value: "strength", label: "Build Strength", icon: BuildStrengthIcon },
   { value: "mindfulness", label: "Practice Mindfulness", icon: PracticeMindfulnessIcon },
   { value: "other", label: "Other", icon: MoreHorizontal },
@@ -221,6 +222,10 @@ export default function YogaGoalPage() {
                         }
                         if (option.value === 'stress-relief') {
                             Icon = StressReliefIcon;
+                            iconClassName = "mb-2 h-16 w-16";
+                        }
+                         if (option.value === 'flexibility') {
+                            Icon = ImproveFlexibilityIcon;
                             iconClassName = "mb-2 h-16 w-16";
                         }
                         return (
