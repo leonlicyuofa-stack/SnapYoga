@@ -53,6 +53,8 @@ export default function WelcomePage() {
                     your
                     <br />
                     <span className="font-extrabold">YOGA JOURNEY</span>
+                    <br />
+                    begins
                 </h1>
             </div>
             
