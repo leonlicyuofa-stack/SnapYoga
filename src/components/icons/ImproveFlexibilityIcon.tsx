@@ -14,7 +14,7 @@ export function ImproveFlexibilityIcon(props: SVGProps<SVGSVGElement>) {
         <path d="M35 25 Q 50 20, 65 25" stroke="#C4B5FD" strokeWidth="2" strokeLinecap="round" />
 
         {/* Mat */}
-        <ellipse cx="50" cy="80" rx="35" ry="8" fill="#6EE7B7" />
+        <ellipse cx="50" cy="80" rx="35" ry="8" fill="#A3D9B1" />
         
         {/* Body */}
         <path 
