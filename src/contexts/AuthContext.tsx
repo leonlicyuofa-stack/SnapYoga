@@ -104,6 +104,11 @@ export const createUserProfileDocument = async (user: User, additionalData: Docu
     if (dataToSet.name && !additionalData.displayName && dataToSet.displayName === dataToSet.name) {
         delete dataToSet.name;
     }
+    
+    // Convert birthday Date object to Firestore Timestamp if it exists
+    if (dataToSet.birthday instanceof Date) {
+        dataToSet.birthday = serverTimestamp();
+    }
 
 
     await setDoc(userRef, dataToSet, { merge: true });

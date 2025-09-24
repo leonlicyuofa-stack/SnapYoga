@@ -21,14 +21,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
 
 const profileSchema = z.object({
   gender: z.string().min(1, { message: "Please select a gender" }),
   email: z.string().email({ message: "Invalid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
   username: z.string().min(2, { message: "Username must be at least 2 characters" }),
-  age: z.string().refine(val => !isNaN(parseInt(val, 10)), {
-      message: "Age is required"
+  birthday: z.date({
+    required_error: "A date of birth is required.",
   }),
 });
 
@@ -47,18 +50,25 @@ export default function GenderProfilePage() {
   });
 
   const selectedGender = watch('gender');
-  const ageValue = watch('age');
 
 
   const onSubmit: SubmitHandler<ProfileFormValues> = async (data) => {
     setIsSubmitting(true);
     try {
-      // Since this is the sign-up-with-email flow, we create the user here.
-      // The useAuth hook will handle navigation on successful user creation.
+      // Calculate age from birthday
+      const today = new Date();
+      const birthDate = new Date(data.birthday);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+
       await signUpWithEmail(data.email, data.password, {
           gender: data.gender,
           displayName: data.username,
-          age: parseInt(data.age, 10),
+          birthday: data.birthday,
+          age: age,
       });
       // The router push will happen from the AuthContext after user is created.
     } catch (error) {
@@ -141,28 +151,47 @@ export default function GenderProfilePage() {
                 </div>
                 
                 <div className="space-y-2">
-                   <Controller
-                      name="age"
-                      control={control}
-                      render={({ field }) => (
-                          <div className="relative">
-                            <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                             <Select onValueChange={field.onChange} value={field.value}>
-                              <SelectTrigger className="w-full bg-transparent border-0 border-b-2 rounded-none px-0 pl-10 focus:ring-0 focus-visible:ring-offset-0 focus:border-primary">
-                                  <SelectValue placeholder="Your age" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                  <ScrollArea className="h-72">
-                                      {ageOptions.map(age => (
-                                          <SelectItem key={age} value={age}>{age}</SelectItem>
-                                      ))}
-                                  </ScrollArea>
-                              </SelectContent>
-                          </Select>
-                          </div>
-                      )}
+                  <Controller
+                    name="birthday"
+                    control={control}
+                    render={({ field }) => (
+                      <div className="relative">
+                        <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full justify-start text-left font-normal bg-transparent border-0 border-b-2 rounded-none px-0 pl-10 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary hover:bg-transparent",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Birthday</span>
+                              )}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              disabled={(date) =>
+                                date > new Date() || date < new Date("1900-01-01")
+                              }
+                              initialFocus
+                              captionLayout="dropdown-buttons"
+                              fromYear={1920}
+                              toYear={new Date().getFullYear()}
+                            />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    )}
                   />
-                  {errors.age && <p className="text-sm text-destructive">{errors.age.message}</p>}
+                  {errors.birthday && <p className="text-sm text-destructive">{errors.birthday.message}</p>}
                 </div>
               </div>
 
