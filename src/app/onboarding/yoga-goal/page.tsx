@@ -16,7 +16,6 @@ import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { Progress } from '@/components/ui/progress';
 import { BuildStrengthIcon } from '@/components/icons/BuildStrengthIcon';
@@ -33,60 +32,12 @@ type YogaGoalFormValues = z.infer<typeof yogaGoalSchema>;
 const mainGoalOptions = [
   { value: "fitness", label: "Stay Fit", icon: StressReliefIcon },
   { value: "stress-relief", label: "Stress Relief", icon: StressReliefIcon },
-  { value: "flexibility", label: "Improve Flexibility", icon: ImproveFlexibilityIcon },
+  { value: "flexibility", label: "Improve Flexibility", icon: 'image', imagePath: 'https://i.imgur.com/gE2413G.png' },
   { value: "strength", label: "Build Strength", icon: BuildStrengthIcon },
   { value: "mindfulness", label: "Practice Mindfulness", icon: StressReliefIcon },
   { value: "other", label: "Other", icon: MoreHorizontal },
 ];
 
-const affirmations = [
-    "I am becoming everything I’m meant to be, one small step at a time.",
-    "Today, I choose peace over pressure.",
-    "I don’t need to rush. What’s meant for me will find me.",
-    "I am allowed to take up space, rest, and breathe deeply.",
-    "Progress is quiet, gentle, and still counts.",
-    "I trust myself to grow through what I go through.",
-    "Even slow blooms still become flowers.",
-    "I honor where I am, even if it’s not where I thought I’d be.",
-    "Every breath is a reset. I start fresh now."
-];
-
-// Affirmation Dialog Component
-function AffirmationDialog({ isOpen, onOpenChange }: { isOpen: boolean, onOpenChange: (open: boolean) => void }) {
-    const [affirmation, setAffirmation] = useState<string | null>(null);
-
-    useEffect(() => {
-        if (isOpen) {
-            const randomIndex = Math.floor(Math.random() * affirmations.length);
-            setAffirmation(affirmations[randomIndex]);
-        }
-    }, [isOpen]);
-
-    return (
-        <Dialog open={isOpen} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-md text-center">
-                <DialogHeader>
-                    
-                    <DialogTitle className="text-2xl font-bold">Your Daily Affirmation</DialogTitle>
-                </DialogHeader>
-                <div className="py-4">
-                    {affirmation ? (
-                        <p className="text-xl font-medium text-primary/90 animate-in zoom-in-125 duration-500">
-                           &ldquo;{affirmation}&rdquo;
-                        </p>
-                    ) : (
-                        <SmileyRockLoader />
-                    )}
-                </div>
-                <DialogFooter>
-                    <Button onClick={() => onOpenChange(false)} className="w-full">
-                        Continue
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
-    );
-}
 
 export default function YogaGoalPage() {
   const { user, loading: authLoading } = useAuth();
@@ -95,7 +46,6 @@ export default function YogaGoalPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isNavigatingBack, setIsNavigatingBack] = useState(false);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
-  const [showAffirmation, setShowAffirmation] = useState(false);
   const [progress, setProgress] = useState(0);
 
   // Define total steps in your onboarding flow
@@ -112,13 +62,6 @@ export default function YogaGoalPage() {
     // Calculate progress and animate it
     const calculatedProgress = (currentStep / totalOnboardingSteps) * 100;
     const timer = setTimeout(() => setProgress(calculatedProgress), 100);
-
-    // Show affirmation dialog on first load of this page
-    const hasSeenAffirmation = sessionStorage.getItem('seenOnboardingAffirmation');
-    if (!hasSeenAffirmation) {
-        setShowAffirmation(true);
-        sessionStorage.setItem('seenOnboardingAffirmation', 'true');
-    }
 
     if (user) {
       const userDocRef = doc(firestore, 'users', user.uid);
@@ -186,7 +129,6 @@ export default function YogaGoalPage() {
 
   return (
     <AppShell>
-      <AffirmationDialog isOpen={showAffirmation} onOpenChange={setShowAffirmation} />
       <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12">
         <div className="w-full max-w-2xl z-10 px-4 flex flex-col items-center">
             <OnboardingHeader />
@@ -263,5 +205,3 @@ export default function YogaGoalPage() {
     </AppShell>
   );
 }
-
-    
