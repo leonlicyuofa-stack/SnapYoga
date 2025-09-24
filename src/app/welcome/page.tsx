@@ -49,7 +49,11 @@ export default function WelcomePage() {
         
         <div className="relative z-10 flex flex-col items-center max-w-lg w-full">
             <div className="text-center text-primary animate-fade-in-up font-serif">
-                <h1 className="text-6xl font-bold tracking-tighter mt-4 font-playfair">your yoga journey begins</h1>
+                <h1 className="text-6xl font-bold tracking-tighter mt-4 font-playfair">
+                    your
+                    <br />
+                    <span className="font-extrabold">YOGA JOURNEY</span>
+                </h1>
             </div>
             
             <div className="mt-12 w-full max-w-xs animate-fade-in-up" style={{ animationDelay: '400ms' }}>
