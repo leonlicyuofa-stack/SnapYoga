@@ -124,7 +124,7 @@ export default function GenderProfilePage() {
                   <Label htmlFor="username">Username</Label>
                   <Input 
                     id="username" 
-                    placeholder="e.g. Chahua" 
+                    placeholder="username" 
                     {...register("username")}
                     className="bg-card/50 text-sm"
                   />
@@ -139,7 +139,7 @@ export default function GenderProfilePage() {
                       render={({ field }) => (
                           <Select onValueChange={field.onChange} value={field.value}>
                               <SelectTrigger className="w-full bg-card/50 text-sm">
-                                  <SelectValue placeholder="Select your age" />
+                                  <SelectValue placeholder="your age" />
                               </SelectTrigger>
                               <SelectContent>
                                   <ScrollArea className="h-72">
