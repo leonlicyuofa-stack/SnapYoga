@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -32,7 +31,7 @@ type YogaGoalFormValues = z.infer<typeof yogaGoalSchema>;
 const mainGoalOptions = [
   { value: "fitness", label: "Stay Fit", icon: StressReliefIcon },
   { value: "stress-relief", label: "Stress Relief", icon: StressReliefIcon },
-  { value: "flexibility", label: "Improve Flexibility", icon: 'image', imagePath: 'https://i.imgur.com/gE2413G.png' },
+  { value: "flexibility", label: "Improve Flexibility", icon: ImproveFlexibilityIcon },
   { value: "strength", label: "Build Strength", icon: BuildStrengthIcon },
   { value: "mindfulness", label: "Practice Mindfulness", icon: StressReliefIcon },
   { value: "other", label: "Other", icon: MoreHorizontal },
