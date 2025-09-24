@@ -209,7 +209,7 @@ export default function YogaGoalPage() {
                             className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card/80 backdrop-blur-sm p-4 h-32 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/10 cursor-pointer transition-all shadow-md"
                             >
                             <RadioGroupItem value={option.value} id={`goal-${option.value}`} className="sr-only" />
-                            <Icon className="mb-2 h-8 w-8" />
+                            <Icon className="mb-2 h-12 w-12" />
                             <span className="text-center font-semibold">{option.label}</span>
                             </Label>
                         );
