@@ -233,9 +233,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       toast({ title: 'Account Created!', description: 'Welcome! Let\'s continue setting up your profile.' });
       router.push('/onboarding/yoga-goal');
-    } catch (error) {
-      handleAuthError(error, 'Failed to create account.');
-      throw error; // Re-throw to be caught by the calling component
+    } catch (error: any) {
+      if (error.code === 'auth/email-already-in-use') {
+        toast({
+            title: "Email Already in Use",
+            description: "Signing you in instead.",
+        });
+        await signInWithEmail(email, pass);
+        // signInWithEmail handles redirection, so we don't need to do it here.
+      } else {
+        handleAuthError(error, 'Failed to create account.');
+        throw error; // Re-throw to be caught by the calling component
+      }
     }
   };
 
