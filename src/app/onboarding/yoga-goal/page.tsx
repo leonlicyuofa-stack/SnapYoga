@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -22,6 +23,7 @@ import { BuildStrengthIcon } from '@/components/icons/BuildStrengthIcon';
 import { PracticeMindfulnessIcon } from '@/components/icons/PracticeMindfulnessIcon';
 import { StayFitIcon } from '@/components/icons/StayFitIcon';
 import { StressReliefIcon } from '@/components/icons/StressReliefIcon';
+import { ImproveFlexibilityIcon } from '@/components/icons/ImproveFlexibilityIcon';
 import Image from 'next/image';
 
 const yogaGoalSchema = z.object({
@@ -33,9 +35,9 @@ type YogaGoalFormValues = z.infer<typeof yogaGoalSchema>;
 const mainGoalOptions = [
   { value: "fitness", label: "Stay Fit", icon: StressReliefIcon },
   { value: "stress-relief", label: "Stress Relief", icon: StressReliefIcon },
-  { value: "flexibility", label: "Improve Flexibility", icon: StressReliefIcon },
+  { value: "flexibility", label: "Improve Flexibility", icon: ImproveFlexibilityIcon },
   { value: "strength", label: "Build Strength", icon: StressReliefIcon },
-  { value: "mindfulness", label: "Practice Mindfulness", icon: StressReliefIcon },
+  { value: "mindfulness", label: "Practice Mindfulness", icon: PracticeMindfulnessIcon },
   { value: "other", label: "Other", icon: MoreHorizontal },
 ];
 
