@@ -26,7 +26,7 @@ export default function SignUpPage() {
                 
                 <OnboardingHeader />
                 
-                <h1 className="text-4xl font-bold font-playfair mb-8">Create an Account</h1>
+                <h1 className="text-4xl font-bold mb-8">Create an Account</h1>
                 
                 <div className="grid grid-cols-2 gap-3">
                     <Button variant="outline" onClick={signInWithGoogle} disabled={authLoading} className="w-full py-6 text-base h-auto justify-start">

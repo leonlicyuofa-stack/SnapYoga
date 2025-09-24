@@ -32,7 +32,7 @@ export function OnboardingHeader() {
                    <div className="w-2 h-2 rounded-full bg-[#FFB6C1]"></div>
                    <div className="w-2 h-2 rounded-full bg-[#FFB6C1]"></div>
                 </div>
-                <h2 className="text-4xl font-playfair font-bold">{title}</h2>
+                <h2 className="text-4xl font-bold">{title}</h2>
                 <div>
                     <p className="text-lg opacity-80">{subtitle}</p>
                     {optionalText && <p className="text-sm italic opacity-80 mt-0">{optionalText}</p>}
