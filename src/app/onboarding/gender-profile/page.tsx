@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
-import { ArrowRight, ArrowLeft, CalendarIcon, MoveUpRight, Loader2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, CalendarIcon, MoveUpRight, Loader2, UserCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FemaleAvatar } from '@/components/icons/FemaleAvatar';
 import { MaleAvatar } from '@/components/icons/MaleAvatar';
@@ -94,7 +94,7 @@ export default function GenderProfilePage() {
         
         <div className="relative z-10 w-full max-w-sm flex flex-col items-center">
             <OnboardingHeader />
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full mt-[-2rem]">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full mt-[-2rem]">
               <div className="flex justify-around items-center pt-8">
                   <div 
                     className={cn(
@@ -119,15 +119,18 @@ export default function GenderProfilePage() {
               </div>
               {errors.gender && <p className="text-sm text-destructive text-center -mt-4">{errors.gender.message}</p>}
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                  <div className="space-y-2">
                   <Label htmlFor="username">Username</Label>
-                  <Input 
-                    id="username" 
-                    placeholder="username" 
-                    {...register("username")}
-                    className="bg-card/50 text-sm"
-                  />
+                   <div className="relative">
+                        <UserCircle className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        <Input 
+                            id="username" 
+                            placeholder="username" 
+                            {...register("username")}
+                            className="bg-transparent border-0 border-b-2 rounded-none px-0 pl-10 focus:ring-0 focus:border-primary"
+                        />
+                   </div>
                   {errors.username && <p className="text-sm text-destructive">{errors.username.message}</p>}
                 </div>
                 
@@ -137,8 +140,10 @@ export default function GenderProfilePage() {
                       name="age"
                       control={control}
                       render={({ field }) => (
-                          <Select onValueChange={field.onChange} value={field.value}>
-                              <SelectTrigger className="w-full bg-card/50 text-sm">
+                          <div className="relative">
+                            <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                             <Select onValueChange={field.onChange} value={field.value}>
+                              <SelectTrigger className="w-full bg-transparent border-0 border-b-2 rounded-none px-0 pl-10 focus:ring-0 focus:border-primary">
                                   <SelectValue placeholder="your age" />
                               </SelectTrigger>
                               <SelectContent>
@@ -149,6 +154,7 @@ export default function GenderProfilePage() {
                                   </ScrollArea>
                               </SelectContent>
                           </Select>
+                          </div>
                       )}
                   />
                   {errors.age && <p className="text-sm text-destructive">{errors.age.message}</p>}
