@@ -29,7 +29,7 @@ export default function WelcomePage() {
     setIsNavigating(true);
     // Add a small delay for transition effect before navigating
     setTimeout(() => {
-        router.push('/dashboard');
+        router.push('/onboarding/gender-profile');
     }, 500);
   };
 
@@ -49,9 +49,7 @@ export default function WelcomePage() {
         
         <div className="relative z-10 flex flex-col items-center max-w-lg w-full">
             <div className="text-center text-primary animate-fade-in-up font-serif">
-                <p className="text-4xl tracking-widest">FIND</p>
-                <h1 className="text-6xl font-bold tracking-tighter mt-4 font-playfair">your peace</h1>
-                <p className="text-4xl tracking-widest mt-4">WITHIN</p>
+                <h1 className="text-6xl font-bold tracking-tighter mt-4 font-playfair">your yoga journey begins</h1>
             </div>
             
             <div className="mt-12 w-full max-w-xs animate-fade-in-up" style={{ animationDelay: '400ms' }}>
