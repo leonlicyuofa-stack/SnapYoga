@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller, type SubmitHandler, useFormContext } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,13 +17,10 @@ import { ArrowRight, ArrowLeft, CalendarIcon, MoveUpRight, Loader2, UserCircle, 
 import { cn } from '@/lib/utils';
 import { FemaleAvatar } from '@/components/icons/FemaleAvatar';
 import { MaleAvatar } from '@/components/icons/MaleAvatar';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { format } from 'date-fns';
+import { format, getDaysInMonth } from 'date-fns';
 
 const profileSchema = z.object({
   gender: z.string().min(1, { message: "Please select a gender" }),
@@ -37,7 +34,50 @@ const profileSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
-const ageOptions = Array.from({ length: 83 }, (_, i) => (i + 18).toString()); // Ages 18 to 100
+const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - 18 - i);
+const months = Array.from({ length: 12 }, (_, i) => i);
+
+const DatePickerColumn = ({ values, onSelect, selectedValue }: { values: (string|number)[], onSelect: (value: any) => void, selectedValue: any }) => {
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const container = scrollContainerRef.current;
+        if (container) {
+            const selectedElement = container.querySelector(`[data-value="${selectedValue}"]`) as HTMLElement;
+            if (selectedElement) {
+                 const containerHeight = container.clientHeight;
+                 const elementHeight = selectedElement.offsetHeight;
+                 const scrollTop = selectedElement.offsetTop - (containerHeight / 2) + (elementHeight / 2);
+                 container.scrollTop = scrollTop;
+            }
+        }
+    }, [selectedValue]);
+
+    return (
+        <div ref={scrollContainerRef} className="h-48 overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar">
+            <div className="flex flex-col items-center">
+                 {/* Padding elements to center the first and last items */}
+                <div className="h-[calc(8.5rem-1.25rem)] flex-shrink-0"></div>
+                {values.map((item, index) => (
+                    <div
+                        key={index}
+                        data-value={item}
+                        onClick={() => onSelect(item)}
+                        className={cn(
+                            "flex items-center justify-center w-full h-10 text-xl snap-center shrink-0 cursor-pointer transition-all duration-200",
+                            selectedValue === item
+                                ? "font-bold text-foreground text-2xl"
+                                : "text-muted-foreground/50"
+                        )}
+                    >
+                        {typeof item === 'number' ? item : format(new Date(0, item), 'MMMM')}
+                    </div>
+                ))}
+                 <div className="h-[calc(8.5rem-1.25rem)] flex-shrink-0"></div>
+            </div>
+        </div>
+    );
+};
 
 export default function GenderProfilePage() {
   const { user, loading: authLoading, signUpWithEmail } = useAuth();
@@ -46,16 +86,29 @@ export default function GenderProfilePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { control, register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileSchema)
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+        birthday: new Date(new Date().getFullYear() - 25, 0, 1)
+    }
   });
 
   const selectedGender = watch('gender');
+  const birthday = watch('birthday');
 
+  const daysInMonth = birthday ? getDaysInMonth(birthday) : 31;
+  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
+  const handleDateChange = (part: 'year' | 'month' | 'day', value: number) => {
+    const newDate = new Date(birthday || new Date());
+    if (part === 'year') newDate.setFullYear(value);
+    if (part === 'month') newDate.setMonth(value);
+    if (part === 'day') newDate.setDate(value);
+    setValue('birthday', newDate, { shouldValidate: true });
+  };
 
   const onSubmit: SubmitHandler<ProfileFormValues> = async (data) => {
     setIsSubmitting(true);
     try {
-      // Calculate age from birthday
       const today = new Date();
       const birthDate = new Date(data.birthday);
       let age = today.getFullYear() - birthDate.getFullYear();
@@ -70,10 +123,8 @@ export default function GenderProfilePage() {
           birthday: data.birthday,
           age: age,
       });
-      // The router push will happen from the AuthContext after user is created.
     } catch (error) {
       console.error("Error during sign up from profile page:", error);
-      // The toast is already handled in the AuthContext, so we don't need to show another one here.
     } finally {
       setIsSubmitting(false);
     }
@@ -150,48 +201,15 @@ export default function GenderProfilePage() {
                   {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
                 </div>
                 
-                <div className="space-y-2">
-                  <Controller
-                    name="birthday"
-                    control={control}
-                    render={({ field }) => (
-                      <div className="relative">
-                        <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "w-full justify-start text-left font-normal bg-transparent border-0 border-b-2 rounded-none px-0 pl-10 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary hover:bg-transparent",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value ? (
-                                format(field.value, "PPP")
-                              ) : (
-                                <span>Birthday</span>
-                              )}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              disabled={(date) =>
-                                date > new Date() || date < new Date("1900-01-01")
-                              }
-                              initialFocus
-                              captionLayout="dropdown-buttons"
-                              fromYear={1920}
-                              toYear={new Date().getFullYear()}
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                    )}
-                  />
-                  {errors.birthday && <p className="text-sm text-destructive">{errors.birthday.message}</p>}
+                <div className="space-y-2 relative">
+                    <Label className="text-muted-foreground text-center block mb-2">Birthday</Label>
+                    <div className="grid grid-cols-3 gap-2 relative h-48">
+                        <DatePickerColumn values={months} onSelect={(month) => handleDateChange('month', month)} selectedValue={birthday?.getMonth()} />
+                        <DatePickerColumn values={days} onSelect={(day) => handleDateChange('day', day)} selectedValue={birthday?.getDate()} />
+                        <DatePickerColumn values={years} onSelect={(year) => handleDateChange('year', year)} selectedValue={birthday?.getFullYear()} />
+                        <div className="absolute top-1/2 left-0 right-0 h-10 -translate-y-1/2 border-y-2 border-foreground/30 pointer-events-none"></div>
+                    </div>
+                    {errors.birthday && <p className="text-sm text-destructive text-center">{errors.birthday.message}</p>}
                 </div>
               </div>
 
@@ -210,3 +228,5 @@ export default function GenderProfilePage() {
     </AppShell>
   );
 }
+
+    
