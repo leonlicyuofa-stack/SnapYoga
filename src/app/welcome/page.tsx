@@ -51,7 +51,18 @@ export default function WelcomePage() {
             <div className="text-center text-primary animate-fade-in-up font-serif">
                 <h1 className="text-6xl font-bold tracking-tighter mt-4 font-playfair flex flex-col">
                     <span className="mb-4 font-bold">your</span>
-                    <span className="font-extrabold mb-4 text-5xl">YOGA JOURNEY</span>
+                    <div className="relative inline-block my-4">
+                        <svg
+                            className="absolute -inset-4 sm:-inset-6 md:-inset-8 w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] md:w-[calc(100%+4rem)] h-full text-white/80"
+                            viewBox="0 0 300 60"
+                            fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                        >
+                            <path d="M299.5 2.45999C281.833 7.87666 211.5 -5.29001 149.5 7.45999C87.5 20.21 21.5 44.96 0.500001 57.96L0.5 41.96C25 31.96 90 2.45999 150.5 14.96C211 27.46 273.5 17.46 299.5 22.46L299.5 2.45999Z" />
+                        </svg>
+                        <span className="relative font-extrabold text-5xl text-primary">YOGA JOURNEY</span>
+                    </div>
                     <span>begins</span>
                 </h1>
             </div>
