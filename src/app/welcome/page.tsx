@@ -53,7 +53,7 @@ export default function WelcomePage() {
                     <span className="mb-4 font-bold">your</span>
                     <div className="relative inline-block my-4">
                         <svg
-                            className="absolute -inset-4 sm:-inset-6 md:-inset-8 w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] md:w-[calc(100%+4rem)] h-full text-white/50"
+                            className="absolute -inset-4 sm:-inset-6 md:-inset-8 w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] md:w-[calc(100%+4rem)] h-full text-white/50 z-0"
                             viewBox="0 0 300 60"
                             fill="currentColor"
                             xmlns="http://www.w3.org/2000/svg"
@@ -73,7 +73,7 @@ export default function WelcomePage() {
                              </filter>
                            </defs>
                         </svg>
-                        <span className="relative font-extrabold text-5xl text-primary">YOGA JOURNEY</span>
+                        <span className="relative font-extrabold text-5xl text-primary z-10">YOGA JOURNEY</span>
                     </div>
                     <span>begins</span>
                 </h1>
