@@ -13,8 +13,6 @@ import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { AppShell } from '@/components/layout/app-shell';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
-import { TikTokIcon } from '@/components/icons/TikTokIcon';
-import { FacebookIcon } from '@/components/icons/FacebookIcon';
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -36,12 +34,6 @@ export default function SignUpPage() {
                     </Button>
                     <Button variant="outline" onClick={signInWithApple} disabled={authLoading} className="w-full py-6 text-base h-auto justify-start">
                         <AppleIcon className="mr-4 h-5 w-5" /> {t('authApple')}
-                    </Button>
-                    <Button variant="outline" disabled={authLoading} className="w-full py-6 text-base h-auto justify-start">
-                        <FacebookIcon className="mr-4 h-5 w-5" /> Facebook
-                    </Button>
-                    <Button variant="outline" disabled={authLoading} className="w-full py-6 text-base h-auto justify-start">
-                        <TikTokIcon className="mr-4 h-5 w-5" /> TikTok
                     </Button>
                 </div>
 

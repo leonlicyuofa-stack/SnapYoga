@@ -19,7 +19,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/contexts/AuthContext'; 
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
-import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 
@@ -56,18 +55,6 @@ export default function HeadstandInvitePage() {
   const whatsappLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
   const pinterestShareUrl = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(inviteLink)}&media=${encodeURIComponent('https://placehold.co/600x400.png')}&description=${encodeURIComponent(shareText)}`;
 
-  const handleTikTokShare = () => {
-    if (navigator.clipboard && inviteLink) {
-        navigator.clipboard.writeText(inviteLink).then(() => {
-            toast({
-                title: "Link Copied for TikTok!",
-                description: "Paste this link in your TikTok bio or video description.",
-                duration: 5000,
-            });
-        });
-    }
-  };
-  
   const handleInstagramShare = () => {
      if (navigator.clipboard && inviteLink) {
       navigator.clipboard.writeText(inviteLink).then(() => {
@@ -274,9 +261,6 @@ export default function HeadstandInvitePage() {
                         <a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer">
                           <PinterestIcon className="mr-2 h-5 w-5" /> Pinterest
                         </a>
-                      </Button>
-                      <Button variant="outline" onClick={handleTikTokShare} disabled={!inviteLink} className="w-full sm:w-auto">
-                          <TikTokIcon className="mr-2 h-5 w-5" /> TikTok
                       </Button>
                   </div>
               </div>

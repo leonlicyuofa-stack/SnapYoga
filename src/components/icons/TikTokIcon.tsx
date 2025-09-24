@@ -1,21 +1,63 @@
+"use client";
 
-import type { SVGProps } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { useAuth } from '@/contexts/AuthContext';
+import { GoogleIcon } from '@/components/icons/GoogleIcon';
+import { AppleIcon } from '@/components/icons/AppleIcon';
+import { Mail, ArrowLeft } from 'lucide-react';
+import { useState } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { AppShell } from '@/components/layout/app-shell';
+import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 
-export function TikTokIcon(props: SVGProps<SVGSVGElement>) {
+export default function SignUpPage() {
+  const router = useRouter();
+  const { signInWithGoogle, signInWithApple, loading: authLoading } = useAuth();
+  const { t } = useLanguage();
+
   return (
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      width="24" 
-      height="24" 
-      viewBox="0 0 24 24" 
-      fill="currentColor" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
-      {...props}
-    >
-        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-2.43.03-4.83-1-6.7-2.9-1.95-2-3.06-4.64-3.06-7.34v-1.28c.28 0 .56-.01.84-.01 1.43 0 2.85-.01 4.28-.01 0 1.39.31 2.75.92 3.95.61 1.2 1.56 2.16 2.78 2.71.62.28 1.26.46 1.91.56v-4.11c-.57-.13-1.14-.33-1.69-.6-1.22-.57-2.33-1.39-3.22-2.42-.89-1.03-1.55-2.25-1.93-3.57-.42-1.44-.54-2.96-.54-4.47 0-1.52.01-3.04.01-4.57.01-.13.02-.26.04-.39.08-.43.27-.84.54-1.2.32-.41.73-.77 1.2-1.07.46-.3.99-.52 1.55-.67.01 1.53.01 3.05.01 4.57v.01Z"/>
-    </svg>
+    <AppShell>
+        <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden">
+            <div className="relative z-10 w-full max-w-sm text-center">
+                
+                <OnboardingHeader />
+                
+                <h1 className="text-4xl font-bold font-playfair mb-8">Create an Account</h1>
+                
+                <div className="grid grid-cols-2 gap-3">
+                    <Button variant="outline" onClick={signInWithGoogle} disabled={authLoading} className="w-full py-6 text-base h-auto justify-start">
+                        <GoogleIcon className="mr-4 h-5 w-5" /> {t('authGoogle')}
+                    </Button>
+                    <Button variant="outline" onClick={signInWithApple} disabled={authLoading} className="w-full py-6 text-base h-auto justify-start">
+                        <AppleIcon className="mr-4 h-5 w-5" /> {t('authApple')}
+                    </Button>
+                </div>
+
+                <div className="relative my-6">
+                    <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-background px-2 text-muted-foreground">{t('authOrSignUpWithEmail')}</span>
+                    </div>
+                </div>
+
+                <Button variant="outline" disabled={authLoading} className="w-full py-6 text-base h-auto justify-start" onClick={() => router.push('/onboarding/gender-profile')}>
+                    <Mail className="mr-4 h-5 w-5" /> Sign Up with Email
+                </Button>
+
+                <p className="text-sm text-muted-foreground mt-8">
+                    {t('authAlreadyHaveAccount')}{' '}
+                    <Link href="/auth/signin" className="font-medium text-primary hover:underline">
+                        {t('signIn')}
+                    </Link>
+                </p>
+
+            </div>
+        </div>
+    </AppShell>
   );
 }
