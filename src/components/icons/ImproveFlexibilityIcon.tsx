@@ -16,6 +16,9 @@ export function ImproveFlexibilityIcon(props: SVGProps<SVGSVGElement>) {
           d="M62.5,90.5 C60.5,95.5 40.5,95.5 38.5,90.5 C35.5,85.5 42.5,70.5 42.5,60.5 C42.5,45.5 35.5,35.5 45.5,25.5 C52.5,18.5 60.5,20.5 65.5,30.5 C72.5,45.5 70.5,50.5 65.5,60.5 C60.5,70.5 70.5,80.5 62.5,90.5Z"
           fill="#FDE68A"
         />
+
+        {/* Leg lifting up */}
+        <path d="M62,90 C50,85 40,88 38,80" fill="none"/>
         
         {/* Blushes */}
         <circle cx="58" cy="52" r="5" fill="#FCCACA" opacity="0.7" stroke="none"/>
