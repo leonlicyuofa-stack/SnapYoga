@@ -50,7 +50,7 @@ export default function WelcomePage() {
         <div className="relative z-10 flex flex-col items-center max-w-lg w-full">
             <div className="text-center text-primary animate-fade-in-up font-serif">
                 <h1 className="text-6xl font-bold tracking-tighter mt-4 font-playfair flex flex-col items-center">
-                    <span className="mb-4 font-bold">your</span>
+                    <span className="mb-4 font-bold text-[40px]">your</span>
                     <div className="relative inline-block my-4">
                         <svg
                             className="absolute -inset-4 sm:-inset-6 md:-inset-8 w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] md:w-[calc(100%+4rem)] h-full text-white/50 z-0"
@@ -75,7 +75,7 @@ export default function WelcomePage() {
                         </svg>
                         <span className="relative font-extrabold text-5xl z-10">YOGA JOURNEY</span>
                     </div>
-                    <span className="mb-4 font-bold">begins</span>
+                    <span className="mb-4 font-bold text-[40px]">begins</span>
                 </h1>
             </div>
             
