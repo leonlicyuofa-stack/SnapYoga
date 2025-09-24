@@ -59,9 +59,9 @@ export default function WelcomePage() {
                             xmlns="http://www.w3.org/2000/svg"
                             aria-hidden="true"
                         >
-                           <path transform="translate(0, 5)" d="M0 20 Q 50 10, 100 20 T 200 20 T 300 20" stroke="currentColor" strokeWidth="25" fill="none" strokeLinecap="round" style={{filter: 'url(#wavy)'}} />
-                           <path transform="translate(0, 10)" d="M0 25 Q 50 18, 100 25 T 200 25 T 300 25" stroke="currentColor" strokeWidth="20" fill="none" strokeLinecap="round" style={{filter: 'url(#wavy2)', opacity: 0.7}} />
-                           <path transform="translate(0, -5)" d="M0 15 Q 50 22, 100 15 T 200 15 T 300 15" stroke="currentColor" strokeWidth="15" fill="none" strokeLinecap="round" style={{filter: 'url(#wavy2)', opacity: 0.8}} />
+                           <path transform="translate(0, 10)" d="M0 20 Q 50 10, 100 20 T 200 20 T 300 20" stroke="currentColor" strokeWidth="25" fill="none" strokeLinecap="round" style={{filter: 'url(#wavy)'}} />
+                           <path transform="translate(0, 20)" d="M0 25 Q 50 18, 100 25 T 200 25 T 300 25" stroke="currentColor" strokeWidth="20" fill="none" strokeLinecap="round" style={{filter: 'url(#wavy2)', opacity: 0.7}} />
+                           <path transform="translate(0, 0)" d="M0 15 Q 50 22, 100 15 T 200 15 T 300 15" stroke="currentColor" strokeWidth="15" fill="none" strokeLinecap="round" style={{filter: 'url(#wavy2)', opacity: 0.8}} />
                            <defs>
                              <filter id="wavy">
                                <feTurbulence x="0" y="0" baseFrequency="0.01 0.005" numOctaves="2" seed="2" />
