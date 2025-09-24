@@ -46,7 +46,7 @@ export default function SignUpPage() {
                     </div>
                 </div>
 
-                <Button variant="outline" disabled={authLoading} className="w-full py-6 text-base h-auto justify-start" onClick={() => router.push('/welcome')}>
+                <Button variant="outline" disabled={authLoading} className="w-full py-6 text-base h-auto justify-start" onClick={() => router.push('/onboarding/gender-profile')}>
                     <Mail className="mr-4 h-5 w-5" /> Sign Up with Email
                 </Button>
 
