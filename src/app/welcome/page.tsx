@@ -73,9 +73,9 @@ export default function WelcomePage() {
                              </filter>
                            </defs>
                         </svg>
-                        <span className="relative font-extrabold text-5xl text-primary z-10">YOGA JOURNEY</span>
+                        <span className="relative font-extrabold text-5xl z-10">YOGA JOURNEY</span>
                     </div>
-                    <span>begins</span>
+                    <span className="mb-4 font-bold">begins</span>
                 </h1>
             </div>
             
