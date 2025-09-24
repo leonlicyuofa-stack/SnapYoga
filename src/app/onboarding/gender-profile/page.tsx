@@ -39,25 +39,27 @@ const months = Array.from({ length: 12 }, (_, i) => i);
 
 const DatePickerColumn = ({ values, onSelect, selectedValue }: { values: (string|number)[], onSelect: (value: any) => void, selectedValue: any }) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const itemHeight = 40; // Corresponds to h-10
+    const containerHeight = 192; // Corresponds to h-48
 
     useEffect(() => {
         const container = scrollContainerRef.current;
         if (container) {
             const selectedElement = container.querySelector(`[data-value="${selectedValue}"]`) as HTMLElement;
             if (selectedElement) {
-                 const containerHeight = container.clientHeight;
-                 const elementHeight = selectedElement.offsetHeight;
-                 const scrollTop = selectedElement.offsetTop - (containerHeight / 2) + (elementHeight / 2);
+                 const scrollTop = selectedElement.offsetTop - (containerHeight / 2) + (itemHeight / 2);
                  container.scrollTop = scrollTop;
             }
         }
-    }, [selectedValue]);
+    }, [selectedValue, containerHeight, itemHeight]);
+
+    const paddingTop = (containerHeight - itemHeight) / 2;
+    const paddingBottom = (containerHeight - itemHeight) / 2;
 
     return (
         <div ref={scrollContainerRef} className="h-48 overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar">
             <div className="flex flex-col items-center">
-                 {/* Padding elements to center the first and last items */}
-                <div className="h-[calc(6rem)] flex-shrink-0"></div>
+                 <div style={{ height: `${paddingTop}px` }} className="flex-shrink-0"></div>
                 {values.map((item, index) => (
                     <div
                         key={index}
@@ -73,7 +75,7 @@ const DatePickerColumn = ({ values, onSelect, selectedValue }: { values: (string
                         {typeof item === 'number' ? item : format(new Date(0, item), 'MMMM')}
                     </div>
                 ))}
-                 <div className="h-[calc(6rem)] flex-shrink-0"></div>
+                 <div style={{ height: `${paddingBottom}px`}} className="flex-shrink-0"></div>
             </div>
         </div>
     );
@@ -248,7 +250,3 @@ export default function GenderProfilePage() {
     </AppShell>
   );
 }
-
-    
-
-    
