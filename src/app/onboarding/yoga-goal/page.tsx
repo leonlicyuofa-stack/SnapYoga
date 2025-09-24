@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -10,7 +9,7 @@ import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { AppShell } from '@/components/layout/app-shell';
-import { Target, ArrowRight, ArrowLeft, HeartPulse, Wind, Spline, Dumbbell, BrainCircuit, MoreHorizontal, Sparkles, MoveUpRight, Loader2 } from 'lucide-react';
+import { Target, ArrowRight, ArrowLeft, HeartPulse, Wind, Spline, BrainCircuit, MoreHorizontal, Sparkles, MoveUpRight, Loader2 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc } from 'firebase/firestore';
@@ -19,6 +18,7 @@ import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { Progress } from '@/components/ui/progress';
+import { BuildStrengthIcon } from '@/components/icons/BuildStrengthIcon';
 
 const yogaGoalSchema = z.object({
   mainGoal: z.string().min(1, { message: "Please select your main yoga goal" }),
@@ -30,7 +30,7 @@ const mainGoalOptions = [
   { value: "fitness", label: "Stay Fit", icon: HeartPulse },
   { value: "stress-relief", label: "Stress Relief", icon: Wind },
   { value: "flexibility", label: "Improve Flexibility", icon: Spline },
-  { value: "strength", label: "Build Strength", icon: Dumbbell },
+  { value: "strength", label: "Build Strength", icon: BuildStrengthIcon },
   { value: "mindfulness", label: "Practice Mindfulness", icon: BrainCircuit },
   { value: "other", label: "Other", icon: MoreHorizontal },
 ];
