@@ -75,7 +75,7 @@ export default function WelcomePage() {
                         </svg>
                         <span className="relative font-extrabold text-5xl z-10">YOGA JOURNEY</span>
                     </div>
-                    <span className="mb-4 font-bold text-[40px]">begins</span>
+                    <span className="mt-4 font-bold text-[40px]">begins</span>
                 </h1>
             </div>
             
