@@ -201,15 +201,35 @@ export default function GenderProfilePage() {
                   {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
                 </div>
                 
-                <div className="space-y-2 relative">
-                    <Label className="text-muted-foreground text-center block mb-2">Birthday</Label>
-                    <div className="grid grid-cols-3 gap-2 relative h-48">
-                        <DatePickerColumn values={months} onSelect={(month) => handleDateChange('month', month)} selectedValue={birthday?.getMonth()} />
-                        <DatePickerColumn values={days} onSelect={(day) => handleDateChange('day', day)} selectedValue={birthday?.getDate()} />
-                        <DatePickerColumn values={years} onSelect={(year) => handleDateChange('year', year)} selectedValue={birthday?.getFullYear()} />
-                        <div className="absolute top-1/2 left-0 right-0 h-10 -translate-y-1/2 border-y-2 border-foreground/30 pointer-events-none"></div>
-                    </div>
-                    {errors.birthday && <p className="text-sm text-destructive text-center">{errors.birthday.message}</p>}
+                <div className="space-y-2">
+                    <Controller
+                        name="birthday"
+                        control={control}
+                        render={({ field }) => (
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <div className="relative">
+                                        <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                        <button
+                                            type="button"
+                                            className="w-full text-left bg-transparent border-0 border-b-2 border-input rounded-none px-0 pl-10 h-10 text-base placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary"
+                                        >
+                                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                                        </button>
+                                    </div>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start">
+                                    <div className="grid grid-cols-3 gap-2 relative h-48 w-80 p-4">
+                                        <DatePickerColumn values={months} onSelect={(month) => handleDateChange('month', month)} selectedValue={field.value?.getMonth()} />
+                                        <DatePickerColumn values={days} onSelect={(day) => handleDateChange('day', day)} selectedValue={field.value?.getDate()} />
+                                        <DatePickerColumn values={years} onSelect={(year) => handleDateChange('year', year)} selectedValue={field.value?.getFullYear()} />
+                                        <div className="absolute top-1/2 left-0 right-0 h-10 -translate-y-1/2 border-y-2 border-foreground/30 pointer-events-none"></div>
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
+                        )}
+                    />
+                    {errors.birthday && <p className="text-sm text-destructive">{errors.birthday.message}</p>}
                 </div>
               </div>
 
