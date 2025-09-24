@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -21,6 +22,7 @@ import { Progress } from '@/components/ui/progress';
 import { BuildStrengthIcon } from '@/components/icons/BuildStrengthIcon';
 import { PracticeMindfulnessIcon } from '@/components/icons/PracticeMindfulnessIcon';
 import { StayFitIcon } from '@/components/icons/StayFitIcon';
+import { StressReliefIcon } from '@/components/icons/StressReliefIcon';
 
 const yogaGoalSchema = z.object({
   mainGoal: z.string().min(1, { message: "Please select your main yoga goal" }),
@@ -30,7 +32,7 @@ type YogaGoalFormValues = z.infer<typeof yogaGoalSchema>;
 
 const mainGoalOptions = [
   { value: "fitness", label: "Stay Fit", icon: StayFitIcon },
-  { value: "stress-relief", label: "Stress Relief", icon: Wind },
+  { value: "stress-relief", label: "Stress Relief", icon: StressReliefIcon },
   { value: "flexibility", label: "Improve Flexibility", icon: Spline },
   { value: "strength", label: "Build Strength", icon: BuildStrengthIcon },
   { value: "mindfulness", label: "Practice Mindfulness", icon: PracticeMindfulnessIcon },
@@ -216,6 +218,10 @@ export default function YogaGoalPage() {
                         if (option.value === 'fitness') {
                             Icon = StayFitIcon;
                             iconClassName = "mb-2 h-12 w-12";
+                        }
+                        if (option.value === 'stress-relief') {
+                            Icon = StressReliefIcon;
+                            iconClassName = "mb-2 h-16 w-16";
                         }
                         return (
                             <Label
