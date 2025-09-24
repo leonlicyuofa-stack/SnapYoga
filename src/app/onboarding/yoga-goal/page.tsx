@@ -32,11 +32,11 @@ const yogaGoalSchema = z.object({
 type YogaGoalFormValues = z.infer<typeof yogaGoalSchema>;
 
 const mainGoalOptions = [
-  { value: "fitness", label: "Stay Fit", icon: StayFitIcon },
+  { value: "fitness", label: "Stay Fit", icon: StressReliefIcon },
   { value: "stress-relief", label: "Stress Relief", icon: StressReliefIcon },
   { value: "flexibility", label: "Improve Flexibility", icon: StressReliefIcon },
-  { value: "strength", label: "Build Strength", icon: 'image', imagePath: '/images/Gemini_BuildStrength.png' },
-  { value: "mindfulness", label: "Practice Mindfulness", icon: PracticeMindfulnessIcon },
+  { value: "strength", label: "Build Strength", icon: StressReliefIcon },
+  { value: "mindfulness", label: "Practice Mindfulness", icon: StressReliefIcon },
   { value: "other", label: "Other", icon: MoreHorizontal },
 ];
 
@@ -222,7 +222,7 @@ export default function YogaGoalPage() {
                           }
 
                           let Icon = option.icon as React.ElementType;
-                          let iconClassName = "mb-2 h-12 w-12";
+                          let iconClassName = "mb-2 h-16 w-16";
                            if (option.value === 'mindfulness') {
                               Icon = PracticeMindfulnessIcon;
                               iconClassName = "mb-2 h-16 w-16";
