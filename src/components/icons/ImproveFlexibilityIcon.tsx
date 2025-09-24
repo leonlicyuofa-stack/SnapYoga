@@ -16,8 +16,8 @@ export function ImproveFlexibilityIcon(props: SVGProps<SVGSVGElement>) {
         />
         
         {/* Blushes */}
-        <circle cx="50" cy="45" r="7" fill="#FCA5A5" opacity="0.6"/>
-        <circle cx="65" cy="45" r="7" fill="#FCA5A5" opacity="0.6"/>
+        <circle cx="48" cy="52" r="5" fill="#FCCACA" opacity="0.7"/>
+        <circle cx="67" cy="52" r="5" fill="#FCCACA" opacity="0.7"/>
 
         {/* Face */}
         <circle cx="53" cy="43" r="2" fill="#27272A" />
