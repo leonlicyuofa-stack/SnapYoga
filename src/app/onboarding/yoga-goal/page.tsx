@@ -29,7 +29,7 @@ const yogaGoalSchema = z.object({
 type YogaGoalFormValues = z.infer<typeof yogaGoalSchema>;
 
 const mainGoalOptions = [
-  { value: "fitness", label: "Stay Fit", icon: StressReliefIcon },
+  { value: "fitness", label: "Stay Fit", icon: 'image', imagePath: '/images/stayfit.png' },
   { value: "stress-relief", label: "Stress Relief", icon: StressReliefIcon },
   { value: "flexibility", label: "Improve Flexibility", icon: ImproveFlexibilityIcon },
   { value: "strength", label: "Build Strength", icon: BuildStrengthIcon },
@@ -147,6 +147,22 @@ export default function YogaGoalPage() {
                     >
                         {mainGoalOptions.map((option) => {
                         
+                        if (option.icon === 'image' && option.imagePath) {
+                            return (
+                              <Label
+                                key={option.value}
+                                htmlFor={`goal-${option.value}`}
+                                className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card/80 backdrop-blur-sm p-4 h-32 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/10 cursor-pointer transition-all shadow-md"
+                              >
+                                <RadioGroupItem value={option.value} id={`goal-${option.value}`} className="sr-only" />
+                                <div className="mb-2 h-16 w-16 relative">
+                                  <Image src={option.imagePath} alt={option.label} layout="fill" objectFit="contain" />
+                                </div>
+                                <span className="text-center font-semibold">{option.label}</span>
+                              </Label>
+                            );
+                        }
+
                         let Icon = option.icon as React.ElementType;
                         let iconClassName = "mb-2 h-16 w-16";
                         
