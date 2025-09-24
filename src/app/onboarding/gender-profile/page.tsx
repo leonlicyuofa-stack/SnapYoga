@@ -126,7 +126,7 @@ export default function GenderProfilePage() {
                     id="username" 
                     placeholder="e.g. Chahua" 
                     {...register("username")}
-                    className="bg-card/50"
+                    className="bg-card/50 text-sm"
                   />
                   {errors.username && <p className="text-sm text-destructive">{errors.username.message}</p>}
                 </div>
@@ -138,7 +138,7 @@ export default function GenderProfilePage() {
                       control={control}
                       render={({ field }) => (
                           <Select onValueChange={field.onChange} value={field.value}>
-                              <SelectTrigger className="w-full bg-card/50">
+                              <SelectTrigger className="w-full bg-card/50 text-sm">
                                   <SelectValue placeholder="Select your age" />
                               </SelectTrigger>
                               <SelectContent>
