@@ -20,7 +20,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { Progress } from '@/components/ui/progress';
 import { BuildStrengthIcon } from '@/components/icons/BuildStrengthIcon';
-import { PracticeMindfulnessIcon } from '@/components/icons/PracticeMindfulnessIcon';
 import { StayFitIcon } from '@/components/icons/StayFitIcon';
 import { StressReliefIcon } from '@/components/icons/StressReliefIcon';
 import { ImproveFlexibilityIcon } from '@/components/icons/ImproveFlexibilityIcon';
@@ -37,7 +36,7 @@ const mainGoalOptions = [
   { value: "stress-relief", label: "Stress Relief", icon: StressReliefIcon },
   { value: "flexibility", label: "Improve Flexibility", icon: ImproveFlexibilityIcon },
   { value: "strength", label: "Build Strength", icon: StressReliefIcon },
-  { value: "mindfulness", label: "Practice Mindfulness", icon: PracticeMindfulnessIcon },
+  { value: "mindfulness", label: "Practice Mindfulness", icon: StressReliefIcon },
   { value: "other", label: "Other", icon: MoreHorizontal },
 ];
 
