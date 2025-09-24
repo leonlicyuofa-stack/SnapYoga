@@ -1,3 +1,4 @@
+
 import type { SVGProps } from 'react';
 
 export function StayFitIcon(props: SVGProps<SVGSVGElement>) {
@@ -5,7 +6,7 @@ export function StayFitIcon(props: SVGProps<SVGSVGElement>) {
     <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <g stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
         {/* Main cloud body */}
-        <path d="M75,40 C85,40 90,50 90,60 C90,70 85,80 75,80 L25,80 C15,80 10,70 10,60 C10,50 15,40 25,40 C25,30 35,25 45,25 C55,25 65,30 75,40 Z" fill="hsl(var(--secondary))" stroke="none"/>
+        <path d="M75,40 C85,40 90,50 90,60 C90,70 85,80 75,80 L25,80 C15,80 10,70 10,60 C10,50 15,40 25,40 C25,30 35,25 45,25 C55,25 65,30 75,40 Z" fill="hsl(var(--muted))" stroke="none"/>
         
         {/* Eyes */}
         <path d="M40 55 q5 -5 5 0" />
