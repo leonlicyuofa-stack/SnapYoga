@@ -49,7 +49,7 @@ export default function GenderProfilePage() {
 
 
   useEffect(() => {
-    if (!user && !authLoading) {
+    if (!authLoading && !user) {
       router.replace('/auth/signin');
     }
   }, [user, authLoading, router]);
@@ -170,5 +170,3 @@ export default function GenderProfilePage() {
     </AppShell>
   );
 }
-
-    
