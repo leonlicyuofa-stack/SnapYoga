@@ -62,24 +62,22 @@ const DatePickerColumn = ({ title, values, onSelect, selectedValue }: { title: s
                 {title}
             </div>
             <div ref={scrollContainerRef} className="h-40 overflow-y-scroll snap-y snap-mandatory no-scrollbar w-full">
-                <div className="flex flex-col items-center">
-                    <div style={{ height: paddingTop }} className="flex-shrink-0"></div>
+                <div className="flex flex-col items-center" style={{paddingTop, paddingBottom}}>
                     {values.map((item, index) => (
                         <div
                             key={index}
                             data-value={item}
                             onClick={() => onSelect(item)}
                             className={cn(
-                                "flex items-center justify-center w-full h-8 text-base snap-center shrink-0 cursor-pointer transition-all duration-200",
+                                "flex items-center justify-center w-full h-8 text-sm snap-center shrink-0 cursor-pointer transition-all duration-200",
                                 selectedValue === item
-                                    ? "font-bold text-foreground text-lg"
+                                    ? "font-bold text-foreground text-base"
                                     : "text-muted-foreground/50"
                             )}
                         >
                             {title === 'Month' ? format(new Date(0, item as number), 'MMM') : item}
                         </div>
                     ))}
-                    <div style={{ height: paddingBottom }} className="flex-shrink-0"></div>
                 </div>
             </div>
         </div>
@@ -95,7 +93,7 @@ export default function GenderProfilePage() {
   const { control, register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-        birthday: new Date(new Date().getFullYear() - 25, 0, 1)
+        birthday: new Date(new Date().getFullYear() - 25, 1, 1)
     }
   });
 
@@ -241,7 +239,6 @@ export default function GenderProfilePage() {
                                         <DatePickerColumn title="Day" values={days} onSelect={(day) => handleDateChange('day', day)} selectedValue={field.value?.getDate()} />
                                         <DatePickerColumn title="Month" values={months} onSelect={(month) => handleDateChange('month', month)} selectedValue={field.value?.getMonth()} />
                                         <DatePickerColumn title="Year" values={years} onSelect={(year) => handleDateChange('year', year)} selectedValue={field.value?.getFullYear()} />
-                                        <div className="absolute top-1/2 left-0 right-0 h-8 -translate-y-1/2 border-y-2 border-foreground/30 pointer-events-none mt-2"></div>
                                     </div>
                                 </PopoverContent>
                             </Popover>
@@ -266,3 +263,5 @@ export default function GenderProfilePage() {
     </AppShell>
   );
 }
+
+    
