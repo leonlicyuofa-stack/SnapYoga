@@ -39,7 +39,7 @@ const months = Array.from({ length: 12 }, (_, i) => i);
 
 const DatePickerColumn = ({ title, values, onSelect, selectedValue }: { title: string; values: (string|number)[], onSelect: (value: any) => void, selectedValue: any }) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const itemHeight = 32; // h-8
+    const itemHeight = 28; // h-7
     const containerHeight = 160; // h-40
 
     useEffect(() => {
@@ -69,7 +69,7 @@ const DatePickerColumn = ({ title, values, onSelect, selectedValue }: { title: s
                             data-value={item}
                             onClick={() => onSelect(item)}
                             className={cn(
-                                "flex items-center justify-center w-full h-8 text-sm snap-center shrink-0 cursor-pointer transition-all duration-200",
+                                "flex items-center justify-center w-full h-7 text-sm snap-center shrink-0 cursor-pointer transition-all duration-200",
                                 selectedValue === item
                                     ? "font-bold text-foreground text-base"
                                     : "text-muted-foreground/50"
@@ -93,7 +93,7 @@ export default function GenderProfilePage() {
   const { control, register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-        birthday: new Date(new Date().getFullYear() - 25, 1, 1)
+        birthday: new Date(new Date().getFullYear() - 25, 0, 1)
     }
   });
 
@@ -235,7 +235,7 @@ export default function GenderProfilePage() {
                                     </div>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0" align="start">
-                                    <div className="grid grid-cols-3 gap-2 relative h-48 w-80 p-4">
+                                    <div className="grid grid-cols-3 gap-4 relative h-48 p-2">
                                         <DatePickerColumn title="Day" values={days} onSelect={(day) => handleDateChange('day', day)} selectedValue={field.value?.getDate()} />
                                         <DatePickerColumn title="Month" values={months} onSelect={(month) => handleDateChange('month', month)} selectedValue={field.value?.getMonth()} />
                                         <DatePickerColumn title="Year" values={years} onSelect={(year) => handleDateChange('year', year)} selectedValue={field.value?.getFullYear()} />
