@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -24,6 +23,7 @@ import { PracticeMindfulnessIcon } from '@/components/icons/PracticeMindfulnessI
 import { StayFitIcon } from '@/components/icons/StayFitIcon';
 import { StressReliefIcon } from '@/components/icons/StressReliefIcon';
 import { ImproveFlexibilityIcon } from '@/components/icons/ImproveFlexibilityIcon';
+import Image from 'next/image';
 
 const yogaGoalSchema = z.object({
   mainGoal: z.string().min(1, { message: "Please select your main yoga goal" }),
@@ -35,7 +35,7 @@ const mainGoalOptions = [
   { value: "fitness", label: "Stay Fit", icon: StayFitIcon },
   { value: "stress-relief", label: "Stress Relief", icon: StressReliefIcon },
   { value: "flexibility", label: "Improve Flexibility", icon: ImproveFlexibilityIcon },
-  { value: "strength", label: "Build Strength", icon: BuildStrengthIcon },
+  { value: "strength", label: "Build Strength", icon: 'image', imagePath: '/images/Gemini_BuildStrength.png' },
   { value: "mindfulness", label: "Practice Mindfulness", icon: PracticeMindfulnessIcon },
   { value: "other", label: "Other", icon: MoreHorizontal },
 ];
@@ -206,39 +206,51 @@ export default function YogaGoalPage() {
                         className="grid grid-cols-2 md:grid-cols-3 gap-4"
                     >
                         {mainGoalOptions.map((option) => {
-                        let Icon = option.icon;
-                        let iconClassName = "mb-2 h-12 w-12";
-                        if (option.value === 'strength') {
-                            Icon = BuildStrengthIcon;
-                            iconClassName = "mb-2 h-16 w-16";
-                        }
-                        if (option.value === 'mindfulness') {
-                            Icon = PracticeMindfulnessIcon;
-                            iconClassName = "mb-2 h-16 w-16";
-                        }
-                        if (option.value === 'fitness') {
-                            Icon = StayFitIcon;
-                            iconClassName = "mb-2 h-12 w-12";
-                        }
-                        if (option.value === 'stress-relief') {
-                            Icon = StressReliefIcon;
-                            iconClassName = "mb-2 h-16 w-16";
-                        }
-                         if (option.value === 'flexibility') {
-                            Icon = ImproveFlexibilityIcon;
-                            iconClassName = "mb-2 h-16 w-16";
-                        }
-                        return (
-                            <Label
-                            key={option.value}
-                            htmlFor={`goal-${option.value}`}
-                            className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card/80 backdrop-blur-sm p-4 h-32 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/10 cursor-pointer transition-all shadow-md"
-                            >
-                            <RadioGroupItem value={option.value} id={`goal-${option.value}`} className="sr-only" />
-                            <Icon className={iconClassName} />
-                            <span className="text-center font-semibold">{option.label}</span>
-                            </Label>
-                        );
+                          if (option.icon === 'image' && option.imagePath) {
+                              return (
+                                <Label
+                                  key={option.value}
+                                  htmlFor={`goal-${option.value}`}
+                                  className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card/80 backdrop-blur-sm p-4 h-32 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/10 cursor-pointer transition-all shadow-md"
+                                >
+                                  <RadioGroupItem value={option.value} id={`goal-${option.value}`} className="sr-only" />
+                                  <div className="mb-2 h-16 w-16 relative">
+                                    <Image src={option.imagePath} alt={option.label} layout="fill" objectFit="contain" />
+                                  </div>
+                                  <span className="text-center font-semibold">{option.label}</span>
+                                </Label>
+                              );
+                          }
+
+                          let Icon = option.icon as React.ElementType;
+                          let iconClassName = "mb-2 h-12 w-12";
+                          if (option.value === 'mindfulness') {
+                              Icon = PracticeMindfulnessIcon;
+                              iconClassName = "mb-2 h-16 w-16";
+                          }
+                          if (option.value === 'fitness') {
+                              Icon = StayFitIcon;
+                              iconClassName = "mb-2 h-12 w-12";
+                          }
+                          if (option.value === 'stress-relief') {
+                              Icon = StressReliefIcon;
+                              iconClassName = "mb-2 h-16 w-16";
+                          }
+                           if (option.value === 'flexibility') {
+                              Icon = ImproveFlexibilityIcon;
+                              iconClassName = "mb-2 h-16 w-16";
+                          }
+                          return (
+                              <Label
+                              key={option.value}
+                              htmlFor={`goal-${option.value}`}
+                              className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card/80 backdrop-blur-sm p-4 h-32 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/10 cursor-pointer transition-all shadow-md"
+                              >
+                              <RadioGroupItem value={option.value} id={`goal-${option.value}`} className="sr-only" />
+                              <Icon className={iconClassName} />
+                              <span className="text-center font-semibold">{option.label}</span>
+                              </Label>
+                          );
                         })}
                     </RadioGroup>
                     )}
