@@ -9,7 +9,7 @@ import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { AppShell } from '@/components/layout/app-shell';
-import { Target, ArrowRight, ArrowLeft, HeartPulse, Wind, Spline, BrainCircuit, MoreHorizontal, Sparkles, MoveUpRight, Loader2 } from 'lucide-react';
+import { Target, ArrowRight, ArrowLeft, Wind, Spline, BrainCircuit, MoreHorizontal, Sparkles, MoveUpRight, Loader2 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc } from 'firebase/firestore';
@@ -20,6 +20,7 @@ import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHea
 import { Progress } from '@/components/ui/progress';
 import { BuildStrengthIcon } from '@/components/icons/BuildStrengthIcon';
 import { PracticeMindfulnessIcon } from '@/components/icons/PracticeMindfulnessIcon';
+import { StayFitIcon } from '@/components/icons/StayFitIcon';
 
 const yogaGoalSchema = z.object({
   mainGoal: z.string().min(1, { message: "Please select your main yoga goal" }),
@@ -28,7 +29,7 @@ const yogaGoalSchema = z.object({
 type YogaGoalFormValues = z.infer<typeof yogaGoalSchema>;
 
 const mainGoalOptions = [
-  { value: "fitness", label: "Stay Fit", icon: HeartPulse },
+  { value: "fitness", label: "Stay Fit", icon: StayFitIcon },
   { value: "stress-relief", label: "Stress Relief", icon: Wind },
   { value: "flexibility", label: "Improve Flexibility", icon: Spline },
   { value: "strength", label: "Build Strength", icon: BuildStrengthIcon },
@@ -206,10 +207,15 @@ export default function YogaGoalPage() {
                         let iconClassName = "mb-2 h-12 w-12";
                         if (option.value === 'strength') {
                             Icon = BuildStrengthIcon;
+                            iconClassName = "mb-2 h-16 w-16";
                         }
                         if (option.value === 'mindfulness') {
                             Icon = PracticeMindfulnessIcon;
                             iconClassName = "mb-2 h-16 w-16";
+                        }
+                        if (option.value === 'fitness') {
+                            Icon = StayFitIcon;
+                            iconClassName = "mb-2 h-12 w-12";
                         }
                         return (
                             <Label
