@@ -19,6 +19,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { Progress } from '@/components/ui/progress';
 import { BuildStrengthIcon } from '@/components/icons/BuildStrengthIcon';
+import { PracticeMindfulnessIcon } from '@/components/icons/PracticeMindfulnessIcon';
 
 const yogaGoalSchema = z.object({
   mainGoal: z.string().min(1, { message: "Please select your main yoga goal" }),
@@ -31,7 +32,7 @@ const mainGoalOptions = [
   { value: "stress-relief", label: "Stress Relief", icon: Wind },
   { value: "flexibility", label: "Improve Flexibility", icon: Spline },
   { value: "strength", label: "Build Strength", icon: BuildStrengthIcon },
-  { value: "mindfulness", label: "Practice Mindfulness", icon: BrainCircuit },
+  { value: "mindfulness", label: "Practice Mindfulness", icon: PracticeMindfulnessIcon },
   { value: "other", label: "Other", icon: MoreHorizontal },
 ];
 
