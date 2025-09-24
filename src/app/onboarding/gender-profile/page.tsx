@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -108,7 +109,7 @@ export default function GenderProfilePage() {
                             type="email"
                             placeholder="Email" 
                             {...register("email")}
-                            className="bg-transparent border-0 border-b-2 rounded-none px-0 pl-10 focus:ring-0 focus:border-primary"
+                            className="bg-transparent border-0 border-b-2 rounded-none px-0 pl-10 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary"
                         />
                    </div>
                   {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
@@ -120,7 +121,7 @@ export default function GenderProfilePage() {
                             id="username" 
                             placeholder="Username" 
                             {...register("username")}
-                            className="bg-transparent border-0 border-b-2 rounded-none px-0 pl-10 focus:ring-0 focus:border-primary"
+                            className="bg-transparent border-0 border-b-2 rounded-none px-0 pl-10 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary"
                         />
                    </div>
                   {errors.username && <p className="text-sm text-destructive">{errors.username.message}</p>}
@@ -133,7 +134,7 @@ export default function GenderProfilePage() {
                             type="password"
                             placeholder="Password" 
                             {...register("password")}
-                            className="bg-transparent border-0 border-b-2 rounded-none px-0 pl-10 focus:ring-0 focus:border-primary"
+                            className="bg-transparent border-0 border-b-2 rounded-none px-0 pl-10 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary"
                         />
                    </div>
                   {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
@@ -147,7 +148,7 @@ export default function GenderProfilePage() {
                           <div className="relative">
                             <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                              <Select onValueChange={field.onChange} value={field.value}>
-                              <SelectTrigger className="w-full bg-transparent border-0 border-b-2 rounded-none px-0 pl-10 focus:ring-0 focus:border-primary">
+                              <SelectTrigger className="w-full bg-transparent border-0 border-b-2 rounded-none px-0 pl-10 focus:ring-0 focus-visible:ring-offset-0 focus:border-primary">
                                   <SelectValue placeholder="Your age" />
                               </SelectTrigger>
                               <SelectContent>
