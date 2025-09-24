@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -57,28 +58,28 @@ const DatePickerColumn = ({ title, values, onSelect, selectedValue }: { title: s
 
     return (
         <div className="flex flex-col items-center">
-            <div className={cn("text-sm text-muted-foreground mb-2", selectedValue !== undefined && "font-bold text-foreground")}>
+            <div className={cn("text-xs text-muted-foreground mb-2", selectedValue !== undefined && "font-bold text-foreground")}>
                 {title}
             </div>
             <div ref={scrollContainerRef} className="h-40 overflow-y-scroll snap-y snap-mandatory no-scrollbar w-full">
                 <div className="flex flex-col items-center">
-                    <div style={{ paddingTop }} className="flex-shrink-0"></div>
+                    <div style={{ height: paddingTop }} className="flex-shrink-0"></div>
                     {values.map((item, index) => (
                         <div
                             key={index}
                             data-value={item}
                             onClick={() => onSelect(item)}
                             className={cn(
-                                "flex items-center justify-center w-full h-8 text-lg snap-center shrink-0 cursor-pointer transition-all duration-200",
+                                "flex items-center justify-center w-full h-8 text-base snap-center shrink-0 cursor-pointer transition-all duration-200",
                                 selectedValue === item
-                                    ? "font-bold text-foreground text-xl"
+                                    ? "font-bold text-foreground text-lg"
                                     : "text-muted-foreground/50"
                             )}
                         >
                             {typeof item === 'number' ? item : format(new Date(0, item), 'MMM')}
                         </div>
                     ))}
-                    <div style={{ paddingBottom }} className="flex-shrink-0"></div>
+                    <div style={{ height: paddingBottom }} className="flex-shrink-0"></div>
                 </div>
             </div>
         </div>
@@ -265,3 +266,4 @@ export default function GenderProfilePage() {
     </AppShell>
   );
 }
+
