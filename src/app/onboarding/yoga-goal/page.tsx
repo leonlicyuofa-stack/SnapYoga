@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -22,7 +23,6 @@ import { BuildStrengthIcon } from '@/components/icons/BuildStrengthIcon';
 import { PracticeMindfulnessIcon } from '@/components/icons/PracticeMindfulnessIcon';
 import { StayFitIcon } from '@/components/icons/StayFitIcon';
 import { StressReliefIcon } from '@/components/icons/StressReliefIcon';
-import { ImproveFlexibilityIcon } from '@/components/icons/ImproveFlexibilityIcon';
 import Image from 'next/image';
 
 const yogaGoalSchema = z.object({
@@ -32,11 +32,11 @@ const yogaGoalSchema = z.object({
 type YogaGoalFormValues = z.infer<typeof yogaGoalSchema>;
 
 const mainGoalOptions = [
-  { value: "fitness", label: "Stay Fit", icon: ImproveFlexibilityIcon },
+  { value: "fitness", label: "Stay Fit", icon: StayFitIcon },
   { value: "stress-relief", label: "Stress Relief", icon: StressReliefIcon },
-  { value: "flexibility", label: "Improve Flexibility", icon: ImproveFlexibilityIcon },
+  { value: "flexibility", label: "Improve Flexibility", icon: StressReliefIcon },
   { value: "strength", label: "Build Strength", icon: 'image', imagePath: '/images/Gemini_BuildStrength.png' },
-  { value: "mindfulness", label: "Practice Mindfulness", icon: ImproveFlexibilityIcon },
+  { value: "mindfulness", label: "Practice Mindfulness", icon: PracticeMindfulnessIcon },
   { value: "other", label: "Other", icon: MoreHorizontal },
 ];
 
@@ -211,25 +211,24 @@ export default function YogaGoalPage() {
                                 <Label
                                   key={option.value}
                                   htmlFor={`goal-${option.value}`}
-                                  className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card/80 backdrop-blur-sm p-4 h-32 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/10 cursor-pointer transition-all shadow-md"
+                                  className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-white p-4 h-32 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/10 cursor-pointer transition-all shadow-md"
                                 >
                                   <RadioGroupItem value={option.value} id={`goal-${option.value}`} className="sr-only" />
                                   <div className="mb-2 h-16 w-16 relative">
                                     <Image src={option.imagePath} alt={option.label} layout="fill" objectFit="contain" />
                                   </div>
-                                  <span className="text-center font-semibold">{option.label}</span>
                                 </Label>
                               );
                           }
 
                           let Icon = option.icon as React.ElementType;
                           let iconClassName = "mb-2 h-12 w-12";
-                          if (option.value === 'mindfulness') {
-                              Icon = ImproveFlexibilityIcon;
+                           if (option.value === 'mindfulness') {
+                              Icon = PracticeMindfulnessIcon;
                               iconClassName = "mb-2 h-16 w-16";
                           }
                           if (option.value === 'fitness') {
-                              Icon = ImproveFlexibilityIcon;
+                              Icon = StayFitIcon;
                               iconClassName = "mb-2 h-12 w-12";
                           }
                           if (option.value === 'stress-relief') {
@@ -237,7 +236,7 @@ export default function YogaGoalPage() {
                               iconClassName = "mb-2 h-16 w-16";
                           }
                            if (option.value === 'flexibility') {
-                              Icon = ImproveFlexibilityIcon;
+                              Icon = StressReliefIcon;
                               iconClassName = "mb-2 h-16 w-16";
                           }
                           return (
