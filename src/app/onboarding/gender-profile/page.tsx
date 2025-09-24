@@ -48,12 +48,17 @@ export default function GenderProfilePage() {
   const ageValue = watch('age');
 
 
+  useEffect(() => {
+    if (!user && !authLoading) {
+      router.replace('/auth/signin');
+    }
+  }, [user, authLoading, router]);
+
   if (authLoading) {
     return <AppShell><div className="flex justify-center items-center min-h-screen"><SmileyRockLoader /></div></AppShell>;
   }
 
   if (!user && !authLoading) {
-    router.replace('/auth/signin');
     return <AppShell><div className="flex justify-center items-center min-h-screen"><p>Redirecting to sign in...</p></div></AppShell>;
   }
 
@@ -165,3 +170,5 @@ export default function GenderProfilePage() {
     </AppShell>
   );
 }
+
+    
