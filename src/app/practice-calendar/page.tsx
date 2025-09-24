@@ -190,14 +190,14 @@ export default function PracticeCalendarPage() {
                           <div className="absolute -bottom-2 -left-2 -right-2 h-full bg-white/40 rounded-lg -z-10 rotate-6"></div>
                           <div className="font-bold text-sm">POSES PRACTICED</div>
                           <div className="text-center mt-2">
-                              <p className="text-4xl font-bold font-chakra">{analysesForSelectedDay.length}</p>
+                              <p className="text-4xl font-bold">{analysesForSelectedDay.length}</p>
                           </div>
                       </div>
                       <div className="bg-card/80 backdrop-blur-sm text-primary shadow-lg relative rotate-3 p-4 rounded-lg">
                           <div className="absolute -bottom-2 -left-2 -right-2 h-full bg-white/40 rounded-lg -z-10 -rotate-6"></div>
                           <div className="font-bold text-sm">TIME SPENT</div>
                           <div className="text-center mt-2">
-                              <p className="text-4xl font-bold font-chakra">~{analysesForSelectedDay.length * 5} <span className="text-xl">min</span></p>
+                              <p className="text-4xl font-bold">~{analysesForSelectedDay.length * 5} <span className="text-xl">min</span></p>
                           </div>
                       </div>
                   </div>
@@ -279,7 +279,7 @@ export default function PracticeCalendarPage() {
                                   y="50%"
                                   textAnchor="middle"
                                   dominantBaseline="middle"
-                                  className="fill-foreground text-3xl font-bold font-chakra"
+                                  className="fill-foreground text-3xl font-bold"
                               >
                                   {monthlyProgress}%
                               </text>

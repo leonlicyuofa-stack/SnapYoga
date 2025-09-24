@@ -1,6 +1,6 @@
 
 import type {Metadata} from 'next';
-import { Lexend, Chakra_Petch, Shadows_Into_Light } from 'next/font/google';
+import { Lexend, Shadows_Into_Light } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/contexts/AuthContext'; 
@@ -11,13 +11,6 @@ const lexend = Lexend({
   subsets: ['latin'],
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   variable: '--font-lexend',
-});
-
-const chakraPetch = Chakra_Petch({
-    subsets: ['latin'],
-    weight: ['400', '700'],
-    style: 'normal',
-    variable: '--font-chakra-petch',
 });
 
 const shadowsIntoLight = Shadows_Into_Light({
@@ -38,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${lexend.variable} ${chakraPetch.variable} ${shadowsIntoLight.variable} font-sans antialiased`}>
+      <body className={`${lexend.variable} ${shadowsIntoLight.variable} font-sans antialiased`}>
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-[hsl(var(--splash-blob-1))] via-splash-background to-[hsl(var(--splash-blob-2))] animate-breathing-bg">
             <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
                 <defs>
