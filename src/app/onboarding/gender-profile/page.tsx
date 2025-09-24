@@ -57,7 +57,7 @@ const DatePickerColumn = ({ values, onSelect, selectedValue }: { values: (string
         <div ref={scrollContainerRef} className="h-48 overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar">
             <div className="flex flex-col items-center">
                  {/* Padding elements to center the first and last items */}
-                <div className="h-[calc(8.5rem-1.25rem)] flex-shrink-0"></div>
+                <div className="h-[calc(6rem)] flex-shrink-0"></div>
                 {values.map((item, index) => (
                     <div
                         key={index}
@@ -73,7 +73,7 @@ const DatePickerColumn = ({ values, onSelect, selectedValue }: { values: (string
                         {typeof item === 'number' ? item : format(new Date(0, item), 'MMMM')}
                     </div>
                 ))}
-                 <div className="h-[calc(8.5rem-1.25rem)] flex-shrink-0"></div>
+                 <div className="h-[calc(6rem)] flex-shrink-0"></div>
             </div>
         </div>
     );
@@ -248,5 +248,7 @@ export default function GenderProfilePage() {
     </AppShell>
   );
 }
+
+    
 
     

@@ -126,4 +126,13 @@
   .btm-nav-label {
     @apply text-xs transition-opacity duration-200 sm:text-sm;
   }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
+
+    
