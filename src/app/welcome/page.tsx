@@ -11,12 +11,6 @@ import { useEffect, useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
-import { Shadows_Into_Light } from 'next/font/google';
-
-const shadowsIntoLight = Shadows_Into_Light({
-  subsets: ['latin'],
-  weight: '400',
-});
 
 export default function WelcomePage() {
   const router = useRouter();
@@ -54,7 +48,7 @@ export default function WelcomePage() {
       <div className="relative flex flex-col min-h-screen items-center justify-center py-12 px-4 text-center">
         
         <div className="relative z-10 flex flex-col items-center max-w-lg w-full">
-            <div className={cn("text-center text-primary animate-fade-in-up", shadowsIntoLight.className)}>
+            <div className={cn("text-center text-primary animate-fade-in-up")}>
                 <h1 className="text-6xl font-bold tracking-tighter mt-4 flex flex-col items-center">
                     <span className="mb-4 font-bold text-[40px]">your</span>
                     <div className="relative inline-block my-4">
