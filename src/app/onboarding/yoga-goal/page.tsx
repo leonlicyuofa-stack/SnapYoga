@@ -31,7 +31,7 @@ type YogaGoalFormValues = z.infer<typeof yogaGoalSchema>;
 const mainGoalOptions = [
   { value: "fitness", label: "Stay Fit", icon: 'image', imagePath: '/images/stayfit.png' },
   { value: "stress-relief", label: "Stress Relief", icon: StressReliefIcon },
-  { value: "flexibility", label: "Improve Flexibility", icon: ImproveFlexibilityIcon },
+  { value: "flexibility", label: "Improve Flexibility", icon: 'image', imagePath: '/images/improveflexibility.png' },
   { value: "strength", label: "Build Strength", icon: BuildStrengthIcon },
   { value: "mindfulness", label: "Practice Mindfulness", icon: StressReliefIcon },
   { value: "other", label: "Other", icon: MoreHorizontal },
