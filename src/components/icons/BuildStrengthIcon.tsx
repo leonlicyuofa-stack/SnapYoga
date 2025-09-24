@@ -24,12 +24,13 @@ export function BuildStrengthIcon(props: SVGProps<SVGSVGElement>) {
         </g>
         <circle cx="38" cy="58" r="5" fill="#FCA5A5" opacity="0.8"/>
         <circle cx="62" cy="58" r="5" fill="#FCA5A5" opacity="0.8"/>
-
-
+        
         {/* Arms */}
         <g fill="#FDE68A" stroke="#27272A" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
-            <path d="M30,55 C20,45 25,30 40,35 C40,45 35,55 30,55 Z" />
-            <path d="M70,55 C80,45 75,30 60,35 C60,45 65,55 70,55 Z" />
+            {/* Left Arm */}
+            <path d="M 25 55 C 20 40, 30 30, 40 35 C 45 40, 40 50, 35 55 C 30 60, 25 60, 25 55 Z" />
+            {/* Right Arm */}
+            <path d="M 75 55 C 80 40, 70 30, 60 35 C 55 40, 60 50, 65 55 C 70 60, 75 60, 75 55 Z" />
         </g>
         
         {/* Abs */}
