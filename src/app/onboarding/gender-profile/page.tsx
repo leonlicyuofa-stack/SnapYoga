@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -39,19 +38,19 @@ const months = Array.from({ length: 12 }, (_, i) => i);
 
 const DatePickerColumn = ({ title, values, onSelect, selectedValue }: { title: string; values: (string|number)[], onSelect: (value: any) => void, selectedValue: any }) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const itemHeight = 40; // Corresponds to h-10
-    const containerHeight = 192; // Corresponds to h-48
+    const itemHeight = 32; // h-8
+    const containerHeight = 160; // h-40
 
     useEffect(() => {
         const container = scrollContainerRef.current;
-        if (container) {
+        if (container && selectedValue !== undefined) {
             const selectedElement = container.querySelector(`[data-value="${selectedValue}"]`) as HTMLElement;
             if (selectedElement) {
                  const scrollTop = selectedElement.offsetTop - (containerHeight / 2) + (itemHeight / 2);
                  container.scrollTop = scrollTop;
             }
         }
-    }, [selectedValue, containerHeight, itemHeight]);
+    }, [selectedValue, values, containerHeight, itemHeight]);
 
     const paddingTop = `calc(50% - ${itemHeight / 2}px)`;
     const paddingBottom = `calc(50% - ${itemHeight / 2}px)`;
@@ -61,7 +60,7 @@ const DatePickerColumn = ({ title, values, onSelect, selectedValue }: { title: s
             <div className={cn("text-sm text-muted-foreground mb-2", selectedValue !== undefined && "font-bold text-foreground")}>
                 {title}
             </div>
-            <div ref={scrollContainerRef} className="h-48 overflow-y-scroll snap-y snap-mandatory no-scrollbar w-full">
+            <div ref={scrollContainerRef} className="h-40 overflow-y-scroll snap-y snap-mandatory no-scrollbar w-full">
                 <div className="flex flex-col items-center">
                     <div style={{ paddingTop }} className="flex-shrink-0"></div>
                     {values.map((item, index) => (
@@ -70,9 +69,9 @@ const DatePickerColumn = ({ title, values, onSelect, selectedValue }: { title: s
                             data-value={item}
                             onClick={() => onSelect(item)}
                             className={cn(
-                                "flex items-center justify-center w-full h-10 text-xl snap-center shrink-0 cursor-pointer transition-all duration-200",
+                                "flex items-center justify-center w-full h-8 text-lg snap-center shrink-0 cursor-pointer transition-all duration-200",
                                 selectedValue === item
-                                    ? "font-bold text-foreground text-2xl"
+                                    ? "font-bold text-foreground text-xl"
                                     : "text-muted-foreground/50"
                             )}
                         >
@@ -108,8 +107,16 @@ export default function GenderProfilePage() {
   const handleDateChange = (part: 'year' | 'month' | 'day', value: number) => {
     const newDate = new Date(birthday || new Date());
     if (part === 'year') newDate.setFullYear(value);
-    if (part === 'month') newDate.setMonth(value);
+    if (part === 'month') {
+        const currentDay = newDate.getDate();
+        newDate.setMonth(value);
+        // If the new month has fewer days, adjust the day to the last day of the new month.
+        if (newDate.getDate() !== currentDay) {
+            newDate.setDate(0); 
+        }
+    }
     if (part === 'day') newDate.setDate(value);
+    
     setValue('birthday', newDate, { shouldValidate: true });
   };
 
@@ -219,18 +226,21 @@ export default function GenderProfilePage() {
                                         <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                                         <button
                                             type="button"
-                                            className="w-full text-left bg-transparent border-0 border-b-2 border-input rounded-none px-0 pl-10 h-10 text-base placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary"
+                                            className={cn(
+                                                "w-full text-left bg-transparent border-0 border-b-2 border-input rounded-none px-0 pl-10 h-10 text-base focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary",
+                                                !field.value && "text-muted-foreground"
+                                            )}
                                         >
                                             {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                                         </button>
                                     </div>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0" align="start">
-                                    <div className="grid grid-cols-3 gap-2 relative h-56 w-80 p-4">
+                                    <div className="grid grid-cols-3 gap-2 relative h-48 w-80 p-4">
                                         <DatePickerColumn title="Month" values={months} onSelect={(month) => handleDateChange('month', month)} selectedValue={field.value?.getMonth()} />
                                         <DatePickerColumn title="Day" values={days} onSelect={(day) => handleDateChange('day', day)} selectedValue={field.value?.getDate()} />
                                         <DatePickerColumn title="Year" values={years} onSelect={(year) => handleDateChange('year', year)} selectedValue={field.value?.getFullYear()} />
-                                        <div className="absolute top-1/2 left-0 right-0 h-10 -translate-y-1/2 border-y-2 border-foreground/30 pointer-events-none mt-3"></div>
+                                        <div className="absolute top-1/2 left-0 right-0 h-8 -translate-y-1/2 border-y-2 border-foreground/30 pointer-events-none mt-2"></div>
                                     </div>
                                 </PopoverContent>
                             </Popover>
