@@ -31,7 +31,7 @@ interface AuthContextType {
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithApple: () => Promise<void>;
-  signUpWithEmail: (email: string, pass: string) => Promise<void>;
+  signUpWithEmail: (email: string, pass: string, profileData: DocumentData) => Promise<void>;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   signOutUser: () => Promise<void>;
   updateUserPassword: (currentPassword: string, newPassword: string) => Promise<boolean>;
@@ -216,22 +216,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return socialSignIn(provider, 'Apple');
   };
 
-  const signUpWithEmail = async (email: string, pass: string) => {
-    if (!checkFirebaseConfig()) return;
+  const signUpWithEmail = async (email: string, pass: string, profileData: DocumentData) => {
+    if (!checkFirebaseConfig()) {
+        throw new Error("Firebase not configured");
+    };
 
-    setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-      // await sendEmailVerification(userCredential.user); // Removed email verification
       await recordDailyLogin(userCredential.user.uid);
-      await createUserProfileDocument(userCredential.user, { email }); 
+      await createUserProfileDocument(userCredential.user, { ...profileData, email }); 
       
-      toast({ title: 'Account Created!', description: 'Welcome! Let\'s get your profile set up.' });
-      router.push('/welcome'); // Redirect to the new welcome page
+      toast({ title: 'Account Created!', description: 'Welcome! Let\'s continue setting up your profile.' });
+      router.push('/onboarding/yoga-goal');
     } catch (error) {
       handleAuthError(error, 'Failed to create account.');
-    } finally {
-      setLoading(false);
+      throw error; // Re-throw to be caught by the calling component
     }
   };
 
