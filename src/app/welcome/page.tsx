@@ -50,8 +50,8 @@ export default function WelcomePage() {
         <div className="relative z-10 flex flex-col items-center max-w-lg w-full">
             <div className="text-center text-primary animate-fade-in-up font-serif">
                 <h1 className="text-6xl font-bold tracking-tighter mt-4 font-playfair flex flex-col">
-                    <span className="mb-4">your</span>
-                    <span className="font-extrabold mb-4">YOGA JOURNEY</span>
+                    <span className="mb-4 font-bold">your</span>
+                    <span className="font-extrabold mb-4 text-5xl">YOGA JOURNEY</span>
                     <span>begins</span>
                 </h1>
             </div>
