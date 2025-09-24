@@ -76,7 +76,7 @@ const DatePickerColumn = ({ title, values, onSelect, selectedValue }: { title: s
                                     : "text-muted-foreground/50"
                             )}
                         >
-                            {typeof item === 'number' ? item : format(new Date(0, item), 'MMM')}
+                            {title === 'Month' ? format(new Date(0, item as number), 'MMM') : item}
                         </div>
                     ))}
                     <div style={{ height: paddingBottom }} className="flex-shrink-0"></div>
@@ -238,8 +238,8 @@ export default function GenderProfilePage() {
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0" align="start">
                                     <div className="grid grid-cols-3 gap-2 relative h-48 w-80 p-4">
-                                        <DatePickerColumn title="Month" values={months} onSelect={(month) => handleDateChange('month', month)} selectedValue={field.value?.getMonth()} />
                                         <DatePickerColumn title="Day" values={days} onSelect={(day) => handleDateChange('day', day)} selectedValue={field.value?.getDate()} />
+                                        <DatePickerColumn title="Month" values={months} onSelect={(month) => handleDateChange('month', month)} selectedValue={field.value?.getMonth()} />
                                         <DatePickerColumn title="Year" values={years} onSelect={(year) => handleDateChange('year', year)} selectedValue={field.value?.getFullYear()} />
                                         <div className="absolute top-1/2 left-0 right-0 h-8 -translate-y-1/2 border-y-2 border-foreground/30 pointer-events-none mt-2"></div>
                                     </div>
@@ -266,4 +266,3 @@ export default function GenderProfilePage() {
     </AppShell>
   );
 }
-
