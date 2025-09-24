@@ -202,7 +202,15 @@ export default function YogaGoalPage() {
                         className="grid grid-cols-2 md:grid-cols-3 gap-4"
                     >
                         {mainGoalOptions.map((option) => {
-                        const Icon = option.icon;
+                        let Icon = option.icon;
+                        let iconClassName = "mb-2 h-12 w-12";
+                        if (option.value === 'strength') {
+                            Icon = BuildStrengthIcon;
+                        }
+                        if (option.value === 'mindfulness') {
+                            Icon = PracticeMindfulnessIcon;
+                            iconClassName = "mb-2 h-16 w-16";
+                        }
                         return (
                             <Label
                             key={option.value}
@@ -210,7 +218,7 @@ export default function YogaGoalPage() {
                             className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card/80 backdrop-blur-sm p-4 h-32 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/10 cursor-pointer transition-all shadow-md"
                             >
                             <RadioGroupItem value={option.value} id={`goal-${option.value}`} className="sr-only" />
-                            <Icon className="mb-2 h-12 w-12" />
+                            <Icon className={iconClassName} />
                             <span className="text-center font-semibold">{option.label}</span>
                             </Label>
                         );
