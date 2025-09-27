@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useRouter } from 'next/navigation';
@@ -14,7 +13,6 @@ import { Loader2 } from 'lucide-react';
 import { Shadows_Into_Light } from 'next/font/google';
 
 const shadowsIntoLight = Shadows_Into_Light({
-  subsets: ['latin'],
   weight: '400',
 });
 
