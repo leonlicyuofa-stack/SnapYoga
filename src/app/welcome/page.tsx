@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useRouter } from 'next/navigation';
@@ -10,11 +11,6 @@ import { useEffect, useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
-import { Shadows_Into_Light } from 'next/font/google';
-
-const shadowsIntoLight = Shadows_Into_Light({
-  weight: '400',
-});
 
 
 export default function WelcomePage() {
@@ -54,7 +50,7 @@ export default function WelcomePage() {
         
         <div className="relative z-10 flex flex-col items-center max-w-lg w-full">
             <div className={cn("text-center text-splash-foreground animate-fade-in-up")}>
-                <h1 className={cn("text-6xl font-bold tracking-tighter mt-4 flex flex-col items-center", shadowsIntoLight.className)}>
+                <h1 className={cn("text-6xl font-bold tracking-tighter mt-4 flex flex-col items-center", "font-script")}>
                     <span className="mb-4 font-bold text-[40px]">your</span>
                     <div className="relative inline-block my-4">
                         <svg
