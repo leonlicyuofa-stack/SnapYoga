@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { KeyRound, Save, Share2, Copy, MessageSquare, UserCircle, Ruler } from 'lucide-react'; 
+import { KeyRound, Save, Share2, Copy, MessageSquare, UserCircle, Ruler, FileText } from 'lucide-react'; 
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { firestore } from '@/lib/firebase/clientApp';
@@ -20,6 +20,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { cn } from '@/lib/utils';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import Link from 'next/link';
 
 
 const usernameChangeSchema = z.object({
@@ -229,6 +230,22 @@ export default function ProfilePage() {
                             {isPasswordSubmitting ? "Updating..." : "Update Password"}
                           </Button>
                         </form>
+                    </dd>
+                </div>
+
+                 {/* Analysis Logs */}
+                <div className="py-5">
+                    <dt className="text-xl font-semibold flex items-center gap-2 mb-4">
+                        <FileText className="h-6 w-6 text-primary" />
+                        Analysis Logs
+                    </dt>
+                    <dd className="space-y-4">
+                        <p className="text-sm text-muted-foreground">
+                            View the raw JSON output from the pose analysis service. This is useful for debugging and checking the landmark data.
+                        </p>
+                        <Button variant="outline" asChild>
+                            <Link href="/profile/analysis-logs">View Analysis Logs</Link>
+                        </Button>
                     </dd>
                 </div>
                 
