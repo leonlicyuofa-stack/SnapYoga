@@ -4,32 +4,24 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { firestore } from '@/lib/firebase/clientApp';
-import { collection, getDocs, query, orderBy, type Timestamp } from 'firebase/firestore';
+import { storage } from '@/lib/firebase/clientApp'; // Import storage
+import { ref, listAll, getDownloadURL, type StorageReference } from 'firebase/storage'; // Import storage functions
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ArrowLeft, AlertCircle, FileText, Download, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, AlertCircle, FileJson, Download, FileText } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { format } from 'date-fns';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
-import { Badge } from '@/components/ui/badge';
 
-interface RawLog {
-  id: string;
-  createdAt: Timestamp;
-  isError: boolean;
-  rawResponse: any;
-  videoUrl: string;
-  gsPath?: string;
-  responseStatus?: number;
-  errorBody?: string;
+interface StorageFile {
+  name: string;
+  downloadUrl: string;
 }
 
 export default function AnalysisLogsPage() {
   const { user: currentUser, loading: authLoading } = useAuth();
-  const [logs, setLogs] = useState<RawLog[]>([]);
+  const [files, setFiles] = useState<StorageFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,78 +29,49 @@ export default function AnalysisLogsPage() {
     if (authLoading) return;
 
     if (!currentUser) {
-      setError("You must be logged in to view analysis logs.");
+      setError("You must be logged in to view analysis result files.");
       setLoading(false);
       return;
     }
 
     setLoading(true);
-    const logsCollectionRef = collection(firestore, 'users', currentUser.uid, 'poseAnalysisRawLogs');
-    const q = query(logsCollectionRef, orderBy('createdAt', 'desc'));
+    // Path to the user's result files in Firebase Storage
+    const filesListRef = ref(storage, `pose_analysis_results/${currentUser.uid}/`);
 
-    getDocs(q)
-      .then((querySnapshot) => {
-        const fetchedLogs: RawLog[] = [];
-        querySnapshot.forEach((doc) => {
-          fetchedLogs.push({ id: doc.id, ...doc.data() } as RawLog);
-        });
-        setLogs(fetchedLogs);
-        if (fetchedLogs.length === 0) {
-            setError("No analysis logs found.");
+    listAll(filesListRef)
+      .then(async (res) => {
+        const fetchedFiles: StorageFile[] = [];
+        for (const itemRef of res.items) {
+          try {
+            const downloadUrl = await getDownloadURL(itemRef);
+            fetchedFiles.push({
+              name: itemRef.name,
+              downloadUrl: downloadUrl,
+            });
+          } catch (urlError) {
+             console.error("Error getting download URL for", itemRef.name, urlError);
+             // Optionally add to an error list to show the user
+          }
+        }
+        
+        // Sort files by name descending (newest first if names are date-based)
+        fetchedFiles.sort((a, b) => b.name.localeCompare(a.name));
+
+        setFiles(fetchedFiles);
+        if (fetchedFiles.length === 0) {
+          setError("No analysis result files found in Storage.");
         }
       })
       .catch((err) => {
-        console.error("Error fetching analysis logs:", err);
-        setError("Failed to fetch analysis logs. Please try again.");
+        console.error("Error listing files from Firebase Storage:", err);
+        setError("Failed to fetch analysis files. Please check permissions and try again.");
       })
       .finally(() => {
         setLoading(false);
       });
   }, [currentUser, authLoading]);
 
-  const handleDownloadJson = (data: any, logId: string) => {
-    const jsonString = JSON.stringify(data, null, 2);
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `analysis-log-${logId}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
   
-  const renderLogContent = (log: RawLog) => {
-    // Check for the new, more complex structure first
-    if (log.rawResponse?.summary?.primary_pose_detected) {
-      const { summary } = log.rawResponse;
-      return (
-        <>
-          <p><strong>Pose:</strong> {summary.primary_pose_detected}</p>
-          <p><strong>Score:</strong> {summary.average_performance_score?.toFixed(2)}</p>
-          <p><strong>Grade:</strong> {summary.performance_grade}</p>
-          <p><strong>Frames:</strong> {summary.total_frames_analyzed}</p>
-        </>
-      )
-    }
-    
-    // Fallback to old structure
-    if (log.rawResponse?.identifiedPose) {
-        return (
-             <>
-              <p><strong>Pose:</strong> {log.rawResponse.identifiedPose}</p>
-              <p><strong>Score:</strong> {log.rawResponse.score?.toFixed(2)}</p>
-            </>
-        )
-    }
-    
-    // Fallback for errors or unknown structures
-    return (
-        <p className="text-destructive font-mono text-xs">{log.errorBody || JSON.stringify(log.rawResponse)}</p>
-    )
-  }
-
   if (authLoading) {
     return (
       <AppShell>
@@ -132,11 +95,11 @@ export default function AnalysisLogsPage() {
         <div className="mb-8 p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
           <CardHeader className="p-0">
             <CardTitle className="flex items-center gap-2 text-3xl text-primary">
-              <FileText className="h-8 w-8" />
-              Raw Analysis Logs
+              <FileJson className="h-8 w-8" />
+              Analysis Result Files
             </CardTitle>
             <CardDescription className="text-md">
-              Here you can view and download the raw JSON responses from the pose analysis service for debugging.
+              Here you can view and download the raw JSON result files from Firebase Storage for debugging.
             </CardDescription>
           </CardHeader>
         </div>
@@ -157,38 +120,22 @@ export default function AnalysisLogsPage() {
             </div>
         ) : (
           <div className="space-y-4">
-            {logs.map((log) => (
-              <Card key={log.id} className="bg-card/80 backdrop-blur-sm shadow-md">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
+            {files.map((file) => (
+              <Card key={file.name} className="bg-card/80 backdrop-blur-sm shadow-md">
+                <CardContent className="p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <FileText className="h-8 w-8 text-primary" />
                     <div>
-                        <CardTitle className="text-lg">Log ID: {log.id}</CardTitle>
-                        <CardDescription>{format(log.createdAt.toDate(), 'PPP p')}</CardDescription>
+                        <p className="font-semibold text-sm sm:text-base break-all">{file.name}</p>
+                        <p className="text-xs text-muted-foreground">Firebase Storage File</p>
                     </div>
-                     <Badge variant={log.isError ? "destructive" : "default"} className={!log.isError ? 'bg-green-600' : ''}>
-                        {log.isError ? <XCircle className="mr-2 h-4 w-4" /> : <CheckCircle className="mr-2 h-4 w-4" />}
-                        {log.isError ? `Error: ${log.responseStatus || 'N/A'}` : `Success: ${log.responseStatus || '200'}`}
-                    </Badge>
                   </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                   <div className="p-3 bg-muted/50 rounded-md border text-sm">
-                        <h4 className="font-semibold mb-2">Analysis Summary:</h4>
-                        {renderLogContent(log)}
-                   </div>
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <Button onClick={() => handleDownloadJson(log.rawResponse, log.id)} size="sm">
-                      <Download className="mr-2 h-4 w-4" />
-                      Download Raw JSON
-                    </Button>
-                     {log.videoUrl && (
-                        <Button variant="outline" size="sm" asChild>
-                            <a href={log.videoUrl} target="_blank" rel="noopener noreferrer">
-                                View Video
-                            </a>
-                        </Button>
-                    )}
-                  </div>
+                  <Button asChild size="sm">
+                    <a href={file.downloadUrl} target="_blank" rel="noopener noreferrer" download={file.name}>
+                        <Download className="mr-2 h-4 w-4" />
+                        Download
+                    </a>
+                  </Button>
                 </CardContent>
               </Card>
             ))}

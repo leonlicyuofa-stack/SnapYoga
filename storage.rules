@@ -15,8 +15,16 @@ service firebase.storage {
     match /user-videos/{userId}/{allPaths=**} {
       allow write: if request.auth != null && request.auth.uid == userId;
       // Allow general read access for displaying videos in the app.
-      // This can be tightened later if needed (e.g., only logged-in users).
       allow read; 
+    }
+
+    // Allow authenticated users to read their own analysis result files.
+    // This is necessary for the analysis-logs page to list and create download URLs.
+    match /pose_analysis_results/{userId}/{allPaths=**} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      // Write access should ideally be handled by a secure backend/server function,
+      // but if the Python service runs with user credentials, it might be needed.
+      // For now, read-only from the client is sufficient and more secure.
     }
   }
 }
