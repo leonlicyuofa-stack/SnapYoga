@@ -38,69 +38,71 @@ const physicalBodyParts = [
 const BodyFigure = ({ selectedParts, onPartToggle }: { selectedParts: string[], onPartToggle: (part: string) => void }) => {
     
     const bodyPartsConfig = {
-        shoulders: { 
-            path: "M75,108 C70,105,65,110,65,115 L60,130 L140,130 L135,115 C135,110,130,105,125,108 Z" 
+        front: {
+            arms: { path: "M60,130 L50,200 L65,200 L70,130 Z M140,130 L150,200 L135,200 L130,130 Z", label: "Arms" },
+            core: { path: "M78,135 L122,135 L118,175 L82,175 Z", label: "Core" },
+            legs: { path: "M80,210 L70,290 L95,290 L90,210 Z M120,210 L130,290 L105,290 L110,210 Z", label: "Legs" },
         },
-        arms: { 
-            path: "M60,130 L50,200 L65,200 L70,130 Z M140,130 L150,200 L135,200 L130,130 Z"
-        },
-        back: { 
-            path: "M75,130 L125,130 L125,180 L75,180 Z" 
-        },
-        core: {
-            path: "M78,135 L122,135 L118,175 L82,175 Z"
-        },
-        hips: { 
-            path: "M75,180 L125,180 L120,210 L80,210 Z" 
-        },
-        legs: { 
-            path: "M80,210 L70,290 L95,290 L90,210 Z M120,210 L130,290 L105,290 L110,210 Z"
+        back: {
+            shoulders: { path: "M75,108 C70,105,65,110,65,115 L60,130 L140,130 L135,115 C135,110,130,105,125,108 Z", label: "Shoulders" },
+            back: { path: "M75,130 L125,130 L125,180 L75,180 Z", label: "Back" },
+            hips: { path: "M75,180 L125,180 L120,210 L80,210 Z", label: "Hips" },
         }
     };
 
     return (
-        <div className="flex justify-center items-start gap-4">
-            <svg width="200" height="320" viewBox="0 60 200 280" xmlns="http://www.w3.org/2000/svg" aria-label="Interactive body figure for selecting focus areas">
-                <g className="text-foreground/80">
-                    {/* Head - Not interactive */}
-                    <circle cx="100" cy="85" r="20" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1.5" />
-                    <path d="M100,105 L100,110" stroke="hsl(var(--border))" strokeWidth="1.5" strokeLinecap="round" />
-                    
-                    {Object.entries(bodyPartsConfig).map(([part, config]) => {
-                        const isPartSelected = selectedParts.includes(part);
+        <div className="flex justify-center items-start gap-8">
+            {/* Front View */}
+            <div className="flex flex-col items-center">
+                <h3 className="font-semibold mb-2 text-foreground">Front</h3>
+                <svg width="200" height="320" viewBox="0 60 200 280" xmlns="http://www.w3.org/2000/svg" aria-label="Interactive body figure for selecting focus areas - Front View">
+                    <g className="text-foreground/80">
+                        {/* Head */}
+                        <circle cx="100" cy="85" r="20" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1.5" />
+                        <path d="M100,105 L100,110" stroke="hsl(var(--border))" strokeWidth="1.5" strokeLinecap="round" />
+                        {/* Body Outline for context */}
+                        <path d="M65,115 L60,130 L75,130 L75,210 L70,290 L95,290 L90,210 L110,210 L105,290 L130,290 L135,210 L125,210 L125,130 L140,130 L135,115 C135,110,130,105,125,108 Z" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1.5" />
                         
-                        return (
-                            <g
-                                key={part}
-                                data-part={part}
-                                onClick={() => onPartToggle(part)}
-                                className="cursor-pointer group"
-                            >
-                                <path
-                                    d={config.path}
-                                    className={cn(
-                                        "transition-all duration-200 fill-muted group-hover:fill-accent/50 stroke-border stroke-1",
-                                        isPartSelected && "fill-primary/20 stroke-primary stroke-2"
-                                    )}
-                                />
-                                <text
-                                    x={part === 'arms' ? 50 : 100}
-                                    y={part === 'shoulders' ? 120 : part === 'arms' ? 165 : part === 'back' ? 155 : part === 'core' ? 158 : part === 'hips' ? 195 : 250}
-                                    textAnchor="middle"
-                                    alignmentBaseline="middle"
-                                    className={cn(
-                                        "text-sm font-semibold pointer-events-none fill-muted-foreground transition-all duration-200 group-hover:fill-accent-foreground",
-                                        isPartSelected ? "fill-primary" : ""
-                                    )}
-                                >
-                                    {part.charAt(0).toUpperCase() + part.slice(1)}
-                                </text>
-                                {part === 'arms' && <text x={150} y={165} textAnchor="middle" alignmentBaseline="middle" className={cn( "text-sm font-semibold pointer-events-none fill-muted-foreground transition-all duration-200 group-hover:fill-accent-foreground", isPartSelected ? "fill-primary" : "")}>Arm</text>}
-                            </g>
-                        );
-                    })}
-                </g>
-            </svg>
+                        {Object.entries(bodyPartsConfig.front).map(([part, config]) => {
+                            const isPartSelected = selectedParts.includes(part);
+                            return (
+                                <g key={`front-${part}`} data-part={part} onClick={() => onPartToggle(part)} className="cursor-pointer group">
+                                    <path d={config.path} className={cn("transition-all duration-200 fill-muted group-hover:fill-accent/50 stroke-border stroke-1", isPartSelected && "fill-primary/20 stroke-primary stroke-2")} />
+                                    <text x={100} y={part === 'arms' ? 165 : part === 'core' ? 158 : 250} textAnchor="middle" alignmentBaseline="middle" className={cn("text-sm font-semibold pointer-events-none fill-muted-foreground transition-all duration-200 group-hover:fill-accent-foreground", isPartSelected && "fill-primary")}>
+                                        {config.label}
+                                    </text>
+                                </g>
+                            );
+                        })}
+                    </g>
+                </svg>
+            </div>
+
+            {/* Back View */}
+            <div className="flex flex-col items-center">
+                <h3 className="font-semibold mb-2 text-foreground">Back</h3>
+                 <svg width="200" height="320" viewBox="0 60 200 280" xmlns="http://www.w3.org/2000/svg" aria-label="Interactive body figure for selecting focus areas - Back View">
+                    <g className="text-foreground/80">
+                        {/* Head */}
+                        <circle cx="100" cy="85" r="20" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1.5" />
+                        <path d="M100,105 L100,110" stroke="hsl(var(--border))" strokeWidth="1.5" strokeLinecap="round" />
+                        {/* Body Outline for context */}
+                        <path d="M65,115 L60,130 L75,130 L75,210 L70,290 L95,290 L90,210 L110,210 L105,290 L130,290 L135,210 L125,210 L125,130 L140,130 L135,115 C135,110,130,105,125,108 Z" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1.5" />
+
+                        {Object.entries(bodyPartsConfig.back).map(([part, config]) => {
+                            const isPartSelected = selectedParts.includes(part);
+                            return (
+                                <g key={`back-${part}`} data-part={part} onClick={() => onPartToggle(part)} className="cursor-pointer group">
+                                    <path d={config.path} className={cn("transition-all duration-200 fill-muted group-hover:fill-accent/50 stroke-border stroke-1", isPartSelected && "fill-primary/20 stroke-primary stroke-2")} />
+                                    <text x={100} y={part === 'shoulders' ? 120 : part === 'back' ? 155 : 195} textAnchor="middle" alignmentBaseline="middle" className={cn("text-sm font-semibold pointer-events-none fill-muted-foreground transition-all duration-200 group-hover:fill-accent-foreground", isPartSelected && "fill-primary")}>
+                                        {config.label}
+                                    </text>
+                                </g>
+                            );
+                        })}
+                    </g>
+                </svg>
+            </div>
         </div>
     );
 };
