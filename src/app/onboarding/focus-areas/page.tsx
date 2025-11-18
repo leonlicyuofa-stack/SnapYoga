@@ -46,6 +46,7 @@ const BodyFigure = ({ selectedParts, onPartToggle }: { selectedParts: string[], 
         back: {
             shoulders: { path: "M75,108 C70,105,65,110,65,115 L60,130 L140,130 L135,115 C135,110,130,105,125,108 Z", label: "Shoulders" },
             back: { path: "M75,130 L125,130 L125,180 L75,180 Z", label: "Back" },
+            // The visual path for hips is removed, but the label and click area remain for functionality.
             hips: { path: "M75,180 L125,180 L120,210 L80,210 Z", label: "Hips" },
         }
     };
@@ -91,9 +92,17 @@ const BodyFigure = ({ selectedParts, onPartToggle }: { selectedParts: string[], 
 
                         {Object.entries(bodyPartsConfig.back).map(([part, config]) => {
                             const isPartSelected = selectedParts.includes(part);
+                            // Do not render the visible path for 'hips' on the back view
+                            const isVisiblePath = part !== 'hips';
                             return (
                                 <g key={`back-${part}`} data-part={part} onClick={() => onPartToggle(part)} className="cursor-pointer group">
-                                    <path d={config.path} className={cn("transition-all duration-200 fill-muted group-hover:fill-accent/50 stroke-border stroke-1", isPartSelected && "fill-primary/20 stroke-primary stroke-2")} />
+                                    {isVisiblePath && (
+                                      <path d={config.path} className={cn("transition-all duration-200 fill-muted group-hover:fill-accent/50 stroke-border stroke-1", isPartSelected && "fill-primary/20 stroke-primary stroke-2")} />
+                                    )}
+                                    {/* Create a transparent but clickable area for hips */}
+                                    {!isVisiblePath && (
+                                       <path d={config.path} className="fill-transparent" />
+                                    )}
                                     <text x={100} y={part === 'shoulders' ? 120 : part === 'back' ? 155 : 195} textAnchor="middle" alignmentBaseline="middle" className={cn("text-sm font-semibold pointer-events-none fill-muted-foreground transition-all duration-200 group-hover:fill-accent-foreground", isPartSelected && "fill-primary")}>
                                         {config.label}
                                     </text>
