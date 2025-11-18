@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { Progress } from '@/components/ui/progress';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import Image from 'next/image';
 
 const focusAreasSchema = z.object({
   focusBodyParts: z.array(z.string()).min(1, { message: "Please select at least one focus area" }),
@@ -25,12 +26,12 @@ const focusAreasSchema = z.object({
 type FocusAreasFormValues = z.infer<typeof focusAreasSchema>;
 
 const physicalBodyParts = [
-  { id: "shoulders", label: "Shoulders" },
-  { id: "arms", label: "Arms" },
-  { id: "core", label: "Core" },
-  { id: "hips", label: "Hips" },
-  { id: "legs", label: "Legs" },
-  { id: "back", label: "Back" },
+  { id: "shoulders", label: "Shoulders", imageUrl: "https://picsum.photos/seed/shoulders/200/200", imageHint: "shoulders stretching" },
+  { id: "arms", label: "Arms", imageUrl: "https://picsum.photos/seed/arms/200/200", imageHint: "arm muscles" },
+  { id: "core", label: "Core", imageUrl: "https://picsum.photos/seed/core/200/200", imageHint: "abdominal muscles" },
+  { id: "hips", label: "Hips", imageUrl: "https://picsum.photos/seed/hips/200/200", imageHint: "hip flexibility" },
+  { id: "legs", label: "Legs", imageUrl: "https://picsum.photos/seed/legs/200/200", imageHint: "leg muscles" },
+  { id: "back", label: "Back", imageUrl: "https://picsum.photos/seed/back/200/200", imageHint: "back muscles" },
 ];
 
 export default function FocusAreasPage() {
@@ -102,7 +103,7 @@ export default function FocusAreasPage() {
           <div className="bg-card/50 backdrop-blur-sm p-4 sm:p-6 rounded-lg w-full">
              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                <Controller
-                name="interestedPoses"
+                name="focusBodyParts"
                 control={control}
                 render={({ field }) => (
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -125,14 +126,26 @@ export default function FocusAreasPage() {
                           <Label
                             htmlFor={item.id}
                             className={cn(
-                              "flex flex-col items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all h-28 bg-card/80 backdrop-blur-sm",
+                              "flex flex-col items-center justify-center p-2 border-2 rounded-lg cursor-pointer transition-all h-full bg-card/80 backdrop-blur-sm overflow-hidden",
                               "hover:border-primary/50",
                               isChecked ? "border-primary bg-primary/10 shadow-md" : "border-muted"
                             )}
                           >
-                            <h3 className="font-bold text-lg text-primary">{item.label}</h3>
+                            <div className="relative w-full h-24 rounded-md overflow-hidden mb-2">
+                                <Image 
+                                    src={item.imageUrl} 
+                                    alt={item.label} 
+                                    fill 
+                                    className="object-cover"
+                                    data-ai-hint={item.imageHint}
+                                />
+                                 {isChecked && (
+                                    <div className="absolute inset-0 bg-primary/40"></div>
+                                 )}
+                            </div>
+                            <h3 className="font-bold text-md text-primary">{item.label}</h3>
                             {isChecked && (
-                                <div className="absolute top-2 right-2 h-5 w-5 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
+                                <div className="absolute top-3 right-3 h-5 w-5 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
                                     <CheckCircle className="h-4 w-4" />
                                 </div>
                             )}
