@@ -26,12 +26,12 @@ const focusAreasSchema = z.object({
 type FocusAreasFormValues = z.infer<typeof focusAreasSchema>;
 
 const physicalBodyParts = [
-  { id: "shoulders", label: "Shoulders", imageUrl: "/images/stayfit.png", imageHint: "shoulders stretching" },
-  { id: "arms", label: "Arms", imageUrl: "/images/stayfit.png", imageHint: "arm muscles" },
-  { id: "core", label: "Core", imageUrl: "/images/stayfit.png", imageHint: "abdominal muscles" },
-  { id: "hips", label: "Hips", imageUrl: "/images/stayfit.png", imageHint: "hip flexibility" },
-  { id: "legs", label: "Legs", imageUrl: "/images/stayfit.png", imageHint: "leg muscles" },
-  { id: "back", label: "Back", imageUrl: "/images/stayfit.png", imageHint: "back muscles" },
+  { id: "shoulders", label: "Shoulders", imageUrl: "https://picsum.photos/seed/shoulders/300/200", imageHint: "shoulders stretching" },
+  { id: "arms", label: "Arms", imageUrl: "https://picsum.photos/seed/arms/300/200", imageHint: "arm muscles" },
+  { id: "core", label: "Core", imageUrl: "https://picsum.photos/seed/core/300/200", imageHint: "abdominal muscles" },
+  { id: "hips", label: "Hips", imageUrl: "https://picsum.photos/seed/hips/300/200", imageHint: "hip flexibility" },
+  { id: "legs", label: "Legs", imageUrl: "https://picsum.photos/seed/legs/300/200", imageHint: "leg muscles" },
+  { id: "back", label: "Back", imageUrl: "https://picsum.photos/seed/back/300/200", imageHint: "back muscles" },
 ];
 
 export default function FocusAreasPage() {

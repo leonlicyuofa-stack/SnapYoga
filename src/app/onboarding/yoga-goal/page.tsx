@@ -30,12 +30,12 @@ const yogaGoalSchema = z.object({
 type YogaGoalFormValues = z.infer<typeof yogaGoalSchema>;
 
 const mainGoalOptions = [
-  { value: "fitness", label: "Stay Fit", icon: 'image', imagePath: '/images/stayfit.png' },
-  { value: "stress-relief", label: "Stress Relief", icon: 'image', imagePath: '/images/stayfit.png' },
-  { value: "flexibility", label: "Improve Flexibility", icon: 'image', imagePath: '/images/stayfit.png' },
-  { value: "strength", label: "Build Strength", icon: 'image', imagePath: '/images/stayfit.png' },
-  { value: "mindfulness", label: "Practice Mindfulness", icon: 'image', imagePath: '/images/stayfit.png' },
-  { value: "other", label: "Other", icon: 'image', imagePath: '/images/stayfit.png' },
+  { value: "fitness", label: "Stay Fit", icon: 'image', imagePath: 'https://picsum.photos/seed/fitness/300/200', imageHint: 'person running' },
+  { value: "stress-relief", label: "Stress Relief", icon: 'image', imagePath: 'https://picsum.photos/seed/stress/300/200', imageHint: 'calm meditation' },
+  { value: "flexibility", label: "Improve Flexibility", icon: 'image', imagePath: 'https://picsum.photos/seed/flexibility/300/200', imageHint: 'yoga stretch' },
+  { value: "strength", label: "Build Strength", icon: 'image', imagePath: 'https://picsum.photos/seed/strength/300/200', imageHint: 'person lifting weights' },
+  { value: "mindfulness", label: "Practice Mindfulness", icon: 'image', imagePath: 'https://picsum.photos/seed/mindfulness/300/200', imageHint: 'zen garden' },
+  { value: "other", label: "Other", icon: 'image', imagePath: 'https://picsum.photos/seed/other/300/200', imageHint: 'question mark' },
 ];
 
 
@@ -156,7 +156,7 @@ export default function YogaGoalPage() {
                             >
                             <RadioGroupItem value={option.value} id={`goal-${option.value}`} className="sr-only" />
                              <div className="mb-2 h-16 w-16 relative">
-                                <Image src={option.imagePath} alt={option.label} layout="fill" objectFit="contain" />
+                                <Image src={option.imagePath} alt={option.label} layout="fill" objectFit="contain" data-ai-hint={option.imageHint} />
                              </div>
                             <span className="text-center font-semibold">{option.label}</span>
                             </Label>
