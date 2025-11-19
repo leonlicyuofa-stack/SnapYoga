@@ -93,7 +93,10 @@ export default function HomePage() {
         "relative flex flex-col min-h-screen items-center justify-center p-4 overflow-hidden"
     )}>
          <div className="relative z-10 flex flex-col items-center justify-center text-center">
-            <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3 font-script">{t('snapYogaTitle')}</h2>
+            <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3 font-script">
+              <span className="animate-snap-flash inline-block">Snap</span>
+              <span>Yoga</span>
+            </h2>
             <div className={cn("mt-2 text-xl text-splash-foreground/80 max-w-md sm:text-2xl", shadowsIntoLight.className)}>
                 <p>your AI companion for mindfulness</p>
             </div>

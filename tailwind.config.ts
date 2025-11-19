@@ -104,12 +104,17 @@ export default {
                 from: { width: '0' },
                 to: { width: '100%' },
             },
+            'snap-flash': {
+              '0%, 100%': { opacity: '1' },
+              '50%': { opacity: '0.2' },
+            },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
             'bounce': 'bounce 1s infinite',
             typewriter: 'typewriter 2s steps(12) 1s 1 normal both',
+            'snap-flash': 'snap-flash 0.7s ease-in-out',
   		}
   	}
   },
