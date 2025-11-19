@@ -10,10 +10,10 @@ import { doc, getDoc, type DocumentData } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { MoveUpRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Shadows_Into_Light } from 'next/font/google';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { GeminiIcon } from '@/components/icons/GeminiIcon';
 
 const shadowsIntoLight = Shadows_Into_Light({
   subsets: ['latin'],
@@ -35,6 +35,8 @@ export default function HomePage() {
   const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [isProcessingClick, setIsProcessingClick] = useState(false);
+  const [animationState, setAnimationState] = useState<'idle' | 'glowing' | 'streaking'>('idle');
+
 
   useEffect(() => {
     if (user && !authLoading) {
@@ -63,11 +65,18 @@ export default function HomePage() {
     if (authLoading || loadingProfile || isProcessingClick) return;
 
     setIsProcessingClick(true);
+    setAnimationState('glowing');
     
     if (typeof window !== 'undefined') {
         sessionStorage.setItem('snapYogaPebbleIncoming', 'true');
     }
+    
+    // Animation timing
+    setTimeout(() => {
+        setAnimationState('streaking');
+    }, 400); // Duration of glow/expand
 
+    // Page navigation timing
     setTimeout(() => {
       if (user) {
         if (userProfile && userProfile.onboardingCompleted) {
@@ -78,7 +87,7 @@ export default function HomePage() {
       } else {
         router.push('/auth/signup');
       }
-    }, 150); 
+    }, 900); // glowing (400) + streaking (500)
   };
 
   const handleLanguageSwitch = () => {
@@ -86,7 +95,7 @@ export default function HomePage() {
     setLanguage(newLang);
   };
 
-  const isLoading = authLoading || loadingProfile || isProcessingClick;
+  const isLoading = authLoading || loadingProfile;
 
   return (
     <div className={cn(
@@ -100,14 +109,11 @@ export default function HomePage() {
             <div className={cn("mt-2 text-xl text-splash-foreground/80 max-w-md sm:text-2xl", shadowsIntoLight.className)}>
                 <p>your AI companion for mindfulness</p>
             </div>
-            <Button
-                onClick={handleGetStarted}
-                className="mt-8 rounded-full h-10 w-auto px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
-                aria-label={t('getStarted')}
-                disabled={isLoading}
-            >
-                {isLoading ? <><span>{t('getStarted')}</span><MoveUpRight className="h-5 w-5 ml-2" /></> : <><span>{t('getStarted')}</span><MoveUpRight className="h-5 w-5 ml-2" /></>}
-            </Button>
+
+            <div className="mt-8" onClick={handleGetStarted} role="button" aria-label={t('getStarted')}>
+                <GeminiIcon animationState={animationState} />
+            </div>
+
         </div>
 
         <header className="navbar w-full absolute top-0 left-0">
@@ -129,3 +135,4 @@ export default function HomePage() {
     </div>
   );
 }
+

@@ -108,6 +108,19 @@ export default {
               '0%, 100%': { opacity: '1' },
               '50%': { opacity: '0.2' },
             },
+            'soft-glow-expand': {
+              '0%, 100%': { transform: 'scale(1)', opacity: 0.7 },
+              '50%': { transform: 'scale(1.1)', opacity: 1 },
+            },
+            'streak-out': {
+              '0%': { transform: 'translateX(0) scaleX(1) scaleY(1)', opacity: 1 },
+              '20%': { transform: 'translateX(0) scaleX(3) scaleY(0.2)', opacity: 0.7 },
+              '100%': { transform: 'translateX(200px) scaleX(0.1) scaleY(0.1)', opacity: 0 },
+            },
+            shimmer: {
+                '0%, 100%': { opacity: 0.5 },
+                '50%': { opacity: 1 },
+            },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
@@ -115,6 +128,9 @@ export default {
             'bounce': 'bounce 1s infinite',
             typewriter: 'typewriter 2s steps(12) 1s 1 normal both',
             'snap-flash': 'snap-flash 0.7s ease-in-out',
+            'soft-glow-expand': 'soft-glow-expand 0.4s ease-out forwards',
+            'streak-out': 'streak-out 0.5s ease-in forwards',
+            shimmer: 'shimmer 1.5s ease-in-out infinite',
   		}
   	}
   },
