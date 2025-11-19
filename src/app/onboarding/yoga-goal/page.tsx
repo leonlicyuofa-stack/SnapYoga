@@ -30,12 +30,12 @@ const yogaGoalSchema = z.object({
 type YogaGoalFormValues = z.infer<typeof yogaGoalSchema>;
 
 const mainGoalOptions = [
-  { value: "fitness", label: "Stay Fit", icon: 'image', imagePath: '/images/stayfit.png', imageHint: 'stay fit' },
-  { value: "stress-relief", label: "Stress Relief", icon: 'image', imagePath: '/images/stayfit.png', imageHint: 'stress relief' },
-  { value: "flexibility", label: "Improve Flexibility", icon: 'image', imagePath: '/images/stayfit.png', imageHint: 'flexibility' },
-  { value: "strength", label: "Build Strength", icon: 'image', imagePath: '/images/stayfit.png', imageHint: 'strength' },
-  { value: "mindfulness", label: "Practice Mindfulness", icon: 'image', imagePath: '/images/stayfit.png', imageHint: 'mindfulness' },
-  { value: "other", label: "Other", icon: 'image', imagePath: '/images/stayfit.png', imageHint: 'other' },
+  { value: "fitness", label: "Stay Fit", icon: 'image', imagePath: '/images/stay_fit_1.png', imageHint: 'stay fit' },
+  { value: "stress-relief", label: "Stress Relief", icon: 'image', imagePath: '/images/stay_fit_1.png', imageHint: 'stress relief' },
+  { value: "flexibility", label: "Improve Flexibility", icon: 'image', imagePath: '/images/stay_fit_1.png', imageHint: 'flexibility' },
+  { value: "strength", label: "Build Strength", icon: 'image', imagePath: '/images/stay_fit_1.png', imageHint: 'strength' },
+  { value: "mindfulness", label: "Practice Mindfulness", icon: 'image', imagePath: '/images/stay_fit_1.png', imageHint: 'mindfulness' },
+  { value: "other", label: "Other", icon: 'image', imagePath: '/images/stay_fit_1.png', imageHint: 'other' },
 ];
 
 
