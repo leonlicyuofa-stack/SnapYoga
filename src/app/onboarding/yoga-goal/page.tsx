@@ -29,12 +29,12 @@ const yogaGoalSchema = z.object({
 type YogaGoalFormValues = z.infer<typeof yogaGoalSchema>;
 
 const mainGoalOptions = [
-  { value: "fitness", label: "Stay Fit", icon: 'image', imagePath: '/images/stay_fit_1.png', imageHint: 'stay fit' },
-  { value: "stress-relief", label: "Stress Relief", icon: 'image', imagePath: '/images/stay_fit_1.png', imageHint: 'stress relief' },
-  { value: "flexibility", label: "Improve Flexibility", icon: 'image', imagePath: '/images/stay_fit_1.png', imageHint: 'flexibility' },
-  { value: "strength", label: "Build Strength", icon: 'image', imagePath: '/images/stay_fit_1.png', imageHint: 'strength' },
-  { value: "mindfulness", label: "Practice Mindfulness", icon: 'image', imagePath: '/images/stay_fit_1.png', imageHint: 'mindfulness' },
-  { value: "other", label: "Other", icon: 'image', imagePath: '/images/stay_fit_1.png', imageHint: 'other' },
+  { value: "fitness", label: "Stay Fit", icon: 'image', imagePath: '/images/stayfit_1.png', imageHint: 'stay fit' },
+  { value: "stress-relief", label: "Stress Relief", icon: 'image', imagePath: '/images/stayfit_1.png', imageHint: 'stress relief' },
+  { value: "flexibility", label: "Improve Flexibility", icon: 'image', imagePath: '/images/stayfit_1.png', imageHint: 'flexibility' },
+  { value: "strength", label: "Build Strength", icon: 'image', imagePath: '/images/stayfit_1.png', imageHint: 'strength' },
+  { value: "mindfulness", label: "Practice Mindfulness", icon: 'image', imagePath: '/images/stayfit_1.png', imageHint: 'mindfulness' },
+  { value: "other", label: "Other", icon: 'image', imagePath: '/images/stayfit_1.png', imageHint: 'other' },
 ];
 
 
@@ -151,10 +151,10 @@ export default function YogaGoalPage() {
                             <Label
                             key={option.value}
                             htmlFor={`goal-${option.value}`}
-                            className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card/80 backdrop-blur-sm p-4 h-32 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/10 cursor-pointer transition-all shadow-md"
+                            className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-card/80 backdrop-blur-sm p-4 h-24 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/10 cursor-pointer transition-all shadow-md"
                             >
                             <RadioGroupItem value={option.value} id={`goal-${option.value}`} className="sr-only" />
-                             <div className="mb-2 h-16 w-16 relative">
+                             <div className="mb-2 h-8 w-8 relative">
                                 <Image src={option.imagePath} alt={option.label} layout="fill" objectFit="contain" data-ai-hint={option.imageHint} />
                              </div>
                             <span className="text-center font-semibold">{option.label}</span>
