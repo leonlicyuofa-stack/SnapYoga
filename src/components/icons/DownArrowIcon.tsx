@@ -5,15 +5,17 @@ import { cn } from "@/lib/utils";
 
 interface DownArrowIconProps {
   animationState: 'idle' | 'clicked';
+  className?: string;
 }
 
-export function DownArrowIcon({ animationState }: DownArrowIconProps) {
+export function DownArrowIcon({ animationState, className }: DownArrowIconProps) {
 
   const groupClasses = cn(
     "relative w-10 h-10 cursor-pointer group",
     {
       'animate-move-down-and-fade': animationState === 'clicked',
-    }
+    },
+    className,
   );
 
   return (
@@ -24,7 +26,7 @@ export function DownArrowIcon({ animationState }: DownArrowIconProps) {
         viewBox="0 0 80 80"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]"
+        className="drop-shadow-[0_0_8px_rgba(0,0,0,0.2)]"
       >
         <title>Get Started</title>
         {/* Circle */}
