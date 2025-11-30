@@ -10,7 +10,7 @@ interface DownArrowIconProps {
 export function DownArrowIcon({ animationState }: DownArrowIconProps) {
 
   const groupClasses = cn(
-    "relative w-20 h-20 cursor-pointer group",
+    "relative w-10 h-10 cursor-pointer group",
     {
       'animate-move-down-and-fade': animationState === 'clicked',
     }
