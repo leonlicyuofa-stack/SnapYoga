@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -60,7 +59,7 @@ export default function SignUpPage() {
         
         <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4 mt-6">
             <h1 className="text-2xl font-bold text-foreground">Create Account</h1>
-            <p className="text-sm text-muted-foreground pb-4">
+            <p className="text-xs text-muted-foreground pb-4">
                 Fill your information below or register with your social account.
             </p>
             
