@@ -108,17 +108,12 @@ export default function HomePage() {
                 <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3 bg-white/50 backdrop-blur-sm hover:bg-white/80 text-black border-black/20" aria-label="Switch Language">
                 <span className="mr-2">🇮🇩</span> Bahasa
                 </Button>
-                <Button variant="ghost" asChild className="h-9 text-black hover:text-black hover:bg-white/20 bg-black/10 backdrop-blur-sm">
-                <Link href="/auth/signin">
-                    {t('signIn')}
-                </Link>
-                </Button>
             </div>
             </div>
         </header>
         <div className="text-center">
             
-            <p className={cn("mt-2 text-xl sm:text-2xl", shadowsIntoLight.className)}>your AI companion for mindfulness</p>
+            <p className={cn("mt-2 text-xl sm:text-2xl", shadowsIntoLight.className)}></p>
         </div>
       </div>
       
