@@ -150,11 +150,11 @@ export default function GenderProfilePage() {
 
   return (
     <AppShell>
-      <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden">
+      <div className="relative flex flex-col items-center p-4 overflow-hidden">
         
-        <Card className="relative z-10 w-full max-w-sm flex flex-col items-center shadow-2xl rounded-3xl overflow-hidden bg-transparent">
+        <div className="relative z-10 w-full max-w-sm flex flex-col items-center">
             <OnboardingHeader />
-            <div className="bg-card/80 backdrop-blur-sm w-full p-6 pt-12">
+            <Card className="bg-card/80 backdrop-blur-sm w-full p-6 -mt-8 rounded-3xl shadow-xl">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
                 <div className="flex justify-around items-center">
                     <div 
@@ -264,8 +264,8 @@ export default function GenderProfilePage() {
                   </Button>
                 </div>
               </form>
-            </div>
-        </Card>
+            </Card>
+        </div>
       </div>
     </AppShell>
   );
