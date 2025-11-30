@@ -1,4 +1,6 @@
 
+"use client";
+
 import * as React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -28,21 +30,17 @@ export function SnapYogaLogo() {
       <div className="relative">
         <span className="text-2xl font-bold tracking-tight text-primary font-script">{t('snapYogaTitle')}</span>
         <svg
-          width="16"
-          height="16"
+          width="24"
+          height="24"
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="absolute text-pink-300"
-          style={{ top: '-14px', left: 'calc(50% - 10px)' }}
+          className="absolute text-primary/80"
+          style={{ top: '-16px', left: '50%', transform: 'translateX(-50%)' }}
         >
-          <path d="M12 17.5C14.7614 17.5 17 15.2614 17 12.5C17 9.73858 14.7614 7.5 12 7.5C9.23858 7.5 7 9.73858 7 12.5C7 15.2614 9.23858 17.5 12 17.5Z" stroke="currentColor" strokeWidth="1.5"/>
-          <path d="M12 7.5C12 7.5 12.5 2 15 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M17 12.5C17 12.5 22 12 20.5 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M12 7.5C12 7.5 11.5 2 9 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M7 12.5C7 12.5 2 12 3.5 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M9 20.5C9 20.5 7.5 22 7.5 17.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M15 20.5C15 20.5 16.5 22 16.5 17.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M2 8C2 6.34315 3.34315 5 5 5H19C20.6569 5 22 6.34315 22 8V18C22 19.6569 20.6569 21 19 21H5C3.34315 21 2 19.6569 2 18V8Z" stroke="currentColor" strokeWidth="1.5"/>
+          <circle cx="12" cy="13" r="4" stroke="currentColor" strokeWidth="1.5"/>
+          <path d="M18 4L16 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
         </svg>
       </div>
       <span className="text-2xl">🌿</span>
