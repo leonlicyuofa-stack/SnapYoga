@@ -3,7 +3,7 @@
 
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import type { AnalyzeYogaPoseOutput } from '@/ai/flows/analyze-yoga-pose';
+import type { AnalysisServiceOutput } from '@/app/actions/analyze-pose-action';
 import { Button } from "@/components/ui/button";
 import { Activity, MessageSquareText, VideoOff, Award } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -13,7 +13,7 @@ import { Progress } from "@/components/ui/progress";
 interface PoseAnalysisCardProps {
   videoDataUri: string | null; // Can be a data URI or a public URL from storage
   videoFileName: string | null;
-  analysis: AnalyzeYogaPoseOutput | null;
+  analysis: AnalysisServiceOutput | null;
   isLoading: boolean;
 }
 
@@ -21,9 +21,9 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
   const rawScore = analysis?.score ?? null;
   const identifiedPose = analysis?.identifiedPose ?? null;
 
-  // Process the score as per the new requirement
+  // Multiply score by 100, round it, and cap at 100.
   const score = typeof rawScore === 'number' 
-    ? Math.min(Math.round(rawScore), 100) 
+    ? Math.min(Math.round(rawScore * 100), 100) 
     : null;
 
   // Determine if the video source is a data URI or a URL
