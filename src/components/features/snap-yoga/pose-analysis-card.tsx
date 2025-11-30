@@ -18,8 +18,13 @@ interface PoseAnalysisCardProps {
 }
 
 export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoading }: PoseAnalysisCardProps) {
-  const score = analysis?.score ?? null;
+  const rawScore = analysis?.score ?? null;
   const identifiedPose = analysis?.identifiedPose ?? null;
+
+  // Process the score as per the new requirement
+  const score = typeof rawScore === 'number' 
+    ? Math.min(Math.round(rawScore), 100) 
+    : null;
 
   // Determine if the video source is a data URI or a URL
   // A simple check for "data:video" vs "https:"
