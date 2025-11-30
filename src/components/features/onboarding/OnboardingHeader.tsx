@@ -24,7 +24,7 @@ export function OnboardingHeader() {
     const { title, subtitle, optionalText } = pageTitles[pathname] ?? { title: "Welcome!", subtitle: "Let's get you set up." };
 
     return (
-        <Card className="bg-[#414869] text-white p-6 rounded-2xl shadow-lg mb-4 overflow-hidden relative max-w-sm w-full">
+        <div className="bg-[#414869] text-white p-6 rounded-t-3xl shadow-lg -mb-8 overflow-hidden relative w-full">
             <div className="flex flex-col items-start">
                 <div className="flex space-x-1 mb-4">
                    <div className="w-2 h-2 rounded-full bg-[#FFB6C1]"></div>
@@ -39,6 +39,6 @@ export function OnboardingHeader() {
                 </div>
             </div>
             <WavingMascot className="absolute -right-10 -bottom-10 h-48 w-48" />
-        </Card>
+        </div>
     );
 }

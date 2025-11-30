@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -153,121 +152,121 @@ export default function GenderProfilePage() {
     <AppShell>
       <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden">
         
-        <div className="relative z-10 w-full max-w-sm flex flex-col items-center">
+        <Card className="relative z-10 w-full max-w-sm flex flex-col items-center shadow-2xl rounded-3xl overflow-hidden bg-transparent">
             <OnboardingHeader />
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full mt-[-2rem]">
-              <div className="flex justify-around items-center pt-8">
-                  <div 
-                    className={cn(
-                        "cursor-pointer p-4 rounded-2xl transition-all w-48 h-auto flex flex-col items-center justify-center space-y-2",
-                        selectedGender === 'female' ? 'bg-white/50' : 'bg-card/20'
-                    )}
-                    onClick={() => setValue('gender', 'female', { shouldValidate: true })}
-                  >
-                    <FemaleAvatar className="w-32 h-32"/>
-                    
-                  </div>
-                   <div 
-                    className={cn(
-                        "cursor-pointer p-4 rounded-2xl transition-all w-48 h-auto flex flex-col items-center justify-center space-y-2",
-                        selectedGender === 'male' ? 'bg-white/50' : 'bg-card/20'
-                    )}
-                    onClick={() => setValue('gender', 'male', { shouldValidate: true })}
-                  >
-                    <MaleAvatar className="w-32 h-32"/>
-                    
-                  </div>
-              </div>
-              {errors.gender && <p className="text-sm text-destructive text-center -mt-4">{errors.gender.message}</p>}
-              
-              <div className="space-y-4">
-                <div className="space-y-2">
-                   <div className="relative">
-                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        <Input 
-                            id="email" 
-                            type="email"
-                            placeholder="Email" 
-                            {...register("email")}
-                            className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 shadow-sm"
-                        />
-                   </div>
-                  {errors.email && <p className="text-sm text-destructive pl-4">{errors.email.message}</p>}
+            <div className="bg-card/80 backdrop-blur-sm w-full p-6 pt-12">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
+                <div className="flex justify-around items-center">
+                    <div 
+                      className={cn(
+                          "cursor-pointer p-4 rounded-2xl transition-all w-36 h-auto flex flex-col items-center justify-center space-y-2",
+                          selectedGender === 'female' ? 'bg-white/50' : 'bg-card/20'
+                      )}
+                      onClick={() => setValue('gender', 'female', { shouldValidate: true })}
+                    >
+                      <FemaleAvatar className="w-24 h-24"/>
+                      
+                    </div>
+                     <div 
+                      className={cn(
+                          "cursor-pointer p-4 rounded-2xl transition-all w-36 h-auto flex flex-col items-center justify-center space-y-2",
+                          selectedGender === 'male' ? 'bg-white/50' : 'bg-card/20'
+                      )}
+                      onClick={() => setValue('gender', 'male', { shouldValidate: true })}
+                    >
+                      <MaleAvatar className="w-24 h-24"/>
+                      
+                    </div>
                 </div>
-                <div className="space-y-2">
-                   <div className="relative">
-                        <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        <Input 
-                            id="username" 
-                            placeholder="Username" 
-                            {...register("username")}
-                            className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 shadow-sm"
-                        />
-                   </div>
-                  {errors.username && <p className="text-sm text-destructive pl-4">{errors.username.message}</p>}
-                </div>
-                 <div className="space-y-2">
-                   <div className="relative">
-                        <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        <Input 
-                            id="password"
-                            type="password"
-                            placeholder="Password" 
-                            {...register("password")}
-                            className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 shadow-sm"
-                        />
-                   </div>
-                  {errors.password && <p className="text-sm text-destructive pl-4">{errors.password.message}</p>}
-                </div>
+                {errors.gender && <p className="text-sm text-destructive text-center -mt-4">{errors.gender.message}</p>}
                 
-                <div className="space-y-2">
-                    <Controller
-                        name="birthday"
-                        control={control}
-                        render={({ field }) => (
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <div className="relative">
-                                        <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                                        <button
-                                            type="button"
-                                            className={cn(
-                                                "w-full text-left bg-background/80 backdrop-blur-sm border border-border/50 rounded-full h-12 pl-12 shadow-sm text-base",
-                                                !field.value && "text-muted-foreground"
-                                            )}
-                                        >
-                                            {field.value ? format(field.value, "PPP") : <span>Birthday</span>}
-                                        </button>
-                                    </div>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
-                                    <div className="grid grid-cols-3 gap-4 relative h-48 p-2">
-                                        <DatePickerColumn title="Day" values={days} onSelect={(day) => handleDateChange('day', day)} selectedValue={field.value?.getDate()} />
-                                        <DatePickerColumn title="Month" values={months} onSelect={(month) => handleDateChange('month', month)} selectedValue={field.value?.getMonth()} />
-                                        <DatePickerColumn title="Year" values={years} onSelect={(year) => handleDateChange('year', year)} selectedValue={field.value?.getFullYear()} />
-                                    </div>
-                                </PopoverContent>
-                            </Popover>
-                        )}
-                    />
-                    {errors.birthday && <p className="text-sm text-destructive pl-4">{errors.birthday.message}</p>}
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                     <div className="relative">
+                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          <Input 
+                              id="email" 
+                              type="email"
+                              placeholder="Email" 
+                              {...register("email")}
+                              className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 shadow-inner"
+                          />
+                     </div>
+                    {errors.email && <p className="text-sm text-destructive pl-4">{errors.email.message}</p>}
+                  </div>
+                  <div className="space-y-2">
+                     <div className="relative">
+                          <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          <Input 
+                              id="username" 
+                              placeholder="Username" 
+                              {...register("username")}
+                              className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 shadow-inner"
+                          />
+                     </div>
+                    {errors.username && <p className="text-sm text-destructive pl-4">{errors.username.message}</p>}
+                  </div>
+                   <div className="space-y-2">
+                     <div className="relative">
+                          <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          <Input 
+                              id="password"
+                              type="password"
+                              placeholder="Password" 
+                              {...register("password")}
+                              className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 shadow-inner"
+                          />
+                     </div>
+                    {errors.password && <p className="text-sm text-destructive pl-4">{errors.password.message}</p>}
+                  </div>
+                  
+                  <div className="space-y-2">
+                      <Controller
+                          name="birthday"
+                          control={control}
+                          render={({ field }) => (
+                              <Popover>
+                                  <PopoverTrigger asChild>
+                                      <div className="relative">
+                                          <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                          <button
+                                              type="button"
+                                              className={cn(
+                                                  "w-full text-left bg-background/80 backdrop-blur-sm border border-border/50 rounded-full h-12 pl-12 shadow-inner text-base",
+                                                  !field.value && "text-muted-foreground"
+                                              )}
+                                          >
+                                              {field.value ? format(field.value, "PPP") : <span>Birthday</span>}
+                                          </button>
+                                      </div>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-auto p-0" align="start">
+                                      <div className="grid grid-cols-3 gap-4 relative h-48 p-2">
+                                          <DatePickerColumn title="Day" values={days} onSelect={(day) => handleDateChange('day', day)} selectedValue={field.value?.getDate()} />
+                                          <DatePickerColumn title="Month" values={months} onSelect={(month) => handleDateChange('month', month)} selectedValue={field.value?.getMonth()} />
+                                          <DatePickerColumn title="Year" values={years} onSelect={(year) => handleDateChange('year', year)} selectedValue={field.value?.getFullYear()} />
+                                      </div>
+                                  </PopoverContent>
+                              </Popover>
+                          )}
+                      />
+                      {errors.birthday && <p className="text-sm text-destructive pl-4">{errors.birthday.message}</p>}
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex justify-center">
-                <Button 
-                  type="submit"
-                  className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
-                  disabled={isSubmitting || authLoading}
-                >
-                  {isSubmitting || authLoading ? <Loader2 className="animate-spin" /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
-                </Button>
-              </div>
-            </form>
-        </div>
+                <div className="flex justify-center">
+                  <Button 
+                    type="submit"
+                    className="w-auto rounded-full h-10 px-6 bg-accent hover:bg-accent/90 text-accent-foreground text-sm font-bold shadow-lg transition-all hover:scale-105"
+                    disabled={isSubmitting || authLoading}
+                  >
+                    {isSubmitting || authLoading ? <Loader2 className="animate-spin" /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
+                  </Button>
+                </div>
+              </form>
+            </div>
+        </Card>
       </div>
     </AppShell>
   );
 }
-
-    
