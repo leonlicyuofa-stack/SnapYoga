@@ -43,7 +43,6 @@ export function SnapYogaLogo() {
           <path d="M18 4L16 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
         </svg>
       </div>
-      <span className="text-2xl">🌿</span>
     </div>
   );
 }
