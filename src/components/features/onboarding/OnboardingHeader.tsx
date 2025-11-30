@@ -23,7 +23,7 @@ export function OnboardingHeader() {
     const { title, subtitle, optionalText } = pageTitles[pathname] ?? { title: "Welcome!", subtitle: "Let's get you set up." };
 
     return (
-        <div className="bg-[#414869] text-white p-6 rounded-b-3xl shadow-lg overflow-hidden relative w-full pb-16">
+        <div className="bg-[#414869] text-white p-6 rounded-b-3xl shadow-lg overflow-hidden relative w-full flex flex-col justify-center" style={{ height: '20vh' }}>
             <div className="flex flex-col items-start">
                 <div className="flex space-x-1 mb-4">
                    <div className="w-2 h-2 rounded-full bg-[#FFB6C1]"></div>
