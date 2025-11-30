@@ -22,8 +22,6 @@ export default function SignUpPage() {
       <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden text-center w-full max-w-sm mx-auto">
         <OnboardingHeader />
         
-        <h1 className="text-4xl font-bold mb-8">Create an Account</h1>
-        
         <div className="grid grid-cols-2 gap-3">
             <Button variant="outline" onClick={signInWithGoogle} disabled={authLoading} className="w-full py-6 text-base h-auto justify-start">
                 <GoogleIcon className="mr-4 h-5 w-5" /> {t('authGoogle')}
