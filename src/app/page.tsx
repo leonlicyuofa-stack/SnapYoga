@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Shadows_Into_Light } from 'next/font/google';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
-import { GeminiIcon } from '@/components/icons/GeminiIcon';
+import { DownArrowIcon } from '@/components/icons/DownArrowIcon';
 
 const shadowsIntoLight = Shadows_Into_Light({
   subsets: ['latin'],
@@ -35,7 +35,7 @@ export default function HomePage() {
   const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [isProcessingClick, setIsProcessingClick] = useState(false);
-  const [animationState, setAnimationState] = useState<'idle' | 'glowing' | 'streaking'>('idle');
+  const [animationState, setAnimationState] = useState<'idle' | 'clicked'>('idle');
 
 
   useEffect(() => {
@@ -65,17 +65,12 @@ export default function HomePage() {
     if (authLoading || loadingProfile || isProcessingClick) return;
 
     setIsProcessingClick(true);
-    setAnimationState('glowing');
+    setAnimationState('clicked');
     
     if (typeof window !== 'undefined') {
         sessionStorage.setItem('snapYogaPebbleIncoming', 'true');
     }
     
-    // Animation timing
-    setTimeout(() => {
-        setAnimationState('streaking');
-    }, 400); // Duration of glow/expand
-
     // Page navigation timing
     setTimeout(() => {
       if (user) {
@@ -87,7 +82,7 @@ export default function HomePage() {
       } else {
         router.push('/auth/signup');
       }
-    }, 900); // glowing (400) + streaking (500)
+    }, 600); // Duration of the click animation
   };
 
   const handleLanguageSwitch = () => {
@@ -120,7 +115,7 @@ export default function HomePage() {
             </div>
 
             <div className="mt-8" onClick={handleGetStarted} role="button" aria-label={t('getStarted')}>
-                <GeminiIcon animationState={animationState} />
+                <DownArrowIcon animationState={animationState} />
             </div>
         </div>
       </div>
