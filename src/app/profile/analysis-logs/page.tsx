@@ -4,24 +4,27 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { storage } from '@/lib/firebase/clientApp'; // Import storage
-import { ref, listAll, getDownloadURL, type StorageReference } from 'firebase/storage'; // Import storage functions
+import { firestore } from '@/lib/firebase/clientApp'; 
+import { collection, query, orderBy, getDocs, type Timestamp } from 'firebase/firestore'; 
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ArrowLeft, AlertCircle, FileJson, Download, FileText } from 'lucide-react';
+import { ArrowLeft, AlertCircle, FileJson, FileText, Calendar, Activity, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { format } from 'date-fns';
 
-interface StorageFile {
-  name: string;
-  downloadUrl: string;
+interface AnalysisSummary {
+  id: string;
+  createdAt: Timestamp;
+  identifiedPose: string;
+  score: number;
 }
 
 export default function AnalysisLogsPage() {
   const { user: currentUser, loading: authLoading } = useAuth();
-  const [files, setFiles] = useState<StorageFile[]>([]);
+  const [analyses, setAnalyses] = useState<AnalysisSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,42 +32,31 @@ export default function AnalysisLogsPage() {
     if (authLoading) return;
 
     if (!currentUser) {
-      setError("You must be logged in to view analysis result files.");
+      setError("You must be logged in to view analysis history.");
       setLoading(false);
       return;
     }
 
     setLoading(true);
-    // Path to the user's result files in Firebase Storage
-    const filesListRef = ref(storage, `pose_analysis_results/${currentUser.uid}/`);
+    // Fetch from the 'poseAnalyses' collection in Firestore
+    const analysesCollectionRef = collection(firestore, `users/${currentUser.uid}/poseAnalyses`);
+    const q = query(analysesCollectionRef, orderBy('createdAt', 'desc'));
 
-    listAll(filesListRef)
-      .then(async (res) => {
-        const fetchedFiles: StorageFile[] = [];
-        for (const itemRef of res.items) {
-          try {
-            const downloadUrl = await getDownloadURL(itemRef);
-            fetchedFiles.push({
-              name: itemRef.name,
-              downloadUrl: downloadUrl,
-            });
-          } catch (urlError) {
-             console.error("Error getting download URL for", itemRef.name, urlError);
-             // Optionally add to an error list to show the user
-          }
-        }
-        
-        // Sort files by name descending (newest first if names are date-based)
-        fetchedFiles.sort((a, b) => b.name.localeCompare(a.name));
+    getDocs(q)
+      .then((querySnapshot) => {
+        const fetchedAnalyses: AnalysisSummary[] = [];
+        querySnapshot.forEach((doc) => {
+          fetchedAnalyses.push({ id: doc.id, ...doc.data() } as AnalysisSummary);
+        });
 
-        setFiles(fetchedFiles);
-        if (fetchedFiles.length === 0) {
-          setError("No analysis result files found in Storage.");
+        setAnalyses(fetchedAnalyses);
+        if (fetchedAnalyses.length === 0) {
+          setError("No analysis history found.");
         }
       })
       .catch((err) => {
-        console.error("Error listing files from Firebase Storage:", err);
-        setError("Failed to fetch analysis files. Please check permissions and try again.");
+        console.error("Error fetching analysis history from Firestore:", err);
+        setError("Failed to fetch analysis history. Please try again.");
       })
       .finally(() => {
         setLoading(false);
@@ -95,11 +87,11 @@ export default function AnalysisLogsPage() {
         <div className="mb-8 p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
           <CardHeader className="p-0">
             <CardTitle className="flex items-center gap-2 text-3xl text-primary">
-              <FileJson className="h-8 w-8" />
-              Analysis Result Files
+              <FileText className="h-8 w-8" />
+              Analysis History
             </CardTitle>
             <CardDescription className="text-md">
-              Here you can view and download the raw JSON result files from Firebase Storage for debugging.
+              Review a summary of your past pose analysis sessions.
             </CardDescription>
           </CardHeader>
         </div>
@@ -120,21 +112,25 @@ export default function AnalysisLogsPage() {
             </div>
         ) : (
           <div className="space-y-4">
-            {files.map((file) => (
-              <Card key={file.name} className="bg-card/80 backdrop-blur-sm shadow-md">
+            {analyses.map((analysis) => (
+              <Card key={analysis.id} className="bg-card/80 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow">
                 <CardContent className="p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <FileText className="h-8 w-8 text-primary" />
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-primary/10 rounded-md">
+                        <Activity className="h-8 w-8 text-primary" />
+                    </div>
                     <div>
-                        <p className="font-semibold text-sm sm:text-base break-all">{file.name}</p>
-                        <p className="text-xs text-muted-foreground">Firebase Storage File</p>
+                        <p className="font-semibold text-lg">{analysis.identifiedPose}</p>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Calendar className="h-4 w-4" />
+                            <span>{format(analysis.createdAt.toDate(), 'PPP p')}</span>
+                        </div>
                     </div>
                   </div>
-                  <Button asChild size="sm">
-                    <a href={file.downloadUrl} target="_blank" rel="noopener noreferrer" download={file.name}>
-                        <Download className="mr-2 h-4 w-4" />
-                        Download
-                    </a>
+                  <Button asChild variant="ghost" size="icon">
+                    <Link href={`/analysis/${analysis.id}`} aria-label={`View details for ${analysis.identifiedPose}`}>
+                        <ChevronRight className="h-6 w-6" />
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>
