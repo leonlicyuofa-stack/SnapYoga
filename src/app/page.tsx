@@ -99,29 +99,17 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Top Pink Section */}
-      <div className="relative flex flex-col items-center justify-center p-4 bg-[hsl(var(--home-pink-bg))] text-[hsl(var(--home-pink-fg))] flex-grow-[2]">
-        <header className="absolute top-0 left-0 w-full p-4">
-           <div className="container mx-auto flex justify-between items-center px-4 sm:px-8">
-            <div></div>
+      {/* Bottom Dark Section */}
+      <div className="relative flex flex-col items-center justify-center p-8 bg-[hsl(var(--home-dark-bg))] text-white flex-grow">
+          <header className="absolute top-0 left-0 w-full p-4">
+           <div className="container mx-auto flex justify-end items-center px-4 sm:px-8">
             <div className="flex items-center gap-2">
-                <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3 bg-white/50 backdrop-blur-sm hover:bg-white/80 text-black border-black/20" aria-label="Switch Language">
+                <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-white/20" aria-label="Switch Language">
                 <span className="mr-2">🇮🇩</span> Bahasa
                 </Button>
             </div>
             </div>
         </header>
-        <div className="text-center">
-            
-            <p className={cn("mt-2 text-xl sm:text-2xl", shadowsIntoLight.className)}></p>
-        </div>
-      </div>
-      
-      {/* Curved Divider */}
-      <div className="wave-divider"></div>
-
-      {/* Bottom Dark Section */}
-      <div className="relative flex flex-col items-center justify-center p-8 bg-[hsl(var(--home-dark-bg))] text-white flex-grow-[1]">
           <div className="relative z-10 flex flex-col items-center justify-center text-center">
             <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-white mb-3 font-script">
               <span className="animate-snap-flash inline-block">Snap</span>
