@@ -14,7 +14,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Shadows_Into_Light } from 'next/font/google';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { GeminiIcon } from '@/components/icons/GeminiIcon';
-import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 
 const shadowsIntoLight = Shadows_Into_Light({
   subsets: ['latin'],
@@ -101,7 +100,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Top Pink Section */}
-      <div className="relative flex flex-col items-center justify-center p-4 bg-[hsl(var(--home-pink-bg))] text-[hsl(var(--home-pink-fg)] flex-grow-[2]">
+      <div className="relative flex flex-col items-center justify-center p-4 bg-[hsl(var(--home-pink-bg))] text-[hsl(var(--home-pink-fg))] flex-grow-[2]">
         <header className="absolute top-0 left-0 w-full p-4">
            <div className="container mx-auto flex justify-between items-center px-4 sm:px-8">
             <div></div>
@@ -118,7 +117,7 @@ export default function HomePage() {
             </div>
         </header>
         <div className="text-center">
-            <SnapYogaLogo className="text-[hsl(var(--home-pink-fg))] h-16 w-auto mx-auto" />
+            
             <p className={cn("mt-2 text-xl sm:text-2xl", shadowsIntoLight.className)}>your AI companion for mindfulness</p>
         </div>
       </div>
