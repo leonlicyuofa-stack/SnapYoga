@@ -180,44 +180,44 @@ export default function GenderProfilePage() {
               </div>
               {errors.gender && <p className="text-sm text-destructive text-center -mt-4">{errors.gender.message}</p>}
               
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div className="space-y-2">
                    <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         <Input 
                             id="email" 
                             type="email"
                             placeholder="Email" 
                             {...register("email")}
-                            className="bg-transparent border-0 border-b-2 rounded-none px-0 pl-10 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary"
+                            className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 shadow-sm"
                         />
                    </div>
-                  {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+                  {errors.email && <p className="text-sm text-destructive pl-4">{errors.email.message}</p>}
                 </div>
                 <div className="space-y-2">
                    <div className="relative">
-                        <UserCircle className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         <Input 
                             id="username" 
                             placeholder="Username" 
                             {...register("username")}
-                            className="bg-transparent border-0 border-b-2 rounded-none px-0 pl-10 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary"
+                            className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 shadow-sm"
                         />
                    </div>
-                  {errors.username && <p className="text-sm text-destructive">{errors.username.message}</p>}
+                  {errors.username && <p className="text-sm text-destructive pl-4">{errors.username.message}</p>}
                 </div>
                  <div className="space-y-2">
                    <div className="relative">
-                        <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         <Input 
                             id="password"
                             type="password"
                             placeholder="Password" 
                             {...register("password")}
-                            className="bg-transparent border-0 border-b-2 rounded-none px-0 pl-10 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary"
+                            className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 shadow-sm"
                         />
                    </div>
-                  {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+                  {errors.password && <p className="text-sm text-destructive pl-4">{errors.password.message}</p>}
                 </div>
                 
                 <div className="space-y-2">
@@ -228,15 +228,15 @@ export default function GenderProfilePage() {
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <div className="relative">
-                                        <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                        <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                                         <button
                                             type="button"
                                             className={cn(
-                                                "w-full text-left bg-transparent border-0 border-b-2 border-input rounded-none px-0 pl-10 h-10 text-base focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary",
+                                                "w-full text-left bg-background/80 backdrop-blur-sm border border-border/50 rounded-full h-12 pl-12 shadow-sm text-base",
                                                 !field.value && "text-muted-foreground"
                                             )}
                                         >
-                                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                                            {field.value ? format(field.value, "PPP") : <span>Birthday</span>}
                                         </button>
                                     </div>
                                 </PopoverTrigger>
@@ -250,7 +250,7 @@ export default function GenderProfilePage() {
                             </Popover>
                         )}
                     />
-                    {errors.birthday && <p className="text-sm text-destructive">{errors.birthday.message}</p>}
+                    {errors.birthday && <p className="text-sm text-destructive pl-4">{errors.birthday.message}</p>}
                 </div>
               </div>
 
@@ -269,3 +269,5 @@ export default function GenderProfilePage() {
     </AppShell>
   );
 }
+
+    
