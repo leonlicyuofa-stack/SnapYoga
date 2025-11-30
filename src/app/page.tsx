@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Shadows_Into_Light } from 'next/font/google';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
-import { DownArrowIcon } from '@/components/icons/DownArrowIcon';
+import { RightArrowIcon } from '@/components/icons/RightArrowIcon';
 
 const shadowsIntoLight = Shadows_Into_Light({
   subsets: ['latin'],
@@ -128,7 +128,7 @@ export default function HomePage() {
         </div>
 
         <div className="mt-8" onClick={handleGetStarted} role="button" aria-label={t('getStarted')}>
-            <DownArrowIcon animationState={animationState} className="text-foreground" />
+            <RightArrowIcon animationState={animationState} className="text-foreground" />
         </div>
       </div>
     </div>

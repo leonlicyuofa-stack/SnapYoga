@@ -110,6 +110,10 @@ export default {
               '0%': { transform: 'translateY(0)', opacity: 1 },
               '100%': { transform: 'translateY(40px)', opacity: 0 },
             },
+            'move-right-and-fade': {
+              '0%': { transform: 'translateX(0)', opacity: 1 },
+              '100%': { transform: 'translateX(40px)', opacity: 0 },
+            },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
@@ -118,6 +122,7 @@ export default {
             typewriter: 'typewriter 2s steps(12) 1s 1 normal both',
             'snap-flash': 'snap-flash 0.7s ease-in-out',
             'move-down-and-fade': 'move-down-and-fade 0.6s ease-in forwards',
+            'move-right-and-fade': 'move-right-and-fade 0.6s ease-in forwards',
   		}
   	}
   },
