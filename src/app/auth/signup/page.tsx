@@ -22,14 +22,26 @@ export default function SignUpPage() {
       <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden text-center w-full max-w-sm mx-auto">
         <OnboardingHeader />
         
-        <div className="grid grid-cols-2 gap-3">
-            <Button variant="outline" onClick={signInWithGoogle} disabled={authLoading} className="w-full py-6 text-base h-auto justify-start">
-                <GoogleIcon className="mr-4 h-5 w-5" /> {t('authGoogle')}
+        <div className="relative my-6 w-full">
+            <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">Or sign in with</span>
+            </div>
+        </div>
+
+        <div className="flex justify-center gap-4 my-4">
+            <Button variant="outline" size="icon" onClick={signInWithGoogle} disabled={authLoading} className="w-14 h-14 rounded-full border-2">
+                <GoogleIcon className="h-6 w-6" />
+                <span className="sr-only">Sign in with Google</span>
             </Button>
-            <Button variant="outline" onClick={signInWithApple} disabled={authLoading} className="w-full py-6 text-base h-auto justify-start">
-                <AppleIcon className="mr-4 h-5 w-5" /> {t('authApple')}
+            <Button variant="outline" size="icon" onClick={signInWithApple} disabled={authLoading} className="w-14 h-14 rounded-full border-2">
+                <AppleIcon className="h-6 w-6" />
+                 <span className="sr-only">Sign in with Apple</span>
             </Button>
         </div>
+
 
         <div className="relative my-6 w-full">
             <div className="absolute inset-0 flex items-center">
