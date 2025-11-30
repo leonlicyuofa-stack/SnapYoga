@@ -14,6 +14,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Shadows_Into_Light } from 'next/font/google';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { GeminiIcon } from '@/components/icons/GeminiIcon';
+import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 
 const shadowsIntoLight = Shadows_Into_Light({
   subsets: ['latin'],
@@ -98,26 +99,11 @@ export default function HomePage() {
   const isLoading = authLoading || loadingProfile;
 
   return (
-    <div className={cn(
-        "relative flex flex-col min-h-screen items-center justify-center p-4 overflow-hidden"
-    )}>
-         <div className="relative z-10 flex flex-col items-center justify-center text-center">
-            <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3 font-script">
-              <span className="animate-snap-flash inline-block">Snap</span>
-              <span>Yoga</span>
-            </h2>
-            <div className={cn("mt-2 text-xl text-splash-foreground/80 max-w-md sm:text-2xl", shadowsIntoLight.className)}>
-                <p>your AI companion for mindfulness</p>
-            </div>
-
-            <div className="mt-8" onClick={handleGetStarted} role="button" aria-label={t('getStarted')}>
-                <GeminiIcon animationState={animationState} />
-            </div>
-
-        </div>
-
-        <header className="navbar w-full absolute top-0 left-0">
-            <div className="container mx-auto flex justify-between items-center px-4 sm:px-8">
+    <div className="flex flex-col min-h-screen">
+      {/* Top Pink Section */}
+      <div className="relative flex flex-col items-center justify-center p-4 bg-[hsl(var(--home-pink-bg))] text-[hsl(var(--home-pink-fg)] flex-grow-[2]">
+        <header className="absolute top-0 left-0 w-full p-4">
+           <div className="container mx-auto flex justify-between items-center px-4 sm:px-8">
             <div></div>
             <div className="flex items-center gap-2">
                 <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3 bg-white/50 backdrop-blur-sm hover:bg-white/80 text-black border-black/20" aria-label="Switch Language">
@@ -131,8 +117,31 @@ export default function HomePage() {
             </div>
             </div>
         </header>
+        <div className="text-center">
+            <SnapYogaLogo className="text-[hsl(var(--home-pink-fg))] h-16 w-auto mx-auto" />
+            <p className={cn("mt-2 text-xl sm:text-2xl", shadowsIntoLight.className)}>your AI companion for mindfulness</p>
+        </div>
+      </div>
+      
+      {/* Curved Divider */}
+      <div className="wave-divider"></div>
 
+      {/* Bottom Dark Section */}
+      <div className="relative flex flex-col items-center justify-center p-8 bg-[hsl(var(--home-dark-bg))] text-white flex-grow-[1]">
+          <div className="relative z-10 flex flex-col items-center justify-center text-center">
+            <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-white mb-3 font-script">
+              <span className="animate-snap-flash inline-block">Snap</span>
+              <span>Yoga</span>
+            </h2>
+            <div className={cn("mt-2 text-xl max-w-md sm:text-2xl opacity-80", shadowsIntoLight.className)}>
+                <p>your AI companion for mindfulness</p>
+            </div>
+
+            <div className="mt-8" onClick={handleGetStarted} role="button" aria-label={t('getStarted')}>
+                <GeminiIcon animationState={animationState} />
+            </div>
+        </div>
+      </div>
     </div>
   );
 }
-

@@ -32,24 +32,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${lexend.variable} ${shadowsIntoLight.variable} font-sans antialiased`}>
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-[hsl(var(--splash-blob-1))] via-splash-background to-[hsl(var(--splash-blob-2))] animate-breathing-bg">
-            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
-                <defs>
-                    <radialGradient id="blushGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                        <stop offset="0%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0.7 }} />
-                        <stop offset="100%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0 }} />
-                    </radialGradient>
-                </defs>
-                {/* BLOB 1: Main pink shape from Top-Right to Bottom-Left */}
-                <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-blob-1))" />
-                
-                {/* BLOB 2: Curve on the left edge, filled with background color for layering effect */}
-                <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
-                
-                {/* BLOB 3: Semi-transparent gray shape from Top-Left to Bottom-Right, adding depth */}
-                <path d="M 100,0 L 0,0 C 50,50 0,50 0,100 L 100,100 Z" fill="hsl(var(--splash-blob-2))" style={{ opacity: 0.5 }}/>
-            </svg>
-        </div>
         <div className="relative z-10">
           <AuthProvider>
             <LanguageProvider>

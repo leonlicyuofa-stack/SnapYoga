@@ -50,6 +50,12 @@
 
     /* Pistachio color */
     --pistachio-background: 99 14% 88%;
+
+    /* New Homepage Colors */
+    --home-pink-bg: 340 100% 92%;
+    --home-pink-fg: 340 50% 60%;
+    --home-dark-bg: 220 15% 18%;
+    --home-dark-fg: 0 0% 100%;
   }
 
   .dark {
@@ -96,6 +102,12 @@
     
     /* Pistachio color */
     --pistachio-background: 99 10% 30%;
+
+    /* New Homepage Colors - Dark Mode */
+    --home-pink-bg: 340 40% 30%;
+    --home-pink-fg: 340 90% 80%;
+    --home-dark-bg: 220 15% 10%;
+    --home-dark-fg: 0 0% 100%;
   }
 }
 
@@ -133,6 +145,16 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-}
+  .wave-divider {
+    aspect-ratio: 960/100;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1440 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 20C240 60 480 20 720 60C960 100 1200 60 1440 20V100H0V20Z" fill="hsl(220 15% 18%)"/></svg>');
+  }
 
-    
+  .dark .wave-divider {
+    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1440 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 20C240 60 480 20 720 60C960 100 1200 60 1440 20V100H0V20Z" fill="hsl(220 15% 10%)"/></svg>');
+  }
+}
