@@ -69,10 +69,10 @@ export function RecommendedVideosCard({ videos, isLoading }: RecommendedVideosCa
                 <div className="aspect-video">
                   {/* Use a standard video tag for direct playback from URL */}
                   <video
-                    src={video.url}
                     controls
                     className="w-full h-full rounded-md object-contain bg-black"
                   >
+                    <source src={video.url} type="video/mp4" />
                     Your browser does not support the video tag.
                   </video>
                 </div>
