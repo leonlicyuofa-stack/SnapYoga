@@ -118,7 +118,7 @@ const challenges: Challenge[] = [
     id: 'pigeon',
     name: 'Pigeon Pose (Kapotasana)',
     description: 'A deep hip opener that helps relieve tension and increase flexibility in the hip flexors.',
-    imageUrl: { src: 'https://placehold.co/600x400.png', width: 600, height: 400 },
+    imageUrl: { src: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?q=80&w=2070&auto=format&fit=crop', width: 600, height: 400 },
     imageHint: 'yoga pigeon pose',
     detailLink: '#',
     inviteLink: '#',
