@@ -7,9 +7,10 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc, type Timestamp } from 'firebase/firestore';
+import { getStorage, ref, listAll, getDownloadURL } from 'firebase/storage';
 import { AppShell } from '@/components/layout/app-shell';
 import { PoseAnalysisCard } from '@/components/features/snap-yoga/pose-analysis-card';
-import { RecommendedVideosCard, type YouTubeVideo } from '@/components/features/snap-yoga/recommended-videos-card';
+import { RecommendedVideosCard, type StorageVideo } from '@/components/features/snap-yoga/recommended-videos-card';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -43,7 +44,7 @@ export default function PastAnalysisPage() {
 
   const [analysisDetail, setAnalysisDetail] = useState<StoredAnalysisData | null>(null);
   const [analysisForCard, setAnalysisForCard] = useState<AnalyzeYogaPoseOutput | null>(null);
-  const [recommendedVideos, setRecommendedVideos] = useState<YouTubeVideo[]>([]);
+  const [recommendedVideos, setRecommendedVideos] = useState<StorageVideo[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loadingRecommendations, setLoadingRecommendations] = useState(false);
@@ -64,26 +65,43 @@ export default function PastAnalysisPage() {
       const analysisDocRef = doc(firestore, 'users', currentUser.uid, 'poseAnalyses', analysisId);
 
       getDoc(analysisDocRef)
-        .then((docSnap) => {
+        .then(async (docSnap) => {
           if (docSnap.exists()) {
             const data = { id: docSnap.id, ...docSnap.data() } as StoredAnalysisData;
             setAnalysisDetail(data);
-            // The card now expects videoUrl. We'll pass it if it exists.
             setAnalysisForCard({
               feedback: data.feedback,
               score: data.score,
               identifiedPose: data.identifiedPose,
-              videoUrl: data.videoUrl || "", // Pass the stored URL
+              videoUrl: data.videoUrl || "",
             });
             
+            // Fetch videos from Firebase Storage
             setLoadingRecommendations(true);
-            setTimeout(() => {
-              setRecommendedVideos([
-                { id: 'vid_detail1', title: `Tips for ${data.identifiedPose}`, embedUrl: 'https://www.youtube.com/embed/tKAs69_N3aE' },
-                { id: 'vid_detail2', title: `Common Mistakes in ${data.identifiedPose}`, embedUrl: 'https://www.youtube.com/embed/jK0arm2R2gU' },
-              ]);
-              setLoadingRecommendations(false);
-            }, 1200);
+            try {
+                const storage = getStorage();
+                // As requested, fetching from 'recommendation-video/downward-dog'
+                const videosRef = ref(storage, 'recommendation-video/downward-dog');
+                const videoList = await listAll(videosRef);
+
+                const videoPromises = videoList.items.map(async (itemRef) => {
+                    const url = await getDownloadURL(itemRef);
+                    return {
+                        id: itemRef.name,
+                        title: itemRef.name.replace(/\.\w+$/, '').replace(/[-_]/g, ' '), // Clean up title
+                        url: url
+                    };
+                });
+
+                const fetchedVideos = await Promise.all(videoPromises);
+                setRecommendedVideos(fetchedVideos);
+
+            } catch (storageError) {
+                console.error("Error fetching recommended videos from Storage:", storageError);
+                // Don't block the UI for this, just show no videos.
+            } finally {
+                setLoadingRecommendations(false);
+            }
 
           } else {
             setError("Analysis not found or you do not have permission to view it.");
@@ -115,7 +133,6 @@ export default function PastAnalysisPage() {
             title: "Link Copied for Instagram!",
             description: "Paste the link in your story or bio. We'll open Instagram for you.",
           });
-          // Attempt to open Instagram app on mobile, or website on desktop
           if (isMobile) {
             window.location.href = "instagram://";
           } else {
@@ -220,7 +237,6 @@ export default function PastAnalysisPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-8 items-start">
-          {/* We now pass the stored videoUrl instead of the data URI */}
           <PoseAnalysisCard
             videoDataUri={analysisDetail.videoUrl || null}
             videoFileName={analysisDetail.videoFileName || "Stored Analysis"}

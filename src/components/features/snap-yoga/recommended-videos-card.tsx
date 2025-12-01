@@ -5,14 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Youtube } from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
 
-export interface YouTubeVideo {
+export interface StorageVideo {
   id: string;
   title: string;
-  embedUrl: string;
+  url: string;
 }
 
 interface RecommendedVideosCardProps {
-  videos: YouTubeVideo[];
+  videos: StorageVideo[];
   isLoading: boolean; 
 }
 
@@ -57,7 +57,7 @@ export function RecommendedVideosCard({ videos, isLoading }: RecommendedVideosCa
         <CardDescription>
           {videos.length > 0 
             ? "Here are some videos that might help you improve your posture and poses."
-            : "Explore these general tips or check back later for more specific recommendations."}
+            : "No specific recommendations available at the moment. Check back after analyzing a pose!"}
         </CardDescription>
       </CardHeader>
       <CardContent className="p-0 mt-6">
@@ -66,18 +66,15 @@ export function RecommendedVideosCard({ videos, isLoading }: RecommendedVideosCa
             {videos.map((video) => (
               <div key={video.id} className="rounded-lg overflow-hidden shadow-md border border-border bg-card p-1">
                 <div className="aspect-video">
-                  <iframe
-                    width="100%"
-                    height="100%"
-                    src={video.embedUrl}
-                    title={video.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="rounded-md"
-                  ></iframe>
+                  <video
+                    src={video.url}
+                    controls
+                    className="w-full h-full rounded-md object-contain bg-black"
+                  >
+                    Your browser does not support the video tag.
+                  </video>
                 </div>
-                <h3 className="mt-3 mb-1 px-2 text-base font-semibold leading-snug text-card-foreground truncate" title={video.title}>
+                <h3 className="mt-3 mb-1 px-2 text-base font-semibold leading-snug text-card-foreground capitalize truncate" title={video.title}>
                   {video.title}
                 </h3>
               </div>
