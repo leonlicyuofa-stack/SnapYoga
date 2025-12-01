@@ -138,7 +138,7 @@ export default function PracticeCalendarPage() {
 
   const modifiersClassNames = {
     practiced: "bg-primary/20 text-primary-foreground font-bold",
-    selected: "bg-primary text-primary-foreground rounded-md",
+    selected: "bg-accent text-accent-foreground rounded-md",
   };
 
   return (
@@ -295,3 +295,5 @@ export default function PracticeCalendarPage() {
     </AppShell>
   );
 }
+
+    
