@@ -20,7 +20,7 @@ export default function OnboardingAlmostTherePage() {
   const handleNext = () => {
     setIsNavigating(true);
     setTimeout(() => {
-        router.push('/onboarding/focus-areas');
+        router.push('/onboarding/profile-summary');
     }, 800);
   };
 
