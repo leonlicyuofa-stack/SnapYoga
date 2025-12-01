@@ -174,34 +174,17 @@ export default function PracticeCalendarPage() {
               />
           </div>
           <div className="relative bg-transparent">
-              <div className="absolute -top-16 right-0 h-16 w-1/2 bg-primary rounded-bl-3xl"></div>
+              <div className="absolute -top-16 right-0 h-16 w-1/2 bg-card/80 backdrop-blur-sm rounded-bl-3xl"></div>
               <div className="absolute -top-16 left-0 h-16 w-1/2 bg-card/80 backdrop-blur-sm rounded-tr-3xl"></div>
                <TabsList className="grid w-full grid-cols-3 bg-transparent h-16 p-0">
                   <TabsTrigger value="log" className="h-full rounded-none data-[state=inactive]:bg-card/80 data-[state=active]:bg-card/80 backdrop-blur-sm text-muted-foreground data-[state=active]:text-foreground font-bold text-base">Practice Log</TabsTrigger>
                   <TabsTrigger value="moods" className="h-full rounded-none data-[state=inactive]:bg-card/80 data-[state=active]:bg-card/80 backdrop-blur-sm text-muted-foreground data-[state=active]:text-foreground font-bold text-base">Moods</TabsTrigger>
-                  <TabsTrigger value="monthly-goal" className="h-full rounded-none data-[state=inactive]:bg-primary data-[state=active]:bg-primary text-primary-foreground font-bold text-base">Monthly Goal</TabsTrigger>
+                  <TabsTrigger value="monthly-goal" className="h-full rounded-none data-[state=inactive]:bg-card/80 data-[state=active]:bg-card/80 backdrop-blur-sm text-muted-foreground data-[state=active]:text-foreground font-bold text-base">Monthly Goal</TabsTrigger>
               </TabsList>
           </div>
           
           <div className="p-6 text-foreground">
               <TabsContent value="log" className="mt-0">
-                  <div className="grid grid-cols-2 gap-4 mt-8">
-                      <div className="bg-card/80 backdrop-blur-sm text-primary shadow-lg relative -rotate-3 p-4 rounded-lg">
-                          <div className="absolute -bottom-2 -left-2 -right-2 h-full bg-white/40 rounded-lg -z-10 rotate-6"></div>
-                          <div className="font-bold text-sm">POSES PRACTICED</div>
-                          <div className="text-center mt-2">
-                              <p className="text-4xl font-bold">{analysesForSelectedDay.length}</p>
-                          </div>
-                      </div>
-                      <div className="bg-card/80 backdrop-blur-sm text-primary shadow-lg relative rotate-3 p-4 rounded-lg">
-                          <div className="absolute -bottom-2 -left-2 -right-2 h-full bg-white/40 rounded-lg -z-10 -rotate-6"></div>
-                          <div className="font-bold text-sm">TIME SPENT</div>
-                          <div className="text-center mt-2">
-                              <p className="text-4xl font-bold">~{analysesForSelectedDay.length * 5} <span className="text-xl">min</span></p>
-                          </div>
-                      </div>
-                  </div>
-
                   <div className="mt-8 space-y-4">
                       <h3 className="font-bold text-lg">Practice Log for {selectedDate ? format(selectedDate, 'PPP') : 'Today'}</h3>
                       {isLoadingData ? (
@@ -295,5 +278,3 @@ export default function PracticeCalendarPage() {
     </AppShell>
   );
 }
-
-    
