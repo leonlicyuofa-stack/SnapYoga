@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Youtube } from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
 
+// This interface now represents videos coming from Firebase Storage.
 export interface StorageVideo {
   id: string;
   title: string;
@@ -18,7 +19,7 @@ interface RecommendedVideosCardProps {
 
 export function RecommendedVideosCard({ videos, isLoading }: RecommendedVideosCardProps) {
   const ContentContainer = ({ children }: { children: React.ReactNode }) => (
-    <div className="w-full p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl mt-8">
+    <div className="w-full p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
       {children}
     </div>
   );
@@ -66,6 +67,7 @@ export function RecommendedVideosCard({ videos, isLoading }: RecommendedVideosCa
             {videos.map((video) => (
               <div key={video.id} className="rounded-lg overflow-hidden shadow-md border border-border bg-card p-1">
                 <div className="aspect-video">
+                  {/* Use a standard video tag for direct playback from URL */}
                   <video
                     src={video.url}
                     controls

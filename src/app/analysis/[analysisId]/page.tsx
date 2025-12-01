@@ -15,7 +15,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, AlertCircle, FileText, YoutubeIcon, Share2, Copy } from 'lucide-react';
-import type { AnalyzeYogaPoseOutput } from '@/ai/flows/analyze-yoga-pose';
+import type { AnalysisServiceOutput } from '@/app/actions/analyze-pose-action';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
@@ -43,7 +43,7 @@ export default function PastAnalysisPage() {
   const isMobile = useIsMobile();
 
   const [analysisDetail, setAnalysisDetail] = useState<StoredAnalysisData | null>(null);
-  const [analysisForCard, setAnalysisForCard] = useState<AnalyzeYogaPoseOutput | null>(null);
+  const [analysisForCard, setAnalysisForCard] = useState<AnalysisServiceOutput | null>(null);
   const [recommendedVideos, setRecommendedVideos] = useState<StorageVideo[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,11 +69,13 @@ export default function PastAnalysisPage() {
           if (docSnap.exists()) {
             const data = { id: docSnap.id, ...docSnap.data() } as StoredAnalysisData;
             setAnalysisDetail(data);
+            
+            // Correctly form the analysis output for the card
             setAnalysisForCard({
               feedback: data.feedback,
               score: data.score,
               identifiedPose: data.identifiedPose,
-              videoUrl: data.videoUrl || "",
+              videoUrl: data.videoUrl || "", // Pass the videoUrl from the stored data
             });
             
             // Fetch videos from Firebase Storage
