@@ -159,139 +159,152 @@ export default function PracticeCalendarPage() {
 
   return (
     <AppShell>
-      <div className="container mx-auto px-4 py-8">
-        <Card className="shadow-xl bg-card/80 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-2xl">
-              <CalendarDays className="h-7 w-7 text-primary" />
-              Practice Calendar
-            </CardTitle>
-            <CardDescription>
-              Select a day to see your practice logs and recorded mood.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="md:col-span-2">
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                month={currentMonth}
-                onMonthChange={setCurrentMonth}
-                modifiers={modifiers}
-                modifiersClassNames={modifiersClassNames}
-                className="rounded-md border p-0"
-                classNames={{
-                  caption_label: "font-bold text-lg",
-                  head_cell: "text-muted-foreground font-semibold w-full",
-                  cell: "h-12 w-full text-center text-sm p-0",
-                  day: "h-12 w-full rounded-md",
-                  day_today: "font-bold text-primary",
-                  day_content: 'w-full h-full',
-                }}
-                components={{
-                    DayContent: DayContent,
-                }}
-              />
-            </div>
+       <div className="relative min-h-[calc(100vh-8rem)]">
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-[hsl(var(--splash-blob-1))] via-background to-[hsl(var(--splash-blob-2))] animate-breathing-bg">
+            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
+                <defs>
+                    <radialGradient id="blushGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                        <stop offset="0%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0.7 }} />
+                        <stop offset="100%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0 }} />
+                    </radialGradient>
+                </defs>
+                <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-blob-1))" />
+                <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
+                <path d="M 100,0 L 0,0 C 50,50 0,50 0,100 L 100,100 Z" fill="hsl(var(--splash-blob-2))" style={{ opacity: 0.5 }}/>
+            </svg>
+        </div>
+        <div className="container mx-auto px-4 py-8 relative z-10">
+            <Card className="shadow-xl bg-card/80 backdrop-blur-sm">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-2xl">
+                <CalendarDays className="h-7 w-7 text-primary" />
+                Practice Calendar
+                </CardTitle>
+                <CardDescription>
+                Select a day to see your practice logs and recorded mood.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="md:col-span-2">
+                <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={setSelectedDate}
+                    month={currentMonth}
+                    onMonthChange={setCurrentMonth}
+                    modifiers={modifiers}
+                    modifiersClassNames={modifiersClassNames}
+                    className="rounded-md border p-0 bg-transparent"
+                    classNames={{
+                    caption_label: "font-bold text-lg",
+                    head_cell: "text-muted-foreground font-semibold w-full",
+                    cell: "h-12 w-full text-center text-sm p-0",
+                    day: "h-12 w-full rounded-md",
+                    day_today: "font-bold text-primary",
+                    day_content: 'w-full h-full',
+                    }}
+                    components={{
+                        DayContent: DayContent,
+                    }}
+                />
+                </div>
 
-            <div className="space-y-6">
-              {/* Daily Details Section */}
-              <div className="space-y-4">
-                  <h3 className="font-bold text-lg text-primary border-b pb-2">
-                    Details for {selectedDate ? format(selectedDate, 'PPP') : 'Today'}
-                  </h3>
+                <div className="space-y-6">
+                {/* Daily Details Section */}
+                <div className="space-y-4">
+                    <h3 className="font-bold text-lg text-primary border-b pb-2">
+                        Details for {selectedDate ? format(selectedDate, 'PPP') : 'Today'}
+                    </h3>
 
-                  {/* Mood for the day */}
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Mood</CardTitle>
-                       {moodForSelectedDay ? (
-                        <span className="text-lg">{moodForSelectedDay.emoji}</span>
-                      ) : (
-                        <Smile className="h-4 w-4 text-muted-foreground" />
-                      )}
-                    </CardHeader>
-                    <CardContent>
-                      {isLoadingData ? (
-                        <Skeleton className="h-8 w-1/2" />
-                      ) : moodForSelectedDay ? (
-                        <p className="text-sm text-muted-foreground">You felt {moodForSelectedDay.name}.</p>
-                      ) : (
-                        <p className="text-sm text-muted-foreground">No mood recorded.</p>
-                      )}
-                    </CardContent>
-                  </Card>
-                  
-                  {/* Practice Log for the day */}
-                  <Card>
-                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Practice Log</CardTitle>
-                      <FileText className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                       {isLoadingData ? (
-                          <>
-                              <Skeleton className="h-10 w-full" />
-                              <Skeleton className="h-10 w-full" />
-                          </>
-                      ) : analysesForSelectedDay.length > 0 ? (
-                          analysesForSelectedDay.map(analysis => (
-                              <div key={analysis.id} className="text-sm text-foreground flex items-center justify-between">
-                                  <div className="flex items-center gap-2">
-                                      <Dumbbell className="h-4 w-4 text-muted-foreground" />
-                                      <p>{analysis.identifiedPose || 'Unknown Pose'}</p>
-                                  </div>
-                                  <div className="flex items-center gap-1 font-semibold">
-                                      <Star className="h-4 w-4 text-yellow-400" />
-                                      <span>{analysis.score || 'N/A'}</span>
-                                  </div>
-                              </div>
-                          ))
-                      ) : (
-                          <p className="text-sm text-muted-foreground">No practice recorded.</p>
-                      )}
-                    </CardContent>
-                  </Card>
-            </div>
-            
-            {/* Monthly Goal Section */}
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Monthly Goal</CardTitle>
-                <Goal className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent className="flex flex-col items-center">
-                <ChartContainer config={chartConfig} className="mx-auto aspect-square h-[150px]">
-                  <PieChart>
-                    <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                    <Pie data={chartData} dataKey="value" nameKey="name" innerRadius={40} strokeWidth={5}>
-                      <Cell key="completed" fill="var(--color-progress)" />
-                      <Cell key="remaining" fill="var(--color-remaining)" />
-                    </Pie>
-                    <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="fill-foreground text-2xl font-bold">
-                      {monthlyProgress}%
-                    </text>
-                  </PieChart>
-                </ChartContainer>
-                <p className="text-xs text-muted-foreground mt-2">You're on track to meet your goal!</p>
-              </CardContent>
+                    {/* Mood for the day */}
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Mood</CardTitle>
+                        {moodForSelectedDay ? (
+                            <span className="text-lg">{moodForSelectedDay.emoji}</span>
+                        ) : (
+                            <Smile className="h-4 w-4 text-muted-foreground" />
+                        )}
+                        </CardHeader>
+                        <CardContent>
+                        {isLoadingData ? (
+                            <Skeleton className="h-8 w-1/2" />
+                        ) : moodForSelectedDay ? (
+                            <p className="text-sm text-muted-foreground">You felt {moodForSelectedDay.name}.</p>
+                        ) : (
+                            <p className="text-sm text-muted-foreground">No mood recorded.</p>
+                        )}
+                        </CardContent>
+                    </Card>
+                    
+                    {/* Practice Log for the day */}
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Practice Log</CardTitle>
+                        <FileText className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                        {isLoadingData ? (
+                            <>
+                                <Skeleton className="h-10 w-full" />
+                                <Skeleton className="h-10 w-full" />
+                            </>
+                        ) : analysesForSelectedDay.length > 0 ? (
+                            analysesForSelectedDay.map(analysis => (
+                                <div key={analysis.id} className="text-sm text-foreground flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <Dumbbell className="h-4 w-4 text-muted-foreground" />
+                                        <p>{analysis.identifiedPose || 'Unknown Pose'}</p>
+                                    </div>
+                                    <div className="flex items-center gap-1 font-semibold">
+                                        <Star className="h-4 w-4 text-yellow-400" />
+                                        <span>{analysis.score || 'N/A'}</span>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-sm text-muted-foreground">No practice recorded.</p>
+                        )}
+                        </CardContent>
+                    </Card>
+                </div>
+                
+                {/* Monthly Goal Section */}
+                <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Monthly Goal</CardTitle>
+                    <Goal className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent className="flex flex-col items-center">
+                    <ChartContainer config={chartConfig} className="mx-auto aspect-square h-[150px]">
+                    <PieChart>
+                        <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                        <Pie data={chartData} dataKey="value" nameKey="name" innerRadius={40} strokeWidth={5}>
+                        <Cell key="completed" fill="var(--color-progress)" />
+                        <Cell key="remaining" fill="var(--color-remaining)" />
+                        </Pie>
+                        <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="fill-foreground text-2xl font-bold">
+                        {monthlyProgress}%
+                        </text>
+                    </PieChart>
+                    </ChartContainer>
+                    <p className="text-xs text-muted-foreground mt-2">You're on track to meet your goal!</p>
+                </CardContent>
+                </Card>
+
+                </div>
+            </CardContent>
             </Card>
 
-            </div>
-          </CardContent>
-        </Card>
-
-        {error && (
-          <Alert variant="destructive" className="max-w-xl mx-auto mt-8">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+            {error && (
+            <Alert variant="destructive" className="max-w-xl mx-auto mt-8">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+            </Alert>
+            )}
+        </div>
       </div>
     </AppShell>
   );
 }
-
-    
