@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -43,10 +44,8 @@ export default function SignUpPage() {
 
   const onSubmit: SubmitHandler<SignUpFormValues> = async (data) => {
     setIsSubmitting(true);
-    const userCredential = await signUpWithEmail(data.email, data.password, { displayName: data.name });
-    if (userCredential) {
-      router.push('/welcome');
-    }
+    // The navigation is now handled inside the signUpWithEmail function
+    await signUpWithEmail(data.email, data.password, { name: data.name });
     setIsSubmitting(false);
   };
   

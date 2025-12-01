@@ -230,9 +230,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
       await recordDailyLogin(userCredential.user.uid);
-      await createUserProfileDocument(userCredential.user, { ...profileData, email });
+      await createUserProfileDocument(userCredential.user, { ...profileData, displayName: profileData.name, email });
       
       toast({ title: 'Account Created!', description: 'Welcome! Let\'s continue setting up your profile.' });
+      
+      // Navigate to the next onboarding step
+      router.push('/onboarding/yoga-goal');
+      
       return userCredential;
     } catch (error: any) {
       if (error.code === 'auth/email-already-in-use') {
@@ -240,10 +244,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           title: "Email Already in Use",
           description: "Signing you in instead.",
         });
-        // Attempt to sign in and return the credential
+        // Attempt to sign in and then navigate
         try {
           const userCredential = await signInWithEmailAndPassword(auth, email, pass);
           await recordDailyLogin(userCredential.user.uid);
+          // Check if onboarding is complete for this existing user
+          const userDocRef = doc(firestore, 'users', userCredential.user.uid);
+          const userSnap = await getDoc(userDocRef);
+          if (userSnap.exists() && userSnap.data()?.onboardingCompleted) {
+            router.push('/dashboard');
+          } else {
+            router.push('/welcome');
+          }
           return userCredential;
         } catch (signInError) {
            handleAuthError(signInError, 'Failed to sign in with existing email.');
