@@ -73,15 +73,7 @@ export default function HomePage() {
     
     // Page navigation timing
     setTimeout(() => {
-      if (user) {
-        if (userProfile && userProfile.onboardingCompleted) {
-          router.push('/dashboard');
-        } else {
-          router.push('/welcome'); 
-        }
-      } else {
-        router.push('/auth/signup');
-      }
+      router.push('/auth/signup');
     }, 600); // Duration of the click animation
   };
 
