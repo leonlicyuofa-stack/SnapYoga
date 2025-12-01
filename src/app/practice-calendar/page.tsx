@@ -216,10 +216,7 @@ export default function PracticeCalendarPage() {
                       {isLoadingData ? (
                         <Skeleton className="h-8 w-1/2" />
                       ) : moodForSelectedDay ? (
-                        <div className="flex items-center gap-2">
-                           <span className="text-2xl">{moodForSelectedDay.emoji}</span>
-                           <p className="text-lg font-semibold">{moodForSelectedDay.name}</p>
-                        </div>
+                        <p className="text-sm text-muted-foreground">You felt {moodForSelectedDay.name}.</p>
                       ) : (
                         <p className="text-sm text-muted-foreground">No mood recorded.</p>
                       )}
