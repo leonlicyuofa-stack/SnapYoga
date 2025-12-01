@@ -47,7 +47,7 @@ export default function SignUpPage() {
     try {
         const userCredential = await signUpWithEmail(data.email, data.password, { name: data.name });
         if (userCredential) {
-            router.push('/welcome');
+            router.push('/onboarding/gender-profile');
         }
     } catch(error) {
         // Error is handled in the context with a toast

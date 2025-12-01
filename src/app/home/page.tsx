@@ -66,7 +66,7 @@ export default function HomePage() {
         if (userProfile && userProfile.onboardingCompleted) {
           router.push('/dashboard');
         } else {
-          router.push('/welcome'); 
+          router.push('/onboarding/gender-profile'); 
         }
       } else {
         router.push('/auth/signup');
