@@ -56,6 +56,9 @@
     --home-pink-fg: 340 50% 60%;
     --home-dark-bg: 220 15% 18%;
     --home-dark-fg: 0 0% 100%;
+
+    /* New Orange for Test Page */
+    --home-orange-bg: 24 100% 85%;
   }
 
   .dark {
@@ -108,6 +111,9 @@
     --home-pink-fg: 340 90% 80%;
     --home-dark-bg: 220 15% 10%;
     --home-dark-fg: 0 0% 100%;
+
+    /* New Orange for Test Page - Dark Mode */
+    --home-orange-bg: 24 80% 30%;
   }
 }
 
