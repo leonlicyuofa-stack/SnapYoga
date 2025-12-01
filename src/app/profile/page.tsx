@@ -237,14 +237,14 @@ export default function ProfilePage() {
                 <div className="py-5">
                     <dt className="text-xl font-semibold flex items-center gap-2 mb-4">
                         <FileText className="h-6 w-6 text-primary" />
-                        Analysis Logs
+                        Your Past Analysis
                     </dt>
                     <dd className="space-y-4">
                         <p className="text-sm text-muted-foreground">
-                            View the raw JSON output from the pose analysis service. This is useful for debugging and checking the landmark data.
+                            Review your past pose analysis sessions.
                         </p>
                         <Button variant="outline" asChild>
-                            <Link href="/profile/analysis-logs">View Analysis Logs</Link>
+                            <Link href="/profile/analysis-logs">View your analysis</Link>
                         </Button>
                     </dd>
                 </div>
