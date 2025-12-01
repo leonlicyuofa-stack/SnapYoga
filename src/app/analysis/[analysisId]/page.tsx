@@ -82,8 +82,8 @@ export default function PastAnalysisPage() {
             setLoadingRecommendations(true);
             try {
                 const storage = getStorage();
-                // As requested, fetching from 'recommendation-video/downward-dog'
-                const videosRef = ref(storage, 'recommendation-video/downward-dog');
+                // Corrected path to match your sample link structure
+                const videosRef = ref(storage, 'recommendation-videos/downward-dog');
                 const videoList = await listAll(videosRef);
 
                 const videoPromises = videoList.items.map(async (itemRef) => {
