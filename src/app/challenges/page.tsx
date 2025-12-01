@@ -130,7 +130,7 @@ const challenges: Challenge[] = [
     id: 'tree',
     name: 'Tree Pose (Vrikshasana)',
     description: 'Enhance your balance, focus, and concentration with this fundamental standing balance pose.',
-    imageUrl: { src: 'https://placehold.co/600x400.png', width: 600, height: 400 },
+    imageUrl: { src: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2120&auto=format&fit=crop', width: 600, height: 400 },
     imageHint: 'yoga tree pose',
     detailLink: '#',
     inviteLink: '#',
