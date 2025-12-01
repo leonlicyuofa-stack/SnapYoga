@@ -7,12 +7,12 @@ import { firestore } from '@/lib/firebase/clientApp';
 import { collection, getDocs, query, where, type Timestamp, orderBy, doc, getDoc } from 'firebase/firestore';
 import { AppShell } from '@/components/layout/app-shell';
 import { Calendar } from '@/components/ui/calendar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle, CalendarDays, Dumbbell, Star, Goal, Smile } from 'lucide-react';
+import { AlertCircle, CalendarDays, Dumbbell, Star, Goal, Smile, FileText } from 'lucide-react';
 import { startOfDay, format, isSameDay } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
   ChartContainer,
   ChartTooltip,
@@ -143,138 +143,133 @@ export default function PracticeCalendarPage() {
 
   return (
     <AppShell>
-      <div className="relative min-h-screen">
-        <div className="relative z-10 container mx-auto px-0 pt-4 pb-24">
+      <div className="container mx-auto px-4 py-8">
+        <Card className="shadow-xl bg-card/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-2xl">
+              <CalendarDays className="h-7 w-7 text-primary" />
+              Practice Calendar
+            </CardTitle>
+            <CardDescription>
+              Select a day to see your practice logs and recorded mood.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="md:col-span-2">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={setSelectedDate}
+                month={currentMonth}
+                onMonthChange={setCurrentMonth}
+                modifiers={modifiers}
+                modifiersClassNames={modifiersClassNames}
+                className="rounded-md border p-0"
+                classNames={{
+                  caption_label: "font-bold text-lg",
+                  head_cell: "text-muted-foreground font-semibold w-full",
+                  cell: "h-12 w-full text-center text-sm p-0",
+                  day: "h-12 w-full rounded-md",
+                  day_today: "font-bold text-primary",
+                }}
+              />
+            </div>
+
+            <div className="space-y-6">
+              {/* Daily Details Section */}
+              <div className="space-y-4">
+                  <h3 className="font-bold text-lg text-primary border-b pb-2">
+                    Details for {selectedDate ? format(selectedDate, 'PPP') : 'Today'}
+                  </h3>
+
+                  {/* Mood for the day */}
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Mood</CardTitle>
+                      <Smile className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      {isLoadingData ? (
+                        <Skeleton className="h-8 w-1/2" />
+                      ) : moodForSelectedDay ? (
+                        <div className="flex items-center gap-2">
+                           <span className="text-2xl">{moodForSelectedDay.emoji}</span>
+                           <p className="text-lg font-semibold">{moodForSelectedDay.name}</p>
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">No mood recorded.</p>
+                      )}
+                    </CardContent>
+                  </Card>
+                  
+                  {/* Practice Log for the day */}
+                  <Card>
+                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Practice Log</CardTitle>
+                      <FileText className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                       {isLoadingData ? (
+                          <>
+                              <Skeleton className="h-10 w-full" />
+                              <Skeleton className="h-10 w-full" />
+                          </>
+                      ) : analysesForSelectedDay.length > 0 ? (
+                          analysesForSelectedDay.map(analysis => (
+                              <div key={analysis.id} className="text-sm text-foreground flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                      <Dumbbell className="h-4 w-4 text-muted-foreground" />
+                                      <p>{analysis.identifiedPose || 'Unknown Pose'}</p>
+                                  </div>
+                                  <div className="flex items-center gap-1 font-semibold">
+                                      <Star className="h-4 w-4 text-yellow-400" />
+                                      <span>{analysis.score || 'N/A'}</span>
+                                  </div>
+                              </div>
+                          ))
+                      ) : (
+                          <p className="text-sm text-muted-foreground">No practice recorded.</p>
+                      )}
+                    </CardContent>
+                  </Card>
+            </div>
+            
+            {/* Monthly Goal Section */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Monthly Goal</CardTitle>
+                <Goal className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent className="flex flex-col items-center">
+                <ChartContainer config={chartConfig} className="mx-auto aspect-square h-[150px]">
+                  <PieChart>
+                    <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                    <Pie data={chartData} dataKey="value" nameKey="name" innerRadius={40} strokeWidth={5}>
+                      <Cell key="completed" fill="var(--color-progress)" />
+                      <Cell key="remaining" fill="var(--color-remaining)" />
+                    </Pie>
+                    <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="fill-foreground text-2xl font-bold">
+                      {monthlyProgress}%
+                    </text>
+                  </PieChart>
+                </ChartContainer>
+                <p className="text-xs text-muted-foreground mt-2">You're on track to meet your goal!</p>
+              </CardContent>
+            </Card>
+
+            </div>
+          </CardContent>
+        </Card>
+
         {error && (
-          <Alert variant="destructive" className="max-w-xl mx-auto m-4 bg-white/80 backdrop-blur-sm">
+          <Alert variant="destructive" className="max-w-xl mx-auto mt-8">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
-        
-        <Tabs defaultValue="log" className="w-full">
-          <div className="bg-card/80 backdrop-blur-sm rounded-t-3xl shadow-xl pb-4">
-              <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={setSelectedDate}
-                  month={currentMonth}
-                  onMonthChange={setCurrentMonth}
-                  modifiers={modifiers}
-                  modifiersClassNames={modifiersClassNames}
-                  className="p-4"
-                  classNames={{
-                  caption_label: "font-bold text-lg",
-                  head_cell: "text-muted-foreground font-semibold w-10",
-                  cell: "h-10 w-10 text-center",
-                  day: "h-10 w-10 rounded-md",
-                  day_today: "font-bold text-primary",
-                  }}
-              />
-          </div>
-          <div className="relative bg-transparent">
-              <div className="absolute -top-16 right-0 h-16 w-1/2 bg-card/80 backdrop-blur-sm rounded-bl-3xl"></div>
-              <div className="absolute -top-16 left-0 h-16 w-1/2 bg-card/80 backdrop-blur-sm rounded-tr-3xl"></div>
-               <TabsList className="grid w-full grid-cols-3 bg-transparent h-16 p-0">
-                  <TabsTrigger value="log" className="h-full rounded-none data-[state=inactive]:bg-card/80 data-[state=active]:bg-card/80 backdrop-blur-sm text-muted-foreground data-[state=active]:text-foreground font-bold text-base">Practice Log</TabsTrigger>
-                  <TabsTrigger value="moods" className="h-full rounded-none data-[state=inactive]:bg-card/80 data-[state=active]:bg-card/80 backdrop-blur-sm text-muted-foreground data-[state=active]:text-foreground font-bold text-base">Moods</TabsTrigger>
-                  <TabsTrigger value="monthly-goal" className="h-full rounded-none data-[state=inactive]:bg-card/80 data-[state=active]:bg-card/80 backdrop-blur-sm text-muted-foreground data-[state=active]:text-foreground font-bold text-base">Monthly Goal</TabsTrigger>
-              </TabsList>
-          </div>
-          
-          <div className="p-6 text-foreground">
-              <TabsContent value="log" className="mt-0">
-                  <div className="mt-8 space-y-4">
-                      <h3 className="font-bold text-lg">Practice Log for {selectedDate ? format(selectedDate, 'PPP') : 'Today'}</h3>
-                      {isLoadingData ? (
-                          <>
-                              <Skeleton className="h-16 w-full bg-white/20" />
-                              <Skeleton className="h-16 w-full bg-white/20" />
-                          </>
-                      ) : analysesForSelectedDay.length > 0 ? (
-                          analysesForSelectedDay.map(analysis => (
-                              <div key={analysis.id} className="bg-white/10 text-primary-foreground rounded-lg p-4 flex items-center justify-between">
-                                  <div className="flex items-center gap-3">
-                                      <Dumbbell className="h-8 w-8" />
-                                      <div>
-                                          <p className="font-bold">{analysis.identifiedPose || 'Unknown Pose'}</p>
-                                          <p className="text-sm opacity-80">Score: {analysis.score || 'N/A'}</p>
-                                      </div>
-                                  </div>
-                                  <div className="flex items-center gap-1 text-yellow-300">
-                                      <Star className="h-4 w-4" />
-                                      <span className="font-bold">{analysis.score || 0}</span>
-                                  </div>
-                              </div>
-                          ))
-                      ) : (
-                          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-                              <p>No practice recorded for this day.</p>
-                          </div>
-                      )}
-                  </div>
-              </TabsContent>
-
-               <TabsContent value="moods" className="mt-8">
-                  <h3 className="font-bold text-lg mb-4">Mood for {selectedDate ? format(selectedDate, 'PPP') : 'Today'}</h3>
-                  {isLoadingData ? (
-                    <Skeleton className="h-24 w-full bg-white/20" />
-                  ) : moodForSelectedDay ? (
-                     <div className="bg-card/80 backdrop-blur-sm text-primary shadow-lg rounded-lg p-6 flex flex-col items-center justify-center gap-4">
-                        <span className="text-6xl">{moodForSelectedDay.emoji}</span>
-                        <p className="text-2xl font-semibold">{moodForSelectedDay.name}</p>
-                        <p className="text-sm text-muted-foreground">Logged on {format(moodForSelectedDay.loggedAt.toDate(), 'p')}</p>
-                    </div>
-                  ) : (
-                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-center">
-                        <p>No mood recorded for this day.</p>
-                    </div>
-                  )}
-              </TabsContent>
-
-
-              <TabsContent value="monthly-goal" className="mt-8">
-                   <div className="bg-card/80 backdrop-blur-sm text-primary shadow-lg rounded-lg p-4">
-                      <div className="flex items-center gap-2">
-                          <Goal />
-                          <h3 className="text-lg font-bold">Your Monthly Progress</h3>
-                      </div>
-                       <p className="text-sm text-muted-foreground">You're doing great! Here is a summary of your activity this month.</p>
-                      <ChartContainer config={chartConfig} className="mx-auto aspect-square h-[250px]">
-                          <PieChart>
-                              <ChartTooltip
-                              cursor={false}
-                              content={<ChartTooltipContent hideLabel />}
-                              />
-                              <Pie
-                                  data={chartData}
-                                  dataKey="value"
-                                  nameKey="name"
-                                  innerRadius={60}
-                                  strokeWidth={5}
-                              >
-                                  <Cell key="completed" fill="var(--color-progress)" />
-                                  <Cell key="remaining" fill="var(--color-remaining)" />
-                              </Pie>
-                               <text
-                                  x="50%"
-                                  y="50%"
-                                  textAnchor="middle"
-                                  dominantBaseline="middle"
-                                  className="fill-foreground text-3xl font-bold"
-                              >
-                                  {monthlyProgress}%
-                              </text>
-                          </PieChart>
-                      </ChartContainer>
-                      <p className="text-xs text-muted-foreground text-center w-full">Keep pushing, you're almost at 100%!</p>
-                   </div>
-              </TabsContent>
-          </div>
-        </Tabs>
-        </div>
       </div>
     </AppShell>
   );
 }
+
