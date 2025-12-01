@@ -50,7 +50,8 @@ export default function SignUpPage() {
             router.push('/onboarding/gender-profile');
         }
     } catch(error) {
-        // Error is handled in the context with a toast
+        // Error is handled in the context with a toast, so we don't need to show another one here.
+        console.error("Sign up failed:", error);
     } finally {
         setIsSubmitting(false);
     }
@@ -64,7 +65,7 @@ export default function SignUpPage() {
         <OnboardingHeader />
         
         <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4 mt-6">
-            <h1 className="text-2xl font-bold text-foreground">Create Account</h1>
+            
             <p className="text-xs text-muted-foreground pb-4">
                 Fill your information below or register with your social account.
             </p>
