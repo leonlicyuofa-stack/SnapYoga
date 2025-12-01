@@ -44,9 +44,16 @@ export default function SignUpPage() {
 
   const onSubmit: SubmitHandler<SignUpFormValues> = async (data) => {
     setIsSubmitting(true);
-    // The navigation is now handled inside the signUpWithEmail function
-    await signUpWithEmail(data.email, data.password, { name: data.name });
-    setIsSubmitting(false);
+    try {
+        const userCredential = await signUpWithEmail(data.email, data.password, { name: data.name });
+        if (userCredential) {
+            router.push('/welcome');
+        }
+    } catch(error) {
+        // Error is handled in the context with a toast
+    } finally {
+        setIsSubmitting(false);
+    }
   };
   
   const isLoading = authLoading || isSubmitting;
