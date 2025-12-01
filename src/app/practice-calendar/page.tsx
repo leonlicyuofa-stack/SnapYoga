@@ -6,7 +6,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, getDocs, query, where, type Timestamp, orderBy, doc, getDoc } from 'firebase/firestore';
 import { AppShell } from '@/components/layout/app-shell';
-import { Calendar } from '@/components/ui/calendar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle, CalendarDays, Dumbbell, Star, Goal, Smile, FileText } from 'lucide-react';
@@ -19,6 +18,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { PieChart, Pie, Cell } from "recharts";
+import { Calendar } from '@/components/ui/calendar';
 
 
 interface StoredAnalysis {
@@ -141,6 +141,22 @@ export default function PracticeCalendarPage() {
     selected: "bg-accent text-accent-foreground rounded-md",
   };
 
+  const DayContent = (props: { date: Date }) => {
+    const dateStr = format(props.date, 'yyyy-MM-dd');
+    const mood = moodsByDate[dateStr];
+    
+    if (mood) {
+      return (
+        <div className="relative w-full h-full flex items-center justify-center">
+          {format(props.date, 'd')}
+          <span className="absolute bottom-1 text-xs">{mood.emoji}</span>
+        </div>
+      );
+    }
+    
+    return <>{format(props.date, 'd')}</>;
+  };
+
   return (
     <AppShell>
       <div className="container mx-auto px-4 py-8">
@@ -171,6 +187,10 @@ export default function PracticeCalendarPage() {
                   cell: "h-12 w-full text-center text-sm p-0",
                   day: "h-12 w-full rounded-md",
                   day_today: "font-bold text-primary",
+                  day_content: 'w-full h-full',
+                }}
+                components={{
+                    DayContent: DayContent,
                 }}
               />
             </div>
@@ -272,4 +292,3 @@ export default function PracticeCalendarPage() {
     </AppShell>
   );
 }
-
