@@ -59,6 +59,13 @@
 
     /* New Orange for Test Page */
     --home-orange-bg: 24 100% 85%;
+
+    /* New Welcome Page Colors */
+    --welcome-cream: 40 50% 95%;
+    --welcome-pastel-brown: 25 30% 88%;
+    --welcome-dark-brown: 25 25% 35%;
+    --welcome-button-yellow: 45 90% 75%;
+    --welcome-button-yellow-darker: 40 85% 65%;
   }
 
   .dark {
@@ -114,6 +121,13 @@
 
     /* New Orange for Test Page - Dark Mode */
     --home-orange-bg: 24 80% 30%;
+
+    /* New Welcome Page Colors - Dark Mode */
+    --welcome-cream: 30 10% 12%;
+    --welcome-pastel-brown: 25 15% 22%;
+    --welcome-dark-brown: 30 20% 90%;
+    --welcome-button-yellow: 45 90% 75%;
+    --welcome-button-yellow-darker: 40 85% 65%;
   }
 }
 
