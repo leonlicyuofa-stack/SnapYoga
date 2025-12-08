@@ -40,9 +40,9 @@ export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { register, handleSubmit, formState: { errors, touchedFields }, watch } = useForm<SignUpFormValues>({
+  const { register, handleSubmit, formState: { errors, isValid }, watch } = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
-    mode: 'onTouched',
+    mode: 'onChange',
   });
 
   const nameValue = watch("name");
@@ -103,7 +103,7 @@ export default function SignUpPage() {
             {errors.agreeToTerms && <p className="text-sm text-destructive text-left">{errors.agreeToTerms.message}</p>}
 
 
-            <Button type="submit" className="w-full h-12 text-base rounded-full" disabled={isLoading}>
+            <Button type="submit" className="w-full h-12 text-base rounded-full" disabled={isLoading || !isValid}>
                 {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Sign Up'}
             </Button>
 
