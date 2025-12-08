@@ -26,9 +26,6 @@ const signUpSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   email: z.string().email({ message: "Invalid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-  agreeToTerms: z.literal(true, {
-    errorMap: () => ({ message: "You must agree to the Terms & Condition" }),
-  }),
 });
 
 type SignUpFormValues = z.infer<typeof signUpSchema>;
@@ -92,16 +89,6 @@ export default function SignUpPage() {
                 </div>
                  {errors.password && <p className="text-sm text-destructive text-left mt-1">{errors.password.message}</p>}
             </div>
-
-
-            <div className="flex items-center space-x-2">
-                <Checkbox id="terms" {...register("agreeToTerms")} />
-                <Label htmlFor="terms" className="text-sm font-normal text-muted-foreground">
-                    Agree with <Link href="#" className="underline font-medium text-primary">Terms & Condition</Link>
-                </Label>
-            </div>
-            {errors.agreeToTerms && <p className="text-sm text-destructive text-left">{errors.agreeToTerms.message}</p>}
-
 
             <Button type="submit" className="w-full h-12 text-base rounded-full" disabled={isLoading || !isValid}>
                 {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Sign Up'}
