@@ -83,7 +83,7 @@ export default function HomePage() {
 
   return (
     <div className={cn(
-        "relative flex flex-col min-h-screen items-center justify-center p-4 bg-splash-background overflow-hidden"
+        "relative flex flex-col min-h-screen items-center justify-end p-4 pb-20 bg-splash-background overflow-hidden"
     )}>
         {/* Full-screen background illustration */}
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-[hsl(var(--splash-blob-1))] via-background to-[hsl(var(--splash-blob-2))] animate-breathing-bg">
