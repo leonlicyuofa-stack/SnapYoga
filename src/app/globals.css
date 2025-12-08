@@ -170,10 +170,10 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1440 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 20C240 60 480 20 720 60C960 100 1200 60 1440 20V100H0V20Z" fill="hsl(var(--home-pink-bg))"/></svg>');
+    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1440 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 40C240 100 480 0 720 50C960 100 1200 0 1440 60V100H0V40Z" fill="hsl(var(--home-pink-bg))"/></svg>');
   }
 
   .dark .wave-divider {
-    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1440 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 20C240 60 480 20 720 60C960 100 1200 60 1440 20V100H0V20Z" fill="hsl(var(--home-pink-bg))"/></svg>');
+    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1440 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 40C240 100 480 0 720 50C960 100 1200 0 1440 60V100H0V40Z" fill="hsl(var(--home-pink-bg))"/></svg>');
   }
 }
