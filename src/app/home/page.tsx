@@ -102,18 +102,6 @@ export default function HomePage() {
         
          <div className="relative z-10 flex flex-col items-center justify-center text-center">
             <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3 font-script">{t('snapYogaTitle')}</h2>
-            <div className="mt-2 text-sm text-splash-foreground/80 max-w-md sm:text-base">
-                
-                
-            </div>
-            <Button
-                onClick={handleGetStarted}
-                className="mt-8 rounded-full h-10 w-auto px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
-                aria-label={t('getStarted')}
-                disabled={isLoading}
-            >
-                {isLoading ? <SmileyRockLoader /> : <><span>{t('getStarted')}</span><MoveUpRight className="h-5 w-5 ml-2" /></>}
-            </Button>
         </div>
 
         <header className="navbar w-full absolute top-0 left-0 z-20">
@@ -131,6 +119,15 @@ export default function HomePage() {
             </div>
             </div>
         </header>
+
+        <Button
+            onClick={handleGetStarted}
+            className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+            aria-label={t('getStarted')}
+            disabled={isLoading}
+        >
+            {isLoading ? <SmileyRockLoader /> : <MoveUpRight className="h-8 w-8" />}
+        </Button>
 
     </div>
   );
