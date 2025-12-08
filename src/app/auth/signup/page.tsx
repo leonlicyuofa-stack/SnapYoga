@@ -74,21 +74,18 @@ export default function SignUpPage() {
         <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-8 mt-6">
             
             <div className="form-group">
-                <Input id="name" type="text" {...register("name")} className="form-input peer" placeholder=" " />
-                <Label htmlFor="name" className={cn("form-label", errors.name && 'text-destructive')}>Name</Label>
+                <Input id="name" type="text" {...register("name")} className="form-input" placeholder="Name" />
                 {errors.name && <p className="text-sm text-destructive text-left mt-1">{errors.name.message}</p>}
             </div>
 
             <div className="form-group">
-                <Input id="email" type="email" {...register("email")} className="form-input peer" placeholder=" " />
-                <Label htmlFor="email" className={cn("form-label", errors.email && 'text-destructive')}>Email</Label>
+                <Input id="email" type="email" {...register("email")} className="form-input" placeholder="Email" />
                 {errors.email && <p className="text-sm text-destructive text-left mt-1">{errors.email.message}</p>}
             </div>
             
             <div className="form-group">
                 <div className="relative">
-                    <Input id="password" type={showPassword ? "text" : "password"} {...register("password")} className="form-input peer" placeholder=" "/>
-                    <Label htmlFor="password" className={cn("form-label", errors.password && 'text-destructive')}>Password</Label>
+                    <Input id="password" type={showPassword ? "text" : "password"} {...register("password")} className="form-input pr-10" placeholder="Password"/>
                     <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-1/2 -translate-y-1/2 h-8 w-8" onClick={() => setShowPassword(!showPassword)}>
                         {showPassword ? <EyeOff /> : <Eye />}
                     </Button>
