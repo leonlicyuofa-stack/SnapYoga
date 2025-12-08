@@ -109,16 +109,7 @@ export default function HomePage() {
         <header className="navbar w-full absolute top-0 left-0 z-20">
             <div className="container mx-auto flex justify-between items-center px-4 sm:px-8">
             <div></div>
-            <div className="flex items-center gap-2">
-                <Button variant="outline" onClick={handleLanguageSwitch} className="h-9 px-3 bg-white/50 backdrop-blur-sm hover:bg-white/80 text-black border-black/20" aria-label="Switch Language">
-                <span className="mr-2">🇮🇩</span> Bahasa
-                </Button>
-                <Button variant="ghost" asChild className="h-9 text-black hover:text-black hover:bg-white/20 bg-black/10 backdrop-blur-sm">
-                <Link href="/auth/signin">
-                    {t('signIn')}
-                </Link>
-                </Button>
-            </div>
+            
             </div>
         </header>
 
