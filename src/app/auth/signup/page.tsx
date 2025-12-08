@@ -19,6 +19,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useState } from 'react';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { TikTokIcon } from '@/components/icons/TikTokIcon';
 
 const signUpSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -130,6 +131,10 @@ export default function SignUpPage() {
             <Button variant="outline" size="icon" disabled className="w-14 h-14 rounded-full border-2">
                 <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"></path></svg>
                 <span className="sr-only">Sign in with Facebook</span>
+            </Button>
+             <Button variant="outline" size="icon" disabled className="w-14 h-14 rounded-full border-2">
+                <TikTokIcon className="h-6 w-6" />
+                <span className="sr-only">Sign in with TikTok</span>
             </Button>
         </div>
 

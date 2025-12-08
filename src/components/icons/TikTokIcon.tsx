@@ -1,63 +1,17 @@
-"use client";
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { useAuth } from '@/contexts/AuthContext';
-import { GoogleIcon } from '@/components/icons/GoogleIcon';
-import { AppleIcon } from '@/components/icons/AppleIcon';
-import { Mail, ArrowLeft } from 'lucide-react';
-import { useState } from 'react';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { AppShell } from '@/components/layout/app-shell';
-import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
+import type { SVGProps } from 'react';
 
-export default function SignUpPage() {
-  const router = useRouter();
-  const { signInWithGoogle, signInWithApple, loading: authLoading } = useAuth();
-  const { t } = useLanguage();
-
+export function TikTokIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <AppShell>
-        <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden">
-            <div className="relative z-10 w-full max-w-sm text-center">
-                
-                <OnboardingHeader />
-                
-                <h1 className="text-4xl font-bold font-playfair mb-8">Create an Account</h1>
-                
-                <div className="grid grid-cols-2 gap-3">
-                    <Button variant="outline" onClick={signInWithGoogle} disabled={authLoading} className="w-full py-6 text-base h-auto justify-start">
-                        <GoogleIcon className="mr-4 h-5 w-5" /> {t('authGoogle')}
-                    </Button>
-                    <Button variant="outline" onClick={signInWithApple} disabled={authLoading} className="w-full py-6 text-base h-auto justify-start">
-                        <AppleIcon className="mr-4 h-5 w-5" /> {t('authApple')}
-                    </Button>
-                </div>
-
-                <div className="relative my-6">
-                    <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-background px-2 text-muted-foreground">{t('authOrSignUpWithEmail')}</span>
-                    </div>
-                </div>
-
-                <Button variant="outline" disabled={authLoading} className="w-full py-6 text-base h-auto justify-start" onClick={() => router.push('/onboarding/gender-profile')}>
-                    <Mail className="mr-4 h-5 w-5" /> Sign Up with Email
-                </Button>
-
-                <p className="text-sm text-muted-foreground mt-8">
-                    {t('authAlreadyHaveAccount')}{' '}
-                    <Link href="/auth/signin" className="font-medium text-primary hover:underline">
-                        {t('signIn')}
-                    </Link>
-                </p>
-
-            </div>
-        </div>
-    </AppShell>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      {...props}
+    >
+      <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-2.43.05-4.84-.95-6.43-2.8-1.59-1.87-2.32-4.2-2.21-6.52.01-.22.02-.43.03-.64.08-1.15.54-2.26 1.19-3.26.76-1.14 1.78-2.09 2.98-2.79.03-.02.05-.02.08-.04.01-.01.02-.02.03-.03.01-.01.02-.01.02-.02 2.91-.9 5.82-.96 8.73-.91z" />
+    </svg>
   );
 }
