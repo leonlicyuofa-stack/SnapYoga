@@ -18,7 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useState } from 'react';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { Loader2 } from 'lucide-react';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
 
 const signUpSchema = z.object({
@@ -72,21 +72,18 @@ export default function SignUpPage() {
             </p>
             
             <div className="space-y-2 text-left">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" placeholder="Ex. John Doe" {...register("name")} />
+                <Input id="name" placeholder="Name" {...register("name")} />
                 {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
             </div>
 
             <div className="space-y-2 text-left">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="example@gmail.com" {...register("email")} />
+                <Input id="email" type="email" placeholder="Email" {...register("email")} />
                 {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-2 text-left">
-                <Label htmlFor="password">Password</Label>
                 <div className="relative">
-                    <Input id="password" type={showPassword ? "text" : "password"} placeholder="••••••••••••" {...register("password")} />
+                    <Input id="password" type={showPassword ? "text" : "password"} placeholder="Password" {...register("password")} />
                     <Button type="button" variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8" onClick={() => setShowPassword(!showPassword)}>
                         {showPassword ? <EyeOff /> : <Eye />}
                     </Button>
@@ -104,7 +101,7 @@ export default function SignUpPage() {
 
 
             <Button type="submit" className="w-full h-12 text-base rounded-full" disabled={isLoading}>
-                {isLoading ? <SmileyRockLoader /> : 'Sign Up'}
+                {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Sign Up'}
             </Button>
 
         </form>
