@@ -20,7 +20,7 @@ const pageTitles: Record<string, { title: string; subtitle: string; optionalText
 
 export function OnboardingHeader() {
     const pathname = usePathname();
-    const { title, subtitle, optionalText } = pageTitles[pathname] ?? { title: "Welcome!", subtitle: "create an account" };
+    const { title, subtitle, optionalText } = pageTitles[pathname] ?? { title: "Welcome!", subtitle: "Create an account" };
 
     return (
         <div className="bg-[#414869] text-white p-6 rounded-b-3xl shadow-lg overflow-hidden relative w-full flex flex-col justify-center" style={{ height: '20vh' }}>
