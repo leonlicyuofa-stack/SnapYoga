@@ -83,39 +83,17 @@ export default function HomePage() {
 
   return (
     <div className={cn(
-        "relative flex flex-col min-h-screen items-center justify-end p-4 pb-20 bg-splash-background overflow-hidden"
+        "relative flex flex-col min-h-screen bg-background overflow-hidden"
     )}>
-        {/* Full-screen background illustration */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-[hsl(var(--splash-blob-1))] via-background to-[hsl(var(--splash-blob-2))] animate-breathing-bg">
-            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
-                <defs>
-                    <radialGradient id="blushGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                        <stop offset="0%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0.7 }} />
-                        <stop offset="100%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0 }} />
-                    </radialGradient>
-                </defs>
-                <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-blob-1))" />
-                <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
-                <path d="M 100,0 L 0,0 C 50,50 0,50 0,100 L 100,100 Z" fill="hsl(var(--splash-blob-2))" style={{ opacity: 0.5 }}/>
-            </svg>
+        <div className="absolute inset-0 z-0 flex flex-col">
+            <div className="h-2/3 w-full bg-[hsl(var(--home-pink-bg))]">
+                {/* Topographic pattern could be a background image here */}
+            </div>
+            <div className="wave-divider -mt-px" />
+            <div className="flex-grow bg-background"></div>
         </div>
         
-         <div className="relative z-10 flex flex-col items-center justify-center text-center">
-            <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3 font-script">{t('snapYogaTitle')}</h2>
-            <div className="mt-2 text-sm text-splash-foreground/80 max-w-md sm:text-base">
-                <p>your AI companion for mindfulness</p>
-            </div>
-            <Button
-                onClick={handleGetStarted}
-                className="mt-8 rounded-full h-10 w-auto px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
-                aria-label={t('getStarted')}
-                disabled={isLoading}
-            >
-                {isLoading ? <SmileyRockLoader /> : <><span>{t('getStarted')}</span><MoveUpRight className="h-5 w-5 ml-2" /></>}
-            </Button>
-        </div>
-
-        <header className="navbar w-full absolute top-0 left-0">
+        <header className="navbar w-full absolute top-0 left-0 z-20">
             <div className="container mx-auto flex justify-between items-center px-4 sm:px-8">
             <div></div>
             <div className="flex items-center gap-2">
@@ -130,7 +108,21 @@ export default function HomePage() {
             </div>
             </div>
         </header>
-
+        
+         <div className="relative z-10 flex flex-col flex-grow items-center justify-end text-center pb-20">
+            <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3 font-script">{t('snapYogaTitle')}</h2>
+            <div className="mt-2 text-sm text-splash-foreground/80 max-w-md sm:text-base">
+                <p>your AI companion for mindfulness</p>
+            </div>
+            <Button
+                onClick={handleGetStarted}
+                className="mt-8 rounded-full h-10 w-auto px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+                aria-label={t('getStarted')}
+                disabled={isLoading}
+            >
+                {isLoading ? <SmileyRockLoader /> : <><span>{t('getStarted')}</span><MoveUpRight className="h-5 w-5 ml-2" /></>}
+            </Button>
+        </div>
     </div>
   );
 }
