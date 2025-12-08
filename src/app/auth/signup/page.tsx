@@ -27,7 +27,7 @@ const signUpSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
   agreeToTerms: z.literal(true, {
-    errorMap: () => ({ message: "You must agree to the Terms & Conditions" }),
+    errorMap: () => ({ message: "You must agree to the Terms & Condition" }),
   }),
 });
 
@@ -72,10 +72,6 @@ export default function SignUpPage() {
         <OnboardingHeader />
         
         <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-8 mt-6">
-            
-            <p className="text-xs text-muted-foreground pb-4">
-                Fill your information below or register with your social account.
-            </p>
             
             <div className="form-group">
                 <Input id="name" type="text" {...register("name")} className="form-input peer" placeholder=" " />
