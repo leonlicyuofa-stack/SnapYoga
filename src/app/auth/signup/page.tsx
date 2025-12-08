@@ -68,29 +68,54 @@ export default function SignUpPage() {
       <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden text-center w-full max-w-sm mx-auto">
         <OnboardingHeader />
         
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-8 mt-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4 mt-6">
             
-            <div className="form-group">
-                <Input id="name" type="text" {...register("name")} className="form-input" placeholder="Name" />
-                {errors.name && <p className="text-sm text-destructive text-left mt-1">{errors.name.message}</p>}
+            <div className="space-y-2">
+                 <div className="relative">
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                      <Input 
+                          id="name"
+                          type="text" 
+                          placeholder="Name" 
+                          {...register("name")}
+                          className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 shadow-inner"
+                      />
+                 </div>
+                {errors.name && <p className="text-sm text-destructive text-left mt-1 pl-4">{errors.name.message}</p>}
             </div>
 
-            <div className="form-group">
-                <Input id="email" type="email" {...register("email")} className="form-input" placeholder="Email" />
-                {errors.email && <p className="text-sm text-destructive text-left mt-1">{errors.email.message}</p>}
+            <div className="space-y-2">
+                 <div className="relative">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                      <Input 
+                          id="email" 
+                          type="email" 
+                          placeholder="Email" 
+                          {...register("email")}
+                          className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 shadow-inner"
+                      />
+                 </div>
+                {errors.email && <p className="text-sm text-destructive text-left mt-1 pl-4">{errors.email.message}</p>}
             </div>
             
-            <div className="form-group">
+            <div className="space-y-2">
                 <div className="relative">
-                    <Input id="password" type={showPassword ? "text" : "password"} {...register("password")} className="form-input pr-10" placeholder="Password"/>
-                    <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-1/2 -translate-y-1/2 h-8 w-8" onClick={() => setShowPassword(!showPassword)}>
+                    <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <Input 
+                        id="password" 
+                        type={showPassword ? "text" : "password"} 
+                        {...register("password")} 
+                        className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 pr-12 shadow-inner" 
+                        placeholder="Password"
+                    />
+                    <Button type="button" variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8" onClick={() => setShowPassword(!showPassword)}>
                         {showPassword ? <EyeOff /> : <Eye />}
                     </Button>
                 </div>
-                 {errors.password && <p className="text-sm text-destructive text-left mt-1">{errors.password.message}</p>}
+                 {errors.password && <p className="text-sm text-destructive text-left mt-1 pl-4">{errors.password.message}</p>}
             </div>
 
-            <Button type="submit" className="w-full h-12 text-base rounded-full" disabled={isLoading || !isValid}>
+            <Button type="submit" className="w-full h-12 text-base rounded-full mt-8" disabled={isLoading || !isValid}>
                 {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Sign Up'}
             </Button>
 
