@@ -114,6 +114,10 @@ export default {
               '0%': { transform: 'translateX(0)', opacity: 1 },
               '100%': { transform: 'translateX(40px)', opacity: 0 },
             },
+            'swing': {
+              '0%, 100%': { transform: 'rotate(20deg)' },
+              '50%': { transform: 'rotate(-20deg)' },
+            },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
@@ -123,6 +127,7 @@ export default {
             'snap-flash': 'snap-flash 0.7s ease-in-out',
             'move-down-and-fade': 'move-down-and-fade 0.6s ease-in forwards',
             'move-right-and-fade': 'move-right-and-fade 0.6s ease-in forwards',
+            'swing': 'swing 1.5s ease-in-out infinite alternate',
   		}
   	}
   },

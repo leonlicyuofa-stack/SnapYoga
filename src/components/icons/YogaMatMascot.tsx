@@ -23,8 +23,12 @@ export function YogaMatMascot(props: SVGProps<SVGSVGElement>) {
             <path d="M 47.5 50 Q 75 25, 102.5 50" stroke="#2C3E50" fill="none" strokeWidth="10" strokeLinecap="round" />
             
             {/* Feet */}
-            <circle cx="65" cy="100" r="8" fill="#2C3E50" />
-            <circle cx="85" cy="100" r="8" fill="#2C3E50" />
+            <g className="origin-[65px_95px] animate-swing">
+                <circle cx="65" cy="100" r="8" fill="#2C3E50" />
+            </g>
+            <g className="origin-[85px_95px] animate-swing" style={{ animationDelay: '100ms' }}>
+                <circle cx="85" cy="100" r="8" fill="#2C3E50" />
+            </g>
 
             {/* Face */}
             <circle cx="70" cy="72" r="2" fill="#2C3E50" />
