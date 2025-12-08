@@ -168,8 +168,8 @@
   }
 
   .form-input {
-      @apply w-full border-0 border-b-2 border-muted-foreground/50 bg-transparent text-base text-foreground transition-colors duration-300;
-      @apply focus:outline-none focus:ring-0 focus:border-primary;
+      @apply w-full border-0 border-b border-dotted border-muted-foreground/50 bg-transparent text-base text-foreground transition-colors duration-300;
+      @apply focus:outline-none focus:ring-0 focus:border-primary focus:border-solid;
       @apply rounded-none px-0.5 py-2;
   }
 
