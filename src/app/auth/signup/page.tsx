@@ -115,7 +115,7 @@ export default function SignUpPage() {
                  {errors.password && <p className="text-sm text-destructive text-left mt-1 pl-4">{errors.password.message}</p>}
             </div>
 
-            <div className="px-4">
+            <div className="px-8">
               <Button type="submit" className="w-full h-12 text-base rounded-full mt-8" disabled={isLoading || !isValid}>
                   {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Sign Up'}
               </Button>
