@@ -21,7 +21,6 @@ import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHea
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { format, getDaysInMonth } from 'date-fns';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 const profileSchema = z.object({
   gender: z.string().min(1, { message: "Please select a gender" }),
@@ -269,7 +268,7 @@ export default function GenderProfilePage() {
             aria-label="Next"
             disabled={isSubmitting || authLoading || !isValid}
         >
-            {isSubmitting || authLoading ? <SmileyRockLoader /> : <MoveUpRight className="h-8 w-8" />}
+            {isSubmitting || authLoading ? <Loader2 className="h-8 w-8 animate-spin" /> : <MoveUpRight className="h-8 w-8" />}
         </Button>
       </div>
     </AppShell>

@@ -11,7 +11,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { AppShell } from '@/components/layout/app-shell';
 import { UserCheck, ArrowRight, Edit3, MoveUpRight, Loader2, Save, X, Check, CheckCircle, Spline, Dumbbell, BrainCircuit, MoreHorizontal, Wind, HeartPulse } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -264,7 +263,7 @@ export default function ProfileSummaryPage() {
     return (
         <AppShell>
             <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
-                <SmileyRockLoader />
+                <Loader2 className="h-16 w-16 animate-spin" />
             </div>
         </AppShell>
     );
@@ -309,7 +308,7 @@ export default function ProfileSummaryPage() {
             aria-label="Next"
             disabled={isNavigatingNext}
         >
-            {isNavigatingNext ? <SmileyRockLoader /> : <MoveUpRight className="h-8 w-8" />}
+            {isNavigatingNext ? <Loader2 className="h-8 w-8 animate-spin" /> : <MoveUpRight className="h-8 w-8" />}
         </Button>
       </div>
     </AppShell>

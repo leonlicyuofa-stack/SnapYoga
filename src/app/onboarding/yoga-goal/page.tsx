@@ -15,7 +15,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { Progress } from '@/components/ui/progress';
 import { BuildStrengthIcon } from '@/components/icons/BuildStrengthIcon';
@@ -89,7 +88,7 @@ export default function YogaGoalPage() {
     return (
         <AppShell>
             <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
-                <SmileyRockLoader />
+                <Loader2 className="h-16 w-16 animate-spin" />
             </div>
         </AppShell>
     );
@@ -187,7 +186,7 @@ export default function YogaGoalPage() {
             aria-label="Next"
             disabled={isSubmitting || authLoading || isNavigatingBack || !isValid}
         >
-            {isSubmitting ? <SmileyRockLoader /> : <MoveUpRight className="h-8 w-8" />}
+            {isSubmitting ? <Loader2 className="h-8 w-8 animate-spin" /> : <MoveUpRight className="h-8 w-8" />}
         </Button>
       </div>
     </AppShell>

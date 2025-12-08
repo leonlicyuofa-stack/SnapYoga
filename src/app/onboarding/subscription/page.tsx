@@ -9,7 +9,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { useToast } from '@/hooks/use-toast';
 import { AppShell } from '@/components/layout/app-shell';
 import { Check, Star, ArrowRight, ArrowLeft, MoveUpRight, Loader2 } from 'lucide-react';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 
 export default function SubscriptionPage() {
@@ -21,7 +20,7 @@ export default function SubscriptionPage() {
   const [isNavigatingNext, setIsNavigatingNext] = useState(false);
 
   if (authLoading) {
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><SmileyRockLoader /></div></AppShell>;
+    return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-16 w-16 animate-spin" /></div></AppShell>;
   }
 
   if (!user && !authLoading) {
@@ -113,7 +112,7 @@ export default function SubscriptionPage() {
             aria-label="Next"
             disabled={anyLoading}
         >
-            {isNavigatingNext ? <SmileyRockLoader /> : <MoveUpRight className="h-8 w-8" />}
+            {isNavigatingNext ? <Loader2 className="h-8 w-8 animate-spin" /> : <MoveUpRight className="h-8 w-8" />}
         </Button>
       </div>
     </AppShell>

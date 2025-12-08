@@ -16,7 +16,6 @@ import { ArrowRight, ArrowLeft, CheckCircle, MoveUpRight, Loader2 } from 'lucide
 import { cn } from '@/lib/utils';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { Progress } from '@/components/ui/progress';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 const interestedPosesSchema = z.object({
   interestedPoses: z.array(z.string()).min(1, { message: "Please select at least one category" }),
@@ -77,7 +76,7 @@ export default function InterestedPosesPage() {
   });
 
   if (authLoading) {
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><SmileyRockLoader /></div></AppShell>;
+    return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-16 w-16 animate-spin" /></div></AppShell>;
   }
 
   if (!user && !authLoading) {
@@ -186,7 +185,7 @@ export default function InterestedPosesPage() {
             aria-label="Next"
             disabled={isSubmitting || authLoading || !isValid}
         >
-            {isSubmitting ? <SmileyRockLoader /> : <MoveUpRight className="h-8 w-8" />}
+            {isSubmitting ? <Loader2 className="h-8 w-8 animate-spin" /> : <MoveUpRight className="h-8 w-8" />}
         </Button>
       </div>
     </AppShell>

@@ -9,7 +9,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { AppShell } from '@/components/layout/app-shell';
 import { CheckCircle, XCircle, Gift, ArrowRight, MoveUpRight, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 
 export default function DrawResultPage() {
@@ -70,7 +69,7 @@ export default function DrawResultPage() {
   };
   
   if (authLoading) {
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><SmileyRockLoader /></div></AppShell>;
+    return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-16 w-16 animate-spin" /></div></AppShell>;
   }
 
   return (
@@ -124,7 +123,7 @@ export default function DrawResultPage() {
             aria-label="Go to Dashboard"
             disabled={isFinalizing}
         >
-            {isFinalizing ? <SmileyRockLoader /> : <MoveUpRight className="h-8 w-8" />}
+            {isFinalizing ? <Loader2 className="h-8 w-8 animate-spin" /> : <MoveUpRight className="h-8 w-8" />}
         </Button>
       </div>
     </AppShell>
