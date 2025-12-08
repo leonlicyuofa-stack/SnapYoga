@@ -91,8 +91,9 @@ export default function GenderProfilePage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { control, register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProfileFormValues>({
+  const { control, register, handleSubmit, setValue, watch, formState: { errors, isValid } } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
+    mode: 'onChange',
     defaultValues: {
         birthday: new Date(new Date().getFullYear() - 25, 0, 1)
     }
@@ -159,7 +160,7 @@ export default function GenderProfilePage() {
               <OnboardingHeader />
             </div>
             <Card className="bg-card/80 backdrop-blur-sm w-full p-6 -mt-8 rounded-3xl shadow-xl pt-16">
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
+              <form id="gender-profile-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
                 <div className="flex justify-around items-center">
                     <div 
                       className={cn(
@@ -258,18 +259,18 @@ export default function GenderProfilePage() {
                   </div>
                 </div>
 
-                <div className="flex justify-center">
-                  <Button 
-                    type="submit"
-                    className="w-auto rounded-full h-10 px-6 bg-accent hover:bg-accent/90 text-accent-foreground text-sm font-bold shadow-lg transition-all hover:scale-105"
-                    disabled={isSubmitting || authLoading}
-                  >
-                    {isSubmitting || authLoading ? <SmileyRockLoader /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
-                  </Button>
-                </div>
               </form>
             </Card>
         </div>
+        <Button
+            type="submit"
+            form="gender-profile-form"
+            className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+            aria-label="Next"
+            disabled={isSubmitting || authLoading || !isValid}
+        >
+            {isSubmitting || authLoading ? <SmileyRockLoader /> : <MoveUpRight className="h-8 w-8" />}
+        </Button>
       </div>
     </AppShell>
   );

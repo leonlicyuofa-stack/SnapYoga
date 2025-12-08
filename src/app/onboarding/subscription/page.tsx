@@ -99,16 +99,6 @@ export default function SubscriptionPage() {
                 Start 7-Day Free Trial (Mock)
                 </Button>
                 
-                <div className="flex flex-col sm:flex-row gap-2 mt-4 justify-center">
-                    
-                    <Button 
-                    onClick={handleProceedToLuckyWheel} 
-                    className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
-                    disabled={anyLoading}
-                    >
-                    {isNavigatingNext ? <Loader2 className="animate-spin" /> : <><span>Next: Try the Lucky Wheel!</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
-                    </Button>
-                </div>
             </CardContent>
             <CardFooter>
                 <p className="text-xs text-muted-foreground text-center w-full">
@@ -117,6 +107,14 @@ export default function SubscriptionPage() {
             </CardFooter>
             </Card>
         </div>
+         <Button
+            onClick={handleProceedToLuckyWheel}
+            className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+            aria-label="Next"
+            disabled={anyLoading}
+        >
+            {isNavigatingNext ? <SmileyRockLoader /> : <MoveUpRight className="h-8 w-8" />}
+        </Button>
       </div>
     </AppShell>
   );

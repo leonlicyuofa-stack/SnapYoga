@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -67,8 +68,9 @@ export default function InterestedPosesPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const { control, handleSubmit, formState: { errors } } = useForm<InterestedPosesFormValues>({
+  const { control, handleSubmit, formState: { errors, isValid } } = useForm<InterestedPosesFormValues>({
     resolver: zodResolver(interestedPosesSchema),
+    mode: 'onChange',
     defaultValues: {
       interestedPoses: [],
     }
@@ -113,7 +115,7 @@ export default function InterestedPosesPage() {
                 
             </div>
         
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full">
+            <form id="yoga-type-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full">
               <Controller
                 name="interestedPoses"
                 control={control}
@@ -170,13 +172,6 @@ export default function InterestedPosesPage() {
                         {Math.round(progress)}% Complete
                     </p>
                 </div>
-                <Button 
-                  type="submit" 
-                  className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40" 
-                  disabled={isSubmitting || authLoading}
-                >
-                    {isSubmitting ? <Loader2 className="animate-spin" /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
-                </Button>
               </div>
             </form>
 
@@ -184,6 +179,15 @@ export default function InterestedPosesPage() {
               This helps us recommend suitable poses and challenges.
             </p>
         </div>
+        <Button
+            type="submit"
+            form="yoga-type-form"
+            className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+            aria-label="Next"
+            disabled={isSubmitting || authLoading || !isValid}
+        >
+            {isSubmitting ? <SmileyRockLoader /> : <MoveUpRight className="h-8 w-8" />}
+        </Button>
       </div>
     </AppShell>
   );

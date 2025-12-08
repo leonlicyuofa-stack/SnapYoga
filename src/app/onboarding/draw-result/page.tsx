@@ -112,19 +112,20 @@ export default function DrawResultPage() {
                 <p className="text-sm text-foreground/80">
                 {prize ? `Your prize will be applied to your account (mock feature).` : `You've completed the main setup steps.`}
                 </p>
-                <Button 
-                    onClick={handleCompleteOnboarding} 
-                    className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
-                    disabled={isFinalizing}
-                >
-                    {isFinalizing ? <Loader2 className="animate-spin" /> : <><span>Go to Dashboard</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
-                </Button>
             </CardContent>
             <CardFooter>
                 
             </CardFooter>
             </Card>
         </div>
+         <Button
+            onClick={handleCompleteOnboarding}
+            className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+            aria-label="Go to Dashboard"
+            disabled={isFinalizing}
+        >
+            {isFinalizing ? <SmileyRockLoader /> : <MoveUpRight className="h-8 w-8" />}
+        </Button>
       </div>
     </AppShell>
   );

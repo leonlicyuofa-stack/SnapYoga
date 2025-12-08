@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -53,8 +54,9 @@ export default function YogaGoalPage() {
   const currentStep = 1;
 
 
-  const { control, handleSubmit, formState: { errors }, reset } = useForm<YogaGoalFormValues>({
+  const { control, handleSubmit, formState: { errors, isValid }, reset } = useForm<YogaGoalFormValues>({
     resolver: zodResolver(yogaGoalSchema),
+    mode: 'onChange',
   });
 
   useEffect(() => {
@@ -135,7 +137,7 @@ export default function YogaGoalPage() {
                 
             </div>
             
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full">
+            <form id="yoga-goal-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full">
                 <Controller
                     name="mainGoal"
                     control={control}
@@ -172,19 +174,21 @@ export default function YogaGoalPage() {
                         {Math.round(progress)}% Complete
                     </p>
                 </div>
-                <Button 
-                  type="submit" 
-                  className="w-auto rounded-full h-10 px-6 bg-white/30 hover:bg-white/50 text-splash-foreground text-xs font-bold shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40" 
-                  disabled={isSubmitting || authLoading || isNavigatingBack}
-                >
-                    {isSubmitting ? <Loader2 className="animate-spin" /> : <><span>Next</span><MoveUpRight className="ml-2 h-5 w-5" /></>}
-                </Button>
                 </div>
             </form>
              <p className="text-xs text-muted-foreground text-center w-full mt-6">
               Understanding your goals helps us personalize suggestions.
             </p>
         </div>
+        <Button
+            type="submit"
+            form="yoga-goal-form"
+            className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+            aria-label="Next"
+            disabled={isSubmitting || authLoading || isNavigatingBack || !isValid}
+        >
+            {isSubmitting ? <SmileyRockLoader /> : <MoveUpRight className="h-8 w-8" />}
+        </Button>
       </div>
     </AppShell>
   );
