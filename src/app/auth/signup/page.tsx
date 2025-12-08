@@ -20,6 +20,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
+import { cn } from '@/lib/utils';
 
 const signUpSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -39,9 +40,14 @@ export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<SignUpFormValues>({
+  const { register, handleSubmit, formState: { errors, touchedFields }, watch } = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
+    mode: 'onTouched',
   });
+
+  const nameValue = watch("name");
+  const emailValue = watch("email");
+  const passwordValue = watch("password");
 
   const onSubmit: SubmitHandler<SignUpFormValues> = async (data) => {
     setIsSubmitting(true);
@@ -65,31 +71,35 @@ export default function SignUpPage() {
       <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden text-center w-full max-w-sm mx-auto">
         <OnboardingHeader />
         
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4 mt-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-8 mt-6">
             
             <p className="text-xs text-muted-foreground pb-4">
                 Fill your information below or register with your social account.
             </p>
             
-            <div className="space-y-2 text-left">
-                <Input id="name" placeholder="Name" {...register("name")} />
-                {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+            <div className="form-group">
+                <Input id="name" type="text" {...register("name")} className="form-input peer" placeholder=" " />
+                <Label htmlFor="name" className={cn("form-label", errors.name && 'text-destructive')}>Name</Label>
+                {errors.name && <p className="text-sm text-destructive text-left mt-1">{errors.name.message}</p>}
             </div>
 
-            <div className="space-y-2 text-left">
-                <Input id="email" type="email" placeholder="Email" {...register("email")} />
-                {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+            <div className="form-group">
+                <Input id="email" type="email" {...register("email")} className="form-input peer" placeholder=" " />
+                <Label htmlFor="email" className={cn("form-label", errors.email && 'text-destructive')}>Email</Label>
+                {errors.email && <p className="text-sm text-destructive text-left mt-1">{errors.email.message}</p>}
             </div>
-
-            <div className="space-y-2 text-left">
+            
+            <div className="form-group">
                 <div className="relative">
-                    <Input id="password" type={showPassword ? "text" : "password"} placeholder="Password" {...register("password")} />
-                    <Button type="button" variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8" onClick={() => setShowPassword(!showPassword)}>
+                    <Input id="password" type={showPassword ? "text" : "password"} {...register("password")} className="form-input peer" placeholder=" "/>
+                    <Label htmlFor="password" className={cn("form-label", errors.password && 'text-destructive')}>Password</Label>
+                    <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-1/2 -translate-y-1/2 h-8 w-8" onClick={() => setShowPassword(!showPassword)}>
                         {showPassword ? <EyeOff /> : <Eye />}
                     </Button>
                 </div>
-                 {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+                 {errors.password && <p className="text-sm text-destructive text-left mt-1">{errors.password.message}</p>}
             </div>
+
 
             <div className="flex items-center space-x-2">
                 <Checkbox id="terms" {...register("agreeToTerms")} />
@@ -97,7 +107,7 @@ export default function SignUpPage() {
                     Agree with <Link href="#" className="underline font-medium text-primary">Terms & Condition</Link>
                 </Label>
             </div>
-            {errors.agreeToTerms && <p className="text-sm text-destructive">{errors.agreeToTerms.message}</p>}
+            {errors.agreeToTerms && <p className="text-sm text-destructive text-left">{errors.agreeToTerms.message}</p>}
 
 
             <Button type="submit" className="w-full h-12 text-base rounded-full" disabled={isLoading}>
