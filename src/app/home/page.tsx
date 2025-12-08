@@ -104,7 +104,7 @@ export default function HomePage() {
             <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3 font-script">{t('snapYogaTitle')}</h2>
             <div className="mt-2 text-sm text-splash-foreground/80 max-w-md sm:text-base">
                 
-                <p>Your AI companion</p>
+                
             </div>
             <Button
                 onClick={handleGetStarted}
