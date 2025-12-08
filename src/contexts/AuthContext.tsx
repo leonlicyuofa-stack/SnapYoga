@@ -236,8 +236,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       await createUserProfileDocument(userCredential.user, { ...profileData, displayName, email });
       
-      toast({ title: 'Account Created!', description: 'Welcome! Let\'s continue setting up your profile.' });
-      
       // The navigation is handled by the calling component after the promise resolves
       return userCredential;
     } catch (error: any) {
