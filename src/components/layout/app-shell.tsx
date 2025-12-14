@@ -65,8 +65,9 @@ export function AppShell({ children }: AppShellProps) {
   
   const noShellRoutes = ['/auth/signin', '/auth/signup', '/auth/verify-email', '/'];
   const noHeaderRoutes = ['/welcome'];
-  const noFooterRoutes = ['/welcome'];
+  
   const showOnboardingHeader = pathname.startsWith('/onboarding/');
+  const noFooterRoutes = ['/welcome', ...showOnboardingHeader ? [pathname] : []];
   
   if (noShellRoutes.includes(pathname) || pathname.startsWith('/home') || pathname === '/page') {
       return (
