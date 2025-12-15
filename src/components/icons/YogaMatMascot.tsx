@@ -9,7 +9,7 @@ export function YogaMatMascot(props: SVGProps<SVGSVGElement>) {
             <title>Yoga Mat Mascot</title>
             
             {/* Background circle */}
-            <circle cx="75" cy="75" r="50" fill="white" fillOpacity="0.8" />
+            <circle cx="75" cy="75" r="75" fill="white" fillOpacity="0.8" />
             
             {/* Main Mat Roll */}
             <rect x="25" y="55" width="100" height="40" rx="20" fill="#64748B" />
