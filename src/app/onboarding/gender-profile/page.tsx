@@ -180,7 +180,7 @@ export default function GenderProfilePage() {
       <QuadrantBackground />
       <Button
           onClick={() => router.back()}
-          className="fixed top-8 left-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+          className="fixed top-8 left-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40 z-20"
           aria-label="Go back"
       >
           <ArrowLeft className="h-8 w-8" />
