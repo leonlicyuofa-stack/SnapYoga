@@ -24,6 +24,7 @@ import { format, getDaysInMonth, startOfDay } from 'date-fns';
 import { OnboardingBackground } from '@/components/layout/OnboardingBackground';
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
+import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 
 const profileSchema = z.object({
   gender: z.string().min(1, { message: "Please select a gender" }),
@@ -175,100 +176,90 @@ export default function GenderProfilePage() {
   };
 
   return (
-    <AppShell>
-      <div className="relative flex flex-col items-center p-4 overflow-hidden">
-        <OnboardingBackground />
-        <div className="relative z-10 w-full max-w-sm flex flex-col items-center">
-            <div className="relative z-20 w-full">
-              <OnboardingHeader />
+    <div className="relative flex min-h-screen items-center justify-center p-4 bg-background">
+      <QuadrantBackground />
+      <div className="relative z-10 w-full max-w-sm bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8 m-4">
+        <OnboardingHeader />
+        
+        <form id="gender-profile-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full mt-8">
+          <div className="flex justify-around items-center">
+              <div 
+                className={cn(
+                    "cursor-pointer p-4 rounded-2xl transition-all w-36 h-auto flex flex-col items-center justify-center space-y-2",
+                    selectedGender === 'female' ? 'bg-white/50' : 'bg-card/20'
+                )}
+                onClick={() => setValue('gender', 'female', { shouldValidate: true })}
+              >
+                <FemaleAvatar className="w-24 h-24"/>
+                
+              </div>
+               <div 
+                className={cn(
+                    "cursor-pointer p-4 rounded-2xl transition-all w-36 h-auto flex flex-col items-center justify-center space-y-2",
+                    selectedGender === 'male' ? 'bg-white/50' : 'bg-card/20'
+                )}
+                onClick={() => setValue('gender', 'male', { shouldValidate: true })}
+              >
+                <MaleAvatar className="w-24 h-24"/>
+                
+              </div>
+          </div>
+          {errors.gender && <p className="text-sm text-destructive text-center -mt-4">{errors.gender.message}</p>}
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+               <div className="relative">
+                    <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <Input 
+                        id="username" 
+                        placeholder="Username" 
+                        {...register("username")}
+                        className="bg-gray-100/80 border-border/50 rounded-full h-12 pl-12 shadow-inner"
+                    />
+               </div>
+              {errors.username && <p className="text-sm text-destructive pl-4">{errors.username.message}</p>}
             </div>
             
-              <form id="gender-profile-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full mt-8">
-                <div className="flex justify-around items-center">
-                    <div 
-                      className={cn(
-                          "cursor-pointer p-4 rounded-2xl transition-all w-36 h-auto flex flex-col items-center justify-center space-y-2",
-                          selectedGender === 'female' ? 'bg-white/50' : 'bg-card/20'
-                      )}
-                      onClick={() => setValue('gender', 'female', { shouldValidate: true })}
-                    >
-                      <FemaleAvatar className="w-24 h-24"/>
-                      
-                    </div>
-                     <div 
-                      className={cn(
-                          "cursor-pointer p-4 rounded-2xl transition-all w-36 h-auto flex flex-col items-center justify-center space-y-2",
-                          selectedGender === 'male' ? 'bg-white/50' : 'bg-card/20'
-                      )}
-                      onClick={() => setValue('gender', 'male', { shouldValidate: true })}
-                    >
-                      <MaleAvatar className="w-24 h-24"/>
-                      
-                    </div>
-                </div>
-                {errors.gender && <p className="text-sm text-destructive text-center -mt-4">{errors.gender.message}</p>}
-                
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                     <div className="relative">
-                          <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                          <Input 
-                              id="username" 
-                              placeholder="Username" 
-                              {...register("username")}
-                              className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 shadow-inner"
-                          />
-                     </div>
-                    {errors.username && <p className="text-sm text-destructive pl-4">{errors.username.message}</p>}
-                  </div>
-                  
-                  <div className="space-y-2">
-                      <Controller
-                          name="birthday"
-                          control={control}
-                          render={({ field }) => (
-                              <Popover>
-                                  <PopoverTrigger asChild>
-                                      <div className="relative">
-                                          <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                                          <button
-                                              type="button"
-                                              className={cn(
-                                                  "w-full text-left bg-background/80 backdrop-blur-sm border border-border/50 rounded-full h-12 pl-12 shadow-inner text-base",
-                                                  !field.value && "text-muted-foreground"
-                                              )}
-                                          >
-                                              {field.value ? format(field.value, "PPP") : <span>Birthday</span>}
-                                          </button>
-                                      </div>
-                                  </PopoverTrigger>
-                                  <PopoverContent className="w-auto p-0" align="start">
-                                      <div className="grid grid-cols-3 gap-4 relative h-48 p-2">
-                                          <DatePickerColumn title="Day" values={days} onSelect={(day) => handleDateChange('day', day)} selectedValue={field.value?.getDate()} />
-                                          <DatePickerColumn title="Month" values={months} onSelect={(month) => handleDateChange('month', month)} selectedValue={field.value?.getMonth()} />
-                                          <DatePickerColumn title="Year" values={years} onSelect={(year) => handleDateChange('year', year)} selectedValue={field.value?.getFullYear()} />
-                                      </div>
-                                  </PopoverContent>
-                              </Popover>
-                          )}
-                      />
-                      {errors.birthday && <p className="text-sm text-destructive pl-4">{errors.birthday.message}</p>}
-                  </div>
-                </div>
-
-              </form>
-            
-        </div>
-        <Button
-            type="submit"
-            form="gender-profile-form"
-            className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
-            aria-label="Next"
-            disabled={isSubmitting || authLoading || !isValid}
-        >
-            {isSubmitting || authLoading ? <Loader2 className="h-8 w-8 animate-spin" /> : <MoveUpRight className="h-8 w-8" />}
-        </Button>
+            <div className="space-y-2">
+                <Controller
+                    name="birthday"
+                    control={control}
+                    render={({ field }) => (
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <div className="relative">
+                                    <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                                    <button
+                                        type="button"
+                                        className={cn(
+                                            "w-full text-left bg-gray-100/80 border border-border/50 rounded-full h-12 pl-12 shadow-inner text-base",
+                                            !field.value && "text-muted-foreground"
+                                        )}
+                                    >
+                                        {field.value ? format(field.value, "PPP") : <span>Birthday</span>}
+                                    </button>
+                                </div>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                                <div className="grid grid-cols-3 gap-4 relative h-48 p-2">
+                                    <DatePickerColumn title="Day" values={days} onSelect={(day) => handleDateChange('day', day)} selectedValue={field.value?.getDate()} />
+                                    <DatePickerColumn title="Month" values={months} onSelect={(month) => handleDateChange('month', month)} selectedValue={field.value?.getMonth()} />
+                                    <DatePickerColumn title="Year" values={years} onSelect={(year) => handleDateChange('year', year)} selectedValue={field.value?.getFullYear()} />
+                                </div>
+                            </PopoverContent>
+                        </Popover>
+                    )}
+                />
+                {errors.birthday && <p className="text-sm text-destructive pl-4">{errors.birthday.message}</p>}
+            </div>
+          </div>
+            <div className="px-8">
+              <Button type="submit" form="gender-profile-form" className="w-full h-12 text-base rounded-full mt-8" disabled={isSubmitting || authLoading || !isValid}>
+                {isSubmitting || authLoading ? <Loader2 className="animate-spin" /> : 'Next'}
+              </Button>
+            </div>
+        </form>
       </div>
-    </AppShell>
+    </div>
   );
 }
