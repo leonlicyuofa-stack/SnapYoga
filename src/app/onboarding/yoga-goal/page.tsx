@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -172,20 +171,20 @@ export default function YogaGoalPage() {
                 )}
             />
             {errors.mainGoal && <p className="text-sm text-destructive text-center">{errors.mainGoal.message}</p>}
+
+             <Button
+                type="submit"
+                form="yoga-goal-form"
+                className="w-full h-12 text-base rounded-full mt-8"
+                disabled={isSubmitting || authLoading || isNavigatingBack || !isValid}
+            >
+                {isSubmitting ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Next'}
+            </Button>
         </form>
          <p className="text-xs text-muted-foreground text-center w-full mt-6">
           Understanding your goals helps us personalize suggestions.
         </p>
       </div>
-       <Button
-            type="submit"
-            form="yoga-goal-form"
-            className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
-            aria-label="Next"
-            disabled={isSubmitting || authLoading || isNavigatingBack || !isValid}
-        >
-            {isSubmitting ? <Loader2 className="h-8 w-8 animate-spin" /> : <MoveUpRight className="h-8 w-8" />}
-        </Button>
     </div>
   );
 }
