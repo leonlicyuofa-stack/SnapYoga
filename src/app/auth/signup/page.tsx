@@ -9,7 +9,6 @@ import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon';
 import { Mail, User, KeyRound, EyeOff, Eye } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { AppShell } from '@/components/layout/app-shell';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -61,8 +60,8 @@ export default function SignUpPage() {
   const isLoading = authLoading || isSubmitting;
 
   return (
-    <AppShell>
-      <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden text-center w-full max-w-sm mx-auto">
+    <div className="relative flex flex-col min-h-screen items-center justify-center p-4 overflow-hidden text-center">
+      <div className="relative flex flex-col items-center justify-center p-4 overflow-hidden text-center w-full max-w-sm mx-auto">
         <OnboardingBackground />
         <OnboardingHeader />
         
@@ -158,6 +157,6 @@ export default function SignUpPage() {
             </Link>
         </p>
       </div>
-    </AppShell>
+    </div>
   );
 }
