@@ -74,7 +74,7 @@ export function LuckyWheelDialog({ isOpen, onClose }: LuckyWheelDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) handleDialogClose(); }}>
        <DialogOverlay className="bg-black/60" />
-      <DialogContent className="sm:max-w-2xl bg-card shadow-xl rounded-t-2xl p-0 overflow-hidden w-full fixed bottom-0 left-0 right-0 translate-y-0 data-[state=open]:slide-in-from-bottom-full data-[state=closed]:slide-out-to-bottom-full duration-500 border-t-2 border-border max-w-full md:max-w-lg mx-auto top-auto rounded-b-none">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader className="text-center pt-6 px-6">
           <DialogTitle className="text-2xl sm:text-3xl font-bold text-primary">Spin the Lucky Wheel!</DialogTitle>
           <DialogDescription className="text-muted-foreground text-sm sm:text-base">
@@ -92,29 +92,36 @@ export function LuckyWheelDialog({ isOpen, onClose }: LuckyWheelDialogProps) {
         </Button>
 
         <div className="py-6 sm:py-8 px-4 sm:px-6 flex flex-col items-center justify-center space-y-6 sm:space-y-8">
-          <div className="relative w-80 h-80 sm:w-96 sm:h-96 flex-shrink-0">
-             {/* This container crops the wheel to show half */}
-            <div className="absolute inset-x-0 bottom-0 h-1/2 overflow-hidden">
-                <div
-                className="w-full h-[200%] rounded-full border-4 border-primary shadow-lg flex items-center justify-center transition-transform duration-[4000ms] ease-out origin-center"
-                style={{ 
-                    transform: `translateY(-25%) rotate(${rotation}deg)`,
-                    background: `conic-gradient(
-                        hsl(var(--splash-blob-1)/0.8) 0deg 60deg, 
-                        hsl(var(--splash-blob-2)/0.8) 60deg 120deg, 
-                        hsl(200 80% 85%) 120deg 180deg,
-                        hsl(var(--splash-blob-1)/0.7) 180deg 240deg, 
-                        hsl(var(--splash-blob-2)/0.7) 240deg 300deg, 
-                        hsl(200 80% 80%) 300deg 360deg
-                    )`
-                }}
-                >
-                </div>
+          <div className="relative w-64 h-64 sm:w-72 sm:h-72 flex-shrink-0">
+            <div
+            className="w-full h-full rounded-full border-4 border-primary shadow-lg flex items-center justify-center transition-transform duration-[4000ms] ease-out relative"
+            style={{ 
+                transform: `rotate(${rotation}deg)`,
+                background: `conic-gradient(
+                    hsl(var(--splash-blob-1)/0.8) 0deg 60deg, 
+                    hsl(var(--splash-blob-2)/0.8) 60deg 120deg, 
+                    hsl(200 80% 85%) 120deg 180deg,
+                    hsl(var(--splash-blob-1)/0.7) 180deg 240deg, 
+                    hsl(var(--splash-blob-2)/0.7) 240deg 300deg, 
+                    hsl(200 80% 80%) 300deg 360deg
+                )`
+            }}
+            >
+                {prizes.map((prize, index, arr) => {
+                    const angle = (360 / arr.length) * index;
+                    return (
+                        <div key={prize.name} className="absolute w-full h-full" style={{ transform: `rotate(${angle}deg)`}}>
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 -mt-4 p-1 bg-card rounded-full flex items-center justify-center h-8 w-8" style={{transform: `rotate(${-rotation - angle}deg)`}}>
+                                {React.cloneElement(prize.icon, { className: "h-5 w-5"})}
+                            </div>
+                        </div>
+                    )
+                })}
             </div>
-             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0 h-0 
+             <div className="absolute top-0 left-1/2 -translate-x-1/2 -mt-1 w-0 h-0 
               border-l-[12px] sm:border-l-[14px] border-l-transparent
               border-r-[12px] sm:border-r-[14px] border-r-transparent
-              border-b-[18px] sm:border-b-[22px] border-b-destructive drop-shadow-md z-10">
+              border-b-[18px] sm:border-b-[22px] border-t-destructive drop-shadow-md z-10" style={{borderBottomColor: 'hsl(var(--destructive))', borderTop: 'none', transform: 'rotate(180deg) translateY(-10px)'}}>
             </div>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
                 <Button
