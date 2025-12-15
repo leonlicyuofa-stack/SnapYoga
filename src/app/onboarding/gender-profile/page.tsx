@@ -178,6 +178,13 @@ export default function GenderProfilePage() {
   return (
     <div className="relative flex min-h-screen items-center justify-center p-4 bg-background">
       <QuadrantBackground />
+      <Button
+          onClick={() => router.back()}
+          className="fixed top-8 left-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+          aria-label="Go back"
+      >
+          <ArrowLeft className="h-8 w-8" />
+      </Button>
       <div className="relative z-10 w-full max-w-sm bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8 m-4">
         <OnboardingHeader />
         
