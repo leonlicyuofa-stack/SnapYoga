@@ -29,25 +29,21 @@ const poseCategoryOptions = [
     id: "standing",
     label: "Standing Poses",
     description: "Build strength, stability, and balance; energize the body.",
-    examples: "E.g., Warrior I, Triangle, Tree Pose."
   },
   {
     id: "seated",
     label: "Seated Poses",
     description: "Promote flexibility in hips and spine; encourage calm.",
-    examples: "E.g., Staff Pose, Seated Forward Bend."
   },
   {
     id: "backbends",
     label: "Backbends",
     description: "Strengthen the back, open the chest and shoulders, boost energy.",
-    examples: "E.g., Cobra, Bridge, Wheel Pose."
   },
   {
     id: "inversions-balancing",
     label: "Inversions & Balancing",
     description: "Improve circulation, build core strength, enhance focus.",
-    examples: "E.g., Headstand, Crow Pose, Plank."
   }
 ];
 
@@ -149,7 +145,7 @@ export default function InterestedPosesPage() {
                       <Label
                         htmlFor={item.id}
                         className={cn(
-                          "flex flex-col justify-between p-4 border-2 rounded-lg cursor-pointer transition-all h-full min-h-[160px] bg-card/80 backdrop-blur-sm",
+                          "flex flex-col justify-center p-4 border-2 rounded-lg cursor-pointer transition-all h-full min-h-[160px] bg-card/80 backdrop-blur-sm",
                           "hover:border-primary/50",
                           isChecked ? "border-primary bg-primary/10 shadow-md" : "border-muted"
                         )}
@@ -158,7 +154,6 @@ export default function InterestedPosesPage() {
                            <h3 className="font-bold text-lg text-primary">{item.label}</h3>
                            <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
                         </div>
-                        <p className="text-xs text-foreground/60 mt-3">{item.examples}</p>
                         {isChecked && (
                             <div className="absolute top-3 right-3 h-6 w-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
                                 <CheckCircle className="h-4 w-4" />
