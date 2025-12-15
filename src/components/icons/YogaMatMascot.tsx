@@ -9,7 +9,7 @@ export function YogaMatMascot(props: SVGProps<SVGSVGElement>) {
             <title>Yoga Mat Mascot</title>
             
             {/* Thought Bubble */}
-            <g className="animate-pulse" transform="translate(0, -5)">
+            <g className="animate-pulse" transform="translate(-10, -20)">
                 <path d="M 20,35 C 5,35 5,15 20,15 Q 30,5 45,15 C 60,15 60,35 45,35 Z" fill="#FFFFFF" fillOpacity="0.9" stroke="#E0E0E0" strokeWidth="1.5"/>
                 <text x="32.5" y="28" fontFamily="sans-serif" fontSize="12" fill="#2C3E50" fontWeight="bold">Hello!</text>
             </g>
