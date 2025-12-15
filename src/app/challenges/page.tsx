@@ -83,7 +83,7 @@ const challenges: Challenge[] = [
     name: 'Warrior III (Virabhadrasana III)',
     description: 'A previous challenge to build strength and improve balance. Review your progress or try it again!',
     imageUrl: { src: 'https://placehold.co/600x400.png', width: 600, height: 400 },
-    imageHint: 'yoga warrior pose',
+    imageHint: 'warrior 3 yoga pose',
     detailLink: '#',
     inviteLink: '#',
     status: 'completed',
