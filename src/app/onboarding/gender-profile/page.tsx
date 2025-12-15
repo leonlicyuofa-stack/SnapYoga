@@ -183,7 +183,7 @@ export default function GenderProfilePage() {
               <OnboardingHeader />
             </div>
             
-              <form id="gender-profile-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full mt-16">
+              <form id="gender-profile-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full mt-8">
                 <div className="flex justify-around items-center">
                     <div 
                       className={cn(
@@ -272,5 +272,3 @@ export default function GenderProfilePage() {
     </AppShell>
   );
 }
-
-    
