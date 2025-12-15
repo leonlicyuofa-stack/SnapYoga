@@ -20,7 +20,7 @@ import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { cn } from '@/lib/utils';
-import { OnboardingBackground } from '@/components/layout/OnboardingBackground';
+import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 
 const signUpSchema = z.object({
   username: z.string().min(2, { message: "Username must be at least 2 characters" }),
@@ -60,12 +60,14 @@ export default function SignUpPage() {
   const isLoading = authLoading || isSubmitting;
 
   return (
-    <div className="relative flex flex-col min-h-screen items-center justify-center p-4 overflow-hidden text-center">
-      <div className="relative flex flex-col items-center justify-center p-4 overflow-hidden text-center w-full max-w-sm mx-auto">
-        <OnboardingBackground />
-        <OnboardingHeader />
+    <div className="relative flex min-h-screen items-center justify-center p-4 bg-background">
+      <QuadrantBackground />
+      <div className="relative z-10 w-full max-w-sm bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8 m-4">
         
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4 mt-6">
+        <h2 className="text-center text-3xl font-bold tracking-tight text-foreground mb-2">Create Account</h2>
+        <p className="text-center text-sm text-muted-foreground mb-8">Let's get started on your journey.</p>
+        
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4">
             
             <div className="space-y-2">
                  <div className="relative">
@@ -75,7 +77,7 @@ export default function SignUpPage() {
                           type="text" 
                           placeholder="Username" 
                           {...register("username")}
-                          className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 shadow-inner"
+                          className="bg-gray-100/80 border-border/50 rounded-full h-12 pl-12 shadow-inner"
                       />
                  </div>
                 {errors.username && <p className="text-sm text-destructive text-left mt-1 pl-4">{errors.username.message}</p>}
@@ -89,7 +91,7 @@ export default function SignUpPage() {
                           type="email" 
                           placeholder="Email" 
                           {...register("email")}
-                          className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 shadow-inner"
+                          className="bg-gray-100/80 border-border/50 rounded-full h-12 pl-12 shadow-inner"
                       />
                  </div>
                 {errors.email && <p className="text-sm text-destructive text-left mt-1 pl-4">{errors.email.message}</p>}
@@ -102,7 +104,7 @@ export default function SignUpPage() {
                         id="password" 
                         type={showPassword ? "text" : "password"} 
                         {...register("password")} 
-                        className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 pr-12 shadow-inner" 
+                        className="bg-gray-100/80 border-border/50 rounded-full h-12 pl-12 pr-12 shadow-inner" 
                         placeholder="Password"
                     />
                     <Button type="button" variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8" onClick={() => setShowPassword(!showPassword)}>
@@ -125,7 +127,7 @@ export default function SignUpPage() {
                 <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">Or sign up with</span>
+                <span className="bg-white px-2 text-muted-foreground">Or sign up with</span>
             </div>
         </div>
 
@@ -150,7 +152,7 @@ export default function SignUpPage() {
         </div>
 
 
-        <p className="text-sm text-muted-foreground mt-8">
+        <p className="text-sm text-muted-foreground mt-8 text-center">
             {t('authAlreadyHaveAccount')}{' '}
             <Link href="/auth/signin" className="font-medium text-primary hover:underline">
                 {t('signIn')}
