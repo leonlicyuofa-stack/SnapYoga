@@ -87,17 +87,19 @@ export default function HomePage() {
         "relative flex flex-col min-h-screen items-center justify-center p-4 bg-splash-background font-sans overflow-hidden"
     )}>
         {/* Full-screen background illustration */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-[hsl(var(--splash-blob-1))] via-background to-[hsl(var(--splash-blob-2))] animate-breathing-bg">
-            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
-                <defs>
-                    <radialGradient id="blushGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                        <stop offset="0%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0.7 }} />
-                        <stop offset="100%" style={{ stopColor: 'hsl(var(--splash-blob-1))', stopOpacity: 0 }} />
-                    </radialGradient>
-                </defs>
-                <path d="M 0,0 L 100,0 C 50,50 100,50 100,100 L 0,100 Z" fill="hsl(var(--splash-blob-1))" />
-                <path d="M 0,100 C 50,50 0,50 0,0" fill="hsl(var(--splash-background))" />
-                <path d="M 100,0 L 0,0 C 50,50 0,50 0,100 L 100,100 Z" fill="hsl(var(--splash-blob-2))" style={{ opacity: 0.5 }}/>
+        <div className="absolute inset-0 z-0 opacity-70">
+            <svg width="100%" height="100%" viewBox="0 0 100 200" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
+                <g transform="translate(-50, 0)">
+                    <path d="M 50,20 C 20,20 20,35 50,35 H 150 C 180,35 180,20 150,20 Z" fill="#F0D9E7" opacity="0.8" />
+                    <path d="M 55,40 C 25,40 25,55 55,55 H 145 C 175,55 175,40 145,40 Z" fill="#E1D9F0" opacity="0.8" />
+                    <path d="M 60,60 C 30,60 30,75 60,75 H 140 C 170,75 170,60 140,60 Z" fill="#D9E7F0" opacity="0.8" />
+                    <path d="M 50,80 C 20,80 20,95 50,95 H 150 C 180,95 180,80 150,80 Z" fill="#D9F0E1" opacity="0.8" />
+                    <path d="M 65,100 C 35,100 35,115 65,115 H 135 C 165,115 165,100 135,100 Z" fill="#F0EFD9" opacity="0.8" />
+                    <path d="M 45,120 C 15,120 15,135 45,135 H 155 C 185,135 185,120 155,120 Z" fill="#F0D9D9" opacity="0.8" />
+                    <path d="M 55,140 C 25,140 25,155 55,155 H 145 C 175,155 175,140 145,140 Z" fill="#F0D9E7" opacity="0.8" />
+                    <path d="M 60,160 C 30,160 30,175 60,175 H 140 C 170,175 170,160 140,160 Z" fill="#D9F0E1" opacity="0.8" />
+                    <path d="M 50,180 C 20,180 20,195 50,195 H 150 C 180,195 180,180 150,180 Z" fill="#D9E7F0" opacity="0.8" />
+                </g>
             </svg>
         </div>
         
