@@ -206,7 +206,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         router.push('/dashboard');
       } else {
         toast({ title: 'Success', description: `${providerName} sign-in successful. Let's get you set up.` });
-        router.push('/welcome');
+        router.push('/onboarding/gender-profile');
       }
     } catch (error) {
       handleAuthError(error, `Failed to sign in with ${providerName}.`);
@@ -280,7 +280,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
          router.push('/dashboard');
       } else {
         toast({ title: 'Success', description: 'Signed in successfully. Let\'s complete your profile.' });
-        router.push('/welcome');
+        router.push('/onboarding/gender-profile');
       }
     } catch (error) {
       handleAuthError(error, 'Failed to sign in.');
