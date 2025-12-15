@@ -87,18 +87,20 @@ export default function HomePage() {
         "relative flex flex-col min-h-screen items-center justify-center p-4 bg-splash-background font-sans overflow-hidden"
     )}>
         {/* Full-screen background illustration */}
-        <div className="absolute inset-0 z-0 opacity-70">
-            <svg width="100%" height="100%" viewBox="0 0 100 200" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
-                <g transform="translate(-50, 0)">
-                    <path d="M 50,20 C 20,20 20,35 50,35 H 150 C 180,35 180,20 150,20 Z" fill="#F0D9E7" opacity="0.8" />
-                    <path d="M 55,40 C 25,40 25,55 55,55 H 145 C 175,55 175,40 145,40 Z" fill="#E1D9F0" opacity="0.8" />
-                    <path d="M 60,60 C 30,60 30,75 60,75 H 140 C 170,75 170,60 140,60 Z" fill="#D9E7F0" opacity="0.8" />
-                    <path d="M 50,80 C 20,80 20,95 50,95 H 150 C 180,95 180,80 150,80 Z" fill="#D9F0E1" opacity="0.8" />
-                    <path d="M 65,100 C 35,100 35,115 65,115 H 135 C 165,115 165,100 135,100 Z" fill="#F0EFD9" opacity="0.8" />
-                    <path d="M 45,120 C 15,120 15,135 45,135 H 155 C 185,135 185,120 155,120 Z" fill="#F0D9D9" opacity="0.8" />
-                    <path d="M 55,140 C 25,140 25,155 55,155 H 145 C 175,155 175,140 145,140 Z" fill="#F0D9E7" opacity="0.8" />
-                    <path d="M 60,160 C 30,160 30,175 60,175 H 140 C 170,175 170,160 140,160 Z" fill="#D9F0E1" opacity="0.8" />
-                    <path d="M 50,180 C 20,180 20,195 50,195 H 150 C 180,195 180,180 150,180 Z" fill="#D9E7F0" opacity="0.8" />
+        <div className="absolute inset-0 z-0">
+             <svg width="100%" height="100%" viewBox="0 0 1440 1024" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
+                <defs>
+                    <filter id="soft-blur" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="15" />
+                    </filter>
+                </defs>
+                <g filter="url(#soft-blur)">
+                    <path d="M -50,0 L 1490,0 L 1490,200 Q 720,250 -50,200 Z" fill="#E1D9F0" opacity="0.6" />
+                    <path d="M -50,180 Q 720,230 1490,180 L 1490,380 Q 720,430 -50,380 Z" fill="#F0D9E7" opacity="0.6" />
+                    <path d="M -50,360 Q 720,410 1490,360 L 1490,560 Q 720,610 -50,560 Z" fill="#D9E7F0" opacity="0.6" />
+                    <path d="M -50,540 Q 720,590 1490,540 L 1490,740 Q 720,790 -50,740 Z" fill="#D9F0E1" opacity="0.6" />
+                    <path d="M -50,720 Q 720,770 1490,720 L 1490,920 Q 720,970 -50,920 Z" fill="#F0EFD9" opacity="0.6" />
+                    <path d="M -50,900 Q 720,950 1490,900 L 1490,1100 L -50,1100 Z" fill="#F0D9D9" opacity="0.6" />
                 </g>
             </svg>
         </div>
