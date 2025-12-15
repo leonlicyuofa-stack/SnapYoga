@@ -21,9 +21,10 @@ import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { cn } from '@/lib/utils';
+import { OnboardingBackground } from '@/components/layout/OnboardingBackground';
 
 const signUpSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+  username: z.string().min(2, { message: "Username must be at least 2 characters" }),
   email: z.string().email({ message: "Invalid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 });
@@ -37,19 +38,15 @@ export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { register, handleSubmit, formState: { errors, isValid }, watch } = useForm<SignUpFormValues>({
+  const { register, handleSubmit, formState: { errors, isValid } } = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
     mode: 'onChange',
   });
 
-  const nameValue = watch("name");
-  const emailValue = watch("email");
-  const passwordValue = watch("password");
-
   const onSubmit: SubmitHandler<SignUpFormValues> = async (data) => {
     setIsSubmitting(true);
     try {
-        const userCredential = await signUpWithEmail(data.email, data.password, { name: data.name });
+        const userCredential = await signUpWithEmail(data.email, data.password, { displayName: data.username });
         if (userCredential) {
             router.push('/onboarding/gender-profile');
         }
@@ -66,6 +63,7 @@ export default function SignUpPage() {
   return (
     <AppShell>
       <div className="relative flex flex-col min-h-[calc(100vh-5rem)] items-center justify-center p-4 overflow-hidden text-center w-full max-w-sm mx-auto">
+        <OnboardingBackground />
         <OnboardingHeader />
         
         <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4 mt-6">
@@ -74,14 +72,14 @@ export default function SignUpPage() {
                  <div className="relative">
                       <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                       <Input 
-                          id="name"
+                          id="username"
                           type="text" 
-                          placeholder="Name" 
-                          {...register("name")}
+                          placeholder="Username" 
+                          {...register("username")}
                           className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 shadow-inner"
                       />
                  </div>
-                {errors.name && <p className="text-sm text-destructive text-left mt-1 pl-4">{errors.name.message}</p>}
+                {errors.username && <p className="text-sm text-destructive text-left mt-1 pl-4">{errors.username.message}</p>}
             </div>
 
             <div className="space-y-2">

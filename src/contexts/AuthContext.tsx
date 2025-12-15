@@ -84,7 +84,7 @@ export const createUserProfileDocument = async (user: User, additionalData: Docu
     const dataToSet: DocumentData = {
       uid,
       email,
-      displayName: displayName || additionalData.name || additionalData.displayName || email?.split('@')[0] || 'User',
+      displayName: displayName || additionalData.displayName || email?.split('@')[0] || 'User',
       photoURL,
       emailVerified: user.emailVerified, // Reflect current verification status
       ...additionalData,
@@ -231,7 +231,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
       await recordDailyLogin(userCredential.user.uid);
       
-      const displayName = profileData.name || userCredential.user.displayName;
+      const displayName = profileData.displayName || userCredential.user.displayName;
       await updateProfile(userCredential.user, { displayName });
       
       await createUserProfileDocument(userCredential.user, { ...profileData, displayName, email });
