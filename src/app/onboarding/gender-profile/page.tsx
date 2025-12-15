@@ -191,24 +191,16 @@ export default function GenderProfilePage() {
         <form id="gender-profile-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full mt-8">
           <div className="flex justify-around items-center">
               <div 
-                className={cn(
-                    "cursor-pointer p-4 rounded-2xl transition-all w-36 h-auto flex flex-col items-center justify-center space-y-2",
-                    selectedGender === 'female' ? 'bg-white/50' : 'bg-card/20'
-                )}
+                className="cursor-pointer p-4 rounded-2xl transition-all"
                 onClick={() => setValue('gender', 'female', { shouldValidate: true })}
               >
-                <FemaleAvatar className="w-24 h-24"/>
-                
+                <FemaleAvatar className={cn("w-24 h-24 transition-opacity", selectedGender && selectedGender !== 'female' && "opacity-40")}/>
               </div>
                <div 
-                className={cn(
-                    "cursor-pointer p-4 rounded-2xl transition-all w-36 h-auto flex flex-col items-center justify-center space-y-2",
-                    selectedGender === 'male' ? 'bg-white/50' : 'bg-card/20'
-                )}
+                className="cursor-pointer p-4 rounded-2xl transition-all"
                 onClick={() => setValue('gender', 'male', { shouldValidate: true })}
               >
-                <MaleAvatar className="w-24 h-24"/>
-                
+                <MaleAvatar className={cn("w-24 h-24 transition-opacity", selectedGender && selectedGender !== 'male' && "opacity-40")}/>
               </div>
           </div>
           {errors.gender && <p className="text-sm text-destructive text-center -mt-4">{errors.gender.message}</p>}
