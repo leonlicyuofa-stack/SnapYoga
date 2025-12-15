@@ -62,15 +62,7 @@ export default function HomePage() {
     }
 
     setTimeout(() => {
-      if (user) {
-        if (userProfile && userProfile.onboardingCompleted) {
-          router.push('/dashboard');
-        } else {
-          router.push('/onboarding/gender-profile'); 
-        }
-      } else {
-        router.push('/auth/signup');
-      }
+      router.push('/auth/signup');
     }, 150); 
   };
 
