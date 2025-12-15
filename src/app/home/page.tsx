@@ -101,8 +101,8 @@ export default function HomePage() {
             </svg>
         </div>
         
-         <div className="relative z-10 flex flex-col items-center justify-center text-center animate-zoom-in -translate-y-8">
-            <YogaMatMascot className="h-24 w-24 text-primary mb-2" />
+         <div className="relative z-10 flex flex-col items-center justify-center text-center -translate-y-8">
+            <YogaMatMascot className="h-24 w-24 text-primary mb-2 animate-zoom-in" />
             <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-splash-foreground mb-1 font-script">{t('snapYogaTitle')}</h2>
             <p className="text-md sm:text-lg text-splash-foreground/80">Master Your Pose. Instantly.</p>
         </div>
