@@ -15,7 +15,7 @@ import { ArrowRight, ArrowLeft, CheckCircle, MoveUpRight, Loader2 } from 'lucide
 import { cn } from '@/lib/utils';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { Progress } from '@/components/ui/progress';
-import { OnboardingBackground } from '@/components/layout/OnboardingBackground';
+import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 
 const interestedPosesSchema = z.object({
   interestedPoses: z.array(z.string()).min(1, { message: "Please select at least one category" }),
@@ -104,82 +104,88 @@ export default function InterestedPosesPage() {
       setIsSubmitting(false);
     }
   };
+  
+    const handleBackNavigation = () => {
+      router.back();
+    };
+
 
   return (
-    <AppShell>
-      <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12">
-        <OnboardingBackground />
-        <div className="w-full max-w-2xl z-10 px-4 flex flex-col items-center">
-            <OnboardingHeader />
-            <div className="text-center mb-2">
-                
-            </div>
+    <div className="relative flex min-h-screen items-center justify-center p-4 bg-background">
+      <QuadrantBackground />
+       <Button
+            onClick={handleBackNavigation}
+            className="fixed top-8 left-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+            aria-label="Go back"
+        >
+            <ArrowLeft className="h-8 w-8" />
+        </Button>
+      <div className="relative z-10 w-full max-w-2xl bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8 m-4">
+        <OnboardingHeader />
         
-            <form id="yoga-type-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full">
-              <Controller
-                name="interestedPoses"
-                control={control}
-                render={({ field }) => (
-                  <div className="grid grid-cols-2 gap-4">
-                    {poseCategoryOptions.map((item) => {
-                      const isChecked = field.value?.includes(item.id);
-                      return (
-                        <div key={item.id} className="relative">
-                          <Checkbox
-                            id={item.id}
-                            className="sr-only"
-                            checked={isChecked}
-                            onCheckedChange={(checked) => {
-                              const currentValue = field.value || [];
-                              const updatedValue = checked
-                                ? [...currentValue, item.id]
-                                : currentValue.filter((value) => value !== item.id);
-                              field.onChange(updatedValue);
-                            }}
-                          />
-                          <Label
-                            htmlFor={item.id}
-                            className={cn(
-                              "flex flex-col justify-between p-4 border-2 rounded-lg cursor-pointer transition-all h-full min-h-[160px] bg-card/80 backdrop-blur-sm",
-                              "hover:border-primary/50",
-                              isChecked ? "border-primary bg-primary/10 shadow-md" : "border-muted"
-                            )}
-                          >
-                            <div>
-                               <h3 className="font-bold text-lg text-primary">{item.label}</h3>
-                               <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
-                            </div>
-                            <p className="text-xs text-foreground/60 mt-3">{item.examples}</p>
-                            {isChecked && (
-                                <div className="absolute top-3 right-3 h-6 w-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
-                                    <CheckCircle className="h-4 w-4" />
-                                </div>
-                            )}
-                          </Label>
+        <form id="yoga-type-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full mt-8">
+          <Controller
+            name="interestedPoses"
+            control={control}
+            render={({ field }) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {poseCategoryOptions.map((item) => {
+                  const isChecked = field.value?.includes(item.id);
+                  return (
+                    <div key={item.id} className="relative">
+                      <Checkbox
+                        id={item.id}
+                        className="sr-only"
+                        checked={isChecked}
+                        onCheckedChange={(checked) => {
+                          const currentValue = field.value || [];
+                          const updatedValue = checked
+                            ? [...currentValue, item.id]
+                            : currentValue.filter((value) => value !== item.id);
+                          field.onChange(updatedValue);
+                        }}
+                      />
+                      <Label
+                        htmlFor={item.id}
+                        className={cn(
+                          "flex flex-col justify-between p-4 border-2 rounded-lg cursor-pointer transition-all h-full min-h-[160px] bg-card/80 backdrop-blur-sm",
+                          "hover:border-primary/50",
+                          isChecked ? "border-primary bg-primary/10 shadow-md" : "border-muted"
+                        )}
+                      >
+                        <div>
+                           <h3 className="font-bold text-lg text-primary">{item.label}</h3>
+                           <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
-              />
-
-              {errors.interestedPoses && <p className="text-sm text-destructive text-center">{errors.interestedPoses.message}</p>}
-              
-              <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center items-center">
-                <div className="w-full sm:w-1/4">
-                    <Progress value={progress} className="w-full h-2" />
-                    <p className="text-xs text-muted-foreground mt-1 text-center sm:text-left">
-                        {Math.round(progress)}% Complete
-                    </p>
-                </div>
+                        <p className="text-xs text-foreground/60 mt-3">{item.examples}</p>
+                        {isChecked && (
+                            <div className="absolute top-3 right-3 h-6 w-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
+                                <CheckCircle className="h-4 w-4" />
+                            </div>
+                        )}
+                      </Label>
+                    </div>
+                  );
+                })}
               </div>
-            </form>
+            )}
+          />
 
-            <p className="text-xs text-muted-foreground text-center w-full mt-6">
-              This helps us recommend suitable poses and challenges.
-            </p>
+          {errors.interestedPoses && <p className="text-sm text-destructive text-center">{errors.interestedPoses.message}</p>}
+        </form>
+         <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center items-center mt-4">
+            <div className="w-full sm:w-1/4">
+                <Progress value={progress} className="w-full h-2" />
+                <p className="text-xs text-muted-foreground mt-1 text-center sm:text-left">
+                    {Math.round(progress)}% Complete
+                </p>
+            </div>
         </div>
-        <Button
+        <p className="text-xs text-muted-foreground text-center w-full mt-6">
+          This helps us recommend suitable poses and challenges.
+        </p>
+      </div>
+       <Button
             type="submit"
             form="yoga-type-form"
             className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
@@ -188,7 +194,6 @@ export default function InterestedPosesPage() {
         >
             {isSubmitting ? <Loader2 className="h-8 w-8 animate-spin" /> : <MoveUpRight className="h-8 w-8" />}
         </Button>
-      </div>
-    </AppShell>
+    </div>
   );
 }
