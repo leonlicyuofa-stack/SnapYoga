@@ -93,8 +93,8 @@ export default function HomePage() {
         </div>
         
          <div className="relative z-10 flex flex-col items-center justify-center text-center">
-            <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3 font-script">{t('snapYogaTitle')}</h2>
             <YogaMatMascot className="h-24 w-24 text-primary" />
+            <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3 font-script">{t('snapYogaTitle')}</h2>
         </div>
 
         <header className="navbar w-full absolute top-0 left-0 z-20">
