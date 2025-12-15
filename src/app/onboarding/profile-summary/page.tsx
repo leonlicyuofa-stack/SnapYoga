@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -17,7 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { OnboardingBackground } from '@/components/layout/OnboardingBackground';
+import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 
 interface UserProfile extends DocumentData {
   displayName?: string;
@@ -274,43 +275,41 @@ export default function ProfileSummaryPage() {
 
 
   return (
-    <AppShell>
-      <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4">
-        <OnboardingBackground />
-        <div className="w-full max-w-2xl flex flex-col items-center">
-            <OnboardingHeader />
-            <div className="w-full shadow-xl z-10 bg-card/80 backdrop-blur-sm p-4 sm:p-6 rounded-lg">
-                <div className="px-4 sm:px-0">
-                    {profileData ? (
-                    <dl className="divide-y divide-border">
-                        {renderDetailItem("Username", "displayName", profileData.displayName)}
-                        {renderDetailItem("Email", "email", user.email)}
-                        {renderDetailItem("Gender", "gender", profileData.gender)}
-                        {renderDetailItem("Age", "age", profileData.age)}
-                        {renderDetailItem("Main Yoga Goal", "mainGoal", profileData.mainGoal)}
-                        {renderDetailItem("Interested Pose Types", "interestedPoses", profileData.interestedPoses)}
-                        {renderDetailItem("Current Body Shape", "currentBodyShape", profileData.currentBodyShape)}
-                    </dl>
-                    ) : (
-                    <p className="text-muted-foreground text-center">Could not load profile data.</p>
-                    )}
-                </div>
-                <div className="mt-6">
-                    <p className="text-xs text-muted-foreground text-center w-full">
-                    Ensure all details are correct before proceeding.
-                    </p>
-                </div>
+    <div className="relative flex min-h-screen items-center justify-center p-4 bg-background">
+      <QuadrantBackground />
+      <div className="relative z-10 w-full max-w-2xl bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8 m-4">
+        <OnboardingHeader />
+        <div className="w-full mt-8">
+            <div className="px-4 sm:px-0">
+                {profileData ? (
+                <dl className="divide-y divide-border">
+                    {renderDetailItem("Username", "displayName", profileData.displayName)}
+                    {renderDetailItem("Email", "email", user.email)}
+                    {renderDetailItem("Gender", "gender", profileData.gender)}
+                    {renderDetailItem("Age", "age", profileData.age)}
+                    {renderDetailItem("Main Yoga Goal", "mainGoal", profileData.mainGoal)}
+                    {renderDetailItem("Interested Pose Types", "interestedPoses", profileData.interestedPoses)}
+                    {renderDetailItem("Current Body Shape", "currentBodyShape", profileData.currentBodyShape)}
+                </dl>
+                ) : (
+                <p className="text-muted-foreground text-center">Could not load profile data.</p>
+                )}
+            </div>
+            <div className="mt-6">
+                <p className="text-xs text-muted-foreground text-center w-full">
+                Ensure all details are correct before proceeding.
+                </p>
             </div>
         </div>
-         <Button
-            onClick={handleNext}
-            className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
-            aria-label="Next"
-            disabled={isNavigatingNext}
-        >
-            {isNavigatingNext ? <Loader2 className="h-8 w-8 animate-spin" /> : <MoveUpRight className="h-8 w-8" />}
-        </Button>
       </div>
-    </AppShell>
+       <Button
+          onClick={handleNext}
+          className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40 z-20"
+          aria-label="Next"
+          disabled={isNavigatingNext}
+      >
+          {isNavigatingNext ? <Loader2 className="h-8 w-8 animate-spin" /> : <MoveUpRight className="h-8 w-8" />}
+      </Button>
+    </div>
   );
 }
