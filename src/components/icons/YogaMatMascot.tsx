@@ -10,8 +10,8 @@ export function YogaMatMascot(props: SVGProps<SVGSVGElement>) {
             
             {/* Thought Bubble */}
             <g className="animate-pulse">
-                <path d="M 20,45 C 5,45 5,25 20,25 Q 30,15 45,25 C 60,25 60,45 45,45 Z" fill="#FFFFFF" fillOpacity="0.9" stroke="#E0E0E0" strokeWidth="1.5"/>
-                <text x="32.5" y="38" fontFamily="sans-serif" fontSize="12" fill="#2C3E50" fontWeight="bold">Hello!</text>
+                <path d="M 20,35 C 5,35 5,15 20,15 Q 30,5 45,15 C 60,15 60,35 45,35 Z" fill="#FFFFFF" fillOpacity="0.9" stroke="#E0E0E0" strokeWidth="1.5"/>
+                <text x="32.5" y="28" fontFamily="sans-serif" fontSize="12" fill="#2C3E50" fontWeight="bold">Hello!</text>
             </g>
             
             {/* Background circle */}
