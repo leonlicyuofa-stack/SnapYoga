@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -115,10 +116,10 @@ export default function InterestedPosesPage() {
       <QuadrantBackground />
        <Button
             onClick={handleBackNavigation}
-            className="fixed top-8 left-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+            className="fixed top-8 left-8 rounded-full h-12 w-12 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
             aria-label="Go back"
         >
-            <ArrowLeft className="h-8 w-8" />
+            <ArrowLeft className="h-6 w-6" />
         </Button>
       <div className="relative z-10 w-full max-w-2xl bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8 m-4">
         <OnboardingHeader />
