@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useRouter } from 'next/navigation';
@@ -6,7 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { useEffect } from 'react';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
-import { OnboardingBackground } from '@/components/layout/OnboardingBackground';
+import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 
 export default function OnboardingAlmostTherePage() {
   const router = useRouter();
@@ -39,7 +40,7 @@ export default function OnboardingAlmostTherePage() {
   return (
     <AppShell>
       <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4 text-center">
-        <OnboardingBackground />
+        <QuadrantBackground />
         <div className="relative z-10 flex flex-col items-center max-w-md w-full">
             <OnboardingHeader />
 
