@@ -340,7 +340,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Manually update the local user object to reflect the change immediately
       setUser({ ...user, displayName: newDisplayName });
       
-      toast({ title: "Success", description: "Username updated successfully." });
       return true;
     } catch (error: any) {
       handleAuthError(error, 'Failed to update username.');
