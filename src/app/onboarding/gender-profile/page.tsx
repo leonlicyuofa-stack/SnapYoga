@@ -20,13 +20,13 @@ import { MaleAvatar } from '@/components/icons/MaleAvatar';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { format, getDaysInMonth } from 'date-fns';
+import { format, getDaysInMonth, startOfDay } from 'date-fns';
 import { OnboardingBackground } from '@/components/layout/OnboardingBackground';
+import { doc, getDoc } from 'firebase/firestore';
+import { firestore } from '@/lib/firebase/clientApp';
 
 const profileSchema = z.object({
   gender: z.string().min(1, { message: "Please select a gender" }),
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
   username: z.string().min(2, { message: "Username must be at least 2 characters" }),
   birthday: z.date({
     required_error: "A date of birth is required.",
@@ -86,18 +86,37 @@ const DatePickerColumn = ({ title, values, onSelect, selectedValue }: { title: s
 };
 
 export default function GenderProfilePage() {
-  const { user, loading: authLoading, signUpWithEmail } = useAuth();
+  const { user, loading: authLoading, updateUserDisplayName } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { control, register, handleSubmit, setValue, watch, formState: { errors, isValid } } = useForm<ProfileFormValues>({
+  const { control, register, handleSubmit, setValue, watch, formState: { errors, isValid }, reset } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     mode: 'onChange',
     defaultValues: {
-        birthday: new Date(new Date().getFullYear() - 25, 0, 1)
+        birthday: startOfDay(new Date(new Date().getFullYear() - 25, 0, 1))
     }
   });
+
+  useEffect(() => {
+    if (user && !authLoading) {
+        const userDocRef = doc(firestore, 'users', user.uid);
+        getDoc(userDocRef).then(docSnap => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const defaultValues: Partial<ProfileFormValues> = {};
+                if (data.gender) defaultValues.gender = data.gender;
+                if (data.displayName) defaultValues.username = data.displayName;
+                if (data.birthday && data.birthday.toDate) {
+                    defaultValues.birthday = startOfDay(data.birthday.toDate());
+                }
+                reset(defaultValues);
+            }
+        });
+    }
+  }, [user, authLoading, reset]);
+
 
   const selectedGender = watch('gender');
   const birthday = watch('birthday');
@@ -118,10 +137,14 @@ export default function GenderProfilePage() {
     }
     if (part === 'day') newDate.setDate(value);
     
-    setValue('birthday', newDate, { shouldValidate: true });
+    setValue('birthday', startOfDay(newDate), { shouldValidate: true });
   };
 
   const onSubmit: SubmitHandler<ProfileFormValues> = async (data) => {
+    if (!user) {
+        toast({ title: "Not logged in", description: "You must be logged in to update your profile.", variant: "destructive" });
+        return;
+    }
     setIsSubmitting(true);
     try {
       const today = new Date();
@@ -131,21 +154,21 @@ export default function GenderProfilePage() {
       if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
         age--;
       }
-
-      const userCredential = await signUpWithEmail(data.email, data.password, {
+      
+      // Update both Auth profile and Firestore document
+      await updateUserDisplayName(data.username);
+      await createUserProfileDocument(user, {
           gender: data.gender,
           displayName: data.username,
           birthday: data.birthday,
           age: age,
       });
 
-      if (userCredential) {
-          router.push('/onboarding/yoga-goal');
-      }
+      router.push('/onboarding/yoga-goal');
       
     } catch (error) {
-      console.error("Error during sign up from profile page:", error);
-      // The signUpWithEmail function already shows a toast on error
+      console.error("Error updating profile:", error);
+      toast({ title: "Update Failed", description: "There was a problem updating your profile. Please try again.", variant: "destructive" });
     } finally {
       setIsSubmitting(false);
     }
@@ -188,19 +211,6 @@ export default function GenderProfilePage() {
                 <div className="space-y-4">
                   <div className="space-y-2">
                      <div className="relative">
-                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                          <Input 
-                              id="email" 
-                              type="email"
-                              placeholder="Email" 
-                              {...register("email")}
-                              className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 shadow-inner"
-                          />
-                     </div>
-                    {errors.email && <p className="text-sm text-destructive pl-4">{errors.email.message}</p>}
-                  </div>
-                  <div className="space-y-2">
-                     <div className="relative">
                           <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                           <Input 
                               id="username" 
@@ -210,19 +220,6 @@ export default function GenderProfilePage() {
                           />
                      </div>
                     {errors.username && <p className="text-sm text-destructive pl-4">{errors.username.message}</p>}
-                  </div>
-                   <div className="space-y-2">
-                     <div className="relative">
-                          <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                          <Input 
-                              id="password"
-                              type="password"
-                              placeholder="Password" 
-                              {...register("password")}
-                              className="bg-background/80 backdrop-blur-sm border-border/50 rounded-full h-12 pl-12 shadow-inner"
-                          />
-                     </div>
-                    {errors.password && <p className="text-sm text-destructive pl-4">{errors.password.message}</p>}
                   </div>
                   
                   <div className="space-y-2">
@@ -275,3 +272,5 @@ export default function GenderProfilePage() {
     </AppShell>
   );
 }
+
+    
