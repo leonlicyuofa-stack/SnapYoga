@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -158,8 +159,8 @@ export default function GenderProfilePage() {
             <div className="relative z-20 w-full">
               <OnboardingHeader />
             </div>
-            <div className="bg-card/80 backdrop-blur-sm w-full p-6 -mt-8 rounded-3xl shadow-xl pt-16">
-              <form id="gender-profile-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
+            
+              <form id="gender-profile-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full mt-16">
                 <div className="flex justify-around items-center">
                     <div 
                       className={cn(
@@ -259,7 +260,7 @@ export default function GenderProfilePage() {
                 </div>
 
               </form>
-            </div>
+            
         </div>
         <Button
             type="submit"
