@@ -128,7 +128,7 @@ export default function InterestedPosesPage() {
             name="interestedPoses"
             control={control}
             render={({ field }) => (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 {poseCategoryOptions.map((item) => {
                   const isChecked = field.value?.includes(item.id);
                   return (
