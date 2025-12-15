@@ -106,7 +106,7 @@ const challenges: Challenge[] = [
     id: 'triangle',
     name: 'Triangle Pose (Trikonasana)',
     description: 'Improve your stability and stretch your hamstrings and spine with this classic standing pose.',
-    imageUrl: { src: 'https://placehold.co/600x400.png', width: 600, height: 400 },
+    imageUrl: { src: 'https://picsum.photos/seed/trianglepose/600/400', width: 600, height: 400 },
     imageHint: 'yoga triangle pose',
     detailLink: '#',
     inviteLink: '#',
@@ -444,5 +444,3 @@ export default function ChallengesPage() {
     </AppShell>
   );
 }
-
-    
