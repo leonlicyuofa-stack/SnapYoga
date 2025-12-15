@@ -28,6 +28,15 @@ export default function HomePage() {
   const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [isProcessingClick, setIsProcessingClick] = useState(false);
+  const [isAnimationComplete, setIsAnimationComplete] = useState(false);
+
+  useEffect(() => {
+    const animationTimer = setTimeout(() => {
+      setIsAnimationComplete(true);
+    }, 700); // Should match the animation duration in tailwind.config.ts
+
+    return () => clearTimeout(animationTimer);
+  }, []);
 
   useEffect(() => {
     if (user && !authLoading) {
@@ -92,8 +101,8 @@ export default function HomePage() {
             </svg>
         </div>
         
-         <div className="relative z-10 flex flex-col items-center justify-center text-center">
-            <YogaMatMascot className="h-24 w-24 text-primary" />
+         <div className="relative z-10 flex flex-col items-center justify-center text-center animate-zoom-in -translate-y-8">
+            <YogaMatMascot className="h-24 w-24 text-primary mb-2" />
             <h2 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-splash-foreground mb-3 font-script">{t('snapYogaTitle')}</h2>
         </div>
 
@@ -104,14 +113,16 @@ export default function HomePage() {
             </div>
         </header>
 
-        <Button
-            onClick={handleGetStarted}
-            className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
-            aria-label={t('getStarted')}
-            disabled={isLoading}
-        >
-            {isLoading ? <Loader2 className="h-8 w-8 animate-spin" /> : <MoveUpRight className="h-8 w-8" />}
-        </Button>
+        {isAnimationComplete && (
+            <Button
+                onClick={handleGetStarted}
+                className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40 animate-in fade-in duration-500"
+                aria-label={t('getStarted')}
+                disabled={isLoading}
+            >
+                {isLoading ? <Loader2 className="h-8 w-8 animate-spin" /> : <MoveUpRight className="h-8 w-8" />}
+            </Button>
+        )}
 
     </div>
   );

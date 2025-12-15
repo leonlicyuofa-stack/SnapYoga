@@ -118,6 +118,10 @@ export default {
               '0%, 100%': { transform: 'rotate(20deg)' },
               '50%': { transform: 'rotate(-20deg)' },
             },
+            'zoom-in': {
+                '0%': { transform: 'scale(0.8)', opacity: '0' },
+                '100%': { transform: 'scale(1)', opacity: '1' },
+            },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
@@ -128,6 +132,7 @@ export default {
             'move-down-and-fade': 'move-down-and-fade 0.6s ease-in forwards',
             'move-right-and-fade': 'move-right-and-fade 0.6s ease-in forwards',
             'swing': 'swing 1.5s ease-in-out infinite alternate',
+            'zoom-in': 'zoom-in 0.7s ease-out forwards',
   		}
   	}
   },
