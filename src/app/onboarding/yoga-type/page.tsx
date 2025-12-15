@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -16,6 +15,7 @@ import { ArrowRight, ArrowLeft, CheckCircle, MoveUpRight, Loader2 } from 'lucide
 import { cn } from '@/lib/utils';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { Progress } from '@/components/ui/progress';
+import { OnboardingBackground } from '@/components/layout/OnboardingBackground';
 
 const interestedPosesSchema = z.object({
   interestedPoses: z.array(z.string()).min(1, { message: "Please select at least one category" }),
@@ -108,6 +108,7 @@ export default function InterestedPosesPage() {
   return (
     <AppShell>
       <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12">
+        <OnboardingBackground />
         <div className="w-full max-w-2xl z-10 px-4 flex flex-col items-center">
             <OnboardingHeader />
             <div className="text-center mb-2">

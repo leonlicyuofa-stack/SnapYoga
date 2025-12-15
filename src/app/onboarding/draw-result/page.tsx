@@ -9,6 +9,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { CheckCircle, XCircle, Gift, ArrowRight, MoveUpRight, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
+import { OnboardingBackground } from '@/components/layout/OnboardingBackground';
 
 export default function DrawResultPage() {
   const { user, loading: authLoading } = useAuth();
@@ -74,6 +75,7 @@ export default function DrawResultPage() {
   return (
     <AppShell>
       <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4">
+        <OnboardingBackground />
         <div className="w-full max-w-md flex flex-col items-center">
             <OnboardingHeader />
             <div className="w-full shadow-xl text-center z-10 bg-card/80 backdrop-blur-sm p-6 rounded-lg">

@@ -20,6 +20,7 @@ import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHea
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { format, getDaysInMonth } from 'date-fns';
+import { OnboardingBackground } from '@/components/layout/OnboardingBackground';
 
 const profileSchema = z.object({
   gender: z.string().min(1, { message: "Please select a gender" }),
@@ -152,7 +153,7 @@ export default function GenderProfilePage() {
   return (
     <AppShell>
       <div className="relative flex flex-col items-center p-4 overflow-hidden">
-        
+        <OnboardingBackground />
         <div className="relative z-10 w-full max-w-sm flex flex-col items-center">
             <div className="relative z-20 w-full">
               <OnboardingHeader />

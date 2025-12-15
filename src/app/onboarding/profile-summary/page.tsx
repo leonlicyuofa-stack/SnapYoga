@@ -17,6 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { OnboardingBackground } from '@/components/layout/OnboardingBackground';
 
 interface UserProfile extends DocumentData {
   displayName?: string;
@@ -275,7 +276,7 @@ export default function ProfileSummaryPage() {
   return (
     <AppShell>
       <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4">
-        
+        <OnboardingBackground />
         <div className="w-full max-w-2xl flex flex-col items-center">
             <OnboardingHeader />
             <div className="w-full shadow-xl z-10 bg-card/80 backdrop-blur-sm p-4 sm:p-6 rounded-lg">
