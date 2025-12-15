@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -71,40 +70,40 @@ export default function SubscriptionPage() {
         
         <div className="w-full max-w-md flex flex-col items-center">
             <OnboardingHeader />
-            <Card className="w-full shadow-xl z-10 bg-card/80 backdrop-blur-sm">
-            <CardHeader className="text-center">
-                <CardDescription>Choose your plan or try our lucky wheel!</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-                <div className="p-6 border rounded-lg bg-primary/5 text-center">
-                <h3 className="text-2xl font-semibold text-primary">Monthly Subscription</h3>
-                <p className="text-4xl font-bold my-2 text-accent">IDR 100,000</p>
-                <p className="text-muted-foreground text-sm">per month</p>
-                <ul className="text-left space-y-2 mt-4 text-sm text-foreground/80">
-                    <li className="flex items-center"><Check className="h-5 w-5 text-green-500 mr-2" /> Unlimited Pose Analysis</li>
-                    <li className="flex items-center"><Check className="h-5 w-5 text-green-500 mr-2" /> Advanced Feedback</li>
-                    <li className="flex items-center"><Check className="h-5 w-5 text-green-500 mr-2" /> Progress Tracking & History</li>
-                    <li className="flex items-center"><Check className="h-5 w-5 text-green-500 mr-2" /> Exclusive Challenges</li>
-                </ul>
+            <div className="w-full shadow-xl z-10 bg-card/80 backdrop-blur-sm p-6 rounded-lg">
+                <div className="text-center mb-6">
+                    <p className="text-muted-foreground">Choose your plan or try our lucky wheel!</p>
                 </div>
+                <div className="space-y-6">
+                    <div className="p-6 border rounded-lg bg-primary/5 text-center">
+                    <h3 className="text-2xl font-semibold text-primary">Monthly Subscription</h3>
+                    <p className="text-4xl font-bold my-2 text-accent">IDR 100,000</p>
+                    <p className="text-muted-foreground text-sm">per month</p>
+                    <ul className="text-left space-y-2 mt-4 text-sm text-foreground/80">
+                        <li className="flex items-center"><Check className="h-5 w-5 text-green-500 mr-2" /> Unlimited Pose Analysis</li>
+                        <li className="flex items-center"><Check className="h-5 w-5 text-green-500 mr-2" /> Advanced Feedback</li>
+                        <li className="flex items-center"><Check className="h-5 w-5 text-green-500 mr-2" /> Progress Tracking & History</li>
+                        <li className="flex items-center"><Check className="h-5 w-5 text-green-500 mr-2" /> Exclusive Challenges</li>
+                    </ul>
+                    </div>
 
-                <Button 
-                onClick={handleStartFreeTrial} 
-                className="w-full bg-green-600 hover:bg-green-700 text-white"
-                isLoadingWithBar={isSubmitting}
-                disabled={anyLoading}
-                >
-                <Star className="mr-2 h-5 w-5" />
-                Start 7-Day Free Trial (Mock)
-                </Button>
-                
-            </CardContent>
-            <CardFooter>
-                <p className="text-xs text-muted-foreground text-center w-full">
-                Cancel anytime. Payment will be processed after the trial if not cancelled (mock).
-                </p>
-            </CardFooter>
-            </Card>
+                    <Button 
+                    onClick={handleStartFreeTrial} 
+                    className="w-full bg-green-600 hover:bg-green-700 text-white"
+                    isLoadingWithBar={isSubmitting}
+                    disabled={anyLoading}
+                    >
+                    <Star className="mr-2 h-5 w-5" />
+                    Start 7-Day Free Trial (Mock)
+                    </Button>
+                    
+                </div>
+                <div className="mt-6">
+                    <p className="text-xs text-muted-foreground text-center w-full">
+                    Cancel anytime. Payment will be processed after the trial if not cancelled (mock).
+                    </p>
+                </div>
+            </div>
         </div>
          <Button
             onClick={handleProceedToLuckyWheel}

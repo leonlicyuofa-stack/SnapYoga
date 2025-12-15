@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -53,21 +52,21 @@ export default function OnboardingLuckyWheelPage() {
       <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4">
         <div className="flex flex-col items-center w-full max-w-md">
             <OnboardingHeader />
-            <Card className="w-full shadow-xl text-center z-10 bg-card/80 backdrop-blur-sm">
-            <CardHeader>
-                <Gift className="mx-auto h-12 w-12 text-primary mb-4" />
-                <CardTitle className="text-3xl font-bold">Lucky Draw!</CardTitle>
-                <CardDescription>Spin the wheel for a chance to win a discount or free trial extension!</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <p className="text-muted-foreground mb-6">
-                Click the button below or wait for the wheel to appear.
-                </p>
-                <Button onClick={() => setShowWheelDialog(true)} size="lg" className="bg-accent hover:bg-accent/80">
-                    Spin the Wheel!
-                </Button>
-            </CardContent>
-            </Card>
+            <div className="w-full shadow-xl text-center z-10 bg-card/80 backdrop-blur-sm p-6 rounded-lg">
+                <div className="mb-4">
+                    <Gift className="mx-auto h-12 w-12 text-primary mb-4" />
+                    <h2 className="text-3xl font-bold">Lucky Draw!</h2>
+                    <p className="text-muted-foreground">Spin the wheel for a chance to win a discount or free trial extension!</p>
+                </div>
+                <div className="p-0 mt-6">
+                    <p className="text-muted-foreground mb-6">
+                        Click the button below or wait for the wheel to appear.
+                    </p>
+                    <Button onClick={() => setShowWheelDialog(true)} size="lg" className="bg-accent hover:bg-accent/80">
+                        Spin the Wheel!
+                    </Button>
+                </div>
+            </div>
         </div>
       </div>
       {user && <LuckyWheelDialog isOpen={showWheelDialog} onClose={handleWheelCloseAndSaveResult} />}

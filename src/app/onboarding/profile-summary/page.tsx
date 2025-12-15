@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -279,28 +278,28 @@ export default function ProfileSummaryPage() {
         
         <div className="w-full max-w-2xl flex flex-col items-center">
             <OnboardingHeader />
-            <Card className="w-full shadow-xl z-10 bg-card/80 backdrop-blur-sm">
-            <CardContent className="px-4 sm:px-6 pt-6">
-                {profileData ? (
-                <dl className="divide-y divide-border">
-                    {renderDetailItem("Username", "displayName", profileData.displayName)}
-                    {renderDetailItem("Email", "email", user.email)}
-                    {renderDetailItem("Gender", "gender", profileData.gender)}
-                    {renderDetailItem("Age", "age", profileData.age)}
-                    {renderDetailItem("Main Yoga Goal", "mainGoal", profileData.mainGoal)}
-                    {renderDetailItem("Interested Pose Types", "interestedPoses", profileData.interestedPoses)}
-                    {renderDetailItem("Current Body Shape", "currentBodyShape", profileData.currentBodyShape)}
-                </dl>
-                ) : (
-                <p className="text-muted-foreground text-center">Could not load profile data.</p>
-                )}
-            </CardContent>
-            <CardFooter>
-                <p className="text-xs text-muted-foreground text-center w-full">
-                Ensure all details are correct before proceeding.
-                </p>
-            </CardFooter>
-            </Card>
+            <div className="w-full shadow-xl z-10 bg-card/80 backdrop-blur-sm p-4 sm:p-6 rounded-lg">
+                <div className="px-4 sm:px-0">
+                    {profileData ? (
+                    <dl className="divide-y divide-border">
+                        {renderDetailItem("Username", "displayName", profileData.displayName)}
+                        {renderDetailItem("Email", "email", user.email)}
+                        {renderDetailItem("Gender", "gender", profileData.gender)}
+                        {renderDetailItem("Age", "age", profileData.age)}
+                        {renderDetailItem("Main Yoga Goal", "mainGoal", profileData.mainGoal)}
+                        {renderDetailItem("Interested Pose Types", "interestedPoses", profileData.interestedPoses)}
+                        {renderDetailItem("Current Body Shape", "currentBodyShape", profileData.currentBodyShape)}
+                    </dl>
+                    ) : (
+                    <p className="text-muted-foreground text-center">Could not load profile data.</p>
+                    )}
+                </div>
+                <div className="mt-6">
+                    <p className="text-xs text-muted-foreground text-center w-full">
+                    Ensure all details are correct before proceeding.
+                    </p>
+                </div>
+            </div>
         </div>
          <Button
             onClick={handleNext}
