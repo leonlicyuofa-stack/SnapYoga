@@ -23,11 +23,12 @@ import { Avatar3Icon } from '@/components/icons/Avatar3Icon';
 import { Avatar4Icon } from '@/components/icons/Avatar4Icon';
 import { Avatar5Icon } from '@/components/icons/Avatar5Icon';
 import Image from 'next/image';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 
 const profileSchema = z.object({
-  avatar: z.string().optional(),
   displayName: z.string().min(2, { message: "Name must be at least 2 characters" }),
+  avatar: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
@@ -116,16 +117,40 @@ export default function GenderProfilePage() {
     }
   };
 
+  const renderSelectedAvatar = () => {
+    if (!selectedAvatar) {
+        return <UserCircle className="h-6 w-6 text-muted-foreground" />;
+    }
+
+    if (customAvatar && selectedAvatar === customAvatar) {
+        return <AvatarImage src={customAvatar} alt="Custom Avatar" />;
+    }
+
+    const avatarData = avatars.find(a => a.id === selectedAvatar);
+    if (avatarData) {
+        const AvatarIcon = avatarData.icon;
+        return <div className={cn("w-full h-full flex items-center justify-center p-1", avatarData.bgColor)}><AvatarIcon className="w-8 h-8" /></div>
+    }
+
+    return <UserCircle className="h-6 w-6 text-muted-foreground" />;
+  }
+
   return (
     <div className="relative flex min-h-screen items-center justify-center p-4 bg-background">
       <QuadrantBackground />
-      <Button
-          onClick={() => router.back()}
-          className="fixed top-8 left-8 rounded-full h-12 w-12 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40 z-20"
-          aria-label="Go back"
-      >
-          <ArrowLeft className="h-6 w-6" />
-      </Button>
+      <div className="fixed top-8 left-8 right-8 z-20 flex justify-between items-center">
+        <Button
+            onClick={() => router.back()}
+            className="rounded-full h-12 w-12 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+            aria-label="Go back"
+        >
+            <ArrowLeft className="h-6 w-6" />
+        </Button>
+        <Avatar className="h-12 w-12 border-2 border-primary/20 bg-card shadow-lg">
+            {renderSelectedAvatar()}
+            <AvatarFallback><UserCircle className="h-6 w-6" /></AvatarFallback>
+        </Avatar>
+      </div>
       <div className="relative z-10 w-full max-w-lg bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8 m-4">
         <OnboardingHeader />
         
