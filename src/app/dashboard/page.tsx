@@ -163,17 +163,19 @@ export default function DashboardPage() {
     <AppShell>
       <div className="relative h-full">
         <QuadrantBackground />
-        <div className="relative z-10 container mx-auto px-4 py-6 space-y-4">
-
-          
-          {/* Greeting */}
-          <div className="flex items-center gap-4">
+         <div className="absolute top-4 right-4 z-20">
               <Avatar className="h-14 w-14 border-2 border-primary/20">
                 <AvatarImage src={user?.photoURL || ''} alt={welcomeName} />
                 <AvatarFallback>
                     {getInitials(user?.email, user?.displayName)}
                 </AvatarFallback>
               </Avatar>
+          </div>
+        <div className="relative z-10 container mx-auto px-4 py-6 space-y-4">
+
+          
+          {/* Greeting */}
+          <div className="flex items-center gap-4 pt-16">
               <div>
                 <h2 className="text-xl font-bold text-foreground">Welcome back!</h2>
                 <p className="text-muted-foreground">{welcomeName}</p>
