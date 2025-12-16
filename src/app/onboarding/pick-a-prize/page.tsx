@@ -91,9 +91,6 @@ export default function PickAPrizePage() {
               )}></div>
 
               <div className="relative z-10 text-center text-white transition-transform duration-300 group-hover:scale-105">
-                 <div className="relative w-48 h-48 sm:w-64 sm:h-64 drop-shadow-2xl">
-                    <Image src={prizes.left.image} alt={prizes.left.name} fill className="object-contain" data-ai-hint={prizes.left.imageHint} />
-                 </div>
                 <h2 className="mt-4 text-2xl font-bold">{prizes.left.name.split(' ')[4]}</h2>
               </div>
             </div>
