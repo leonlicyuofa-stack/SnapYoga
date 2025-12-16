@@ -22,6 +22,7 @@ import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { RockWheelDialog } from '@/components/features/dashboard/rock-wheel-dialog';
 import { RewardDialog } from '@/components/features/dashboard/reward-dialog';
 import type { Rock } from '@/components/features/dashboard/rock-data';
+import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 
 interface Friend {
   id: string;
@@ -316,131 +317,136 @@ export default function ChallengesPage() {
             rock={rewardedRock} 
           />
       )}
-      <div className="container mx-auto px-4 py-12 space-y-12">
-        <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl flex items-center justify-center gap-3">
-            <Crown className="h-10 w-10 text-primary" />
-            Yoga Challenges
-          </h1>
-          <p className="mt-4 text-xl text-muted-foreground max-w-2xl mx-auto">
-            Improve your practice, track your progress, and connect with friends.
-          </p>
-        </div>
+      <div className="relative min-h-[calc(100vh-8rem)]">
+        <QuadrantBackground />
+        <div className="container mx-auto px-4 py-12 space-y-12 relative z-10">
+          <div className="text-center">
+            <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl flex items-center justify-center gap-3">
+              <Crown className="h-10 w-10 text-primary" />
+              Yoga Challenges
+            </h1>
+            <p className="mt-4 text-xl text-muted-foreground max-w-2xl mx-auto">
+              Improve your practice, track your progress, and connect with friends.
+            </p>
+          </div>
 
-        <Card className="w-full shadow-lg">
-            <CardHeader>
-                <CardTitle className="flex items-center text-xl md:text-2xl">
-                    <Gift className="mr-3 h-7 w-7 text-primary" />
-                    Challenge Rewards
-                </CardTitle>
-                <CardDescription>
-                    You've completed the Headstand Challenge! Claim your reward.
-                </CardDescription>
+          <Card className="w-full shadow-lg">
+              <CardHeader>
+                  <CardTitle className="flex items-center text-xl md:text-2xl">
+                      <Gift className="mr-3 h-7 w-7 text-primary" />
+                      Challenge Rewards
+                  </CardTitle>
+                  <CardDescription>
+                      You've completed the Headstand Challenge! Claim your reward.
+                  </CardDescription>
+              </CardHeader>
+              <CardContent>
+                  <Button onClick={() => setShowRockWheelDialog(true)} className="w-full" size="lg">
+                      Claim Your Rock!
+                  </Button>
+              </CardContent>
+          </Card>
+
+          <Card className="w-full shadow-2xl overflow-hidden bg-card/80 backdrop-blur-sm">
+            <CardHeader className="text-center pt-8">
+              <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
+                <Users className="h-8 w-8 text-primary" />
+                {t('challengesWithFriendsTitle')}
+              </CardTitle>
+              <CardDescription className="text-lg text-muted-foreground mt-2 max-w-md mx-auto">
+                {t('challengesWithFriendsDesc')}
+              </CardDescription>
             </CardHeader>
-            <CardContent>
-                <Button onClick={() => setShowRockWheelDialog(true)} className="w-full" size="lg">
-                    Claim Your Rock!
-                </Button>
-            </CardContent>
-        </Card>
-
-        <Card className="w-full shadow-2xl overflow-hidden bg-card/80 backdrop-blur-sm">
-          <CardHeader className="text-center pt-8">
-            <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
-              <Users className="h-8 w-8 text-primary" />
-              {t('challengesWithFriendsTitle')}
-            </CardTitle>
-            <CardDescription className="text-lg text-muted-foreground mt-2 max-w-md mx-auto">
-              {t('challengesWithFriendsDesc')}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center space-y-6 p-8">
-            <div className="flex -space-x-6">
-              {friends.map(friend => (
-                <Avatar key={friend.id} className="h-16 w-16 border-4 border-background hover:z-10 transition-transform hover:scale-110">
-                  <AvatarImage src={friend.avatarUrl} alt={friend.name} data-ai-hint={friend.avatarHint} />
-                  <AvatarFallback>{friend.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-              ))}
-            </div>
-            <InviteFriendDialog />
-          </CardContent>
-        </Card>
-
-        <div className="space-y-12">
-          {categoryOrder.map((category) => {
-            const challengesInCategory = challengesByCategory[category];
-            if (!challengesInCategory) return null;
-            const Icon = categoryIcons[category];
-            return (
-              <div key={category}>
-                <h2 className="text-3xl font-bold tracking-tight mb-6 flex items-center gap-3">
-                  <Icon className="h-8 w-8 text-accent" />
-                  {category} Challenges
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {challengesInCategory.map((challenge, index) => (
-                    <Card key={challenge.id} className="overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group rounded-lg flex flex-col bg-card/80 backdrop-blur-sm">
-                      <div className="relative w-full h-64">
-                        <Image
-                          src={typeof challenge.imageUrl === 'string' ? challenge.imageUrl : challenge.imageUrl.src}
-                          alt={`${challenge.name} background`}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                          priority={index < 2}
-                          data-ai-hint={challenge.imageHint}
-                          className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-between p-4">
-                          <div className="flex justify-between items-start">
-                              {getStatusBadge(challenge)}
-                              {challenge.status === 'active' && challenge.daysInChallenge && (
-                                <Badge variant="destructive">
-                                  Day {challenge.daysInChallenge} / {challenge.totalDays}
-                                </Badge>
-                              )}
-                          </div>
-                          <h2 className="text-2xl font-bold text-white mb-1">{challenge.name}</h2>
-                        </div>
-                      </div>
-                      <CardContent className="p-6 bg-card flex-grow flex flex-col">
-                        <div className="flex justify-between items-center mb-4">
-                          <p className="text-muted-foreground text-sm">Difficulty:</p>
-                          <div className="flex items-center">
-                            {Array.from({ length: 5 }).map((_, i) => (
-                              <Star
-                                key={i}
-                                className={cn(
-                                  "h-5 w-5",
-                                  i < challenge.difficulty
-                                    ? "text-yellow-400 fill-yellow-400"
-                                    : "text-muted-foreground/50"
-                                )}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                        <p className="text-muted-foreground mb-6 flex-grow">{challenge.description}</p>
-                        <Link href={challenge.detailLink} passHref>
-                          <Button
-                            size="lg"
-                            className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md hover:shadow-lg transition-all transform hover:scale-105"
-                            aria-label={`Action for ${challenge.name}`}
-                            disabled={challenge.detailLink === '#'}
-                          >
-                            {getButtonText(challenge.status)}
-                            <ArrowRight className="ml-2 h-5 w-5" />
-                          </Button>
-                        </Link>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+            <CardContent className="flex flex-col items-center space-y-6 p-8">
+              <div className="flex -space-x-6">
+                {friends.map(friend => (
+                  <Avatar key={friend.id} className="h-16 w-16 border-4 border-background hover:z-10 transition-transform hover:scale-110">
+                    <AvatarImage src={friend.avatarUrl} alt={friend.name} data-ai-hint={friend.avatarHint} />
+                    <AvatarFallback>{friend.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                ))}
               </div>
-            );
-          })}
+              <InviteFriendDialog />
+            </CardContent>
+          </Card>
+
+          <div className="space-y-12">
+            {categoryOrder.map((category) => {
+              const challengesInCategory = challengesByCategory[category];
+              if (!challengesInCategory) return null;
+              const Icon = categoryIcons[category];
+              return (
+                <div key={category}>
+                  <h2 className="text-3xl font-bold tracking-tight mb-6 flex items-center gap-3">
+                    <Icon className="h-8 w-8 text-accent" />
+                    {category} Challenges
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {challengesInCategory.map((challenge, index) => (
+                      <Card key={challenge.id} className="overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group rounded-lg flex flex-col bg-card/80 backdrop-blur-sm">
+                        <div className="relative w-full h-64">
+                          <Image
+                            src={typeof challenge.imageUrl === 'string' ? challenge.imageUrl : challenge.imageUrl.src}
+                            alt={`${challenge.name} background`}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                            priority={index < 2}
+                            data-ai-hint={challenge.imageHint}
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-between p-4">
+                            <div className="flex justify-between items-start">
+                                {getStatusBadge(challenge)}
+                                {challenge.status === 'active' && challenge.daysInChallenge && (
+                                  <Badge variant="destructive">
+                                    Day {challenge.daysInChallenge} / {challenge.totalDays}
+                                  </Badge>
+                                )}
+                            </div>
+                            <h2 className="text-2xl font-bold text-white mb-1">{challenge.name}</h2>
+                          </div>
+                        </div>
+                        <CardContent className="p-6 bg-card flex-grow flex flex-col">
+                          <div className="flex justify-between items-center mb-4">
+                            <p className="text-muted-foreground text-sm">Difficulty:</p>
+                            <div className="flex items-center">
+                              {Array.from({ length: 5 }).map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={cn(
+                                    "h-5 w-5",
+                                    i < challenge.difficulty
+                                      ? "text-yellow-400 fill-yellow-400"
+                                      : "text-muted-foreground/50"
+                                  )}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                          <p className="text-muted-foreground mb-6 flex-grow">{challenge.description}</p>
+                          <Link href={challenge.detailLink} passHref>
+                            <Button
+                              size="lg"
+                              className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md hover:shadow-lg transition-all transform hover:scale-105"
+                              aria-label={`Action for ${challenge.name}`}
+                              disabled={challenge.detailLink === '#'}
+                            >
+                              {getButtonText(challenge.status)}
+                              <ArrowRight className="ml-2 h-5 w-5" />
+                            </Button>
+                          </Link>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </AppShell>
   );
 }
+
+    
