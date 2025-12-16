@@ -20,7 +20,7 @@ const prizes = {
   }
 };
 
-const Pattern = () => (
+const RightPattern = () => (
     <svg width="100%" height="100%" className="absolute inset-0 z-0" preserveAspectRatio="none">
         <defs>
             <filter id="brush-stroke" x="-20%" y="-20%" width="140%" height="140%">
@@ -34,6 +34,25 @@ const Pattern = () => (
         <rect y="65%" width="100%" height="20%" fill="#D4B6C1" filter="url(#brush-stroke)" />
     </svg>
 )
+
+const LeftPattern = () => (
+    <svg width="100%" height="100%" className="absolute inset-0 z-0" preserveAspectRatio="none">
+        <defs>
+            <filter id="wave-filter" x="-20%" y="-20%" width="140%" height="140%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.005 0.015" numOctaves="2" result="turbulence"/>
+                <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="25" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+        </defs>
+        <rect width="100%" height="100%" fill="#1A4A63"/>
+        <g filter="url(#wave-filter)">
+            <rect width="100%" height="100%" fill="#1A4A63" />
+            <path d="M -100 450 C 300 350, 600 550, 1540 450 L 1540 500 C 600 600, 300 400, -100 500 Z" fill="#E4C1C8" opacity="0.7"/>
+            <path d="M -100 470 C 300 370, 600 570, 1540 470 L 1540 520 C 600 620, 300 420, -100 520 Z" fill="#78A7A8" opacity="0.7"/>
+            <path d="M -100 490 C 300 390, 600 590, 1540 490 L 1540 540 C 600 640, 300 440, -100 540 Z" fill="#D4B6A3" opacity="0.7"/>
+        </g>
+    </svg>
+);
+
 
 export default function PickAPrizePage() {
   const router = useRouter();
@@ -64,16 +83,16 @@ export default function PickAPrizePage() {
             {/* Left Side */}
             <div
               className={cn(
-                "relative flex flex-col items-center justify-center p-8 transition-all duration-500 cursor-pointer group",
-                selectedSide === 'left' ? 'bg-purple-300' : 'bg-purple-200 hover:bg-purple-300/80'
+                "relative flex flex-col items-center justify-center p-8 transition-all duration-500 cursor-pointer group overflow-hidden"
               )}
               onClick={handleLeftClick}
             >
-              <div className={cn("absolute inset-0 bg-purple-300 transition-all duration-500",
-                selectedSide === 'left' ? 'opacity-100 scale-150' : 'opacity-0'
+              <LeftPattern />
+              <div className={cn("absolute inset-0 bg-blue-400 transition-all duration-500",
+                selectedSide === 'left' ? 'opacity-50 scale-150' : 'opacity-0'
               )}></div>
 
-              <div className="relative z-10 text-center text-purple-800 transition-transform duration-300 group-hover:scale-105">
+              <div className="relative z-10 text-center text-white transition-transform duration-300 group-hover:scale-105">
                  <div className="relative w-48 h-48 sm:w-64 sm:h-64 drop-shadow-2xl">
                     <Image src={prizes.left.image} alt={prizes.left.name} fill className="object-contain" data-ai-hint={prizes.left.imageHint} />
                  </div>
@@ -88,7 +107,7 @@ export default function PickAPrizePage() {
               )}
               onClick={handleRightClick}
             >
-              <Pattern />
+              <RightPattern />
               <div className={cn("absolute inset-0 bg-pink-300 transition-all duration-500",
                 selectedSide === 'right' ? 'opacity-80 scale-150' : 'opacity-0'
               )}></div>
