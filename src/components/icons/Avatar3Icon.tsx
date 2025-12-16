@@ -5,24 +5,31 @@ export function Avatar3Icon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <g>
-        <title>Avatar of a cute watermelon slice</title>
+        <title>Avatar of a cute watermelon</title>
         {/* The head/background is transparent so it can be colored by its container */}
-        <rect width="100" height="100" fill="transparent" />
-
-        {/* Green Rind */}
-        <rect y="70" width="100" height="30" fill="#84CC16" />
-
-        {/* White Rind */}
-        <rect y="60" width="100" height="10" fill="#F8F8F0" />
+        <circle cx="50" cy="50" r="40" fill="transparent" />
         
-        {/* Pink Flesh */}
-        <rect width="100" height="60" fill="#F472B6" />
-
-        {/* Face */}
+        {/* Watermelon Flesh */}
+        <circle cx="50" cy="50" r="40" fill="#F472B6" />
+        
+        {/* Watermelon Rind */}
+        <circle cx="50" cy="50" r="38" stroke="#84CC16" strokeWidth="12" />
+        
+        {/* Seeds and Face */}
         <g fill="black">
-          <circle cx="38" cy="48" r="6" />
-          <circle cx="62" cy="48" r="6" />
-          <path d="M 48 55 C 49 57, 51 57, 52 55" stroke="black" strokeWidth="2" fill="none" strokeLinecap="round" />
+          {/* Eyes */}
+          <circle cx="38" cy="48" r="5" />
+          <circle cx="62" cy="48" r="5" />
+
+          {/* Smile */}
+          <path d="M 48 60 C 50 65, 55 65, 57 60" stroke="black" strokeWidth="2" fill="none" strokeLinecap="round" />
+
+          {/* Seeds as freckles */}
+           <path d="M 30,60 a 1.5,2.5 0 1,1 0,0.1" />
+           <path d="M 70,60 a 1.5,2.5 0 1,1 0,0.1" />
+           <path d="M 45,70 a 1.5,2.5 0 1,1 0,0.1" />
+           <path d="M 55,70 a 1.5,2.5 0 1,1 0,0.1" />
+
         </g>
       </g>
     </svg>
