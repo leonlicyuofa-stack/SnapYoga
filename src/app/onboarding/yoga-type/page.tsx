@@ -89,7 +89,7 @@ export default function InterestedPosesPage() {
     setIsSubmitting(true);
     try {
       await createUserProfileDocument(user, { interestedPoses: data.interestedPoses });
-      router.push('/onboarding/almost-there');
+      router.push('/onboarding/profile-summary');
     } catch (error) {
       console.error("Error saving interested poses:", error);
       toast({
