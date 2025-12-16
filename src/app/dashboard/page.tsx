@@ -20,6 +20,7 @@ import { PracticeAnalytics } from '@/components/features/dashboard/PracticeAnaly
 import { RockCollectionCard } from '@/components/features/dashboard/rock-collection-card';
 import { allRocks } from '@/components/features/dashboard/rock-data';
 import { PracticeCalendarSnapshot } from '@/components/features/dashboard/PracticeCalendarSnapshot';
+import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 
 interface UserProfileData extends DocumentData {
   displayName?: string;
@@ -160,8 +161,9 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <div className="h-full">
-        <div className="container mx-auto px-4 py-6 space-y-4">
+      <div className="relative h-full">
+        <QuadrantBackground />
+        <div className="relative z-10 container mx-auto px-4 py-6 space-y-4">
 
           
           {/* Greeting */}
