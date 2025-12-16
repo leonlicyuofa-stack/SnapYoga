@@ -136,7 +136,7 @@ export function MoodChart({ className }: { className?: string }) {
                     <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
                 </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="hsl(var(--border))" />
+            <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={true} stroke="hsl(var(--border))" />
             <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
             <YAxis hide={true} domain={[0, 5]} />
             <Tooltip content={<CustomTooltip />} />
