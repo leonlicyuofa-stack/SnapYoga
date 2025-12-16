@@ -20,6 +20,22 @@ const prizes = {
   }
 };
 
+const Pattern = () => (
+    <svg width="100%" height="100%" className="absolute inset-0 z-0">
+        <defs>
+            <pattern id="pastel-squares" patternUnits="userSpaceOnUse" width="100" height="100">
+                <rect width="100" height="100" fill="hsl(340, 50%, 96%)"/>
+                <rect x="0" y="0" width="50" height="50" fill="hsl(240, 60%, 95%)" fillOpacity="0.5"/>
+                <rect x="50" y="0" width="50" height="50" fill="hsl(40, 60%, 95%)" fillOpacity="0.5"/>
+                <rect x="0" y="50" width="50" height="50" fill="hsl(120, 60%, 95%)" fillOpacity="0.5"/>
+                <rect x="50" y="50" width="50" height="50" fill="hsl(0, 60%, 95%)" fillOpacity="0.5"/>
+                <rect x="25" y="25" width="50" height="50" fill="hsl(200, 60%, 95%)" fillOpacity="0.4"/>
+            </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#pastel-squares)" />
+    </svg>
+)
+
 export default function PickAPrizePage() {
   const router = useRouter();
   const [selectedSide, setSelectedSide] = useState<'left' | 'right' | null>(null);
@@ -69,13 +85,13 @@ export default function PickAPrizePage() {
             {/* Right Side */}
             <div
               className={cn(
-                "relative flex flex-col items-center justify-center p-8 transition-all duration-500 cursor-pointer group",
-                selectedSide === 'right' ? 'bg-pink-300' : 'bg-pink-200 hover:bg-pink-300/80'
+                "relative flex flex-col items-center justify-center p-8 transition-all duration-500 cursor-pointer group overflow-hidden"
               )}
               onClick={handleRightClick}
             >
+              <Pattern />
               <div className={cn("absolute inset-0 bg-pink-300 transition-all duration-500",
-                selectedSide === 'right' ? 'opacity-100 scale-150' : 'opacity-0'
+                selectedSide === 'right' ? 'opacity-80 scale-150' : 'opacity-0'
               )}></div>
                 
               <div className="relative z-10 text-center text-pink-800 transition-transform duration-300 group-hover:scale-105">
@@ -87,7 +103,7 @@ export default function PickAPrizePage() {
             </div>
 
             {/* "This or That" text */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
               <div className="w-1 h-32 bg-white/50 rotate-12"></div>
               <div className="absolute text-center text-white font-extrabold tracking-widest uppercase">
                   <span className="text-4xl text-shadow-lg">This</span>
