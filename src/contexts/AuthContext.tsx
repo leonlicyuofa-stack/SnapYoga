@@ -28,7 +28,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
-import { getAvatarDataUri } from '@/lib/avatar-utils';
+import { getAvatarDataUri } from '@/lib/avatar-utils.tsx';
 
 
 interface AuthContextType {
