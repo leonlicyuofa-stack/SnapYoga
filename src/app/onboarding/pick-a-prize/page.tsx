@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -10,7 +11,7 @@ import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHea
 const prizes = {
   left: {
     name: "A shiny new Croissant!",
-    image: "/images/croissant.png",
+    image: "https://i.imgur.com/h5cANfR.png",
     imageHint: "a croissant"
   },
   right: {
