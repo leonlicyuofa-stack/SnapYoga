@@ -23,15 +23,31 @@ const prizes = {
 const RightPattern = () => (
     <svg width="100%" height="100%" className="absolute inset-0 z-0" preserveAspectRatio="none">
         <defs>
-            <filter id="brush-stroke" x="-20%" y="-20%" width="140%" height="140%">
-                <feTurbulence type="fractalNoise" baseFrequency="0.01 0.005" numOctaves="2" result="turbulence"/>
-                <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="10" xChannelSelector="R" yChannelSelector="G"/>
-            </filter>
+            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style={{stopColor: '#fce3e1', stopOpacity: 1}} />
+                <stop offset="100%" style={{stopColor: '#fadbcc', stopOpacity: 1}} />
+            </linearGradient>
         </defs>
-        <rect width="100%" height="100%" fill="#F8F3F1"/>
-        <rect y="5%" width="100%" height="20%" fill="#EFE7E4" filter="url(#brush-stroke)" />
-        <rect y="35%" width="100%" height="20%" fill="#D3C3BE" filter="url(#brush-stroke)" />
-        <rect y="65%" width="100%" height="20%" fill="#D4B6C1" filter="url(#brush-stroke)" />
+        <rect width="100%" height="100%" fill="#fdf6f2"/>
+
+        <rect x="0%" y="0" width="10%" height="100%" fill="#fce3e1" />
+        <rect x="10%" y="0" width="8%" height="100%" fill="#f7d9d5" />
+
+        <rect x="18%" y="0" width="15%" height="40%" fill="#e6e6e6" />
+        <rect x="18%" y="40%" width="15%" height="60%" fill="#f2dacc" />
+
+        <rect x="33%" y="0" width="12%" height="100%" fill="#fce3e1" />
+
+        <rect x="45%" y="0" width="5%" height="100%" fill="#ffffff" />
+        <rect x="50%" y="0" width="2%" height="100%" fill="#f7d9d5" />
+        <rect x="52%" y="0" width="3%" height="100%" fill="#ffffff" />
+
+        <rect x="55%" y="0" width="18%" height="65%" fill="#d4dde6" />
+        <rect x="55%" y="65%" width="18%" height="35%" fill="#ede4d6" />
+        
+        <rect x="73%" y="0" width="15%" height="100%" fill="#fcd9c9" />
+        <rect x="88%" y="0" width="4%" height="100%" fill="#f7d9d5" />
+        <rect x="92%" y="0" width="8%" height="100%" fill="#fde5e3" />
     </svg>
 )
 
