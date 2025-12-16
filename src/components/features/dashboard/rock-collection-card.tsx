@@ -11,9 +11,10 @@ import Link from 'next/link';
 
 interface RockCollectionCardProps {
   rocks: Rock[];
+  className?: string;
 }
 
-export function RockCollectionCard({ rocks }: RockCollectionCardProps) {
+export function RockCollectionCard({ rocks, className }: RockCollectionCardProps) {
   // Simulate which rocks are collected for demo purposes
   const collectedRockIds = ['welcome', 'first-analysis', 'join-challenge'];
 
@@ -28,7 +29,7 @@ export function RockCollectionCard({ rocks }: RockCollectionCardProps) {
   }
 
   return (
-    <Card className="shadow-lg mb-6">
+    <div className={className}>
       <CardHeader>
         <CardTitle className="flex items-center text-xl md:text-2xl">
           <Gem className="mr-3 h-7 w-7 text-primary" />
@@ -85,8 +86,6 @@ export function RockCollectionCard({ rocks }: RockCollectionCardProps) {
               </Link>
           </Button>
       </CardFooter>
-    </Card>
+    </div>
   );
 }
-
-    
