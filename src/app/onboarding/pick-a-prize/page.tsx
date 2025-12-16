@@ -21,18 +21,17 @@ const prizes = {
 };
 
 const Pattern = () => (
-    <svg width="100%" height="100%" className="absolute inset-0 z-0">
+    <svg width="100%" height="100%" className="absolute inset-0 z-0" preserveAspectRatio="none">
         <defs>
-            <pattern id="pastel-squares" patternUnits="userSpaceOnUse" width="100" height="100">
-                <rect width="100" height="100" fill="hsl(340, 50%, 96%)"/>
-                <rect x="0" y="0" width="50" height="50" fill="hsl(240, 60%, 95%)" fillOpacity="0.5"/>
-                <rect x="50" y="0" width="50" height="50" fill="hsl(40, 60%, 95%)" fillOpacity="0.5"/>
-                <rect x="0" y="50" width="50" height="50" fill="hsl(120, 60%, 95%)" fillOpacity="0.5"/>
-                <rect x="50" y="50" width="50" height="50" fill="hsl(0, 60%, 95%)" fillOpacity="0.5"/>
-                <rect x="25" y="25" width="50" height="50" fill="hsl(200, 60%, 95%)" fillOpacity="0.4"/>
-            </pattern>
+            <filter id="brush-stroke" x="-20%" y="-20%" width="140%" height="140%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.01 0.005" numOctaves="2" result="turbulence"/>
+                <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="10" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
         </defs>
-        <rect width="100%" height="100%" fill="url(#pastel-squares)" />
+        <rect width="100%" height="100%" fill="#F8F3F1"/>
+        <rect y="5%" width="100%" height="20%" fill="#EFE7E4" filter="url(#brush-stroke)" />
+        <rect y="35%" width="100%" height="20%" fill="#D3C3BE" filter="url(#brush-stroke)" />
+        <rect y="65%" width="100%" height="20%" fill="#D4B6C1" filter="url(#brush-stroke)" />
     </svg>
 )
 
