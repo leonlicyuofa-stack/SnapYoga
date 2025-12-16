@@ -134,7 +134,7 @@ export function AppShell({ children }: AppShellProps) {
                 </div>
                 
                 <div className="absolute left-1/2 -translate-x-1/2 font-semibold text-lg">
-                   {pathname === '/dashboard' ? 'Welcome!' : ''}
+                   
                 </div>
             
                 <div className="flex items-center space-x-2">
