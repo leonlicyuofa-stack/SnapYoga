@@ -83,7 +83,7 @@ export default function DrawResultPage() {
                 {error ? (
                 <XCircle className="mx-auto h-16 w-16 text-destructive mb-4" />
                 ) : prize ? (
-                <Gift className="mx-auto h-16 w-16 text-yellow-400 mb-4" />
+                null
                 ) : (
                 <CheckCircle className="mx-auto h-16 w-16 text-green-500 mb-4" />
                 )}
