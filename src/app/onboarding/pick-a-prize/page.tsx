@@ -14,9 +14,9 @@ const prizes = {
     imageHint: "a croissant"
   },
   right: {
-    name: "Some delicious Toast!",
-    image: "/images/toast.png",
-    imageHint: "toast with butter"
+    name: "A warm cup of Coffee!",
+    image: "https://images.unsplash.com/photo-1615485736894-a2d2e6d4cd9a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxNnx8Y29mZmVlJTIwY3VwfGVufDB8fHx8MTc2NTg5NDg0Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+    imageHint: "coffee cup"
   }
 };
 
@@ -116,7 +116,7 @@ export default function PickAPrizePage() {
                 <div className="relative w-48 h-48 sm:w-64 sm:h-64 drop-shadow-2xl">
                     <Image src={prizes.right.image} alt={prizes.right.name} fill className="object-contain" data-ai-hint={prizes.right.imageHint}/>
                 </div>
-                <h2 className="mt-4 text-2xl font-bold">{prizes.right.name.split(' ')[3]}</h2>
+                <h2 className="mt-4 text-2xl font-bold">{prizes.right.name.split(' ')[4]}</h2>
               </div>
             </div>
 
