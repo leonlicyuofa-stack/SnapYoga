@@ -1,3 +1,4 @@
+
 import type { SVGProps } from 'react';
 
 export function Avatar2Icon(props: SVGProps<SVGSVGElement>) {

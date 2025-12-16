@@ -1,3 +1,4 @@
+
 import type { SVGProps } from 'react';
 
 export function Avatar4Icon(props: SVGProps<SVGSVGElement>) {
@@ -11,29 +12,29 @@ export function Avatar4Icon(props: SVGProps<SVGSVGElement>) {
         {/* Eyes */}
         <g>
           {/* Left Eye */}
-          <circle cx="38" cy="45" r="14" fill="#FFFFFF" stroke="#8B5742" strokeWidth="2.5"/>
-          <circle cx="45" cy="45" r="9" fill="#2E4A8D" />
+          <circle cx="35" cy="48" r="14" fill="#FFFFFF" stroke="#8B5742" strokeWidth="2.5"/>
+          <circle cx="42" cy="48" r="9" fill="#2E4A8D" />
 
           {/* Right Eye */}
-          <circle cx="68" cy="45" r="14" fill="#FFFFFF" stroke="#8B5742" strokeWidth="2.5"/>
-          <circle cx="75" cy="45" r="9" fill="#2E4A8D" />
+          <circle cx="65" cy="48" r="14" fill="#FFFFFF" stroke="#8B5742" strokeWidth="2.5"/>
+          <circle cx="72" cy="48" r="9" fill="#2E4A8D" />
         </g>
         
         {/* Mouth and Fangs */}
         <g>
           {/* Mouth */}
-          <ellipse cx="53" cy="62" rx="7" ry="4" fill="#D9534F" stroke="#B54440" strokeWidth="1"/>
+          <ellipse cx="50" cy="65" rx="7" ry="4" fill="#D9534F" stroke="#B54440" strokeWidth="1"/>
           
           {/* Fangs line */}
-          <path d="M 38 72 L 68 72" stroke="#8B5742" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+          <path d="M 35 75 L 65 75" stroke="#8B5742" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
           
           {/* Fangs */}
-          <path d="M 42 72 L 46 78 L 50 72 Z" fill="#FFFFFF" stroke="#CCCCCC" strokeWidth="1" />
-          <path d="M 58 72 L 62 78 L 66 72 Z" fill="#FFFFFF" stroke="#CCCCCC" strokeWidth="1" />
+          <path d="M 39 75 L 43 81 L 47 75 Z" fill="#FFFFFF" stroke="#CCCCCC" strokeWidth="1" />
+          <path d="M 55 75 L 59 81 L 63 75 Z" fill="#FFFFFF" stroke="#CCCCCC" strokeWidth="1" />
         </g>
         
         {/* Cheek */}
-        <path d="M 70 70 C 75 75, 75 80, 70 85" stroke="#8B5742" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+        <path d="M 67 73 C 72 78, 72 83, 67 88" stroke="#8B5742" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
 
       </g>
     </svg>
