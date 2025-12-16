@@ -30,7 +30,7 @@ const projects = [
   {
     icon: PracticeAnalytics,
     title: "Profile",
-    category: "Settings",
+    category: "Overview",
     bgColor: "bg-pistachio-background", 
     href: "/profile",
     className: "col-span-1 row-span-1",
