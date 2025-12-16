@@ -2,45 +2,45 @@
 "use client";
 
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  ResponsiveContainer,
-} from "recharts";
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { PieChart, Pie, Cell } from "recharts";
 
-const data = [
-  { name: "Mon", poses: 4 },
-  { name: "Tue", poses: 3 },
-  { name: "Wed", poses: 5 },
-  { name: "Thu", poses: 2 },
-  { name: "Fri", poses: 6 },
-  { name: "Sat", poses: 1 },
-  { name: "Sun", poses: 4 },
+// Mock data for the pie chart
+const monthlyProgress = 72;
+const chartData = [
+  { name: 'Completed', value: monthlyProgress, fill: 'hsl(var(--primary))' },
+  { name: 'Remaining', value: 100 - monthlyProgress, fill: 'hsl(var(--muted))' },
 ];
+const chartConfig = {
+  progress: {
+    label: 'Progress',
+    color: 'hsl(var(--primary))',
+  },
+  remaining: {
+    label: 'Remaining',
+    color: 'hsl(var(--muted))',
+  }
+}
 
 export function PracticeCalendarSnapshot() {
   return (
     <div className="h-full w-full flex flex-col justify-center items-center">
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} margin={{ top: 10, right: 0, left: -20, bottom: -10 }}>
-          <XAxis 
-            dataKey="name" 
-            stroke="hsl(var(--foreground))"
-            fontSize={12}
-            tickLine={false}
-            axisLine={false}
-          />
-          <YAxis 
-            stroke="hsl(var(--foreground))"
-            fontSize={12}
-            tickLine={false}
-            axisLine={false}
-          />
-          <Bar dataKey="poses" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-        </BarChart>
-      </ResponsiveContainer>
-      <p className="text-xs text-muted-foreground mt-1 text-center">Weekly Practice</p>
+        <ChartContainer config={chartConfig} className="mx-auto aspect-square h-full w-full">
+            <PieChart>
+                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                <Pie data={chartData} dataKey="value" nameKey="name" innerRadius={25} outerRadius={35} strokeWidth={2}>
+                    <Cell key="completed" fill="var(--color-progress)" />
+                    <Cell key="remaining" fill="var(--color-remaining)" />
+                </Pie>
+                 <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="fill-foreground text-xl font-bold">
+                    {monthlyProgress}%
+                </text>
+            </PieChart>
+        </ChartContainer>
+        <p className="text-xs text-muted-foreground mt-1 text-center">Monthly Goal</p>
     </div>
   );
 }

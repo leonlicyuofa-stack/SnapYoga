@@ -28,7 +28,7 @@ interface UserProfileData extends DocumentData {
 
 const projects = [
   {
-    icon: PracticeAnalytics,
+    component: PracticeAnalytics,
     title: "Profile",
     category: "Overview",
     bgColor: "bg-pistachio-background", 
@@ -36,7 +36,7 @@ const projects = [
     className: "col-span-1 row-span-1",
   },
   {
-    icon: RockCollectionCard,
+    component: RockCollectionCard,
     title: "Rock Collection",
     category: "Collectibles",
     bgColor: "bg-rose-200",
@@ -45,7 +45,7 @@ const projects = [
     props: { rocks: allRocks },
   },
   {
-    icon: null,
+    component: null,
     title: "Friends Challenges",
     category: "Community",
     bgColor: "bg-fuchsia-200",
@@ -53,7 +53,7 @@ const projects = [
     className: "col-span-1 row-span-2"
   },
   {
-    icon: PracticeCalendarSnapshot,
+    component: PracticeCalendarSnapshot,
     title: "Practice Calendar",
     category: "Tracking",
     bgColor: "bg-violet-200",
@@ -206,8 +206,8 @@ export default function DashboardPage() {
           {/* Ongoing Projects */}
             <div className="grid grid-cols-2 grid-rows-3 gap-4 h-[30rem]">
               {projects.map((project, index) => {
-                const Icon = project.icon
-                const CardProps = project.icon ? project.props : {};
+                const Component = project.component
+                const CardProps = project.component ? project.props : {};
                 return (
                   <Link href={project.href} key={index} className={cn("block hover:scale-105 transition-transform duration-200", project.className)}>
                     <Card className={cn(project.bgColor, "rounded-xl shadow-sm p-4 flex flex-col h-full relative overflow-hidden")}>
@@ -217,7 +217,7 @@ export default function DashboardPage() {
                         <p className="text-sm text-card-foreground/90">{project.category}</p>
                       </CardHeader>
                       <CardContent className="p-2 flex justify-center items-center flex-1">
-                        {Icon ? <Icon {...CardProps} className="h-full w-full text-card-foreground/80" /> : null}
+                        {Component ? <Component {...CardProps} className="h-full w-full text-card-foreground/80" /> : null}
                       </CardContent>
                     </Card>
                   </Link>
