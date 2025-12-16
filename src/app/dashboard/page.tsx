@@ -19,6 +19,7 @@ import Image from 'next/image';
 import { PracticeAnalytics } from '@/components/features/dashboard/PracticeAnalytics';
 import { RockCollectionCard } from '@/components/features/dashboard/rock-collection-card';
 import { allRocks } from '@/components/features/dashboard/rock-data';
+import { PracticeCalendarSnapshot } from '@/components/features/dashboard/PracticeCalendarSnapshot';
 
 interface UserProfileData extends DocumentData {
   displayName?: string;
@@ -51,7 +52,7 @@ const projects = [
     className: "col-span-1 row-span-2"
   },
   {
-    icon: null,
+    icon: PracticeCalendarSnapshot,
     title: "Practice Calendar",
     category: "Tracking",
     bgColor: "bg-violet-200",
