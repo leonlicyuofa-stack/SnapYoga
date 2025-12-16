@@ -16,6 +16,7 @@ import type { DocumentData } from 'firebase/firestore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { PracticeAnalytics } from '@/components/features/dashboard/PracticeAnalytics';
 
 interface UserProfileData extends DocumentData {
   displayName?: string;
@@ -23,7 +24,7 @@ interface UserProfileData extends DocumentData {
 
 const projects = [
   {
-    icon: null,
+    icon: PracticeAnalytics,
     title: "Pose Analysis",
     category: "AI Feedback",
     bgColor: "bg-pistachio-background", 
@@ -209,7 +210,7 @@ export default function DashboardPage() {
                         <p className="text-sm text-card-foreground/90">{project.category}</p>
                       </CardHeader>
                       <CardContent className="p-2 flex justify-center items-center flex-1">
-                        {Icon && <Icon className="h-12 w-12 text-card-foreground/80" />}
+                        {Icon ? <Icon className="h-full w-full text-card-foreground/80" /> : null}
                       </CardContent>
                     </Card>
                   </Link>
