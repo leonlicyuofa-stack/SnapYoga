@@ -21,6 +21,7 @@ import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { cn } from '@/lib/utils';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import Link from 'next/link';
+import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 
 
 const usernameChangeSchema = z.object({
@@ -163,122 +164,125 @@ export default function ProfilePage() {
 
   return (
     <AppShell>
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-3xl mx-auto space-y-8 w-full bg-card/50 backdrop-blur-sm p-4 sm:p-6 md:p-8 rounded-xl">
-            <header className="text-center">
-              <h1 className="text-4xl font-extrabold tracking-tight text-primary flex items-center justify-center gap-3">
-                <UserCircle className="h-10 w-10" /> Your Profile
-              </h1>
-              <p className="mt-3 text-lg text-muted-foreground">
-                Manage your account settings and preferences.
-              </p>
-            </header>
+      <div className="relative min-h-[calc(100vh-8rem)]">
+        <QuadrantBackground />
+        <div className="container mx-auto px-4 py-12 relative z-10">
+            <div className="max-w-3xl mx-auto space-y-8 w-full bg-card/50 backdrop-blur-sm p-4 sm:p-6 md:p-8 rounded-xl">
+                <header className="text-center">
+                <h1 className="text-4xl font-extrabold tracking-tight text-primary flex items-center justify-center gap-3">
+                    <UserCircle className="h-10 w-10" /> Your Profile
+                </h1>
+                <p className="mt-3 text-lg text-muted-foreground">
+                    Manage your account settings and preferences.
+                </p>
+                </header>
 
-            <dl className="divide-y divide-border/50">
-                {/* User Information */}
-                <div className="py-5">
-                    <dt className="text-xl font-semibold flex items-center gap-2 mb-4">
-                        <UserCircle className="h-6 w-6 text-primary" />
-                        Username
-                    </dt>
-                    <dd>
-                        <form onSubmit={handleSubmitUsername(onUsernameSubmit)} className="space-y-4 mt-2">
-                            <div className="space-y-2">
-                                <Label htmlFor="username">Your username</Label>
-                                <div className="flex items-center gap-2">
-                                    <Input 
-                                        id="username" 
-                                        type="text"
-                                        {...registerUsername("username")}
-                                        className={cn(usernameErrors.username ? "border-destructive" : "", "flex-grow")}
-                                    />
-                                    <Button type="submit" disabled={isUsernameSubmitting || authLoading}>
-                                        {isUsernameSubmitting ? <SmileyRockLoader /> : <Save className="h-4 w-4" />}
-                                    </Button>
+                <dl className="divide-y divide-border/50">
+                    {/* User Information */}
+                    <div className="py-5">
+                        <dt className="text-xl font-semibold flex items-center gap-2 mb-4">
+                            <UserCircle className="h-6 w-6 text-primary" />
+                            Username
+                        </dt>
+                        <dd>
+                            <form onSubmit={handleSubmitUsername(onUsernameSubmit)} className="space-y-4 mt-2">
+                                <div className="space-y-2">
+                                    <Label htmlFor="username">Your username</Label>
+                                    <div className="flex items-center gap-2">
+                                        <Input 
+                                            id="username" 
+                                            type="text"
+                                            {...registerUsername("username")}
+                                            className={cn(usernameErrors.username ? "border-destructive" : "", "flex-grow")}
+                                        />
+                                        <Button type="submit" disabled={isUsernameSubmitting || authLoading}>
+                                            {isUsernameSubmitting ? <SmileyRockLoader /> : <Save className="h-4 w-4" />}
+                                        </Button>
+                                    </div>
+                                    {usernameErrors.username && <p className="text-sm text-destructive">{usernameErrors.username.message}</p>}
                                 </div>
-                                {usernameErrors.username && <p className="text-sm text-destructive">{usernameErrors.username.message}</p>}
+                            </form>
+                        </dd>
+                    </div>
+                    
+                    {/* Change Password */}
+                    <div className="py-5">
+                        <dt className="text-xl font-semibold flex items-center gap-2 mb-4">
+                            <KeyRound className="h-6 w-6 text-primary" />
+                            Change Password
+                        </dt>
+                        <dd>
+                            <form onSubmit={handleSubmitPassword(onPasswordSubmit)} className="space-y-4 mt-2">
+                            <div className="space-y-2">
+                                <Label htmlFor="currentPassword">Current Password</Label>
+                                <Input id="currentPassword" type="password" {...registerPassword("currentPassword")} placeholder="••••••••" className={passwordErrors.currentPassword ? "border-destructive" : ""}/>
+                                {passwordErrors.currentPassword && <p className="text-sm text-destructive">{passwordErrors.currentPassword.message}</p>}
                             </div>
-                        </form>
-                    </dd>
-                </div>
-                
-                {/* Change Password */}
-                <div className="py-5">
-                    <dt className="text-xl font-semibold flex items-center gap-2 mb-4">
-                        <KeyRound className="h-6 w-6 text-primary" />
-                        Change Password
-                    </dt>
-                    <dd>
-                        <form onSubmit={handleSubmitPassword(onPasswordSubmit)} className="space-y-4 mt-2">
-                          <div className="space-y-2">
-                            <Label htmlFor="currentPassword">Current Password</Label>
-                            <Input id="currentPassword" type="password" {...registerPassword("currentPassword")} placeholder="••••••••" className={passwordErrors.currentPassword ? "border-destructive" : ""}/>
-                            {passwordErrors.currentPassword && <p className="text-sm text-destructive">{passwordErrors.currentPassword.message}</p>}
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="newPassword">New Password</Label>
-                            <Input id="newPassword" type="password" {...registerPassword("newPassword")} placeholder="Minimum 6 characters" className={passwordErrors.newPassword ? "border-destructive" : ""}/>
-                            {passwordErrors.newPassword && <p className="text-sm text-destructive">{passwordErrors.newPassword.message}</p>}
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="confirmNewPassword">Confirm New Password</Label>
-                            <Input id="confirmNewPassword" type="password" {...registerPassword("confirmNewPassword")} placeholder="Re-type new password" className={passwordErrors.confirmNewPassword ? "border-destructive" : ""}/>
-                            {passwordErrors.confirmNewPassword && <p className="text-sm text-destructive">{passwordErrors.confirmNewPassword.message}</p>}
-                          </div>
-                          <Button type="submit" className="w-full" disabled={isPasswordSubmitting || authLoading}>
-                            {isPasswordSubmitting ? <SmileyRockLoader /> : <Save className="mr-2 h-4 w-4" />}
-                            {isPasswordSubmitting ? "Updating..." : "Update Password"}
-                          </Button>
-                        </form>
-                    </dd>
-                </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="newPassword">New Password</Label>
+                                <Input id="newPassword" type="password" {...registerPassword("newPassword")} placeholder="Minimum 6 characters" className={passwordErrors.newPassword ? "border-destructive" : ""}/>
+                                {passwordErrors.newPassword && <p className="text-sm text-destructive">{passwordErrors.newPassword.message}</p>}
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="confirmNewPassword">Confirm New Password</Label>
+                                <Input id="confirmNewPassword" type="password" {...registerPassword("confirmNewPassword")} placeholder="Re-type new password" className={passwordErrors.confirmNewPassword ? "border-destructive" : ""}/>
+                                {passwordErrors.confirmNewPassword && <p className="text-sm text-destructive">{passwordErrors.confirmNewPassword.message}</p>}
+                            </div>
+                            <Button type="submit" className="w-full" disabled={isPasswordSubmitting || authLoading}>
+                                {isPasswordSubmitting ? <SmileyRockLoader /> : <Save className="mr-2 h-4 w-4" />}
+                                {isPasswordSubmitting ? "Updating..." : "Update Password"}
+                            </Button>
+                            </form>
+                        </dd>
+                    </div>
 
-                 {/* Analysis Logs */}
-                <div className="py-5">
-                    <dt className="text-xl font-semibold flex items-center gap-2 mb-4">
-                        <FileText className="h-6 w-6 text-primary" />
-                        Your Past Analysis
-                    </dt>
-                    <dd className="space-y-4">
-                        <p className="text-sm text-muted-foreground">
-                            Review your past pose analysis sessions.
-                        </p>
-                        <Button variant="outline" asChild>
-                            <Link href="/profile/analysis-logs">View your analysis</Link>
-                        </Button>
-                    </dd>
-                </div>
-                
-                {/* Invite Friends */}
-                <div className="py-5">
-                    <dt className="text-xl font-semibold flex items-center gap-2 mb-4">
-                        <Share2 className="h-6 w-6 text-primary" />
-                        {t('inviteFriendsTitle')}
-                    </dt>
-                    <dd className="space-y-4">
-                         <div className="text-center p-3 bg-green-100/50 text-green-800 border border-green-200 rounded-md text-sm font-medium">
-                            {t('referralBonusText')}
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium mb-1">{t('yourInviteLink')}</p>
-                            <div className="flex items-center space-x-2">
-                                <Input type="text" value={inviteLink} readOnly className="text-sm text-muted-foreground" aria-label="Invite Link" />
-                                <Button variant="outline" size="icon" onClick={handleCopyInviteLink} title="Copy Link"><Copy className="h-5 w-5" /></Button>
+                    {/* Analysis Logs */}
+                    <div className="py-5">
+                        <dt className="text-xl font-semibold flex items-center gap-2 mb-4">
+                            <FileText className="h-6 w-6 text-primary" />
+                            Your Past Analysis
+                        </dt>
+                        <dd className="space-y-4">
+                            <p className="text-sm text-muted-foreground">
+                                Review your past pose analysis sessions.
+                            </p>
+                            <Button variant="outline" asChild>
+                                <Link href="/profile/analysis-logs">View your analysis</Link>
+                            </Button>
+                        </dd>
+                    </div>
+                    
+                    {/* Invite Friends */}
+                    <div className="py-5">
+                        <dt className="text-xl font-semibold flex items-center gap-2 mb-4">
+                            <Share2 className="h-6 w-6 text-primary" />
+                            {t('inviteFriendsTitle')}
+                        </dt>
+                        <dd className="space-y-4">
+                            <div className="text-center p-3 bg-green-100/50 text-green-800 border border-green-200 rounded-md text-sm font-medium">
+                                {t('referralBonusText')}
                             </div>
-                        </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                            <Button variant="outline" className="w-full" asChild disabled={!inviteLink}><a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer"><MessageSquare className="mr-2 h-5 w-5" /> WhatsApp</a></Button>
-                            <Button variant="outline" className="w-full" onClick={handleInstagramShare} disabled={!inviteLink}><Share2 className="mr-2 h-5 w-5" /> Instagram</Button>
-                            <Button variant="outline" className="w-full" asChild disabled={!inviteLink}><a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer"><PinterestIcon className="mr-2 h-5 w-5" /> Pinterest</a></Button>
-                        </div>
-                         <p className="text-xs text-muted-foreground text-center w-full !mt-6">
-                            {t('inviteLinkHelp')}
-                        </p>
-                    </dd>
-                </div>
-            </dl>
-          </div>
+                            <div>
+                                <p className="text-sm font-medium mb-1">{t('yourInviteLink')}</p>
+                                <div className="flex items-center space-x-2">
+                                    <Input type="text" value={inviteLink} readOnly className="text-sm text-muted-foreground" aria-label="Invite Link" />
+                                    <Button variant="outline" size="icon" onClick={handleCopyInviteLink} title="Copy Link"><Copy className="h-5 w-5" /></Button>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                <Button variant="outline" className="w-full" asChild disabled={!inviteLink}><a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer"><MessageSquare className="mr-2 h-5 w-5" /> WhatsApp</a></Button>
+                                <Button variant="outline" className="w-full" onClick={handleInstagramShare} disabled={!inviteLink}><Share2 className="mr-2 h-5 w-5" /> Instagram</Button>
+                                <Button variant="outline" className="w-full" asChild disabled={!inviteLink}><a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer"><PinterestIcon className="mr-2 h-5 w-5" /> Pinterest</a></Button>
+                            </div>
+                            <p className="text-xs text-muted-foreground text-center w-full !mt-6">
+                                {t('inviteLinkHelp')}
+                            </p>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
         </div>
+      </div>
     </AppShell>
   );
 }
