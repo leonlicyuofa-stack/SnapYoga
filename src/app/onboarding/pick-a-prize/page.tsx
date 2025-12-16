@@ -108,7 +108,7 @@ export default function PickAPrizePage() {
               )}></div>
 
               <div className="relative z-10 text-center text-white transition-transform duration-300 group-hover:scale-105">
-                <h2 className="mt-4 text-2xl font-bold">This</h2>
+                
               </div>
             </div>
 
@@ -125,7 +125,7 @@ export default function PickAPrizePage() {
               )}></div>
                 
               <div className="relative z-10 text-center text-white transition-transform duration-300 group-hover:scale-105">
-                <h2 className="mt-4 text-2xl font-bold">That</h2>
+                
               </div>
             </div>
 
@@ -133,9 +133,9 @@ export default function PickAPrizePage() {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
               <div className="w-1 h-32 bg-white/50 rotate-12"></div>
               <div className="absolute text-center text-white font-extrabold tracking-widest uppercase">
-                  <span className="text-4xl text-shadow-lg">This</span>
+                  
                   <span className="block text-2xl my-1">or</span>
-                  <span className="text-4xl text-shadow-lg">That</span>
+                  
               </div>
             </div>
           </div>
