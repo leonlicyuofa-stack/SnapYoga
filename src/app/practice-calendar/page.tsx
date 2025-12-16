@@ -101,37 +101,25 @@ export default function PracticeCalendarPage() {
   const DayContent = (props: { date: Date }) => {
     const dateStr = format(props.date, 'yyyy-MM-dd');
     const mood = moodsByDate[dateStr];
-    
-    if (mood) {
-      const colorClass = moodToColor[mood.name] || 'bg-muted';
-      const faceType = moodToFace[mood.name] || 'neutral';
-      
-      return (
-        <div className="relative w-full h-full flex items-center justify-center">
-            <div className="absolute top-0 right-0 left-0 bottom-0 flex items-center justify-center">
-               <SmileyPebbleIcon mood={faceType} className={cn("w-11 h-11 transition-all", colorClass)} />
-            </div>
-           <span className={cn(
-               "relative z-10 font-bold text-xs", 
-               isSameDay(props.date, new Date()) ? "bg-primary text-primary-foreground rounded-full h-4 w-4 flex items-center justify-center" : "text-black/60"
+
+    return (
+        <div className="relative w-full h-full flex flex-col items-center justify-center gap-1 pt-1">
+            <span className={cn(
+                "relative z-10 font-semibold", 
+                isSameDay(props.date, new Date()) ? "text-primary" : "text-muted-foreground",
             )}>
                 {format(props.date, 'd')}
             </span>
+            {mood && (
+                <div className={cn(
+                    "w-8 h-8 rounded-full flex items-center justify-center transition-all", 
+                    moodToColor[mood.name] || 'bg-muted'
+                )}>
+                    <SmileyPebbleIcon mood={moodToFace[mood.name] || 'neutral'} className="w-5 h-5" />
+                </div>
+            )}
         </div>
-      );
-    }
-    
-    // Render day number for days without mood
-    return (
-        <div className="relative w-full h-full flex items-center justify-center">
-             <span className={cn(
-                 "relative z-10 font-semibold", 
-                 isSameDay(props.date, new Date()) ? "text-primary" : "text-muted-foreground"
-             )}>
-                {format(props.date, 'd')}
-             </span>
-        </div>
-    )
+    );
   };
 
   return (
@@ -170,9 +158,9 @@ export default function PracticeCalendarPage() {
                     head_row: "flex justify-around",
                     head_cell: "text-muted-foreground font-semibold w-full uppercase text-sm",
                     row: "flex w-full mt-2 justify-around",
-                    cell: "h-16 w-16 text-center text-sm p-0 relative",
-                    day: "h-16 w-16 p-0 font-normal rounded-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2",
-                    day_selected: "bg-transparent", // Selection is handled by day content
+                    cell: "h-24 w-24 text-center text-sm p-0 relative rounded-full",
+                    day: "h-24 w-24 p-0 font-normal rounded-full focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2",
+                    day_selected: "bg-primary/10", // Highlight selected day
                     day_today: "", // Today is handled by day content
                     day_outside: "opacity-30",
                     day_disabled: "text-muted-foreground opacity-50",
