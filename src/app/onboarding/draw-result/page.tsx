@@ -11,6 +11,8 @@ import { CheckCircle, XCircle, Gift, ArrowRight, MoveUpRight, Loader2 } from 'lu
 import { useToast } from '@/hooks/use-toast';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { UserCircle } from 'lucide-react';
 
 export default function DrawResultPage() {
   const { user, loading: authLoading } = useAuth();
@@ -83,14 +85,15 @@ export default function DrawResultPage() {
                 {error ? (
                 <XCircle className="mx-auto h-16 w-16 text-destructive mb-4" />
                 ) : prize ? (
-                null
+                 <Avatar className="h-32 w-32 mx-auto mb-4 border-4 border-primary/20 shadow-lg">
+                    <AvatarImage src={user?.photoURL || ''} alt={user?.displayName || 'User'} />
+                    <AvatarFallback>
+                        <UserCircle className="h-full w-full text-muted-foreground" />
+                    </AvatarFallback>
+                 </Avatar>
                 ) : (
                 <CheckCircle className="mx-auto h-16 w-16 text-green-500 mb-4" />
                 )}
-                <h2 className="text-3xl font-bold">
-                    {error ? "Spin Error" : prize ? "Congratulations!" : "Onboarding Nearly Done!"}
-                </h2>
-                <p className="text-muted-foreground">Your lucky draw result.</p>
             </div>
             <div className="space-y-4">
                 {error ? (
