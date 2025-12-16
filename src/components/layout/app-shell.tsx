@@ -110,64 +110,57 @@ export function AppShell({ children }: AppShellProps) {
     </>
   )
 
-  const renderHeaderLeft = () => {
+  const renderHeader = () => {
+    if (noHeaderRoutes.includes(pathname)) return null;
+
     if (showOnboardingHeader) {
         return (
-            <Button variant="ghost" size="icon" className="rounded-full bg-card/20 backdrop-blur-sm" onClick={() => router.back()}>
-                <ArrowLeft className="h-5 w-5" />
-            </Button>
+             <header className="fixed top-0 z-40 w-full">
+                <div className="container mx-auto flex h-20 items-center justify-start px-4 sm:px-6 lg:px-8">
+                    <Button variant="ghost" size="icon" className="rounded-full bg-card/20 backdrop-blur-sm h-12 w-12" onClick={() => router.back()}>
+                        <ArrowLeft className="h-6 w-6" />
+                    </Button>
+                </div>
+             </header>
         );
     }
-    return <div className="w-10"></div>; // Placeholder to keep balance
+    
+    // Default Header
+    return (
+        <header className="sticky top-0 z-40 w-full border-b bg-card/80 backdrop-blur-sm">
+            <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center gap-2">
+                    <div className="w-10"></div>
+                </div>
+                
+                <div className="absolute left-1/2 -translate-x-1/2 font-semibold text-lg">
+                   {pathname === '/dashboard' ? 'Welcome!' : ''}
+                </div>
+            
+                <div className="flex items-center space-x-2">
+                    <Button variant="ghost" size="icon">
+                        <Search />
+                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                                <MoreHorizontal />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-56" align="end">
+                            {userMenuItems}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </div>
+        </header>
+    );
   }
-
-  const renderHeaderCenter = () => {
-    if (pathname === '/dashboard') {
-      return <div className="font-semibold text-lg">Welcome!</div>;
-    }
-    if (showOnboardingHeader) {
-        return <div className="font-semibold text-lg"></div>; // Can add titles here later
-    }
-    // Default empty state to balance flexbox
-    return <div></div>;
-  };
 
 
   return (
     <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
-      {!noHeaderRoutes.includes(pathname) && (
-        <header className="sticky top-0 z-40 w-full border-b bg-card/80 backdrop-blur-sm">
-            <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center gap-2">
-                    {renderHeaderLeft()}
-                </div>
-                
-                <div className="absolute left-1/2 -translate-x-1/2">
-                   {renderHeaderCenter()}
-                </div>
-            
-                <div className="flex items-center space-x-2">
-                    {!showOnboardingHeader && (
-                        <>
-                            <Button variant="ghost" size="icon">
-                                <Search />
-                            </Button>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="icon">
-                                        <MoreHorizontal />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-56" align="end">
-                                    {userMenuItems}
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </>
-                    )}
-                </div>
-            </div>
-        </header>
-      )}
+      {renderHeader()}
 
       <main className={cn("flex-grow", !noFooterRoutes.includes(pathname) && "mb-20")}>
         {children}
