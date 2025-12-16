@@ -8,8 +8,8 @@ import { collection, getDocs, query, where, type Timestamp, orderBy, doc, getDoc
 import { AppShell } from '@/components/layout/app-shell';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle, CalendarDays, Dumbbell, Star, Goal, Smile, FileText } from 'lucide-react';
-import { startOfDay, format, isSameDay } from 'date-fns';
+import { AlertCircle, CalendarDays, Dumbbell, Star, Goal, Smile, FileText, Upload, RefreshCcw } from 'lucide-react';
+import { startOfDay, format, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
@@ -20,6 +20,8 @@ import {
 import { PieChart, Pie, Cell } from "recharts";
 import { Calendar } from '@/components/ui/calendar';
 import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
+import { Button } from '@/components/ui/button';
+import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
 
 
 interface StoredAnalysis {
@@ -36,34 +38,28 @@ interface StoredMood {
   emoji: string;
 }
 
+const moodToColor: Record<string, string> = {
+  'Happy': 'bg-green-300',
+  'Relaxed': 'bg-green-200',
+  'Sad': 'bg-yellow-300',
+  'Angry': 'bg-yellow-400',
+};
+
+const moodToFace: Record<string, 'happy' | 'neutral' | 'sad'> = {
+  'Happy': 'happy',
+  'Relaxed': 'happy',
+  'Sad': 'sad',
+  'Angry': 'sad',
+}
+
 export default function PracticeCalendarPage() {
   const { user, loading: authLoading } = useAuth();
-  const [practiceDates, setPracticeDates] = useState<Date[]>([]);
   const [moodsByDate, setMoodsByDate] = useState<Record<string, StoredMood>>({});
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [analysesForSelectedDay, setAnalysesForSelectedDay] = useState<StoredAnalysis[]>([]);
-  const [allAnalyses, setAllAnalyses] = useState<StoredAnalysis[]>([]);
   
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentMonth, setCurrentMonth] = useState<Date>(startOfDay(new Date()));
-
-  // Mock data for the pie chart
-  const monthlyProgress = 72;
-  const chartData = [
-    { name: 'Completed', value: monthlyProgress, fill: 'hsl(var(--primary))' },
-    { name: 'Remaining', value: 100 - monthlyProgress, fill: 'hsl(var(--muted))' },
-  ];
-  const chartConfig = {
-    progress: {
-      label: 'Progress',
-      color: 'hsl(var(--primary))',
-    },
-    remaining: {
-      label: 'Remaining',
-      color: 'hsl(var(--muted))',
-    }
-  }
 
   useEffect(() => {
     if (authLoading) return;
@@ -76,26 +72,12 @@ export default function PracticeCalendarPage() {
     setIsLoadingData(true);
     setError(null);
 
-    const fetchAnalyses = getDocs(query(collection(firestore, 'users', user.uid, 'poseAnalyses'), orderBy('createdAt', 'desc')));
-    const fetchMoods = getDocs(query(collection(firestore, 'users', user.uid, 'moods'), orderBy('loggedAt', 'desc')));
+    const start = startOfMonth(currentMonth);
+    const end = endOfMonth(currentMonth);
 
-    Promise.all([fetchAnalyses, fetchMoods]).then(([analysesSnapshot, moodsSnapshot]) => {
-        // Process Analyses
-        const fetchedAnalyses: StoredAnalysis[] = [];
-        analysesSnapshot.forEach(doc => {
-            fetchedAnalyses.push({ id: doc.id, ...doc.data() } as StoredAnalysis);
-        });
-        setAllAnalyses(fetchedAnalyses);
+    const fetchMoods = getDocs(query(collection(firestore, 'users', user.uid, 'moods'), where('loggedAt', '>=', start), where('loggedAt', '<=', end)));
 
-        const uniquePracticeDates = new Set<string>();
-        fetchedAnalyses.forEach(analysis => {
-            if (analysis.createdAt) {
-                const date = startOfDay(analysis.createdAt.toDate());
-                uniquePracticeDates.add(date.toISOString());
-            }
-        });
-        setPracticeDates(Array.from(uniquePracticeDates).map(dateStr => new Date(dateStr)));
-
+    fetchMoods.then((moodsSnapshot) => {
         // Process Moods
         const fetchedMoods: Record<string, StoredMood> = {};
         moodsSnapshot.forEach(doc => {
@@ -114,48 +96,42 @@ export default function PracticeCalendarPage() {
         setIsLoadingData(false);
     });
 
-  }, [user, authLoading]);
-  
-  useEffect(() => {
-    if (selectedDate) {
-        const startOfSelected = startOfDay(selectedDate);
-        const filtered = allAnalyses.filter(a => a.createdAt && isSameDay(a.createdAt.toDate(), startOfSelected));
-        setAnalysesForSelectedDay(filtered);
-    } else {
-        setAnalysesForSelectedDay([]);
-    }
-  }, [selectedDate, allAnalyses]);
-
-  const moodForSelectedDay = useMemo(() => {
-    if (!selectedDate) return null;
-    const dateStr = format(selectedDate, 'yyyy-MM-dd');
-    return moodsByDate[dateStr] || null;
-  }, [selectedDate, moodsByDate]);
-
-  const practicedDaysModifier = { practiced: practiceDates };
-  const selectedDayModifier = { selected: selectedDate };
-  
-  const modifiers = { ...practicedDaysModifier, ...selectedDayModifier };
-
-  const modifiersClassNames = {
-    practiced: "bg-primary/20 text-primary-foreground font-bold",
-    selected: "bg-accent text-accent-foreground rounded-md",
-  };
+  }, [user, authLoading, currentMonth]);
 
   const DayContent = (props: { date: Date }) => {
     const dateStr = format(props.date, 'yyyy-MM-dd');
     const mood = moodsByDate[dateStr];
     
     if (mood) {
+      const colorClass = moodToColor[mood.name] || 'bg-muted';
+      const faceType = moodToFace[mood.name] || 'neutral';
+      
       return (
         <div className="relative w-full h-full flex items-center justify-center">
-          {format(props.date, 'd')}
-          <span className="absolute bottom-1 text-xs">{mood.emoji}</span>
+            <div className="absolute top-0 right-0 left-0 bottom-0 flex items-center justify-center">
+               <SmileyPebbleIcon mood={faceType} className={cn("w-11 h-11 transition-all", colorClass)} />
+            </div>
+           <span className={cn(
+               "relative z-10 font-bold text-xs", 
+               isSameDay(props.date, new Date()) ? "bg-primary text-primary-foreground rounded-full h-4 w-4 flex items-center justify-center" : "text-black/60"
+            )}>
+                {format(props.date, 'd')}
+            </span>
         </div>
       );
     }
     
-    return <>{format(props.date, 'd')}</>;
+    // Render day number for days without mood
+    return (
+        <div className="relative w-full h-full flex items-center justify-center">
+             <span className={cn(
+                 "relative z-10 font-semibold", 
+                 isSameDay(props.date, new Date()) ? "text-primary" : "text-muted-foreground"
+             )}>
+                {format(props.date, 'd')}
+             </span>
+        </div>
+    )
   };
 
   return (
@@ -163,107 +139,49 @@ export default function PracticeCalendarPage() {
        <div className="relative min-h-[calc(100vh-8rem)]">
         <QuadrantBackground />
         <div className="container mx-auto px-4 py-8 relative z-10">
-            <Card className="shadow-xl bg-card/80 backdrop-blur-sm">
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-2xl">
-                <CalendarDays className="h-7 w-7 text-primary" />
-                Practice Calendar
-                </CardTitle>
-                <CardDescription>
-                Select a day to see your practice logs and recorded mood.
-                </CardDescription>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="md:col-span-2">
-                <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={setSelectedDate}
-                    month={currentMonth}
-                    onMonthChange={setCurrentMonth}
-                    modifiers={modifiers}
-                    modifiersClassNames={modifiersClassNames}
-                    className="rounded-md border p-0 bg-transparent"
-                    classNames={{
-                    caption_label: "font-bold text-lg",
-                    head_cell: "text-muted-foreground font-semibold w-full",
-                    cell: "h-12 w-full text-center text-sm p-0",
-                    day: "h-12 w-full rounded-md",
-                    day_today: "font-bold text-primary",
-                    day_content: 'w-full h-full',
-                    }}
-                    components={{
-                        DayContent: DayContent,
-                    }}
-                />
+            <header className="flex justify-between items-center mb-8">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-green-100 rounded-lg">
+                        <SmileyPebbleIcon mood="happy" className="h-8 w-8 text-green-700" />
+                    </div>
+                     <Button variant="ghost" size="icon">
+                        <RefreshCcw className="h-5 w-5 text-muted-foreground"/>
+                    </Button>
                 </div>
+                <h1 className="text-2xl font-bold text-foreground">
+                    {format(currentMonth, 'MMMM yyyy')}
+                </h1>
+                <Button variant="outline">
+                    <Upload className="h-5 w-5"/>
+                </Button>
+            </header>
 
-                <div className="space-y-6">
-                {/* Daily Details Section */}
-                <div className="space-y-4">
-                    <h3 className="font-bold text-lg text-primary border-b pb-2">
-                        Details for {selectedDate ? format(selectedDate, 'PPP') : 'Today'}
-                    </h3>
-
-                    
-                    {/* Practice Log for the day */}
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Practice Log</CardTitle>
-                        <FileText className="h-4 w-4 text-muted-foreground" />
-                        </CardHeader>
-                        <CardContent className="space-y-2">
-                        {isLoadingData ? (
-                            <>
-                                <Skeleton className="h-10 w-full" />
-                                <Skeleton className="h-10 w-full" />
-                            </>
-                        ) : analysesForSelectedDay.length > 0 ? (
-                            analysesForSelectedDay.map(analysis => (
-                                <div key={analysis.id} className="text-sm text-foreground flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <Dumbbell className="h-4 w-4 text-muted-foreground" />
-                                        <p>{analysis.identifiedPose || 'Unknown Pose'}</p>
-                                    </div>
-                                    <div className="flex items-center gap-1 font-semibold">
-                                        <Star className="h-4 w-4 text-yellow-400" />
-                                        <span>{analysis.score || 'N/A'}</span>
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <p className="text-sm text-muted-foreground">No practice recorded.</p>
-                        )}
-                        </CardContent>
-                    </Card>
-                </div>
-                
-                {/* Monthly Goal Section */}
-                <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Monthly Goal</CardTitle>
-                    <Goal className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent className="flex flex-col items-center">
-                    <ChartContainer config={chartConfig} className="mx-auto aspect-square h-[150px]">
-                    <PieChart>
-                        <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                        <Pie data={chartData} dataKey="value" nameKey="name" innerRadius={40} strokeWidth={5}>
-                        <Cell key="completed" fill="var(--color-progress)" />
-                        <Cell key="remaining" fill="var(--color-remaining)" />
-                        </Pie>
-                        <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="fill-foreground text-2xl font-bold">
-                        {monthlyProgress}%
-                        </text>
-                    </PieChart>
-                    </ChartContainer>
-                    <p className="text-xs text-muted-foreground mt-2">You're on track to meet your goal!</p>
-                </CardContent>
-                </Card>
-
-                </div>
-            </CardContent>
-            </Card>
+            <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={setSelectedDate}
+                month={currentMonth}
+                onMonthChange={setCurrentMonth}
+                className="rounded-md bg-transparent p-0"
+                classNames={{
+                    months: 'p-0',
+                    month: 'p-0 space-y-4',
+                    caption: "hidden", // We have a custom header now
+                    head_row: "flex justify-around",
+                    head_cell: "text-muted-foreground font-semibold w-full uppercase text-sm",
+                    row: "flex w-full mt-2 justify-around",
+                    cell: "h-16 w-16 text-center text-sm p-0 relative",
+                    day: "h-16 w-16 p-0 font-normal rounded-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2",
+                    day_selected: "bg-transparent", // Selection is handled by day content
+                    day_today: "", // Today is handled by day content
+                    day_outside: "opacity-30",
+                    day_disabled: "text-muted-foreground opacity-50",
+                    day_hidden: "invisible",
+                }}
+                components={{
+                    DayContent: DayContent,
+                }}
+            />
 
             {error && (
             <Alert variant="destructive" className="max-w-xl mx-auto mt-8">
