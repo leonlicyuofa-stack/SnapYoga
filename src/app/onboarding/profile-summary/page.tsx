@@ -312,14 +312,6 @@ export default function ProfileSummaryPage() {
             </div>
         </div>
       </div>
-       <Button
-          onClick={handleNext}
-          className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40 z-20"
-          aria-label="Next"
-          disabled={isNavigatingNext}
-      >
-          {isNavigatingNext ? <Loader2 className="h-8 w-8 animate-spin" /> : <MoveUpRight className="h-8 w-8" />}
-      </Button>
     </div>
   );
 }
