@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -82,7 +83,7 @@ export default function PickAPrizePage() {
 
   const handleLeftClick = () => {
     setSelectedSide('left');
-    setTimeout(() => handlePrizeSelection("A shiny new Croissant!"), 500);
+    setTimeout(() => handlePrizeSelection("3-month free trial"), 500);
   };
   
   const handleRightClick = () => {
@@ -130,13 +131,10 @@ export default function PickAPrizePage() {
               </div>
             </div>
 
-            {/* "This or That" text */}
+            {/* "or" text */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
-              <div className="w-1 h-32 bg-white/50 rotate-12"></div>
               <div className="absolute text-center text-white font-extrabold tracking-widest uppercase">
-                  
                   <span className="block text-2xl my-1">or</span>
-                  
               </div>
             </div>
           </div>
