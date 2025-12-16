@@ -10,8 +10,7 @@ import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { AppShell } from '@/components/layout/app-shell';
-import { Target, ArrowRight, ArrowLeft, Wind, Spline, BrainCircuit, MoreHorizontal, Sparkles, MoveUpRight, Loader2 } from 'lucide-react';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Target, ArrowRight, ArrowLeft, Wind, Spline, BrainCircuit, MoreHorizontal, Sparkles, MoveUpRight, Loader2, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
@@ -23,12 +22,13 @@ import { ImproveFlexibilityIcon } from '@/components/icons/ImproveFlexibilityIco
 import Image from 'next/image';
 import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 import { cn } from '@/lib/utils';
+import { Checkbox } from '@/components/ui/checkbox';
 
-const yogaGoalSchema = z.object({
-  mainGoal: z.string().min(1, { message: "Please select your main yoga goal" }),
+const yogaGoalsSchema = z.object({
+  mainGoals: z.array(z.string()).min(1, { message: "Please select at least one goal" }),
 });
 
-type YogaGoalFormValues = z.infer<typeof yogaGoalSchema>;
+type YogaGoalsFormValues = z.infer<typeof yogaGoalsSchema>;
 
 const mainGoalOptions = [
   { value: "fitness", label: "Stay Fit", icon: 'image', imagePath: '/images/stayfit_1.png', imageHint: 'stay fit' },
@@ -55,19 +55,22 @@ export default function YogaGoalPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  const { control, handleSubmit, formState: { errors, isValid }, setValue, watch } = useForm<YogaGoalFormValues>({
-    resolver: zodResolver(yogaGoalSchema),
+  const { control, handleSubmit, formState: { errors, isValid }, setValue, watch } = useForm<YogaGoalsFormValues>({
+    resolver: zodResolver(yogaGoalsSchema),
     mode: 'onChange',
+    defaultValues: {
+        mainGoals: [],
+    }
   });
 
-  const selectedGoal = watch('mainGoal');
+  const selectedGoals = watch('mainGoals');
 
   useEffect(() => {
     if (user && !authLoading) {
         const userDocRef = doc(firestore, 'users', user.uid);
         getDoc(userDocRef).then(docSnap => {
-            if (docSnap.exists() && docSnap.data().mainGoal) {
-                setValue('mainGoal', docSnap.data().mainGoal, { shouldValidate: true });
+            if (docSnap.exists() && docSnap.data().mainGoals) {
+                setValue('mainGoals', docSnap.data().mainGoals, { shouldValidate: true });
             }
         });
     }
@@ -83,14 +86,14 @@ export default function YogaGoalPage() {
     return <AppShell><div className="flex justify-center items-center min-h-screen"><p>Redirecting to sign in...</p></div></AppShell>;
   }
 
-  const onSubmit: SubmitHandler<YogaGoalFormValues> = async (data) => {
+  const onSubmit: SubmitHandler<YogaGoalsFormValues> = async (data) => {
     if (!user) {
       toast({ title: "Error", description: "No authenticated user found.", variant: "destructive" });
       return;
     }
     setIsSubmitting(true);
     try {
-      await createUserProfileDocument(user, { mainGoal: data.mainGoal });
+      await createUserProfileDocument(user, { mainGoals: data.mainGoals });
       router.push('/onboarding/yoga-type');
     } catch (error) {
       console.error("Error saving yoga goal:", error);
@@ -123,20 +126,27 @@ export default function YogaGoalPage() {
         
         <form id="yoga-goal-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full mt-8">
             <Controller
-                name="mainGoal"
+                name="mainGoals"
                 control={control}
                 render={({ field }) => (
-                    <RadioGroup
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        className="grid grid-cols-2 sm:grid-cols-3 gap-4"
-                    >
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     {mainGoalOptions.map((option) => {
                         const Icon = option.icon;
-                        const isChecked = selectedGoal === option.value;
+                        const isChecked = field.value?.includes(option.value);
                         return (
-                            <div key={option.value}>
-                                <RadioGroupItem value={option.value} id={option.value} className="sr-only" />
+                            <div key={option.value} className="relative">
+                                <Checkbox
+                                    id={option.value}
+                                    checked={isChecked}
+                                    onCheckedChange={(checked) => {
+                                        const currentValue = field.value || [];
+                                        const updatedValue = checked
+                                            ? [...currentValue, option.value]
+                                            : currentValue.filter(v => v !== option.value);
+                                        field.onChange(updatedValue);
+                                    }}
+                                    className="sr-only"
+                                />
                                 <Label
                                 htmlFor={option.value}
                                 className={cn(
@@ -151,14 +161,19 @@ export default function YogaGoalPage() {
                                     <Icon className="h-12 w-12 text-primary/80" />
                                 )}
                                 <span className="mt-2 text-center font-semibold text-sm">{option.label}</span>
+                                {isChecked && (
+                                    <div className="absolute top-2 right-2 h-5 w-5 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
+                                        <CheckCircle className="h-4 w-4" />
+                                    </div>
+                                )}
                                 </Label>
                             </div>
                         )
                     })}
-                    </RadioGroup>
+                    </div>
                 )}
             />
-            {errors.mainGoal && <p className="text-sm text-destructive text-center">{errors.mainGoal.message}</p>}
+            {errors.mainGoals && <p className="text-sm text-destructive text-center">{errors.mainGoals.message}</p>}
              <div className="px-8 pt-4">
               <Button type="submit" form="yoga-goal-form" className="w-full h-12 text-base rounded-full" disabled={isSubmitting || authLoading || !isValid}>
                 {isSubmitting || authLoading ? <Loader2 className="animate-spin" /> : 'Next'}
@@ -178,3 +193,5 @@ export default function YogaGoalPage() {
     </div>
   );
 }
+
+    

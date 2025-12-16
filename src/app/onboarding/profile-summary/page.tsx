@@ -25,7 +25,7 @@ interface UserProfile extends DocumentData {
   email?: string;
   gender?: string;
   age?: number;
-  mainGoal?: string;
+  mainGoals?: string[];
   interestedPoses?: string[];
   currentBodyShape?: string;
   focusBodyParts?: string[];
@@ -172,14 +172,24 @@ export default function ProfileSummaryPage() {
                 </SelectContent>
             </Select>
         );
-      case 'mainGoal':
+      case 'mainGoals':
         return (
-            <Select value={fieldValue} onValueChange={handleFieldChange}>
-                <SelectTrigger className="w-full sm:w-[240px]"><SelectValue placeholder="Select a goal" /></SelectTrigger>
-                <SelectContent>
-                    {mainGoalOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
-                </SelectContent>
-            </Select>
+            <div className="flex flex-col gap-2">
+                {mainGoalOptions.map(opt => (
+                    <Label key={opt.value} className="flex items-center gap-2 font-normal">
+                        <Checkbox 
+                            checked={fieldValue?.includes(opt.value)}
+                            onCheckedChange={(checked) => {
+                                const current = fieldValue || [];
+                                const newValue = checked ? [...current, opt.value] : current.filter((p: string) => p !== opt.value);
+                                setFieldValue(newValue);
+                                handleSave(fieldName, newValue);
+                            }}
+                        />
+                        {opt.label}
+                    </Label>
+                ))}
+            </div>
         );
       case 'interestedPoses':
         return (
@@ -287,7 +297,7 @@ export default function ProfileSummaryPage() {
                     {renderDetailItem("Email", "email", user.email)}
                     {renderDetailItem("Gender", "gender", profileData.gender)}
                     {renderDetailItem("Age", "age", profileData.age)}
-                    {renderDetailItem("Main Yoga Goal", "mainGoal", profileData.mainGoal)}
+                    {renderDetailItem("Main Yoga Goals", "mainGoals", profileData.mainGoals)}
                     {renderDetailItem("Interested Pose Types", "interestedPoses", profileData.interestedPoses)}
                     {renderDetailItem("Current Body Shape", "currentBodyShape", profileData.currentBodyShape)}
                 </dl>
@@ -313,3 +323,5 @@ export default function ProfileSummaryPage() {
     </div>
   );
 }
+
+    
