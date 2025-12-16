@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -37,19 +36,17 @@ const RightPattern = () => (
 )
 
 const LeftPattern = () => (
-    <svg width="100%" height="100%" className="absolute inset-0 z-0" preserveAspectRatio="none">
-        <defs>
-            <filter id="wave-filter" x="-20%" y="-20%" width="140%" height="140%">
-                <feTurbulence type="fractalNoise" baseFrequency="0.005 0.015" numOctaves="2" result="turbulence"/>
-                <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="25" xChannelSelector="R" yChannelSelector="G"/>
-            </filter>
-        </defs>
-        <rect width="100%" height="100%" fill="#1A4A63"/>
-        <g filter="url(#wave-filter)">
-            <rect width="100%" height="100%" fill="#1A4A63" />
-            <path d="M -100 450 C 300 350, 600 550, 1540 450 L 1540 500 C 600 600, 300 400, -100 500 Z" fill="#E4C1C8" opacity="0.7"/>
-            <path d="M -100 470 C 300 370, 600 570, 1540 470 L 1540 520 C 600 620, 300 420, -100 520 Z" fill="#78A7A8" opacity="0.7"/>
-            <path d="M -100 490 C 300 390, 600 590, 1540 490 L 1540 540 C 600 640, 300 440, -100 540 Z" fill="#D4B6A3" opacity="0.7"/>
+    <svg width="100%" height="100%" viewBox="0 0 400 600" className="absolute inset-0 z-0" preserveAspectRatio="none">
+        <g stroke="#FFFFFF" strokeWidth="2">
+            <rect width="400" height="600" fill="#fbc4b8" />
+            <rect x="0" y="0" width="220" height="150" fill="#f8a090" />
+            <rect x="0" y="150" width="220" height="180" fill="#f9e79f" />
+            <rect x="0" y="330" width="150" height="160" fill="#a2d9ce" />
+            <rect x="150" y="330" width="70" height="90" fill="#c8e6c9" />
+            <rect x="0" y="490" width="400" height="110" fill="#a9cce3" />
+            <rect x="0" y="490" width="140" height="110" fill="#a2d9ce" />
+            <rect x="140" y="490" width="110" height="110" fill="#f5b7b1" />
+            <rect x="250" y="490" width="150" height="110" fill="#d7bde2" />
         </g>
     </svg>
 );
