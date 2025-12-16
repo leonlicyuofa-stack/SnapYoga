@@ -164,9 +164,9 @@ export default function DashboardPage() {
       <div className="relative h-full">
         <QuadrantBackground />
          <div className="absolute top-4 right-4 z-20">
-              <Avatar className="h-42 w-42 border-2 border-primary/20">
+              <Avatar className="h-12 w-12 border-2 border-primary/20">
                 <AvatarImage src={user?.photoURL || ''} alt={welcomeName} />
-                <AvatarFallback className="text-6xl">
+                <AvatarFallback>
                     {getInitials(user?.email, user?.displayName)}
                 </AvatarFallback>
               </Avatar>
