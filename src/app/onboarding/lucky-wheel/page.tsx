@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -18,8 +19,10 @@ export default function OnboardingLuckyWheelPage() {
   const [showWheelDialog, setShowWheelDialog] = useState(false);
 
   useEffect(() => {
+    // Automatically open the dialog as soon as we know the user is logged in.
     if (!authLoading && user) {
-      setShowWheelDialog(true);
+      const timer = setTimeout(() => setShowWheelDialog(true), 500);
+      return () => clearTimeout(timer);
     }
   }, [authLoading, user]);
 
@@ -30,46 +33,22 @@ export default function OnboardingLuckyWheelPage() {
   
   const handleWheelCloseAndSaveResult = async (prizeName?: string) => {
     setShowWheelDialog(false);
-    if (user && prizeName) {
-      try {
-        // The LuckyWheelDialog doesn't actually pass the prize currently, 
-        // but if it did, this is where we'd save it.
-        // For now, we'll just navigate, and the result page will read it from URL params (if set by dialog later)
-        // or show a default.
-        // await createUserProfileDocument(user, { luckyDrawResult: prizeName }); 
-        router.push(`/onboarding/draw-result?prize=${encodeURIComponent(prizeName)}`);
-      } catch (error) {
-        console.error("Error saving lucky draw result (if prize was passed):", error);
-        router.push('/onboarding/draw-result?error=true'); 
-      }
-    } else {
-       router.push('/onboarding/draw-result');
-    }
+    // Add a slight delay to allow the dialog to close before navigating
+    setTimeout(() => {
+        if (prizeName) {
+            router.push(`/onboarding/draw-result?prize=${encodeURIComponent(prizeName)}`);
+        } else {
+            router.push('/onboarding/draw-result');
+        }
+    }, 300);
   };
 
 
   return (
+    // The AppShell now just provides the background. The dialog is the main content.
     <AppShell>
-      <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4">
-        <OnboardingBackground />
-        <div className="flex flex-col items-center w-full max-w-md">
-            <OnboardingHeader />
-            <div className="w-full shadow-xl text-center z-10 bg-card/80 backdrop-blur-sm p-6 rounded-lg">
-                <div className="mb-4">
-                    <Gift className="mx-auto h-12 w-12 text-primary mb-4" />
-                    <h2 className="text-3xl font-bold">Lucky Draw!</h2>
-                    <p className="text-muted-foreground">Spin the wheel for a chance to win a discount or free trial extension!</p>
-                </div>
-                <div className="p-0 mt-6">
-                    <p className="text-muted-foreground mb-6">
-                        Click the button below or wait for the wheel to appear.
-                    </p>
-                    <Button onClick={() => setShowWheelDialog(true)} size="lg" className="bg-accent hover:bg-accent/80">
-                        Spin the Wheel!
-                    </Button>
-                </div>
-            </div>
-        </div>
+      <div className="relative flex flex-col min-h-screen items-center justify-center py-12 px-4 bg-black/50">
+          <SmileyRockLoader text="Loading your surprise..."/>
       </div>
       {user && <LuckyWheelDialog isOpen={showWheelDialog} onClose={handleWheelCloseAndSaveResult} />}
     </AppShell>
