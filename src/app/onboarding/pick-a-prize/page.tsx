@@ -108,7 +108,7 @@ export default function PickAPrizePage() {
               )}></div>
 
               <div className="relative z-10 text-center text-white transition-transform duration-300 group-hover:scale-105">
-                <h2 className="mt-4 text-2xl font-bold">{prizes.left.name.split(' ')[4]}</h2>
+                <h2 className="mt-4 text-2xl font-bold">This</h2>
               </div>
             </div>
 
@@ -124,8 +124,8 @@ export default function PickAPrizePage() {
                 selectedSide === 'right' ? 'opacity-80 scale-150' : 'opacity-0'
               )}></div>
                 
-              <div className="relative z-10 text-center text-pink-800 transition-transform duration-300 group-hover:scale-105">
-                <h2 className="mt-4 text-2xl font-bold">{prizes.right.name.split(' ')[4]}</h2>
+              <div className="relative z-10 text-center text-white transition-transform duration-300 group-hover:scale-105">
+                <h2 className="mt-4 text-2xl font-bold">That</h2>
               </div>
             </div>
 
