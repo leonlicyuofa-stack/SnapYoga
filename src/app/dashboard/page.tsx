@@ -165,14 +165,6 @@ export default function DashboardPage() {
     <AppShell>
       <div className="relative h-full">
         <QuadrantBackground />
-         <div className="absolute top-4 right-4 z-20">
-              <Avatar className="h-36 w-36 border-2 border-primary/20">
-                <AvatarImage src={user?.photoURL || ''} alt={welcomeName} />
-                <AvatarFallback className="text-6xl">
-                    <UserCircle />
-                </AvatarFallback>
-              </Avatar>
-          </div>
         <div className="relative z-10 container mx-auto px-4 py-6 space-y-4">
 
           
