@@ -306,8 +306,17 @@ export default function ProfileSummaryPage() {
                 )}
             </div>
             <div className="mt-6">
-                <p className="text-xs text-muted-foreground text-center w-full">
-                Ensure all details are correct before proceeding.
+                 <div className="px-8 pt-4">
+                    <Button 
+                        onClick={handleNext} 
+                        className="w-full h-12 text-base rounded-full" 
+                        disabled={isNavigatingNext}
+                    >
+                        {isNavigatingNext ? <Loader2 className="animate-spin" /> : 'Next'}
+                    </Button>
+                </div>
+                <p className="text-xs text-muted-foreground text-center w-full mt-4">
+                    Ensure all details are correct before proceeding.
                 </p>
             </div>
         </div>
@@ -315,5 +324,3 @@ export default function ProfileSummaryPage() {
     </div>
   );
 }
-
-    
