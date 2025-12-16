@@ -29,10 +29,10 @@ interface UserProfileData extends DocumentData {
 const projects = [
   {
     icon: PracticeAnalytics,
-    title: "Pose Analysis",
-    category: "AI Feedback",
+    title: "Profile",
+    category: "Settings",
     bgColor: "bg-pistachio-background", 
-    href: "/snap-yoga",
+    href: "/profile",
     className: "col-span-1 row-span-1",
   },
   {
