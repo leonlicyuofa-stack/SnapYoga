@@ -8,16 +8,20 @@ import { collection, getDocs, query, where, type Timestamp, orderBy, doc, getDoc
 import { AppShell } from '@/components/layout/app-shell';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle, CalendarDays, Dumbbell, Star, Goal, Smile, FileText, Upload, RefreshCcw } from 'lucide-react';
+import { AlertCircle, CalendarDays, Dumbbell, Star, Goal, Smile, FileText, Upload, RefreshCcw, ChevronDown, Activity, CheckCircle } from 'lucide-react';
 import { startOfDay, format, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
-import { PieChart, Pie, Cell } from "recharts";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Calendar } from '@/components/ui/calendar';
 import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 import { Button } from '@/components/ui/button';
@@ -38,6 +42,8 @@ interface StoredMood {
   emoji: string;
 }
 
+type ViewMode = 'mood' | 'practice';
+
 const moodToColor: Record<string, string> = {
   'Happy': 'bg-green-300',
   'Relaxed': 'bg-green-200',
@@ -54,7 +60,9 @@ const moodToFace: Record<string, 'happy' | 'neutral' | 'sad'> = {
 
 export default function PracticeCalendarPage() {
   const { user, loading: authLoading } = useAuth();
+  const [viewMode, setViewMode] = useState<ViewMode>('mood');
   const [moodsByDate, setMoodsByDate] = useState<Record<string, StoredMood>>({});
+  const [analysesByDate, setAnalysesByDate] = useState<Record<string, StoredAnalysis[]>>({});
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   
   const [isLoadingData, setIsLoadingData] = useState(true);
@@ -76,8 +84,10 @@ export default function PracticeCalendarPage() {
     const end = endOfMonth(currentMonth);
 
     const fetchMoods = getDocs(query(collection(firestore, 'users', user.uid, 'moods'), where('loggedAt', '>=', start), where('loggedAt', '<=', end)));
+    const fetchAnalyses = getDocs(query(collection(firestore, 'users', user.uid, 'poseAnalyses'), where('createdAt', '>=', start), where('createdAt', '<=', end)));
 
-    fetchMoods.then((moodsSnapshot) => {
+
+    Promise.all([fetchMoods, fetchAnalyses]).then(([moodsSnapshot, analysesSnapshot]) => {
         // Process Moods
         const fetchedMoods: Record<string, StoredMood> = {};
         moodsSnapshot.forEach(doc => {
@@ -88,6 +98,20 @@ export default function PracticeCalendarPage() {
             }
         });
         setMoodsByDate(fetchedMoods);
+
+        // Process Analyses
+        const fetchedAnalyses: Record<string, StoredAnalysis[]> = {};
+        analysesSnapshot.forEach(doc => {
+            const analysis = { id: doc.id, ...doc.data() } as StoredAnalysis;
+            if(analysis.createdAt) {
+                const dateStr = format(analysis.createdAt.toDate(), 'yyyy-MM-dd');
+                if (!fetchedAnalyses[dateStr]) {
+                    fetchedAnalyses[dateStr] = [];
+                }
+                fetchedAnalyses[dateStr].push(analysis);
+            }
+        });
+        setAnalysesByDate(fetchedAnalyses);
 
     }).catch((err) => {
         console.error("Error fetching practice data:", err);
@@ -101,6 +125,28 @@ export default function PracticeCalendarPage() {
   const DayContent = (props: { date: Date }) => {
     const dateStr = format(props.date, 'yyyy-MM-dd');
     const mood = moodsByDate[dateStr];
+    const analyses = analysesByDate[dateStr];
+
+    const renderContent = () => {
+        if (viewMode === 'mood' && mood) {
+            return (
+                <div className={cn(
+                    "w-8 h-8 rounded-full flex items-center justify-center transition-all", 
+                    moodToColor[mood.name] || 'bg-muted'
+                )}>
+                    <SmileyPebbleIcon mood={moodToFace[mood.name] || 'neutral'} className="w-5 h-5" />
+                </div>
+            );
+        }
+        if (viewMode === 'practice' && analyses) {
+            return (
+                <div className="w-8 h-8 rounded-full flex items-center justify-center bg-primary/10">
+                    <Activity className="w-5 h-5 text-primary" />
+                </div>
+            )
+        }
+        return null;
+    }
 
     return (
         <div className="relative w-full h-full flex flex-col items-center justify-center gap-1 pt-1">
@@ -110,14 +156,7 @@ export default function PracticeCalendarPage() {
             )}>
                 {format(props.date, 'd')}
             </span>
-            {mood && (
-                <div className={cn(
-                    "w-8 h-8 rounded-full flex items-center justify-center transition-all", 
-                    moodToColor[mood.name] || 'bg-muted'
-                )}>
-                    <SmileyPebbleIcon mood={moodToFace[mood.name] || 'neutral'} className="w-5 h-5" />
-                </div>
-            )}
+            {renderContent()}
         </div>
     );
   };
@@ -129,9 +168,29 @@ export default function PracticeCalendarPage() {
         <div className="container mx-auto px-4 py-8 relative z-10">
             <header className="flex justify-between items-center mb-8">
                 <div className="flex items-center gap-4">
-                    <div className="p-3 bg-green-100 rounded-lg">
-                        <SmileyPebbleIcon mood="happy" className="h-8 w-8 text-green-700" />
-                    </div>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" className="flex items-center gap-2">
+                                {viewMode === 'mood' ? <Smile className="h-5 w-5"/> : <Activity className="h-5 w-5"/>}
+                                <span className="capitalize">{viewMode}</span>
+                                <ChevronDown className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuLabel>View Type</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuRadioGroup value={viewMode} onValueChange={(value) => setViewMode(value as ViewMode)}>
+                                <DropdownMenuRadioItem value="mood">
+                                    <Smile className="mr-2 h-4 w-4" />
+                                    Mood
+                                </DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="practice">
+                                    <Activity className="mr-2 h-4 w-4" />
+                                    Practice
+                                </DropdownMenuRadioItem>
+                            </DropdownMenuRadioGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                      <Button variant="ghost" size="icon">
                         <RefreshCcw className="h-5 w-5 text-muted-foreground"/>
                     </Button>
@@ -183,3 +242,5 @@ export default function PracticeCalendarPage() {
     </AppShell>
   );
 }
+
+    
