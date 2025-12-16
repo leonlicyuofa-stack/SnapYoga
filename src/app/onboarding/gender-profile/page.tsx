@@ -26,7 +26,7 @@ import Image from 'next/image';
 
 
 const profileSchema = z.object({
-  avatar: z.string().min(1, { message: "Please select an avatar" }),
+  avatar: z.string().optional(),
   displayName: z.string().min(2, { message: "Name must be at least 2 characters" }),
 });
 
