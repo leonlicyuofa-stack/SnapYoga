@@ -127,22 +127,6 @@ export function MoodChart({ className }: { className?: string }) {
 
   return (
     <div className={className}>
-      <CardHeader>
-        <div className="flex justify-between items-center">
-            <div>
-                <CardTitle>Mood Analysis</CardTitle>
-                <CardDescription>This week</CardDescription>
-            </div>
-            <div className="flex gap-2">
-                <Button variant="outline" size="icon" onClick={handlePrevWeek}>
-                    <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button variant="outline" size="icon" onClick={handleNextWeek}>
-                    <ChevronRight className="h-4 w-4" />
-                </Button>
-            </div>
-        </div>
-      </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={200}>
           <AreaChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
