@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -125,7 +126,7 @@ export function MoodChart({ className }: { className?: string }) {
 
 
   return (
-    <Card className={className}>
+    <div className={className}>
       <CardHeader>
         <div className="flex justify-between items-center">
             <div>
@@ -168,6 +169,6 @@ export function MoodChart({ className }: { className?: string }) {
           </AreaChart>
         </ResponsiveContainer>
       </CardContent>
-    </Card>
+    </div>
   );
 }
