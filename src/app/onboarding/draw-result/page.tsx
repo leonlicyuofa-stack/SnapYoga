@@ -103,9 +103,7 @@ export default function DrawResultPage() {
                 ) : (
                 <p className="text-muted-foreground">No prize from the lucky wheel this time, but you're ready to start!</p>
                 )}
-                <p className="text-sm text-foreground/80">
-                {prize ? `Your prize will be applied to your account (mock feature).` : `You've completed the main setup steps.`}
-                </p>
+                
             </div>
             <div className="px-8 pt-8">
               <Button onClick={handleCompleteOnboarding} className="w-full h-12 text-base rounded-full" disabled={isFinalizing}>
