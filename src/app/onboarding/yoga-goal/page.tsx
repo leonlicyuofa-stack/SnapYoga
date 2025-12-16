@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -116,7 +115,7 @@ export default function YogaGoalPage() {
       <QuadrantBackground />
        <Button
             onClick={handleBackNavigation}
-            className="fixed top-8 left-8 rounded-full h-12 w-12 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
+            className="fixed top-8 left-8 rounded-full h-12 w-12 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40 z-20"
             aria-label="Go back"
         >
             <ArrowLeft className="h-6 w-6" />
@@ -174,11 +173,6 @@ export default function YogaGoalPage() {
                 )}
             />
             {errors.mainGoals && <p className="text-sm text-destructive text-center">{errors.mainGoals.message}</p>}
-             <div className="px-8 pt-4">
-              <Button type="submit" form="yoga-goal-form" className="w-full h-12 text-base rounded-full" disabled={isSubmitting || authLoading || !isValid}>
-                {isSubmitting || authLoading ? <Loader2 className="animate-spin" /> : 'Next'}
-              </Button>
-            </div>
         </form>
 
         <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center items-center mt-4">
@@ -190,8 +184,15 @@ export default function YogaGoalPage() {
             </div>
         </div>
       </div>
+      <Button
+          type="submit"
+          form="yoga-goal-form"
+          className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40 z-20"
+          aria-label="Next"
+          disabled={isSubmitting || authLoading || !isValid}
+      >
+          {isSubmitting || authLoading ? <Loader2 className="h-8 w-8 animate-spin" /> : <MoveUpRight className="h-8 w-8" />}
+      </Button>
     </div>
   );
 }
-
-    
