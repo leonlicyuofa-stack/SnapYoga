@@ -64,7 +64,7 @@ export function AppShell({ children }: AppShellProps) {
   };
   
   const noShellRoutes = ['/auth/signin', '/auth/signup', '/auth/verify-email', '/'];
-  const noHeaderRoutes = ['/welcome'];
+  const noHeaderRoutes = ['/welcome', '/dashboard'];
   
   const showOnboardingHeader = pathname.startsWith('/onboarding/');
   const noFooterRoutes = ['/welcome', ...showOnboardingHeader ? [pathname] : []];
@@ -125,36 +125,8 @@ export function AppShell({ children }: AppShellProps) {
         );
     }
     
-    // Default Header
-    return (
-        <header className="sticky top-0 z-40 w-full border-b bg-card/80 backdrop-blur-sm">
-            <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center gap-2">
-                    <div className="w-10"></div>
-                </div>
-                
-                <div className="absolute left-1/2 -translate-x-1/2 font-semibold text-lg">
-                   
-                </div>
-            
-                <div className="flex items-center space-x-2">
-                    <Button variant="ghost" size="icon">
-                        <Search />
-                    </Button>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                                <MoreHorizontal />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-56" align="end">
-                            {userMenuItems}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            </div>
-        </header>
-    );
+    // Default Header - Now removed
+    return null;
   }
 
 
