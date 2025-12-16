@@ -30,15 +30,6 @@ export function RockCollectionCard({ rocks, className }: RockCollectionCardProps
 
   return (
     <div className={className}>
-      <CardHeader>
-        <CardTitle className="flex items-center text-xl md:text-2xl">
-          <Gem className="mr-3 h-7 w-7 text-primary" />
-          Your Rock Collection
-        </CardTitle>
-        <CardDescription>
-          Collect special rocks by completing challenges and using app features!
-        </CardDescription>
-      </CardHeader>
       <CardContent>
         <TooltipProvider>
           <div className="flex flex-wrap gap-4 justify-center md:justify-start">
