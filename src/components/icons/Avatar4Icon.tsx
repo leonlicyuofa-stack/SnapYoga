@@ -4,19 +4,37 @@ export function Avatar4Icon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <g>
-        <title>Avatar of woman with hijab</title>
-        <circle cx="50" cy="50" r="40" fill="#FECDD3" />
-        <path d="M50 80 C 65 95, 35 95, 50 80 L 50 60 Z" fill="#FBCFE8"/>
-        {/* Hijab */}
-        <path d="M50 90 C 30 90, 25 70, 30 50 C 35 30, 65 30, 70 50 C 75 70, 70 90, 50 90 Z" fill="#881337" />
-        <circle cx="50" cy="55" r="18" fill="#FEEBCB"/>
+        <title>Avatar of a cute brown monster</title>
+        {/* The head/background is transparent so it can be colored by its container */}
+        <path d="M 20,60 C 10,40 25,25 50,25 C 75,25 90,40 80,60 C 90,80 70,95 50,95 C 30,95 10,80 20,60 Z" fill="transparent" />
+
         {/* Eyes */}
-        <g stroke="#3D2C28" strokeWidth="2.5" fill="none">
-            <path d="M40 55 Q 44 53 48 55" strokeLinecap="round" />
-            <path d="M52 55 Q 56 53 60 55" strokeLinecap="round" />
+        <g>
+          {/* Left Eye */}
+          <circle cx="38" cy="45" r="14" fill="#FFFFFF" stroke="#8B5742" strokeWidth="2.5"/>
+          <circle cx="45" cy="45" r="9" fill="#2E4A8D" />
+
+          {/* Right Eye */}
+          <circle cx="68" cy="45" r="14" fill="#FFFFFF" stroke="#8B5742" strokeWidth="2.5"/>
+          <circle cx="75" cy="45" r="9" fill="#2E4A8D" />
         </g>
-        {/* Smile */}
-        <path d="M47,65 Q 50,68 53,65" stroke="#3D2C28" strokeWidth="2" fill="none" strokeLinecap="round" />
+        
+        {/* Mouth and Fangs */}
+        <g>
+          {/* Mouth */}
+          <ellipse cx="53" cy="62" rx="7" ry="4" fill="#D9534F" stroke="#B54440" strokeWidth="1"/>
+          
+          {/* Fangs line */}
+          <path d="M 38 72 L 68 72" stroke="#8B5742" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+          
+          {/* Fangs */}
+          <path d="M 42 72 L 46 78 L 50 72 Z" fill="#FFFFFF" stroke="#CCCCCC" strokeWidth="1" />
+          <path d="M 58 72 L 62 78 L 66 72 Z" fill="#FFFFFF" stroke="#CCCCCC" strokeWidth="1" />
+        </g>
+        
+        {/* Cheek */}
+        <path d="M 70 70 C 75 75, 75 80, 70 85" stroke="#8B5742" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+
       </g>
     </svg>
   );
