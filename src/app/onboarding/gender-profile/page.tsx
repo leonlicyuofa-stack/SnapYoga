@@ -1,90 +1,42 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm, Controller, type SubmitHandler, useFormContext } from 'react-hook-form';
+import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { AppShell } from '@/components/layout/app-shell';
-import { ArrowRight, ArrowLeft, CalendarIcon, MoveUpRight, Loader2, UserCircle, Mail, KeyRound } from 'lucide-react';
+import { ArrowRight, ArrowLeft, MoveUpRight, Loader2, UserCircle, PlusCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { FemaleAvatar } from '@/components/icons/FemaleAvatar';
-import { MaleAvatar } from '@/components/icons/MaleAvatar';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { format, getDaysInMonth, startOfDay } from 'date-fns';
-import { OnboardingBackground } from '@/components/layout/OnboardingBackground';
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
+import { Avatar1Icon } from '@/components/icons/Avatar1Icon';
+import { Avatar2Icon } from '@/components/icons/Avatar2Icon';
+import { Avatar3Icon } from '@/components/icons/Avatar3Icon';
+import { Avatar4Icon } from '@/components/icons/Avatar4Icon';
+import { Avatar5Icon } from '@/components/icons/Avatar5Icon';
+
 
 const profileSchema = z.object({
-  gender: z.string().min(1, { message: "Please select a gender" }),
-  username: z.string().min(2, { message: "Username must be at least 2 characters" }),
-  birthday: z.date({
-    required_error: "A date of birth is required.",
-  }),
+  avatar: z.string().min(1, { message: "Please select an avatar" }),
+  displayName: z.string().min(2, { message: "Name must be at least 2 characters" }),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
-const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - 18 - i);
-const months = Array.from({ length: 12 }, (_, i) => i);
-
-const DatePickerColumn = ({ title, values, onSelect, selectedValue }: { title: string; values: (string|number)[], onSelect: (value: any) => void, selectedValue: any }) => {
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const itemHeight = 28; // h-7
-    const containerHeight = 160; // h-40
-
-    useEffect(() => {
-        const container = scrollContainerRef.current;
-        if (container && selectedValue !== undefined) {
-            const selectedElement = container.querySelector(`[data-value="${selectedValue}"]`) as HTMLElement;
-            if (selectedElement) {
-                 const scrollTop = selectedElement.offsetTop - (containerHeight / 2) + (itemHeight / 2);
-                 container.scrollTop = scrollTop;
-            }
-        }
-    }, [selectedValue, values, containerHeight, itemHeight]);
-
-    const paddingTop = `calc(50% - ${itemHeight / 2}px)`;
-    const paddingBottom = `calc(50% - ${itemHeight / 2}px)`;
-
-    return (
-        <div className="flex flex-col items-center">
-            <div className={cn("text-xs text-muted-foreground mb-2", selectedValue !== undefined && "font-bold text-foreground")}>
-                {title}
-            </div>
-            <div ref={scrollContainerRef} className="h-40 overflow-y-scroll snap-y snap-mandatory no-scrollbar w-full">
-                <div className="flex flex-col items-center" style={{paddingTop, paddingBottom}}>
-                    {values.map((item, index) => (
-                        <div
-                            key={index}
-                            data-value={item}
-                            onClick={() => onSelect(item)}
-                            className={cn(
-                                "flex items-center justify-center w-full h-7 text-sm snap-center shrink-0 cursor-pointer transition-all duration-200",
-                                selectedValue === item
-                                    ? "font-bold text-foreground text-base"
-                                    : "text-muted-foreground/50"
-                            )}
-                        >
-                            {title === 'Month' ? format(new Date(0, item as number), 'MMM') : item}
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-    );
-};
+const avatars = [
+    { id: 'avatar1', icon: Avatar1Icon, bgColor: 'bg-purple-200' },
+    { id: 'avatar2', icon: Avatar2Icon, bgColor: 'bg-pink-200' },
+    { id: 'avatar3', icon: Avatar3Icon, bgColor: 'bg-orange-200' },
+    { id: 'avatar4', icon: Avatar4Icon, bgColor: 'bg-rose-200' },
+    { id: 'avatar5', icon: Avatar5Icon, bgColor: 'bg-green-200' },
+];
 
 export default function GenderProfilePage() {
   const { user, loading: authLoading, updateUserDisplayName } = useAuth();
@@ -95,9 +47,6 @@ export default function GenderProfilePage() {
   const { control, register, handleSubmit, setValue, watch, formState: { errors, isValid }, reset } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     mode: 'onChange',
-    defaultValues: {
-        birthday: startOfDay(new Date(new Date().getFullYear() - 25, 0, 1))
-    }
   });
 
   useEffect(() => {
@@ -107,11 +56,8 @@ export default function GenderProfilePage() {
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 const defaultValues: Partial<ProfileFormValues> = {};
-                if (data.gender) defaultValues.gender = data.gender;
-                if (data.displayName) defaultValues.username = data.displayName;
-                if (data.birthday && data.birthday.toDate) {
-                    defaultValues.birthday = startOfDay(data.birthday.toDate());
-                }
+                if (data.avatar) defaultValues.avatar = data.avatar;
+                if (data.displayName) defaultValues.displayName = data.displayName;
                 reset(defaultValues);
             }
         });
@@ -119,27 +65,7 @@ export default function GenderProfilePage() {
   }, [user, authLoading, reset]);
 
 
-  const selectedGender = watch('gender');
-  const birthday = watch('birthday');
-
-  const daysInMonth = birthday ? getDaysInMonth(birthday) : 31;
-  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-
-  const handleDateChange = (part: 'year' | 'month' | 'day', value: number) => {
-    const newDate = new Date(birthday || new Date());
-    if (part === 'year') newDate.setFullYear(value);
-    if (part === 'month') {
-        const currentDay = newDate.getDate();
-        newDate.setMonth(value);
-        // If the new month has fewer days, adjust the day to the last day of the new month.
-        if (newDate.getDate() !== currentDay) {
-            newDate.setDate(0); 
-        }
-    }
-    if (part === 'day') newDate.setDate(value);
-    
-    setValue('birthday', startOfDay(newDate), { shouldValidate: true });
-  };
+  const selectedAvatar = watch('avatar');
 
   const onSubmit: SubmitHandler<ProfileFormValues> = async (data) => {
     if (!user) {
@@ -148,21 +74,12 @@ export default function GenderProfilePage() {
     }
     setIsSubmitting(true);
     try {
-      const today = new Date();
-      const birthDate = new Date(data.birthday);
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const m = today.getMonth() - birthDate.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-      }
       
       // Update both Auth profile and Firestore document
-      await updateUserDisplayName(data.username);
+      await updateUserDisplayName(data.displayName);
       await createUserProfileDocument(user, {
-          gender: data.gender,
-          displayName: data.username,
-          birthday: data.birthday,
-          age: age,
+          avatar: data.avatar,
+          displayName: data.displayName,
       });
 
       router.push('/onboarding/yoga-goal');
@@ -180,77 +97,57 @@ export default function GenderProfilePage() {
       <QuadrantBackground />
       <Button
           onClick={() => router.back()}
-          className="fixed top-8 left-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40 z-20"
+          className="fixed top-8 left-8 rounded-full h-12 w-12 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40 z-20"
           aria-label="Go back"
       >
-          <ArrowLeft className="h-8 w-8" />
+          <ArrowLeft className="h-6 w-6" />
       </Button>
-      <div className="relative z-10 w-full max-w-sm bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8 m-4">
+      <div className="relative z-10 w-full max-w-lg bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8 m-4">
         <OnboardingHeader />
         
         <form id="gender-profile-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full mt-8">
-          <div className="flex justify-around items-center">
+          <div className="grid grid-cols-3 gap-4">
+              {avatars.map(avatar => {
+                const AvatarIcon = avatar.icon;
+                return (
+                    <div 
+                        key={avatar.id}
+                        className={cn(
+                            "cursor-pointer p-2 rounded-full transition-all aspect-square flex items-center justify-center",
+                            selectedAvatar === avatar.id ? 'ring-2 ring-primary ring-offset-2' : ''
+                        )}
+                        onClick={() => setValue('avatar', avatar.id, { shouldValidate: true })}
+                    >
+                        <div className={cn("rounded-full w-full h-full flex items-center justify-center", avatar.bgColor)}>
+                            <AvatarIcon className="w-20 h-20" />
+                        </div>
+                    </div>
+                )
+              })}
               <div 
-                className="cursor-pointer p-4 rounded-2xl transition-all"
-                onClick={() => setValue('gender', 'female', { shouldValidate: true })}
-              >
-                <FemaleAvatar className={cn("w-24 h-24 transition-opacity", selectedGender && selectedGender !== 'female' && "opacity-40")}/>
-              </div>
-               <div 
-                className="cursor-pointer p-4 rounded-2xl transition-all"
-                onClick={() => setValue('gender', 'male', { shouldValidate: true })}
-              >
-                <MaleAvatar className={cn("w-24 h-24 transition-opacity", selectedGender && selectedGender !== 'male' && "opacity-40")}/>
+                className="cursor-pointer p-2 rounded-full transition-all aspect-square flex items-center justify-center border-2 border-dashed border-muted-foreground/50 text-muted-foreground/50 hover:border-primary hover:text-primary"
+                onClick={() => toast({ title: "Coming Soon!", description: "Custom avatar uploads are not yet available."})}
+                >
+                <PlusCircle className="w-10 h-10" />
               </div>
           </div>
-          {errors.gender && <p className="text-sm text-destructive text-center -mt-4">{errors.gender.message}</p>}
+          {errors.avatar && <p className="text-sm text-destructive text-center -mt-4">{errors.avatar.message}</p>}
           
           <div className="space-y-4">
             <div className="space-y-2">
+               <Label htmlFor="displayName" className="text-center block">How should we address you?</Label>
                <div className="relative">
                     <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     <Input 
-                        id="username" 
-                        placeholder="Username" 
-                        {...register("username")}
+                        id="displayName" 
+                        placeholder="Enter your name" 
+                        {...register("displayName")}
                         className="bg-gray-100/80 border-border/50 rounded-full h-12 pl-12 shadow-inner"
                     />
                </div>
-              {errors.username && <p className="text-sm text-destructive pl-4">{errors.username.message}</p>}
+              {errors.displayName && <p className="text-sm text-destructive pl-4">{errors.displayName.message}</p>}
             </div>
             
-            <div className="space-y-2">
-                <Controller
-                    name="birthday"
-                    control={control}
-                    render={({ field }) => (
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <div className="relative">
-                                    <CalendarIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                                    <button
-                                        type="button"
-                                        className={cn(
-                                            "w-full text-left bg-gray-100/80 border border-border/50 rounded-full h-12 pl-12 shadow-inner text-base",
-                                            !field.value && "text-muted-foreground"
-                                        )}
-                                    >
-                                        {field.value ? format(field.value, "PPP") : <span>Birthday</span>}
-                                    </button>
-                                </div>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                                <div className="grid grid-cols-3 gap-4 relative h-48 p-2">
-                                    <DatePickerColumn title="Day" values={days} onSelect={(day) => handleDateChange('day', day)} selectedValue={field.value?.getDate()} />
-                                    <DatePickerColumn title="Month" values={months} onSelect={(month) => handleDateChange('month', month)} selectedValue={field.value?.getMonth()} />
-                                    <DatePickerColumn title="Year" values={years} onSelect={(year) => handleDateChange('year', year)} selectedValue={field.value?.getFullYear()} />
-                                </div>
-                            </PopoverContent>
-                        </Popover>
-                    )}
-                />
-                {errors.birthday && <p className="text-sm text-destructive pl-4">{errors.birthday.message}</p>}
-            </div>
           </div>
             <div className="px-8">
               <Button type="submit" form="gender-profile-form" className="w-full h-12 text-base rounded-full mt-8" disabled={isSubmitting || authLoading || !isValid}>

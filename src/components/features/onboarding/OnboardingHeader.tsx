@@ -5,7 +5,7 @@ import { WavingMascot } from '@/components/icons/WavingMascot';
 import { usePathname } from 'next/navigation';
 
 const pageTitles: Record<string, { title: string; subtitle: string; optionalText?: string }> = {
-    '/onboarding/gender-profile': { title: 'Who are you?', subtitle: "Let's start with the basics." },
+    '/onboarding/gender-profile': { title: 'Choose your avatar', subtitle: "Let's start with the basics." },
     '/onboarding/yoga-goal': { title: 'Your Yoga Goal', subtitle: "What do you want to achieve?" },
     '/onboarding/yoga-type': { title: 'Pose Interests', subtitle: "What poses excite you?" },
     '/onboarding/current-body-shape': { title: 'Current Shape', subtitle: "How do you see yourself now?", optionalText: "(optional)" },
