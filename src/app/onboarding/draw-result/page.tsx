@@ -7,12 +7,12 @@ import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { AppShell } from '@/components/layout/app-shell';
-import { CheckCircle, XCircle, Gift, ArrowRight, MoveUpRight, Loader2 } from 'lucide-react';
+import { CheckCircle, XCircle, Gift, ArrowRight, MoveUpRight, Loader2, UserCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { UserCircle } from 'lucide-react';
+
 
 export default function DrawResultPage() {
   const { user, loading: authLoading } = useAuth();
