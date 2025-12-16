@@ -28,6 +28,8 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
+import { getAvatarDataUri } from '@/lib/avatar-utils';
+
 
 interface AuthContextType {
   user: User | null;
@@ -82,33 +84,46 @@ export const createUserProfileDocument = async (user: User, additionalData: Docu
   try {
     const userSnap = await getDoc(userRef);
 
-    const { uid, email, photoURL } = user;
-    let newPhotoURL = photoURL;
+    const { uid, email } = user;
+    let photoURL = user.photoURL;
     let displayName = user.displayName || additionalData.displayName || email?.split('@')[0] || 'User';
 
+    let dataUriForUpload: string | null = null;
+    
     // Handle custom avatar upload (if avatar is a data URI)
     if (additionalData.avatar && additionalData.avatar.startsWith('data:image')) {
+        dataUriForUpload = additionalData.avatar;
+    } 
+    // Handle preset avatar selection
+    else if (additionalData.avatar && additionalData.avatar.startsWith('avatar')) {
+        dataUriForUpload = await getAvatarDataUri(additionalData.avatar);
+    }
+    
+    if (dataUriForUpload) {
         const avatarId = uuidv4();
         const avatarRef = ref(storage, `avatars/${user.uid}/${avatarId}.png`);
-        await uploadString(avatarRef, additionalData.avatar, 'data_url');
-        newPhotoURL = await getDownloadURL(avatarRef);
+        await uploadString(avatarRef, dataUriForUpload, 'data_url');
+        photoURL = await getDownloadURL(avatarRef);
 
         // Update Auth profile with new photo URL
-        await updateProfile(user, { photoURL: newPhotoURL });
+        await updateProfile(user, { photoURL: photoURL });
     }
 
     const dataToSet: DocumentData = {
       uid,
       email,
       displayName: displayName,
-      photoURL: newPhotoURL,
+      photoURL: photoURL,
       emailVerified: user.emailVerified,
       ...additionalData,
     };
     
-    // Remove the large data URI from the Firestore document
-    if (dataToSet.avatar && dataToSet.avatar.startsWith('data:image')) {
-        dataToSet.avatar = newPhotoURL; // Store the URL instead
+    // Store the avatar ID, not the data URI, in Firestore
+    if (additionalData.avatar && !additionalData.avatar.startsWith('data:image')) {
+      dataToSet.avatar = additionalData.avatar;
+    } else {
+      // If it was a custom upload, store the final URL.
+      dataToSet.avatar = photoURL;
     }
 
 
@@ -131,7 +146,6 @@ export const createUserProfileDocument = async (user: User, additionalData: Docu
     if (dataToSet.birthday instanceof Date) {
         dataToSet.birthday = serverTimestamp();
     }
-
 
     await setDoc(userRef, dataToSet, { merge: true });
   } catch (error) {
