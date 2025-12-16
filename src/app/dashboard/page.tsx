@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -205,7 +206,7 @@ export default function DashboardPage() {
                 const Component = project.component
                 const CardProps = project.component ? project.props : {};
                 return (
-                  <Link href={project.href} key={index} className={cn("block hover:scale-105 transition-transform duration-200", project.className)}>
+                  <div key={index} className={cn("block transition-transform duration-200", project.className)}>
                     <Card className={cn(project.bgColor, "rounded-xl shadow-sm p-4 flex flex-col h-full relative overflow-hidden")}>
                      
                       <CardHeader className="flex-1 p-2 z-10">
@@ -216,7 +217,7 @@ export default function DashboardPage() {
                         {Component ? <Component {...CardProps} className="h-full w-full text-card-foreground/80" /> : null}
                       </CardContent>
                     </Card>
-                  </Link>
+                  </div>
                 )
               })}
             </div>
