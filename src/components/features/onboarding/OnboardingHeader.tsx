@@ -13,7 +13,7 @@ const pageTitles: Record<string, { title: string; subtitle: string; optionalText
     '/onboarding/profile-summary': { title: 'Your Summary', subtitle: "Let's review your profile." },
     '/onboarding/subscription': { title: 'Choose a Plan', subtitle: "Unlock SnapYoga Premium" },
     '/onboarding/pick-a-prize': { title: 'Pick a Prize!', subtitle: "A special reward just for you." },
-    '/onboarding/draw-result': { title: 'Your Prize', subtitle: "Here's what you've got!" },
+    '/onboarding/draw-result': { title: 'Congratulations!', subtitle: "Here's what you've got!" },
 };
 
 
