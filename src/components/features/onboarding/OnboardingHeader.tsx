@@ -9,11 +9,10 @@ const pageTitles: Record<string, { title: string; subtitle: string; optionalText
     '/onboarding/yoga-goal': { title: 'Your Yoga Goal', subtitle: "What do you want to achieve?" },
     '/onboarding/yoga-type': { title: 'Pose Interests', subtitle: "What poses excite you?" },
     '/onboarding/current-body-shape': { title: 'Current Shape', subtitle: "How do you see yourself now?", optionalText: "(optional)" },
-    '/onboarding/almost-there': { title: 'Almost There!', subtitle: "Just a few more steps." },
     '/onboarding/focus-areas': { title: 'Focus Areas', subtitle: "Where do you want to improve?" },
     '/onboarding/profile-summary': { title: 'Your Summary', subtitle: "Let's review your profile." },
     '/onboarding/subscription': { title: 'Choose a Plan', subtitle: "Unlock SnapYoga Premium" },
-    '/onboarding/lucky-wheel': { title: 'Lucky Spin!', subtitle: "A special prize just for you." },
+    '/onboarding/pick-a-prize': { title: 'Pick a Prize!', subtitle: "A special reward just for you." },
     '/onboarding/draw-result': { title: 'Your Prize', subtitle: "Here's what you've got!" },
 };
 

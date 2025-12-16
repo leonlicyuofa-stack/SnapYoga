@@ -36,7 +36,7 @@ export default function SubscriptionPage() {
         trialStatus: 'active', 
         trialStartDate: new Date().toISOString(), 
       });
-      router.push('/onboarding/lucky-wheel'); 
+      router.push('/onboarding/pick-a-prize'); 
     } catch (error) {
       console.error("Error activating free trial:", error);
       toast({
@@ -49,10 +49,10 @@ export default function SubscriptionPage() {
     }
   };
   
-  const handleProceedToLuckyWheel = () => {
+  const handleProceedToNextStep = () => {
       setIsNavigatingNext(true);
       setTimeout(() => {
-        router.push('/onboarding/lucky-wheel');
+        router.push('/onboarding/pick-a-prize');
       }, 500);
   }
 
@@ -73,7 +73,7 @@ export default function SubscriptionPage() {
             <OnboardingHeader />
             <div className="w-full shadow-xl z-10 bg-card/80 backdrop-blur-sm p-6 rounded-lg">
                 <div className="text-center mb-6">
-                    <p className="text-muted-foreground">Choose your plan or try our lucky wheel!</p>
+                    <p className="text-muted-foreground">Choose your plan to continue.</p>
                 </div>
                 <div className="space-y-6">
                     <div className="p-6 border rounded-lg bg-primary/5 text-center">
@@ -107,7 +107,7 @@ export default function SubscriptionPage() {
             </div>
         </div>
          <Button
-            onClick={handleProceedToLuckyWheel}
+            onClick={handleProceedToNextStep}
             className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
             aria-label="Next"
             disabled={anyLoading}
