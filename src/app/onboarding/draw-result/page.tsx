@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -9,7 +10,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { CheckCircle, XCircle, Gift, ArrowRight, MoveUpRight, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
-import { OnboardingBackground } from '@/components/layout/OnboardingBackground';
+import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 
 export default function DrawResultPage() {
   const { user, loading: authLoading } = useAuth();
@@ -73,57 +74,52 @@ export default function DrawResultPage() {
   }
 
   return (
-    <AppShell>
-      <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4">
-        <OnboardingBackground />
-        <div className="w-full max-w-md flex flex-col items-center">
-            <OnboardingHeader />
-            <div className="w-full shadow-xl text-center z-10 bg-card/80 backdrop-blur-sm p-6 rounded-lg">
-                <div className="mb-4">
-                    {error ? (
-                    <XCircle className="mx-auto h-16 w-16 text-destructive mb-4" />
-                    ) : prize ? (
-                    <Gift className="mx-auto h-16 w-16 text-yellow-400 mb-4" />
-                    ) : (
-                    <CheckCircle className="mx-auto h-16 w-16 text-green-500 mb-4" />
-                    )}
-                    <h2 className="text-3xl font-bold">
-                        {error ? "Spin Error" : prize ? "Congratulations!" : "Onboarding Nearly Done!"}
-                    </h2>
-                    <p className="text-muted-foreground">Your lucky draw result.</p>
-                </div>
-                <div className="space-y-4">
-                    {error ? (
-                    <p className="text-destructive">There was an issue with the lucky spin. Please try again later or proceed.</p>
-                    ) : prize ? (
-                    (() => {
-                        let displayedPrize = prize;
-                        try {
-                        displayedPrize = decodeURIComponent(prize);
-                        } catch (e) {
-                        console.warn("Failed to decode prize from URL for display, showing raw value:", prize, e);
-                        // Keep prize as is for display if decoding fails
-                        }
-                        return <p className="text-xl font-semibold text-accent">You won: {displayedPrize}!</p>;
-                    })()
-                    ) : (
-                    <p className="text-muted-foreground">No prize from the lucky wheel this time, but you're ready to start!</p>
-                    )}
-                    <p className="text-sm text-foreground/80">
-                    {prize ? `Your prize will be applied to your account (mock feature).` : `You've completed the main setup steps.`}
-                    </p>
-                </div>
+    <div className="relative flex min-h-screen items-center justify-center p-4 bg-background">
+      <QuadrantBackground />
+      <div className="relative z-10 w-full max-w-md bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8 m-4">
+        <OnboardingHeader />
+        <div className="w-full text-center mt-8">
+            <div className="mb-4">
+                {error ? (
+                <XCircle className="mx-auto h-16 w-16 text-destructive mb-4" />
+                ) : prize ? (
+                <Gift className="mx-auto h-16 w-16 text-yellow-400 mb-4" />
+                ) : (
+                <CheckCircle className="mx-auto h-16 w-16 text-green-500 mb-4" />
+                )}
+                <h2 className="text-3xl font-bold">
+                    {error ? "Spin Error" : prize ? "Congratulations!" : "Onboarding Nearly Done!"}
+                </h2>
+                <p className="text-muted-foreground">Your lucky draw result.</p>
+            </div>
+            <div className="space-y-4">
+                {error ? (
+                <p className="text-destructive">There was an issue with the lucky spin. Please try again later or proceed.</p>
+                ) : prize ? (
+                (() => {
+                    let displayedPrize = prize;
+                    try {
+                    displayedPrize = decodeURIComponent(prize);
+                    } catch (e) {
+                    console.warn("Failed to decode prize from URL for display, showing raw value:", prize, e);
+                    // Keep prize as is for display if decoding fails
+                    }
+                    return <p className="text-xl font-semibold text-accent">You won: {displayedPrize}!</p>;
+                })()
+                ) : (
+                <p className="text-muted-foreground">No prize from the lucky wheel this time, but you're ready to start!</p>
+                )}
+                <p className="text-sm text-foreground/80">
+                {prize ? `Your prize will be applied to your account (mock feature).` : `You've completed the main setup steps.`}
+                </p>
+            </div>
+            <div className="px-8 pt-8">
+              <Button onClick={handleCompleteOnboarding} className="w-full h-12 text-base rounded-full" disabled={isFinalizing}>
+                  {isFinalizing ? <Loader2 className="animate-spin" /> : 'Go to Dashboard'}
+              </Button>
             </div>
         </div>
-         <Button
-            onClick={handleCompleteOnboarding}
-            className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
-            aria-label="Go to Dashboard"
-            disabled={isFinalizing}
-        >
-            {isFinalizing ? <Loader2 className="h-8 w-8 animate-spin" /> : <MoveUpRight className="h-8 w-8" />}
-        </Button>
       </div>
-    </AppShell>
+    </div>
   );
 }
