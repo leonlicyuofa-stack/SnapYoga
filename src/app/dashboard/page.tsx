@@ -21,6 +21,7 @@ import { RockCollectionCard } from '@/components/features/dashboard/rock-collect
 import { allRocks } from '@/components/features/dashboard/rock-data';
 import { PracticeCalendarSnapshot } from '@/components/features/dashboard/PracticeCalendarSnapshot';
 import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
+import { MoodChart } from '@/components/features/dashboard/MoodChart';
 
 interface UserProfileData extends DocumentData {
   displayName?: string;
@@ -45,7 +46,7 @@ const projects = [
     props: { rocks: allRocks },
   },
   {
-    component: null,
+    component: MoodChart,
     title: "Friends Challenges",
     category: "Community",
     bgColor: "bg-fuchsia-200",
