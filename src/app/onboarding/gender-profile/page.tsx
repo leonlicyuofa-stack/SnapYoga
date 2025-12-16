@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -21,6 +22,7 @@ import { Avatar2Icon } from '@/components/icons/Avatar2Icon';
 import { Avatar3Icon } from '@/components/icons/Avatar3Icon';
 import { Avatar4Icon } from '@/components/icons/Avatar4Icon';
 import { Avatar5Icon } from '@/components/icons/Avatar5Icon';
+import Image from 'next/image';
 
 
 const profileSchema = z.object({
@@ -43,6 +45,8 @@ export default function GenderProfilePage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [customAvatar, setCustomAvatar] = useState<string | null>(null);
   
   const { control, register, handleSubmit, setValue, watch, formState: { errors, isValid }, reset } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -56,7 +60,14 @@ export default function GenderProfilePage() {
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 const defaultValues: Partial<ProfileFormValues> = {};
-                if (data.avatar) defaultValues.avatar = data.avatar;
+                // If photoURL is a custom one, set it as customAvatar
+                if (data.photoURL && !data.photoURL.includes('googleusercontent.com')) {
+                    setCustomAvatar(data.photoURL);
+                    defaultValues.avatar = data.photoURL;
+                } else if (data.avatar) {
+                    defaultValues.avatar = data.avatar;
+                }
+                
                 if (data.displayName) defaultValues.displayName = data.displayName;
                 reset(defaultValues);
             }
@@ -66,6 +77,19 @@ export default function GenderProfilePage() {
 
 
   const selectedAvatar = watch('avatar');
+
+  const handleCustomAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUri = reader.result as string;
+        setCustomAvatar(dataUri);
+        setValue('avatar', dataUri, { shouldValidate: true });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const onSubmit: SubmitHandler<ProfileFormValues> = async (data) => {
     if (!user) {
@@ -78,7 +102,7 @@ export default function GenderProfilePage() {
       // Update both Auth profile and Firestore document
       await updateUserDisplayName(data.displayName);
       await createUserProfileDocument(user, {
-          avatar: data.avatar,
+          avatar: data.avatar, // This will be the data URI if a custom avatar is selected
           displayName: data.displayName,
       });
 
@@ -124,11 +148,25 @@ export default function GenderProfilePage() {
                     </div>
                 )
               })}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleCustomAvatarUpload}
+                className="hidden"
+                accept="image/*"
+              />
               <div 
-                className="cursor-pointer p-2 rounded-full transition-all aspect-square flex items-center justify-center border-2 border-dashed border-muted-foreground/50 text-muted-foreground/50 hover:border-primary hover:text-primary"
-                onClick={() => toast({ title: "Coming Soon!", description: "Custom avatar uploads are not yet available."})}
+                className={cn(
+                    "cursor-pointer p-2 rounded-full transition-all aspect-square flex items-center justify-center",
+                    customAvatar && selectedAvatar === customAvatar ? 'ring-2 ring-primary ring-offset-2' : 'border-2 border-dashed border-muted-foreground/50 text-muted-foreground/50 hover:border-primary hover:text-primary'
+                )}
+                onClick={() => fileInputRef.current?.click()}
                 >
-                <PlusCircle className="w-10 h-10" />
+                {customAvatar ? (
+                    <Image src={customAvatar} alt="Custom Avatar" width={100} height={100} className="rounded-full object-cover w-full h-full" />
+                ) : (
+                    <PlusCircle className="w-10 h-10" />
+                )}
               </div>
           </div>
           {errors.avatar && <p className="text-sm text-destructive text-center -mt-4">{errors.avatar.message}</p>}

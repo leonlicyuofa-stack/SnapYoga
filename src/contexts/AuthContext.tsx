@@ -21,11 +21,13 @@ import {
   updateProfile,
   type UserCredential,
 } from 'firebase/auth';
-import { auth, firestore } from '@/lib/firebase/clientApp';
+import { auth, firestore, storage } from '@/lib/firebase/clientApp';
 import { doc, setDoc, getDoc, serverTimestamp, type DocumentData } from 'firebase/firestore';
+import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
+import { v4 as uuidv4 } from 'uuid';
 
 interface AuthContextType {
   user: User | null;
@@ -80,15 +82,35 @@ export const createUserProfileDocument = async (user: User, additionalData: Docu
   try {
     const userSnap = await getDoc(userRef);
 
-    const { uid, email, displayName, photoURL } = user;
+    const { uid, email, photoURL } = user;
+    let newPhotoURL = photoURL;
+    let displayName = user.displayName || additionalData.displayName || email?.split('@')[0] || 'User';
+
+    // Handle custom avatar upload (if avatar is a data URI)
+    if (additionalData.avatar && additionalData.avatar.startsWith('data:image')) {
+        const avatarId = uuidv4();
+        const avatarRef = ref(storage, `avatars/${user.uid}/${avatarId}.png`);
+        await uploadString(avatarRef, additionalData.avatar, 'data_url');
+        newPhotoURL = await getDownloadURL(avatarRef);
+
+        // Update Auth profile with new photo URL
+        await updateProfile(user, { photoURL: newPhotoURL });
+    }
+
     const dataToSet: DocumentData = {
       uid,
       email,
-      displayName: displayName || additionalData.displayName || email?.split('@')[0] || 'User',
-      photoURL,
-      emailVerified: user.emailVerified, // Reflect current verification status
+      displayName: displayName,
+      photoURL: newPhotoURL,
+      emailVerified: user.emailVerified,
       ...additionalData,
     };
+    
+    // Remove the large data URI from the Firestore document
+    if (dataToSet.avatar && dataToSet.avatar.startsWith('data:image')) {
+        dataToSet.avatar = newPhotoURL; // Store the URL instead
+    }
+
 
     if (!userSnap.exists()) {
       dataToSet.createdAt = serverTimestamp();
@@ -106,7 +128,6 @@ export const createUserProfileDocument = async (user: User, additionalData: Docu
         delete dataToSet.name;
     }
     
-    // Convert birthday Date object to Firestore Timestamp if it exists
     if (dataToSet.birthday instanceof Date) {
         dataToSet.birthday = serverTimestamp();
     }
@@ -140,7 +161,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
 
   React.useEffect(() => {
-    // Check if auth is available. If not, it means Firebase init failed.
     if (!auth) {
         console.error("Firebase Auth is not initialized. Authentication features will be disabled.");
         setLoading(false);
@@ -236,7 +256,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       await createUserProfileDocument(userCredential.user, { ...profileData, displayName, email });
       
-      // The navigation is handled by the calling component after the promise resolves
       return userCredential;
     } catch (error: any) {
       if (error.code === 'auth/email-already-in-use') {
@@ -244,7 +263,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           title: "Email Already in Use",
           description: "Signing you in instead.",
         });
-        // Attempt to sign in and then let the calling component navigate
         try {
           const userCredential = await signInWithEmailAndPassword(auth, email, pass);
           await recordDailyLogin(userCredential.user.uid);
@@ -266,8 +284,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, pass);
-      
-      // Removed email verification check
       
       await recordDailyLogin(userCredential.user.uid);
       await createUserProfileDocument(userCredential.user);
@@ -332,12 +348,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     setLoading(true);
     try {
-      // Update Firebase Auth display name
       await updateProfile(user, { displayName: newDisplayName });
-      // Update Firestore display name
       await createUserProfileDocument(user, { displayName: newDisplayName });
       
-      // Manually update the local user object to reflect the change immediately
       setUser({ ...user, displayName: newDisplayName });
       
       return true;
