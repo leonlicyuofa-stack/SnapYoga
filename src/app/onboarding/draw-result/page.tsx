@@ -96,16 +96,7 @@ export default function DrawResultPage() {
                 {error ? (
                 <p className="text-destructive">There was an issue with the lucky spin. Please try again later or proceed.</p>
                 ) : prize ? (
-                (() => {
-                    let displayedPrize = prize;
-                    try {
-                    displayedPrize = decodeURIComponent(prize);
-                    } catch (e) {
-                    console.warn("Failed to decode prize from URL for display, showing raw value:", prize, e);
-                    // Keep prize as is for display if decoding fails
-                    }
-                    return <p className="text-xl font-semibold text-accent">You won: {displayedPrize}!</p>;
-                })()
+                <p className="text-xl font-semibold text-accent">You won: 3-month free trial!</p>
                 ) : (
                 <p className="text-muted-foreground">No prize from the lucky wheel this time, but you're ready to start!</p>
                 )}

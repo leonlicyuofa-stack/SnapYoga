@@ -106,12 +106,13 @@ export default function PickAPrizePage() {
               )}
               onClick={handleLeftClick}
             >
+              <LeftPattern />
               <div className={cn("absolute inset-0 bg-blue-400 transition-all duration-500",
                 selectedSide === 'left' ? 'opacity-50 scale-150' : 'opacity-0'
               )}></div>
 
               <div className="relative z-10 text-center text-white transition-transform duration-300 group-hover:scale-105">
-                <YogaMatMascot className="h-48 w-48 text-primary" />
+                
               </div>
             </div>
 
@@ -122,12 +123,13 @@ export default function PickAPrizePage() {
               )}
               onClick={handleRightClick}
             >
+              <RightPattern />
               <div className={cn("absolute inset-0 bg-pink-300 transition-all duration-500",
                 selectedSide === 'right' ? 'opacity-80 scale-150' : 'opacity-0'
               )}></div>
                 
               <div className="relative z-10 text-center text-white transition-transform duration-300 group-hover:scale-105">
-                 <YogaMatMascot className="h-48 w-48 text-primary" />
+                 
               </div>
             </div>
 
