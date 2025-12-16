@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
+import { YogaMatMascot } from '@/components/icons/YogaMatMascot';
 
 const LeftPattern = () => (
     <svg width="100%" height="100%" className="absolute inset-0 z-0" preserveAspectRatio="none">
@@ -109,7 +110,7 @@ export default function PickAPrizePage() {
               )}></div>
 
               <div className="relative z-10 text-center text-white transition-transform duration-300 group-hover:scale-105">
-                
+                <YogaMatMascot className="h-48 w-48 text-primary" />
               </div>
             </div>
 
@@ -125,7 +126,7 @@ export default function PickAPrizePage() {
               )}></div>
                 
               <div className="relative z-10 text-center text-white transition-transform duration-300 group-hover:scale-105">
-                
+                 <YogaMatMascot className="h-48 w-48 text-primary" />
               </div>
             </div>
 
