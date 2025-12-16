@@ -41,16 +41,16 @@ const projects = [
     title: "Rock Collection",
     category: "Collectibles",
     bgColor: "bg-rose-200",
-    href: "/challenges",
+    href: "/rocks",
     className: "col-span-1 row-span-2",
     props: { rocks: allRocks },
   },
   {
     component: MoodChart,
-    title: "Friends Challenges",
-    category: "Community",
+    title: "Mood Analysis",
+    category: "Tracking",
     bgColor: "bg-fuchsia-200",
-    href: "/challenges",
+    href: "/practice-calendar",
     className: "col-span-1 row-span-2"
   },
   {
