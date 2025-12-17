@@ -28,14 +28,12 @@ export function RockCollectionCard({ rocks, className }: RockCollectionCardProps
     }
   }
   
-  const recentRocks = rocks.filter(rock => collectedRockIds.includes(rock.id)).slice(0, 2);
-
   return (
     <div className={className}>
       <CardContent>
         <TooltipProvider>
           <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-            {recentRocks.map((rock) => {
+            {rocks.map((rock) => {
               const isCollected = collectedRockIds.includes(rock.id);
               const RockIcon = rock.icon;
               return (
