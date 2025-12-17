@@ -10,13 +10,20 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ArrowLeft, AlertCircle, FileText, Calendar as CalendarIcon, Activity, ChevronRight } from 'lucide-react';
+import { ArrowLeft, AlertCircle, FileText, Calendar as CalendarIcon, Activity, ChevronRight, Award, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { format, isSameDay } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import type { DayContentProps } from 'react-day-picker';
 import { cn } from '@/lib/utils';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import { Badge } from '@/components/ui/badge';
 
 
 interface AnalysisSummary {
@@ -177,33 +184,52 @@ export default function AnalysisLogsPage() {
                         <Skeleton className="h-24 w-full" />
                     </div>
                 ) : filteredAnalyses.length > 0 ? (
-                  <div className="space-y-4">
-                    <h2 className="text-2xl font-bold">
-                        Analyses for {selectedDate ? format(selectedDate, 'PPP') : 'All Time'}
-                    </h2>
-                    {filteredAnalyses.map((analysis) => (
-                      <Card key={analysis.id} className="bg-card/80 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow">
-                        <CardContent className="p-4 flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <div className="p-3 bg-primary/10 rounded-md">
-                                <Activity className="h-8 w-8 text-primary" />
-                            </div>
-                            <div>
-                                <p className="font-semibold text-lg">{analysis.identifiedPose}</p>
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                    <span>{format(analysis.createdAt.toDate(), 'p')}</span>
-                                </div>
-                            </div>
-                          </div>
-                          <Button asChild variant="ghost" size="icon">
-                            <Link href={`/analysis/${analysis.id}`} aria-label={`View details for ${analysis.identifiedPose}`}>
-                                <ChevronRight className="h-6 w-6" />
-                            </Link>
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
+                    <Accordion type="single" collapsible className="w-full space-y-4">
+                        <h2 className="text-2xl font-bold">
+                            Analyses for {selectedDate ? format(selectedDate, 'PPP') : 'All Time'}
+                        </h2>
+                        {filteredAnalyses.map((analysis) => (
+                            <AccordionItem value={analysis.id} key={analysis.id} className="border-b-0">
+                                <Card className="bg-card/80 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow">
+                                    <AccordionTrigger className="p-4 hover:no-underline w-full">
+                                        <div className="flex items-center gap-4 text-left">
+                                            <div className="p-3 bg-primary/10 rounded-md">
+                                                <Activity className="h-8 w-8 text-primary" />
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold text-lg">{analysis.identifiedPose}</p>
+                                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                                    <span>{format(analysis.createdAt.toDate(), 'p')}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </AccordionTrigger>
+                                    <AccordionContent className="px-4 pb-4">
+                                        <div className="border-t pt-4 mt-2 space-y-3">
+                                            <div className="flex items-center justify-between text-sm">
+                                                <span className="text-muted-foreground flex items-center"><Award className="mr-2 h-4 w-4"/>Score</span>
+                                                <Badge variant="secondary">{analysis.score.toFixed(1)} / 100</Badge>
+                                            </div>
+                                            <div className="flex items-center justify-between text-sm">
+                                                <span className="text-muted-foreground flex items-center"><CalendarIcon className="mr-2 h-4 w-4"/>Date</span>
+                                                <span className="font-medium">{format(analysis.createdAt.toDate(), 'PPP')}</span>
+                                            </div>
+                                            <div className="flex items-center justify-between text-sm">
+                                                <span className="text-muted-foreground flex items-center"><Clock className="mr-2 h-4 w-4"/>Time</span>
+                                                <span className="font-medium">{format(analysis.createdAt.toDate(), 'p')}</span>
+                                            </div>
+                                            <Button asChild variant="outline" size="sm" className="w-full mt-2">
+                                                <Link href={`/analysis/${analysis.id}`}>
+                                                    View Full Report
+                                                    <ChevronRight className="ml-2 h-4 w-4"/>
+                                                </Link>
+                                            </Button>
+                                        </div>
+                                    </AccordionContent>
+                                </Card>
+                            </AccordionItem>
+                        ))}
+                    </Accordion>
                 ) : selectedDate && (
                     <div className="p-8 border-2 border-dashed rounded-lg text-center bg-card/50">
                         <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
