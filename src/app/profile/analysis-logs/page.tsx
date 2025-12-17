@@ -10,10 +10,12 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ArrowLeft, AlertCircle, FileText, Calendar as CalendarIcon, Activity, ChevronRight, Calendar } from 'lucide-react';
+import { ArrowLeft, AlertCircle, FileText, Calendar as CalendarIcon, Activity, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { format, isSameDay } from 'date-fns';
+import { Calendar } from '@/components/ui/calendar';
+
 
 interface AnalysisSummary {
   id: string;
