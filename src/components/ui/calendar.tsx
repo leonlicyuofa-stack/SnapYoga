@@ -63,8 +63,6 @@ function Calendar({
       // Use the styles prop here to apply inline styles
       styles={{
         ...props.styles,
-        day_selected: daySelectedStyle,
-        day_today: dayTodayStyle,
       }}
       components={{
         IconLeft: ({ className, ...props }) => (
@@ -73,6 +71,7 @@ function Calendar({
         IconRight: ({ className, ...props }) => (
           <ChevronRight className={cn("h-4 w-4", className)} {...props} />
         ),
+        ...props.components,
       }}
       {...props}
     />

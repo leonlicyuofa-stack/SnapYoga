@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp'; 
@@ -15,6 +15,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { format, isSameDay } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
+import type { DayContentProps } from 'react-day-picker';
+import { cn } from '@/lib/utils';
 
 
 interface AnalysisSummary {
@@ -70,6 +72,26 @@ export default function AnalysisLogsPage() {
       selectedDate ? isSameDay(analysis.createdAt.toDate(), selectedDate) : true
   );
 
+  const analysisDates = useMemo(() => {
+    const dates = new Set<string>();
+    analyses.forEach(analysis => {
+      dates.add(format(analysis.createdAt.toDate(), 'yyyy-MM-dd'));
+    });
+    return dates;
+  }, [analyses]);
+
+  const DayWithDot = (props: DayContentProps) => {
+    const dateStr = format(props.date, 'yyyy-MM-dd');
+    const hasAnalysis = analysisDates.has(dateStr);
+    return (
+      <div className="relative h-full w-full flex items-center justify-center">
+        <span>{format(props.date, 'd')}</span>
+        {hasAnalysis && (
+          <div className="absolute bottom-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+        )}
+      </div>
+    );
+  };
   
   if (authLoading) {
     return (
@@ -118,16 +140,12 @@ export default function AnalysisLogsPage() {
                             selected={selectedDate}
                             onSelect={setSelectedDate}
                             className="p-0"
-                            styles={{
-                                day_selected: { 
-                                  backgroundColor: 'hsl(var(--primary))', 
-                                  color: 'hsl(var(--primary-foreground))',
-                                  
-                                },
-                                day_today: { 
-                                  backgroundColor: 'hsl(var(--accent))',
-                                  color: 'hsl(var(--accent-foreground))',
-                                 },
+                            components={{
+                                DayContent: DayWithDot
+                            }}
+                            classNames={{
+                                day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
+                                day_today: "bg-accent text-accent-foreground",
                             }}
                         />
                     </CardContent>
