@@ -112,7 +112,7 @@ export default function PickAPrizePage() {
               )}></div>
 
               <div className="relative z-10 text-center text-white transition-transform duration-300 group-hover:scale-105">
-                <span className={cn("text-5xl font-extrabold transition-opacity duration-300", selectedSide === 'left' ? 'opacity-100' : 'opacity-0')}>This</span>
+                <span className={cn("text-5xl font-extrabold transition-opacity duration-300", selectedSide ? 'opacity-0' : 'opacity-100')}>This</span>
               </div>
             </div>
 
@@ -129,7 +129,7 @@ export default function PickAPrizePage() {
               )}></div>
                 
               <div className="relative z-10 text-center text-white transition-transform duration-300 group-hover:scale-105">
-                 <span className={cn("text-5xl font-extrabold transition-opacity duration-300", selectedSide === 'right' ? 'opacity-100' : 'opacity-0')}>That</span>
+                 <span className={cn("text-5xl font-extrabold transition-opacity duration-300", selectedSide ? 'opacity-0' : 'opacity-100')}>That</span>
               </div>
             </div>
 
