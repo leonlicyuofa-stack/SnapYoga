@@ -16,6 +16,11 @@ function Calendar({
   showOutsideDays = true,
   ...props
 }: CalendarProps) {
+  // Extract custom day styles from the 'styles' prop if it exists
+  const dayStyles = props.styles || {};
+  const daySelectedStyle = dayStyles.day_selected || {};
+  const dayTodayStyle = dayStyles.day_today || {};
+
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -54,6 +59,12 @@ function Calendar({
         day_hidden: "invisible",
         day_content: 'relative h-full w-full',
         ...classNames,
+      }}
+      // Use the styles prop here to apply inline styles
+      styles={{
+        ...props.styles,
+        day_selected: daySelectedStyle,
+        day_today: dayTodayStyle,
       }}
       components={{
         IconLeft: ({ className, ...props }) => (

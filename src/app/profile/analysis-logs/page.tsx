@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -115,9 +116,16 @@ export default function AnalysisLogsPage() {
                             selected={selectedDate}
                             onSelect={setSelectedDate}
                             className="p-0"
-                            classNames={{
-                                day_selected: "bg-primary text-primary-foreground hover:bg-primary/90 focus:bg-primary/90",
-                                day_today: "bg-accent text-accent-foreground",
+                            styles={{
+                                day_selected: { 
+                                  backgroundColor: 'hsl(var(--primary))', 
+                                  color: 'hsl(var(--primary-foreground))',
+                                  
+                                },
+                                day_today: { 
+                                  backgroundColor: 'hsl(var(--accent))',
+                                  color: 'hsl(var(--accent-foreground))',
+                                 },
                             }}
                         />
                     </CardContent>
