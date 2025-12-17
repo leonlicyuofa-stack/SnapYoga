@@ -146,10 +146,6 @@ export default function GenderProfilePage() {
         >
             <ArrowLeft className="h-6 w-6" />
         </Button>
-        <Avatar className="h-12 w-12 border-2 border-primary/20 bg-card shadow-lg">
-            {renderSelectedAvatar()}
-            <AvatarFallback><UserCircle className="h-6 w-6" /></AvatarFallback>
-        </Avatar>
       </div>
       <div className="relative z-10 w-full max-w-lg bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8 m-4">
         <OnboardingHeader />
