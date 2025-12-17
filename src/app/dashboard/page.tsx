@@ -170,7 +170,7 @@ export default function DashboardPage() {
 
           
           {/* Greeting */}
-          <div className="flex items-center gap-4 pt-16">
+          <div className="flex items-center gap-4 pt-4">
               <div>
                 <h2 className="text-xl font-bold text-foreground">Welcome back!</h2>
                 <p className="text-muted-foreground">{welcomeName}</p>
