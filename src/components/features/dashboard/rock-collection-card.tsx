@@ -71,14 +71,7 @@ export function RockCollectionCard({ rocks, className }: RockCollectionCardProps
           </div>
         </TooltipProvider>
       </CardContent>
-      <CardFooter className="flex justify-end">
-          <Button variant="outline" asChild>
-              <Link href="/rocks">
-                Check Out Our Rocks Section
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-          </Button>
-      </CardFooter>
+      
     </div>
   );
 }
