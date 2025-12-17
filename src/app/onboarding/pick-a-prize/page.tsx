@@ -135,9 +135,10 @@ export default function PickAPrizePage() {
 
             {/* "or" text */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
-              <div className={cn("absolute text-center text-white font-extrabold tracking-widest uppercase transition-opacity duration-300", selectedSide ? 'opacity-0' : 'opacity-100')}>
-                  <span className="block text-2xl my-1">or</span>
-              </div>
+                <div className={cn("relative text-center text-white font-extrabold tracking-widest uppercase transition-opacity duration-300", selectedSide ? 'opacity-0' : 'opacity-100')}>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-0.5 h-20 bg-white/50 -rotate-[20deg]"></div>
+                    <span className="relative block text-2xl my-1">or</span>
+                </div>
             </div>
           </div>
       </div>
