@@ -86,9 +86,10 @@ export default function AnalysisLogsPage() {
     return (
       <div className="relative h-full w-full flex flex-col items-center justify-center pt-1">
         <span>{format(props.date, 'd')}</span>
-        {hasAnalysis && (
-          <div className="h-1.5 w-1.5 rounded-full bg-primary mt-0.5" />
-        )}
+        <div className={cn(
+            "h-1.5 w-1.5 rounded-full mt-0.5",
+            hasAnalysis ? "bg-primary" : "bg-transparent"
+        )} />
       </div>
     );
   };
