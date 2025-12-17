@@ -64,7 +64,7 @@ export function AppShell({ children }: AppShellProps) {
   };
   
   const noShellRoutes = ['/auth/signin', '/auth/signup', '/auth/verify-email', '/'];
-  const noHeaderRoutes = ['/welcome'];
+  const noHeaderRoutes = ['/welcome', '/dashboard'];
   
   const showOnboardingHeader = pathname.startsWith('/onboarding/');
   const noFooterRoutes = ['/welcome', ...showOnboardingHeader ? [pathname] : []];
@@ -165,7 +165,14 @@ export function AppShell({ children }: AppShellProps) {
             )}
 
             <Link href="/profile" className={navLinkClasses("/profile")}>
-                <UserCircle className="h-6 w-6" />
+                {user?.photoURL ? (
+                    <Avatar className="h-6 w-6">
+                        <AvatarImage src={user.photoURL} alt={user.displayName || 'User avatar'} />
+                        <AvatarFallback>{getInitials(user.email, user.displayName)}</AvatarFallback>
+                    </Avatar>
+                ) : (
+                    <UserCircle className="h-6 w-6" />
+                )}
                 <span className="btm-nav-label">{t('profile')}</span>
             </Link>
         </footer>
