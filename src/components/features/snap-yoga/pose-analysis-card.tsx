@@ -21,9 +21,9 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
   const rawScore = analysis?.score ?? null;
   const identifiedPose = analysis?.identifiedPose ?? null;
 
-  // Multiply score by 100, round it, and cap at 100.
+  // Score is already between 0-100, so just round it
   const score = typeof rawScore === 'number' 
-    ? Math.min(Math.round(rawScore * 100), 100) 
+    ? Math.min(Math.round(rawScore), 100) 
     : null;
 
   // Determine if the video source is a data URI or a URL
