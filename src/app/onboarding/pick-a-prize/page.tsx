@@ -112,7 +112,7 @@ export default function PickAPrizePage() {
               )}></div>
 
               <div className="relative z-10 text-center text-white transition-transform duration-300 group-hover:scale-105">
-                
+                <span className={cn("text-5xl font-extrabold transition-opacity duration-300", selectedSide === 'left' ? 'opacity-100' : 'opacity-0')}>This</span>
               </div>
             </div>
 
@@ -129,13 +129,13 @@ export default function PickAPrizePage() {
               )}></div>
                 
               <div className="relative z-10 text-center text-white transition-transform duration-300 group-hover:scale-105">
-                 
+                 <span className={cn("text-5xl font-extrabold transition-opacity duration-300", selectedSide === 'right' ? 'opacity-100' : 'opacity-0')}>That</span>
               </div>
             </div>
 
             {/* "or" text */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
-              <div className="absolute text-center text-white font-extrabold tracking-widest uppercase">
+              <div className={cn("absolute text-center text-white font-extrabold tracking-widest uppercase transition-opacity duration-300", selectedSide ? 'opacity-0' : 'opacity-100')}>
                   <span className="block text-2xl my-1">or</span>
               </div>
             </div>
