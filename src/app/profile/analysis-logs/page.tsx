@@ -189,7 +189,8 @@ export default function AnalysisLogsPage() {
                             Analyses for {selectedDate ? format(selectedDate, 'PPP') : 'All Time'}
                         </h2>
                         {filteredAnalyses.map((analysis) => {
-                             const score = Math.min(Math.round(analysis.score), 100);
+                             const scoreValue = analysis.score < 1 ? analysis.score * 100 : analysis.score;
+                             const score = Math.min(Math.round(scoreValue), 100);
                              return (
                                 <AccordionItem value={analysis.id} key={analysis.id} className="border-b-0">
                                     <Card className="bg-card/80 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow">
