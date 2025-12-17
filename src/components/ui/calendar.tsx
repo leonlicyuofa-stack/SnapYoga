@@ -57,7 +57,6 @@ function Calendar({
         day_range_middle:
           "aria-selected:bg-accent aria-selected:text-accent-foreground",
         day_hidden: "invisible",
-        day_content: 'relative h-full w-full',
         ...classNames,
       }}
       // Use the styles prop here to apply inline styles

@@ -84,10 +84,10 @@ export default function AnalysisLogsPage() {
     const dateStr = format(props.date, 'yyyy-MM-dd');
     const hasAnalysis = analysisDates.has(dateStr);
     return (
-      <div className="relative h-full w-full flex items-center justify-center">
+      <div className="relative h-full w-full flex flex-col items-center justify-center pt-1">
         <span>{format(props.date, 'd')}</span>
         {hasAnalysis && (
-          <div className="absolute bottom-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
+          <div className="h-1.5 w-1.5 rounded-full bg-primary mt-0.5" />
         )}
       </div>
     );
@@ -143,9 +143,17 @@ export default function AnalysisLogsPage() {
                             components={{
                                 DayContent: DayWithDot
                             }}
-                            classNames={{
-                                day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-                                day_today: "bg-accent text-accent-foreground",
+                            styles={{
+                                day_selected: { 
+                                    backgroundColor: 'hsl(var(--primary))', 
+                                    color: 'hsl(var(--primary-foreground))',
+                                    borderRadius: '9999px',
+                                },
+                                day_today: {
+                                    backgroundColor: 'hsl(var(--accent))',
+                                    color: 'hsl(var(--accent-foreground))',
+                                    borderRadius: '9999px',
+                                }
                             }}
                         />
                     </CardContent>
