@@ -10,10 +10,10 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ArrowLeft, AlertCircle, FileJson, FileText, Calendar, Activity, ChevronRight } from 'lucide-react';
+import { ArrowLeft, AlertCircle, FileText, Calendar as CalendarIcon, Activity, ChevronRight, Calendar } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
-import { format } from 'date-fns';
+import { format, isSameDay } from 'date-fns';
 
 interface AnalysisSummary {
   id: string;
@@ -27,6 +27,7 @@ export default function AnalysisLogsPage() {
   const [analyses, setAnalyses] = useState<AnalysisSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 
   useEffect(() => {
     if (authLoading) return;
@@ -62,6 +63,10 @@ export default function AnalysisLogsPage() {
         setLoading(false);
       });
   }, [currentUser, authLoading]);
+  
+  const filteredAnalyses = analyses.filter(analysis => 
+      selectedDate ? isSameDay(analysis.createdAt.toDate(), selectedDate) : true
+  );
 
   
   if (authLoading) {
@@ -91,52 +96,90 @@ export default function AnalysisLogsPage() {
               Analysis History
             </CardTitle>
             <CardDescription className="text-md">
-              Review a summary of your past pose analysis sessions.
+              Select a date on the calendar to review your practice sessions.
             </CardDescription>
           </CardHeader>
         </div>
 
-        {error && !loading && (
-          <Alert variant="destructive" className="max-w-md mx-auto">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Notice</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-        
-        {loading ? (
-            <div className="space-y-4">
-                <Skeleton className="h-24 w-full" />
-                <Skeleton className="h-24 w-full" />
-                <Skeleton className="h-24 w-full" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="md:col-span-1">
+                 <Card className="bg-card/80 backdrop-blur-sm shadow-md">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-xl">
+                            <CalendarIcon className="h-6 w-6 text-primary" />
+                            Select a Date
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex justify-center">
+                        <Calendar
+                            mode="single"
+                            selected={selectedDate}
+                            onSelect={setSelectedDate}
+                            className="p-0"
+                            classNames={{
+                                day_selected: "bg-primary text-primary-foreground hover:bg-primary/90 focus:bg-primary/90",
+                                day_today: "bg-accent text-accent-foreground",
+                            }}
+                        />
+                    </CardContent>
+                </Card>
             </div>
-        ) : (
-          <div className="space-y-4">
-            {analyses.map((analysis) => (
-              <Card key={analysis.id} className="bg-card/80 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow">
-                <CardContent className="p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-primary/10 rounded-md">
-                        <Activity className="h-8 w-8 text-primary" />
+
+            <div className="md:col-span-2">
+                {error && !loading && analyses.length === 0 && (
+                  <Alert variant="destructive" className="max-w-md mx-auto">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Notice</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+                
+                {loading ? (
+                    <div className="space-y-4">
+                        <Skeleton className="h-24 w-full" />
+                        <Skeleton className="h-24 w-full" />
+                        <Skeleton className="h-24 w-full" />
                     </div>
-                    <div>
-                        <p className="font-semibold text-lg">{analysis.identifiedPose}</p>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Calendar className="h-4 w-4" />
-                            <span>{format(analysis.createdAt.toDate(), 'PPP p')}</span>
-                        </div>
-                    </div>
+                ) : filteredAnalyses.length > 0 ? (
+                  <div className="space-y-4">
+                    <h2 className="text-2xl font-bold">
+                        Analyses for {selectedDate ? format(selectedDate, 'PPP') : 'All Time'}
+                    </h2>
+                    {filteredAnalyses.map((analysis) => (
+                      <Card key={analysis.id} className="bg-card/80 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow">
+                        <CardContent className="p-4 flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div className="p-3 bg-primary/10 rounded-md">
+                                <Activity className="h-8 w-8 text-primary" />
+                            </div>
+                            <div>
+                                <p className="font-semibold text-lg">{analysis.identifiedPose}</p>
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                    <span>{format(analysis.createdAt.toDate(), 'p')}</span>
+                                </div>
+                            </div>
+                          </div>
+                          <Button asChild variant="ghost" size="icon">
+                            <Link href={`/analysis/${analysis.id}`} aria-label={`View details for ${analysis.identifiedPose}`}>
+                                <ChevronRight className="h-6 w-6" />
+                            </Link>
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
-                  <Button asChild variant="ghost" size="icon">
-                    <Link href={`/analysis/${analysis.id}`} aria-label={`View details for ${analysis.identifiedPose}`}>
-                        <ChevronRight className="h-6 w-6" />
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+                ) : selectedDate && (
+                    <div className="p-8 border-2 border-dashed rounded-lg text-center bg-card/50">
+                        <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                        <h3 className="text-xl font-semibold">No Analyses Found</h3>
+                        <p className="text-muted-foreground mt-1">
+                            No analysis sessions were recorded on {format(selectedDate, 'PPP')}.
+                        </p>
+                    </div>
+                )}
+            </div>
+        </div>
+
       </div>
     </AppShell>
   );
