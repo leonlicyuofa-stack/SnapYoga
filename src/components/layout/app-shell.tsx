@@ -126,40 +126,7 @@ export function AppShell({ children }: AppShellProps) {
     }
     
     // Default Header
-    return (
-      <header className="sticky top-0 z-40 w-full">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-            <div> {/* Left side placeholder */} </div>
-            <div className="flex items-center gap-4">
-                {loading && <SmileyRockLoader />}
-                {!loading && user && (
-                    <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                            <Avatar className="h-10 w-10 border-2 border-primary/30">
-                                <AvatarImage src={user.photoURL || ''} alt={user.displayName || user.email || ''} />
-                                <AvatarFallback className="bg-muted text-muted-foreground font-semibold">
-                                {getInitials(user.email, user.displayName)}
-                                </AvatarFallback>
-                            </Avatar>
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56" align="end" forceMount>
-                        {userMenuItems}
-                    </DropdownMenuContent>
-                    </DropdownMenu>
-                )}
-                {!loading && !user && (
-                    <Button asChild>
-                    <Link href="/auth/signin">
-                        <LogIn className="mr-2 h-4 w-4" /> {t('signIn')}
-                    </Link>
-                    </Button>
-                )}
-            </div>
-        </div>
-      </header>
-    );
+    return null;
   }
 
 
