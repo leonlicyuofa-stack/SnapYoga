@@ -121,18 +121,6 @@ export default function AnalysisLogsPage() {
           </Link>
         </Button>
         
-        <div className="mb-8 p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
-          <CardHeader className="p-0">
-            <CardTitle className="flex items-center gap-2 text-3xl text-primary">
-              <FileText className="h-8 w-8" />
-              Analysis History
-            </CardTitle>
-            <CardDescription className="text-md">
-              Select a date on the calendar to review your practice sessions.
-            </CardDescription>
-          </CardHeader>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="md:col-span-1">
                  <Card className="bg-card/80 backdrop-blur-sm shadow-md">
