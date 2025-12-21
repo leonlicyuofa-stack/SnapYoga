@@ -41,16 +41,21 @@ const valueToColor: { [key: number]: string } = {
 const CustomDot = (props: DotProps & { payload: any }) => {
     const { cx, cy, payload } = props;
   
-    if (!payload.moodValue) {
-      return null;
+    // If moodValue exists, render the emoji.
+    if (payload.moodValue) {
+      return (
+        <g transform={`translate(${cx},${cy})`}>
+          {/* Increased foreignObject size and adjusted y to prevent clipping */}
+          <foreignObject x={-14} y={-14} width={28} height={28}>
+            <div className="text-2xl text-center">{valueToEmoji[payload.moodValue]}</div>
+          </foreignObject>
+        </g>
+      );
     }
   
+    // If no moodValue, render a placeholder grey dot.
     return (
-      <g transform={`translate(${cx},${cy})`}>
-        <foreignObject x={-12} y={-12} width={24} height={24}>
-          <div className="text-2xl text-center">{valueToEmoji[payload.moodValue]}</div>
-        </foreignObject>
-      </g>
+      <circle cx={cx} cy={cy} r={5} fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth={1} />
     );
 };
 
@@ -105,7 +110,10 @@ export function MoodChart({ className }: { className?: string }) {
         const moodData = moods[dayKey];
         return {
           day: format(day, 'EEE'),
+          // Ensure there's always a numeric value for the Area chart to connect smoothly
+          // We use moodValue for the dot and plotValue for the area.
           moodValue: moodData ? moodToValue[moodData.name] : null,
+          plotValue: moodData ? moodToValue[moodData.name] : 2.5, // Center value for placeholder
           fill: moodData ? valueToColor[moodToValue[moodData.name]] : 'transparent',
         };
       });
@@ -129,27 +137,27 @@ export function MoodChart({ className }: { className?: string }) {
     <div className={className}>
       <CardContent>
         <ResponsiveContainer width="100%" height={200}>
-          <AreaChart data={data} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+          <AreaChart data={data} margin={{ top: 15, right: 20, left: -10, bottom: 5 }}>
             <defs>
-                <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="colorMood" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
                     <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
                 </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={true} stroke="hsl(var(--border))" />
+            <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="hsl(var(--border))" />
             <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
             <YAxis hide={true} domain={[0, 5]} />
             <Tooltip content={<CustomTooltip />} />
             <Area 
                 type="monotone" 
-                dataKey="moodValue" 
+                dataKey="plotValue" // Use plotValue for the area
                 stroke="hsl(var(--primary))" 
-                strokeWidth={2}
+                strokeWidth={2.5}
                 fillOpacity={1} 
-                fill="url(#colorUv)" 
+                fill="url(#colorMood)" 
                 connectNulls
                 //@ts-ignore
-                dot={<CustomDot />}
+                dot={<CustomDot />} // CustomDot will use moodValue
             />
           </AreaChart>
         </ResponsiveContainer>
