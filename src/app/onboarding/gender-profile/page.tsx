@@ -17,11 +17,6 @@ import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHea
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
-import { Avatar1Icon } from '@/components/icons/Avatar1Icon';
-import { Avatar2Icon } from '@/components/icons/Avatar2Icon';
-import { Avatar3Icon } from '@/components/icons/Avatar3Icon';
-import { Avatar4Icon } from '@/components/icons/Avatar4Icon';
-import { Avatar5Icon } from '@/components/icons/Avatar5Icon';
 import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
@@ -34,11 +29,12 @@ const profileSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 const avatars = [
-    { id: 'avatar1', icon: Avatar1Icon, bgColor: 'bg-purple-200' },
-    { id: 'avatar2', icon: Avatar2Icon, bgColor: 'bg-pink-200' },
-    { id: 'avatar3', icon: Avatar3Icon, bgColor: 'bg-orange-200' },
-    { id: 'avatar4', icon: Avatar4Icon, bgColor: 'bg-rose-200' },
-    { id: 'avatar5', icon: Avatar5Icon, bgColor: 'bg-green-200' },
+    { id: 'avatar1', imagePath: '/images/avatar1.png', bgColor: 'bg-purple-200' },
+    { id: 'avatar2', imagePath: '/images/avatar2.png', bgColor: 'bg-pink-200' },
+    { id: 'avatar3', imagePath: '/images/avatar3.png', bgColor: 'bg-orange-200' },
+    { id: 'avatar4', imagePath: '/images/avatar4.png', bgColor: 'bg-rose-200' },
+    { id: 'avatar5', imagePath: '/images/avatar5.png', bgColor: 'bg-green-200' },
+    { id: 'avatar6', imagePath: '/images/avatar6.png', bgColor: 'bg-blue-200' },
 ];
 
 export default function GenderProfilePage() {
@@ -128,8 +124,7 @@ export default function GenderProfilePage() {
 
     const avatarData = avatars.find(a => a.id === selectedAvatar);
     if (avatarData) {
-        const AvatarIcon = avatarData.icon;
-        return <div className={cn("w-full h-full flex items-center justify-center p-1", avatarData.bgColor)}><AvatarIcon className="w-8 h-8" /></div>
+        return <div className={cn("w-full h-full flex items-center justify-center p-1", avatarData.bgColor)}><Image src={avatarData.imagePath} alt={avatarData.id} width={80} height={80} /></div>
     }
 
     return <UserCircle className="h-6 w-6 text-muted-foreground" />;
@@ -153,7 +148,6 @@ export default function GenderProfilePage() {
         <form id="gender-profile-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full mt-8">
           <div className="grid grid-cols-3 gap-4">
               {avatars.map(avatar => {
-                const AvatarIcon = avatar.icon;
                 return (
                     <div 
                         key={avatar.id}
@@ -163,8 +157,8 @@ export default function GenderProfilePage() {
                         )}
                         onClick={() => setValue('avatar', avatar.id, { shouldValidate: true })}
                     >
-                        <div className={cn("rounded-full w-full h-full flex items-center justify-center", avatar.bgColor)}>
-                            <AvatarIcon className="w-20 h-20" />
+                        <div className={cn("rounded-full w-full h-full flex items-center justify-center overflow-hidden", avatar.bgColor)}>
+                            <Image src={avatar.imagePath} alt={avatar.id} width={120} height={120} className="object-cover" />
                         </div>
                     </div>
                 )
