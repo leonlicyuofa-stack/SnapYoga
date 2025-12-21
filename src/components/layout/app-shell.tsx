@@ -64,7 +64,7 @@ export function AppShell({ children }: AppShellProps) {
   };
   
   const noShellRoutes = ['/auth/signin', '/auth/signup', '/auth/verify-email', '/'];
-  const noHeaderRoutes = ['/welcome', '/dashboard'];
+  const noHeaderRoutes = ['/welcome'];
   
   const showOnboardingHeader = pathname.startsWith('/onboarding/');
   const noFooterRoutes = ['/welcome', ...showOnboardingHeader ? [pathname] : []];
@@ -111,10 +111,8 @@ export function AppShell({ children }: AppShellProps) {
   )
 
   const renderHeader = () => {
-    // Hide header on dashboard and welcome pages
     if (noHeaderRoutes.includes(pathname)) return null;
 
-    // Default header with sign-out button
     return (
         <header className="fixed top-0 left-0 z-40 w-full">
             <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -122,6 +120,21 @@ export function AppShell({ children }: AppShellProps) {
                     <Button variant="ghost" size="icon" className="rounded-full bg-card/20 backdrop-blur-sm h-12 w-12" onClick={signOutUser}>
                         <LogOut className="h-6 w-6" />
                     </Button>
+                )}
+                 {user && (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="relative h-12 w-12 rounded-full bg-card/20 backdrop-blur-sm">
+                                <Avatar className="h-10 w-10">
+                                    <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User avatar'} />
+                                    <AvatarFallback>{getInitials(user.email, user.displayName)}</AvatarFallback>
+                                </Avatar>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-56" align="end" forceMount>
+                            {userMenuItems}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 )}
             </div>
         </header>
