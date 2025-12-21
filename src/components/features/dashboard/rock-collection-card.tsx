@@ -4,6 +4,9 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Collectible } from './rock-data';
 import Image from 'next/image';
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+
 
 interface YogaCollectionCardProps {
   collectibles: Collectible[];
@@ -25,7 +28,7 @@ export function RockCollectionCard({ collectibles, className }: YogaCollectionCa
   }
   
   return (
-    <div className={className}>
+    <ScrollArea className={cn("h-full w-full", className)}>
         <TooltipProvider>
           <div className="flex flex-wrap gap-4 justify-center md:justify-start">
             {collectibles.map((item) => {
@@ -66,6 +69,6 @@ export function RockCollectionCard({ collectibles, className }: YogaCollectionCa
             })}
           </div>
         </TooltipProvider>
-    </div>
+    </ScrollArea>
   );
 }
