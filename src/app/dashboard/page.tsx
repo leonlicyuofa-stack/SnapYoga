@@ -120,17 +120,17 @@ export default function DashboardPage() {
       if (mood.name === 'Sad') {
         toast({
             title: "A Little Note for You",
-            description: "Inhale the good vibes, exhale the drama.",
+            description: "Inhale the good vibes, exhale the drama. Refresh to see your mood chart update!",
         });
       } else if (mood.name === 'Happy') {
         toast({
             title: "Rise, stretch, breathe, smile — it's Yoga Day!",
-            description: `Your mood for today is set to: ${mood.emoji} ${mood.name}`,
+            description: `Your mood is set to: ${mood.emoji} ${mood.name}. Refresh to see your mood chart update!`,
         });
       } else {
         toast({
             title: "Mood Saved!",
-            description: `Your mood for today has been set to: ${mood.emoji} ${mood.name}`,
+            description: `Your mood has been set to: ${mood.emoji} ${mood.name}. Refresh to see your mood chart update!`,
         });
       }
 
