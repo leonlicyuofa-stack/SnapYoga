@@ -50,7 +50,7 @@ const projects = [
   {
     component: MoodChart,
     title: "Mood Analysis",
-    category: "Tracking",
+    category: "Log your mood above to see your weekly trend.",
     bgColor: "bg-fuchsia-200",
     href: "/practice-calendar",
     className: "col-span-1 row-span-2"
