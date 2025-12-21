@@ -115,12 +115,7 @@ export function AppShell({ children }: AppShellProps) {
 
     return (
         <header className="fixed top-0 left-0 z-40 w-full">
-            <div className="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
-                {user && (
-                    <Button variant="ghost" size="icon" className="rounded-full bg-card/20 backdrop-blur-sm h-12 w-12" onClick={signOutUser}>
-                        <LogOut className="h-6 w-6" />
-                    </Button>
-                )}
+            <div className="container mx-auto flex h-20 items-center justify-end px-4 sm:px-6 lg:px-8">
                  {user && (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
