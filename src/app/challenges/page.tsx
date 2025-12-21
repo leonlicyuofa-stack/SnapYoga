@@ -21,7 +21,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { RockWheelDialog } from '@/components/features/dashboard/rock-wheel-dialog';
 import { RewardDialog } from '@/components/features/dashboard/reward-dialog';
-import type { Rock } from '@/components/features/dashboard/rock-data';
+import type { Collectible } from '@/components/features/dashboard/rock-data';
 import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 
 interface Friend {
@@ -271,9 +271,9 @@ export default function ChallengesPage() {
   const { t } = useLanguage();
   const [showRockWheelDialog, setShowRockWheelDialog] = useState(false);
   const [showRewardDialog, setShowRewardDialog] = useState(false);
-  const [rewardedRock, setRewardedRock] = useState<Rock | null>(null);
+  const [rewardedRock, setRewardedRock] = useState<Collectible | null>(null);
 
-  const handleRockReward = (rock: Rock) => {
+  const handleRockReward = (rock: Collectible) => {
     setShowRockWheelDialog(false);
     setRewardedRock(rock);
     setShowRewardDialog(true);
@@ -342,7 +342,7 @@ export default function ChallengesPage() {
               </CardHeader>
               <CardContent>
                   <Button onClick={() => setShowRockWheelDialog(true)} className="w-full" size="lg">
-                      Claim Your Rock!
+                      Claim Your Item!
                   </Button>
               </CardContent>
           </Card>
