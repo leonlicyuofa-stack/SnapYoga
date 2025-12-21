@@ -28,7 +28,8 @@ export function RockCollectionCard({ collectibles, className }: YogaCollectionCa
   }
   
   return (
-    <ScrollArea className={cn("h-full w-full", className)}>
+    <div className={cn("relative h-full w-full", className)}>
+      <ScrollArea className="absolute h-full w-full">
         <TooltipProvider>
           <div className="flex flex-wrap gap-4 justify-center md:justify-start">
             {collectibles.map((item) => {
@@ -70,5 +71,6 @@ export function RockCollectionCard({ collectibles, className }: YogaCollectionCa
           </div>
         </TooltipProvider>
     </ScrollArea>
+    </div>
   );
 }
