@@ -29,12 +29,12 @@ const profileSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 const avatars = [
-    { id: 'avatar1', imagePath: '/images/avatar1.png', bgColor: 'bg-purple-200' },
-    { id: 'avatar2', imagePath: '/images/avatar2.png', bgColor: 'bg-pink-200' },
-    { id: 'avatar3', imagePath: '/images/avatar3.png', bgColor: 'bg-orange-200' },
-    { id: 'avatar4', imagePath: '/images/avatar4.png', bgColor: 'bg-rose-200' },
-    { id: 'avatar5', imagePath: '/images/avatar5.png', bgColor: 'bg-green-200' },
-    { id: 'avatar6', imagePath: '/images/avatar6.png', bgColor: 'bg-blue-200' },
+    { id: 'avatar1', imagePath: '/images/avatar1.png', bgColor: 'bg-white' },
+    { id: 'avatar2', imagePath: '/images/avatar2.png', bgColor: 'bg-white' },
+    { id: 'avatar3', imagePath: '/images/avatar3.png', bgColor: 'bg-white' },
+    { id: 'avatar4', imagePath: '/images/avatar4.png', bgColor: 'bg-white' },
+    { id: 'avatar5', imagePath: '/images/avatar5.png', bgColor: 'bg-white' },
+    { id: 'avatar6', imagePath: '/images/avatar6.png', bgColor: 'bg-white' },
 ];
 
 export default function GenderProfilePage() {
