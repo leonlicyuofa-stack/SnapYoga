@@ -18,7 +18,7 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { PracticeAnalytics } from '@/components/features/dashboard/PracticeAnalytics';
 import { RockCollectionCard } from '@/components/features/dashboard/rock-collection-card';
-import { allRocks } from '@/components/features/dashboard/rock-data';
+import { allCollectibles } from '@/components/features/dashboard/rock-data';
 import { PracticeCalendarSnapshot } from '@/components/features/dashboard/PracticeCalendarSnapshot';
 import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 import { MoodChart } from '@/components/features/dashboard/MoodChart';
@@ -40,17 +40,17 @@ const projects = [
   },
   {
     component: RockCollectionCard,
-    title: "Rock Collection",
+    title: "Yoga Collection",
     category: "Collectibles",
     bgColor: "bg-rose-200",
-    href: "/rocks",
+    href: "/yoga-collection",
     className: "col-span-1 row-span-2",
-    props: { rocks: allRocks },
+    props: { collectibles: allCollectibles },
   },
   {
     component: MoodChart,
     title: "Mood Analysis",
-    category: "Log your mood above to see your daily trend.",
+    category: "Log your mood to see your daily trend.",
     bgColor: "bg-fuchsia-200",
     href: "/practice-calendar",
     className: "col-span-1 row-span-2"

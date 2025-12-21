@@ -5,20 +5,21 @@ import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Gift, RotateCw, X } from 'lucide-react';
-import { allRocks, type Rock } from './rock-data';
+import { allCollectibles, type Collectible } from './rock-data';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import Image from 'next/image';
 
-interface RockWheelDialogProps {
+interface YogaWheelDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onReward: (rock: Rock) => void;
+  onReward: (collectible: Collectible) => void;
 }
 
-export function RockWheelDialog({ isOpen, onClose, onReward }: RockWheelDialogProps) {
+export function RockWheelDialog({ isOpen, onClose, onReward }: YogaWheelDialogProps) {
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [hasSpun, setHasSpun] = useState(false);
-  const [result, setResult] = useState<Rock | null>(null);
+  const [result, setResult] = useState<Collectible | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -36,10 +37,10 @@ export function RockWheelDialog({ isOpen, onClose, onReward }: RockWheelDialogPr
     setRotation(finalRotation);
 
     setTimeout(() => {
-      // Exclude already collected rocks for this demo
-      const uncollectedRocks = allRocks.filter(r => !['welcome', 'first-analysis', 'join-challenge'].includes(r.id));
-      const prizeIndex = Math.floor(Math.random() * uncollectedRocks.length);
-      const wonPrize = uncollectedRocks[prizeIndex];
+      // Exclude already collected items for this demo
+      const uncollectedItems = allCollectibles.filter(r => !['welcome_mat', 'first_analysis_block', 'join_challenge_strap'].includes(r.id));
+      const prizeIndex = Math.floor(Math.random() * uncollectedItems.length);
+      const wonPrize = uncollectedItems[prizeIndex];
       
       setResult(wonPrize);
       setIsSpinning(false);
@@ -60,7 +61,7 @@ export function RockWheelDialog({ isOpen, onClose, onReward }: RockWheelDialogPr
         <DialogHeader className="text-center pt-6 px-6">
           <DialogTitle className="text-2xl sm:text-3xl font-bold text-primary">Challenge Reward!</DialogTitle>
           <DialogDescription className="text-muted-foreground text-sm sm:text-base">
-            Spin the wheel to discover which rock you've earned!
+            Spin the wheel to discover which item you've earned!
           </DialogDescription>
         </DialogHeader>
         
@@ -80,13 +81,12 @@ export function RockWheelDialog({ isOpen, onClose, onReward }: RockWheelDialogPr
                     className="w-full h-full rounded-full border-4 border-primary shadow-lg flex items-center justify-center transition-transform duration-[4000ms] ease-out relative"
                     style={{ transform: `rotate(${rotation}deg)` }}
                 >
-                    {allRocks.map((rock, index, arr) => {
-                        const RockIcon = rock.icon;
+                    {allCollectibles.map((item, index, arr) => {
                         const angle = (360 / arr.length) * index;
                         return (
-                            <div key={rock.id} className="absolute w-full h-full" style={{ transform: `rotate(${angle}deg)`}}>
+                            <div key={item.id} className="absolute w-full h-full" style={{ transform: `rotate(${angle}deg)`}}>
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -mt-4 p-1 bg-card rounded-full">
-                                    <RockIcon className="h-8 w-8" style={{transform: `rotate(${-rotation - angle}deg)`}} />
+                                    <Image src={item.imageUrl} alt={item.name} width={32} height={32} className="rounded-full" style={{transform: `rotate(${-rotation - angle}deg)`}}/>
                                 </div>
                             </div>
                         )
@@ -120,7 +120,7 @@ export function RockWheelDialog({ isOpen, onClose, onReward }: RockWheelDialogPr
                 You won a...
               </h3>
               <div className="flex items-center justify-center gap-2 text-xl sm:text-2xl font-medium text-foreground">
-                <result.icon className="h-8 w-8" style={{color: result.color}} />
+                <Image src={result.imageUrl} alt={result.name} width={32} height={32} className="rounded-full" />
                 <span style={{color: result.color}}>{result.name}!</span>
               </div>
             </div>

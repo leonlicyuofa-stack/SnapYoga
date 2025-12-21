@@ -2,100 +2,92 @@
 "use client";
 
 import type { ComponentType, SVGProps } from 'react';
-import { WelcomeRock } from '@/components/icons/rocks/welcome-rock';
-import { FirstAnalysisRock } from '@/components/icons/rocks/first-analysis-rock';
-import { ChallengeStarterRock } from '@/components/icons/rocks/challenge-starter-rock';
-import { FeedbackFriendRock } from '@/components/icons/rocks/feedback-friend-rock';
-import { PerfectionistPebble } from '@/components/icons/rocks/perfectionist-pebble';
-import { ConsistentYogiStone } from '@/components/icons/rocks/consistent-yogi-stone';
-import { SocialButterflyRock } from '@/components/icons/rocks/social-butterfly-rock';
-import { EarlyBirdRock } from '@/components/icons/rocks/early-bird-rock';
 
-export type RockRarity = 'Common' | 'Uncommon' | 'Rare' | 'Epic';
+// The icons are no longer used, we will use imageUrls instead.
 
-export interface Rock {
+export type Rarity = 'Common' | 'Uncommon' | 'Rare' | 'Epic';
+
+export interface Collectible {
   id: string;
   name: string;
   description: string;
   color: string;
-  icon: ComponentType<SVGProps<SVGSVGElement>>;
-  rarity: RockRarity;
+  imageUrl: string; // Changed from 'icon' to 'imageUrl'
+  rarity: Rarity;
   story: string;
 }
 
-export const allRocks: Rock[] = [
+export const allCollectibles: Collectible[] = [
     { 
-      id: 'welcome', 
-      name: 'Welcome Rock', 
+      id: 'welcome_mat', 
+      name: 'Welcome Mat', 
       description: 'Awarded for joining the SnapYoga community. Welcome!',
-      color: '#e53935', // Primary red
-      icon: WelcomeRock,
+      color: '#6D8A94', // A calm, welcoming blue-grey
+      imageUrl: 'https://picsum.photos/seed/yogamat/100/100',
       rarity: 'Common',
-      story: 'This smooth, warm stone represents the first step on a new path. It reminds us that every yoga journey begins with a single, simple intention.'
+      story: 'The foundation of every practice. This mat represents the first step on a new path.'
     },
     { 
-      id: 'first-analysis', 
-      name: 'First Analysis Rock', 
+      id: 'first_analysis_block', 
+      name: 'Insight Block', 
       description: 'Analyze your first yoga pose.', 
-      color: '#43a047', // Green
-      icon: FirstAnalysisRock,
+      color: '#C7AFA5', // A warm, earthy cork color
+      imageUrl: 'https://picsum.photos/seed/yogablock/100/100',
       rarity: 'Common',
-      story: 'A stone of clarity and insight. It symbolizes the moment you first sought to understand your practice more deeply. Its green hue represents growth.'
+      story: 'A tool for support and deeper understanding. It symbolizes the moment you first sought to understand your practice.'
     },
     { 
-      id: 'join-challenge', 
-      name: 'Challenge Starter Rock', 
+      id: 'join_challenge_strap', 
+      name: 'Challenge Strap', 
       description: 'Join your first challenge.',
-      color: '#1e88e5', // Blue
-      icon: ChallengeStarterRock,
+      color: '#8A9A5B', // Olive green
+      imageUrl: 'https://picsum.photos/seed/yogastrap/100/100',
       rarity: 'Uncommon',
-      story: 'This vibrant blue stone holds the energy of courage and community. It marks your commitment to grow alongside others on a shared journey.'
+      story: 'This strap represents reaching for new goals and the connection of a shared journey with the community.'
     },
     { 
-      id: 'give-feedback', 
-      name: 'Feedback Friend Rock', 
+      id: 'feedback_bolster', 
+      name: 'Feedback Bolster', 
       description: 'Provide feedback on an analysis.',
-      color: '#fdd835', // Yellow
-      icon: FeedbackFriendRock,
+      color: '#BDB3D1', // Lavender
+      imageUrl: 'https://picsum.photos/seed/yogabolster/100/100',
       rarity: 'Uncommon',
-      story: 'A cheerful, bright stone that radiates helpfulness. It represents the wisdom shared and the cycle of learning and teaching within the yoga practice.'
+      story: 'A cushion for restorative feedback. It represents the wisdom shared and the cycle of learning and teaching.'
     },
     { 
-      id: 'perfect-score', 
-      name: 'Perfectionist Pebble', 
+      id: 'perfect_score_wheel', 
+      name: 'Wheel of Perfection', 
       description: 'Achieve a perfect score of 100 on any pose.',
-      color: '#8e24aa', // Purple
-      icon: PerfectionistPebble,
+      color: '#D4AF37', // Gold
+      imageUrl: 'https://picsum.photos/seed/yogawheel/100/100',
       rarity: 'Epic',
-      story: 'A rare and perfectly balanced gem. It embodies a moment of perfect harmony between mind, body, and spirit, where every alignment falls into place.'
+      story: 'A rare and perfectly balanced circle. It embodies a moment of perfect harmony between mind, body, and spirit.'
     },
     { 
-      id: 'five-analyses', 
-      name: 'Consistent Yogi Stone', 
+      id: 'five_analyses_towel', 
+      name: 'Towel of Tenacity', 
       description: 'Complete 5 pose analyses.', 
-      color: '#fb8c00', // Orange
-      icon: ConsistentYogiStone,
+      color: '#4682B4', // Steel blue
+      imageUrl: 'https://picsum.photos/seed/yogatowel/100/100',
       rarity: 'Rare',
-      story: 'This steady, layered stone is a testament to dedication. Each layer represents a session of practice, building a strong and stable foundation over time.'
+      story: 'This absorbent towel is a testament to dedication and consistent effort, soaking up the rewards of practice.'
     },
     {
-      id: 'social-butterfly',
-      name: 'Social Butterfly Rock',
+      id: 'social_butterfly_bottle',
+      name: 'Community Carafe',
       description: 'Invite a friend to join SnapYoga.',
-      color: '#d81b60', // Pink
-      icon: SocialButterflyRock,
+      color: '#FFC0CB', // Pink
+      imageUrl: 'https://picsum.photos/seed/yogabottle/100/100',
       rarity: 'Rare',
-      story: 'A stone that glows with the warmth of connection. It celebrates the act of sharing the gift of yoga with others, creating a stronger community.'
+      story: 'A vessel that holds the refreshing spirit of connection. It celebrates sharing the gift of yoga with others.'
     },
     {
-      id: 'early-bird',
-      name: 'Early Bird Rock',
+      id: 'early_bird_blanket',
+      name: 'Dawn Blanket',
       description: 'Complete a session before 8 AM.',
-      color: '#00acc1', // Cyan
-      icon: EarlyBirdRock,
+      color: '#FFDAB9', // Peach
+      imageUrl: 'https://picsum.photos/seed/yogablanket/100/100',
       rarity: 'Uncommon',
-      story: 'This cool, serene stone captures the quiet energy of the morning. It is awarded to those who rise with the sun to greet their mat.'
+      story: 'This warm, serene blanket captures the quiet energy of the morning, awarded to those who rise with the sun.'
     }
 ];
-
-    

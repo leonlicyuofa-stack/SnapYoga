@@ -4,22 +4,22 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, PartyPopper, X } from 'lucide-react';
-import { Rock } from './rock-data';
+import { Collectible } from './rock-data';
 import Confetti from 'react-confetti';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 interface RewardDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  rock: Rock | null;
+  rock: Collectible | null;
 }
 
-export function RewardDialog({ isOpen, onClose, rock }: RewardDialogProps) {
+export function RewardDialog({ isOpen, onClose, rock: item }: RewardDialogProps) {
   const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      // Trigger confetti a moment after the dialog opens
       const timer = setTimeout(() => setShowConfetti(true), 200);
       return () => clearTimeout(timer);
     } else {
@@ -27,9 +27,7 @@ export function RewardDialog({ isOpen, onClose, rock }: RewardDialogProps) {
     }
   }, [isOpen]);
 
-  if (!rock) return null;
-
-  const RockIcon = rock.icon;
+  if (!item) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
@@ -48,7 +46,7 @@ export function RewardDialog({ isOpen, onClose, rock }: RewardDialogProps) {
           <div className="relative mx-auto mb-4">
              <PartyPopper className="h-16 w-16 text-primary" />
           </div>
-          <DialogTitle className="text-2xl sm:text-3xl font-bold text-primary">You've Earned a Rock!</DialogTitle>
+          <DialogTitle className="text-2xl sm:text-3xl font-bold text-primary">You've Earned an Item!</DialogTitle>
           <DialogDescription className="text-muted-foreground text-sm sm:text-base">
             Your collection is growing. Keep up the great work!
           </DialogDescription>
@@ -59,17 +57,17 @@ export function RewardDialog({ isOpen, onClose, rock }: RewardDialogProps) {
                 <div
                     className="p-3 rounded-full transition-all duration-300 animate-in zoom-in-50"
                     style={{
-                    backgroundColor: `${rock.color}33`,
-                    border: `3px solid ${rock.color}`
+                    backgroundColor: `${item.color}33`,
+                    border: `3px solid ${item.color}`
                     }}
                 >
-                    <RockIcon className="h-20 w-20" />
+                    <Image src={item.imageUrl} alt={item.name} width={80} height={80} className="rounded-full" />
                 </div>
-                <p className="text-2xl font-semibold" style={{ color: rock.color }}>
-                    {rock.name}
+                <p className="text-2xl font-semibold" style={{ color: item.color }}>
+                    {item.name}
                 </p>
                 <p className="text-md text-muted-foreground text-center max-w-xs">
-                    {rock.description}
+                    {item.description}
                 </p>
             </div>
         </div>

@@ -1,24 +1,20 @@
 
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
-import { Gem, ArrowRight } from 'lucide-react';
-import type { Rock } from './rock-data';
-import { Badge } from "@/components/ui/badge";
-import Link from 'next/link';
+import type { Collectible } from './rock-data';
+import Image from 'next/image';
 
-interface RockCollectionCardProps {
-  rocks: Rock[];
+interface YogaCollectionCardProps {
+  collectibles: Collectible[];
   className?: string;
 }
 
-export function RockCollectionCard({ rocks, className }: RockCollectionCardProps) {
-  // Simulate which rocks are collected for demo purposes
-  const collectedRockIds = ['welcome', 'first-analysis', 'join-challenge'];
+export function RockCollectionCard({ collectibles, className }: YogaCollectionCardProps) {
+  // Simulate which items are collected for demo purposes
+  const collectedIds = ['welcome_mat', 'first_analysis_block', 'join_challenge_strap'];
 
-  const getRarityClass = (rarity: Rock['rarity']) => {
+  const getRarityClass = (rarity: Collectible['rarity']) => {
     switch(rarity) {
         case 'Common': return 'text-gray-500';
         case 'Uncommon': return 'text-green-600';
@@ -30,37 +26,39 @@ export function RockCollectionCard({ rocks, className }: RockCollectionCardProps
   
   return (
     <div className={className}>
-      <CardContent>
         <TooltipProvider>
           <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-            {rocks.map((rock) => {
-              const isCollected = collectedRockIds.includes(rock.id);
-              const RockIcon = rock.icon;
+            {collectibles.map((item) => {
+              const isCollected = collectedIds.includes(item.id);
               return (
-                <Tooltip key={rock.id}>
+                <Tooltip key={item.id}>
                   <TooltipTrigger asChild>
                     <div className="flex flex-col items-center gap-1 w-24">
                       <div
-                        className="p-2 rounded-full transition-all duration-300"
+                        className="p-1 rounded-full transition-all duration-300"
                         style={{
-                          backgroundColor: isCollected ? `${rock.color}33` : 'hsl(var(--muted))',
-                          border: `2px solid ${isCollected ? rock.color : 'hsl(var(--border))'}`
+                          backgroundColor: isCollected ? `${item.color}33` : 'hsl(var(--muted))',
+                          border: `2px solid ${isCollected ? item.color : 'hsl(var(--border))'}`
                         }}
                       >
-                        <RockIcon
-                          className="h-12 w-12"
+                        <Image
+                          src={item.imageUrl}
+                          alt={item.name}
+                          width={64}
+                          height={64}
+                          className="rounded-full transition-all duration-300"
                           style={{ opacity: isCollected ? 1 : 0.4 }}
                         />
                       </div>
                       <p className={`text-xs text-center truncate w-full ${isCollected ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>
-                        {rock.name}
+                        {item.name}
                       </p>
                     </div>
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs">
-                    <p className="font-semibold text-base" style={{color: rock.color}}>{rock.name}</p>
-                    <p className={`font-bold text-sm ${getRarityClass(rock.rarity)}`}>{rock.rarity}</p>
-                    <p className="text-sm text-muted-foreground mt-1 italic">&quot;{rock.story}&quot;</p>
+                    <p className="font-semibold text-base" style={{color: item.color}}>{item.name}</p>
+                    <p className={`font-bold text-sm ${getRarityClass(item.rarity)}`}>{item.rarity}</p>
+                    <p className="text-sm text-muted-foreground mt-1 italic">&quot;{item.story}&quot;</p>
                     {!isCollected && <p className="text-xs text-primary/80 italic mt-2">Keep exploring to unlock!</p>}
                   </TooltipContent>
                 </Tooltip>
@@ -68,8 +66,6 @@ export function RockCollectionCard({ rocks, className }: RockCollectionCardProps
             })}
           </div>
         </TooltipProvider>
-      </CardContent>
-      
     </div>
   );
 }
