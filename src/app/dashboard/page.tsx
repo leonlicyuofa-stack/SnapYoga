@@ -19,7 +19,7 @@ import Image from 'next/image';
 import { PracticeAnalytics } from '@/components/features/dashboard/PracticeAnalytics';
 import { RockCollectionCard } from '@/components/features/dashboard/rock-collection-card';
 import { allCollectibles } from '@/components/features/dashboard/rock-data';
-import { PracticeCalendarSnapshot } from '@/components/features/dashboard/PracticeCalendarSnapshot';
+import { QuoteCarousel } from '@/components/features/dashboard/QuoteCarousel';
 import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 import { MoodChart } from '@/components/features/dashboard/MoodChart';
 import { UserCircle } from 'lucide-react';
@@ -56,9 +56,9 @@ const projects = [
     className: "col-span-1 row-span-2"
   },
   {
-    component: PracticeCalendarSnapshot,
-    title: "Practice Calendar",
-    category: "Tracking",
+    component: QuoteCarousel,
+    title: "Quote for the day",
+    category: "Inspiration",
     bgColor: "bg-violet-200",
     href: "/practice-calendar",
     className: "col-span-1 row-span-1"
@@ -117,22 +117,10 @@ export default function DashboardPage() {
         loggedAt: serverTimestamp() 
       }, { merge: true });
       
-      if (mood.name === 'Sad') {
-        toast({
-            title: "A Little Note for You",
-            description: "Inhale the good vibes, exhale the drama. Refresh to see your mood chart update!",
-        });
-      } else if (mood.name === 'Happy') {
-        toast({
-            title: "Rise, stretch, breathe, smile — it's Yoga Day!",
-            description: `Your mood is set to: ${mood.emoji} ${mood.name}. Refresh to see your mood chart update!`,
-        });
-      } else {
-        toast({
-            title: "Mood Saved!",
-            description: `Your mood has been set to: ${mood.emoji} ${mood.name}. Refresh to see your mood chart update!`,
-        });
-      }
+      toast({
+          title: "Mood Saved!",
+          description: `Your mood has been set to: ${mood.emoji} ${mood.name}. Refresh to see your mood chart update!`,
+      });
 
     } catch (error) {
       console.error("Error saving mood:", error);
