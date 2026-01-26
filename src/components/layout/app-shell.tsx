@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { LogOut, UserCircle, Home, Settings, CalendarDays, Trophy, Languages, Sparkles, Menu } from 'lucide-react';
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname, useRouter } from 'next/navigation'; 
 import { cn } from '@/lib/utils';
@@ -90,6 +90,10 @@ export function AppShell({ children }: AppShellProps) {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="flex w-full max-w-sm flex-col p-6">
+              <SheetHeader>
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <SheetDescription className="sr-only">A list of links to navigate the application.</SheetDescription>
+              </SheetHeader>
               <div className="mb-8">
                 <SnapYogaLogo />
               </div>
