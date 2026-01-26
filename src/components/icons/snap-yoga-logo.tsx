@@ -16,24 +16,16 @@ export function SnapYogaLogo() {
         className="h-8 w-auto"
       >
         <title>SnapYoga</title>
-        {/* Using a generic serif font-family. The browser will fall back. */}
+        {/* Using a font stack that mimics high-contrast serif fonts like Didot or Bodoni to replicate the desired style. */}
         <text 
-          x="0" 
-          y="32" 
-          fontFamily="Georgia, Times, serif" 
-          fontSize="36" 
+          x="50%" 
+          y="32"
+          textAnchor="middle"
+          fontFamily="Didot, 'Bodoni MT', 'Century Schoolbook', 'Palatino Linotype', Georgia, serif"
+          fontSize="36"
           letterSpacing="-1"
         >
-          Snap
-        </text>
-        {/* Using the script font from the layout's imported variable */}
-        <text 
-          x="95"
-          y="32"
-          fontFamily="var(--font-shadows-into-light), cursive"
-          fontSize="40"
-        >
-          Yoga
+          SnapYoga
         </text>
       </svg>
     </div>
