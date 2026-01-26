@@ -56,7 +56,7 @@ export default function HomePage() {
         </header>
 
         {/* Hero Section */}
-        <main className="flex-grow flex flex-col items-center justify-center text-center px-6">
+        <main className="flex-grow flex flex-col items-start justify-center text-left px-6 md:px-12">
           <h1 className="text-4xl md:text-5xl font-medium leading-tight max-w-md">
             Master Your Pose. Instantly.
           </h1>
