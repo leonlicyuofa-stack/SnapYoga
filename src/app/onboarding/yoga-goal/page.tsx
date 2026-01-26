@@ -27,8 +27,6 @@ const mainGoalOptions = [
   { value: "stress-relief", label: "Stress Relief", image: { src: "https://picsum.photos/seed/stressgoal/400/500", width: 400, height: 500, hint: "calm meditation" } },
   { value: "flexibility", label: "Improve Flexibility", image: { src: "https://picsum.photos/seed/flexibilitygoal/400/700", width: 400, height: 700, hint: "yoga flexibility" } },
   { value: "strength", label: "Build Strength", image: { src: "https://picsum.photos/seed/strengthgoal/400/550", width: 400, height: 550, hint: "yoga strength" } },
-  { value: "mindfulness", label: "Mindfulness", image: { src: "https://picsum.photos/seed/mindfulgoal/400/650", width: 400, height: 650, hint: "mindful yoga" } },
-  { value: "other", label: "Other", image: { src: "https://picsum.photos/seed/othergoal/400/450", width: 400, height: 450, hint: "yoga journal" } },
 ];
 
 
@@ -96,7 +94,7 @@ export default function YogaGoalPage() {
         />
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-4xl bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
+            <div className="w-full max-w-2xl bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
                 <header className="text-center">
                     <h1 className="text-3xl font-bold tracking-tight">Your Yoga Goal</h1>
                     <p className="text-sm text-white/80">What do you want to achieve?</p>
@@ -108,11 +106,11 @@ export default function YogaGoalPage() {
                             name="mainGoals"
                             control={control}
                             render={({ field }) => (
-                                <div className="columns-2 sm:columns-3 gap-4 space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
                                 {mainGoalOptions.map((option) => {
                                     const isChecked = field.value?.includes(option.value);
                                     return (
-                                        <div key={option.value} className="relative break-inside-avoid group">
+                                        <div key={option.value} className="relative group">
                                             <Checkbox
                                                 id={option.value}
                                                 checked={isChecked}
