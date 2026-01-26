@@ -2,69 +2,26 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
-import { firestore } from '@/lib/firebase/clientApp';
-import { doc, getDoc, type DocumentData } from 'firebase/firestore';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { MoveUpRight, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { YogaMatMascot } from '@/components/icons/YogaMatMascot';
-
-interface UserProfileData extends DocumentData {
-  uid?: string;
-  email?: string;
-  displayName?: string;
-  photoURL?: string;
-  onboardingCompleted?: boolean;
-}
+import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
+import { RightArrowIcon } from '@/components/icons/RightArrowIcon';
 
 export default function HomePage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
-  const { t, language, setLanguage } = useLanguage();
-  const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
-  const [loadingProfile, setLoadingProfile] = useState(false);
+  const { t } = useLanguage();
   const [isProcessingClick, setIsProcessingClick] = useState(false);
-  const [isAnimationComplete, setIsAnimationComplete] = useState(false);
+  const [arrowAnimationState, setArrowAnimationState] = useState<'idle' | 'clicked'>('idle');
 
-  useEffect(() => {
-    const animationTimer = setTimeout(() => {
-      setIsAnimationComplete(true);
-    }, 700); // Should match the animation duration in tailwind.config.ts
-
-    return () => clearTimeout(animationTimer);
-  }, []);
-
-  useEffect(() => {
-    if (user && !authLoading) {
-      setLoadingProfile(true);
-      const userDocRef = doc(firestore, 'users', user.uid);
-      getDoc(userDocRef)
-        .then((docSnap) => {
-          if (docSnap.exists()) {
-            setUserProfile(docSnap.data() as UserProfileData);
-          } else {
-            setUserProfile(null);
-          }
-        })
-        .catch(error => {
-            console.error("Error fetching user profile on welcome page:", error);
-            setUserProfile(null);
-        })
-        .finally(() => setLoadingProfile(false));
-    } else if (!user && !authLoading) {
-      setUserProfile(null);
-      setLoadingProfile(false);
-    }
-  }, [user, authLoading]);
 
   const handleGetStarted = () => {
-    if (authLoading || loadingProfile || isProcessingClick) return;
+    if (isProcessingClick) return;
 
     setIsProcessingClick(true);
+    setArrowAnimationState('clicked');
     
     if (typeof window !== 'undefined') {
         sessionStorage.setItem('snapYogaPebbleIncoming', 'true');
@@ -72,63 +29,60 @@ export default function HomePage() {
 
     setTimeout(() => {
       router.push('/auth/signup');
-    }, 150); 
+    }, 600); // Wait for the arrow animation to complete before navigating
   };
-
-  const handleLanguageSwitch = () => {
-    const newLang = language === 'en' ? 'id' : 'en';
-    setLanguage(newLang);
-  };
-
-  const isLoading = authLoading || loadingProfile || isProcessingClick;
 
   return (
-    <div className={cn(
-        "relative flex flex-col min-h-screen items-center justify-center p-4 bg-splash-background font-sans overflow-hidden"
-    )}>
-        {/* Full-screen background illustration */}
-        <div className="absolute inset-0 z-0">
-             <svg width="100%" height="100%" viewBox="0 0 1440 1024" preserveAspectRatio="xMidYMid slice" className="absolute inset-0">
-                <defs>
-                    <filter id="soft-blur" x="-20%" y="-20%" width="140%" height="140%">
-                        <feGaussianBlur in="SourceGraphic" stdDeviation="15" />
-                    </filter>
-                </defs>
-                <g filter="url(#soft-blur)">
-                    <path d="M -50,0 L 1490,0 L 1490,200 Q 720,250 -50,200 Z" fill="#E1D9F0" opacity="0.6" />
-                    <path d="M -50,180 Q 720,230 1490,180 L 1490,380 Q 720,430 -50,380 Z" fill="#F0D9E7" opacity="0.6" />
-                    <path d="M -50,360 Q 720,410 1490,360 L 1490,560 Q 720,610 -50,560 Z" fill="#D9E7F0" opacity="0.6" />
-                    <path d="M -50,540 Q 720,590 1490,540 L 1490,740 Q 720,790 -50,740 Z" fill="#D9F0E1" opacity="0.6" />
-                    <path d="M -50,720 Q 720,770 1490,720 L 1490,920 Q 720,970 -50,920 Z" fill="#F0EFD9" opacity="0.6" />
-                    <path d="M -50,900 Q 720,950 1490,900 L 1490,1100 L -50,1100 Z" fill="#F0D9D9" opacity="0.6" />
-                </g>
-            </svg>
-        </div>
-        
-         <div className="relative z-10 flex flex-col items-center justify-center text-center -translate-y-8">
-            <YogaMatMascot className="h-24 w-24 text-primary mb-2 animate-zoom-in" />
-            <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-splash-foreground mb-1 font-script">{t('snapYogaTitle')}</h2>
-            <p className="text-md sm:text-lg text-splash-foreground/80">Master Your Pose. Instantly.</p>
-        </div>
+    <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
+      {/* Background Image */}
+      <Image
+        src="https://picsum.photos/seed/yogawellness/1920/1080"
+        alt="A tranquil, modern space for practicing yoga."
+        fill
+        className="object-cover"
+        data-ai-hint="modern wellness room"
+        priority
+      />
+      <div className="absolute inset-0 bg-black/40" /> {/* Overlay for contrast */}
 
-        <header className="navbar w-full absolute top-0 left-0 z-20">
-            <div className="container mx-auto flex justify-between items-center px-4 sm:px-8">
-            <div></div>
-            
-            </div>
+      {/* Main Content Panel */}
+      <div className="absolute inset-y-0 left-0 w-full md:w-1/2 flex flex-col bg-black/20 backdrop-blur-lg">
+        
+        {/* Header */}
+        <header className="flex justify-between items-center p-6 md:p-8">
+          <SnapYogaLogo />
+          <Button asChild variant="link" className="text-white hover:text-white/80">
+            <Link href="/auth/signin">{t('signIn')}</Link>
+          </Button>
         </header>
 
-        {isAnimationComplete && (
-            <Button
-                onClick={handleGetStarted}
-                className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40 animate-in fade-in duration-500"
-                aria-label={t('getStarted')}
-                disabled={isLoading}
+        {/* Hero Section */}
+        <main className="flex-grow flex flex-col items-center justify-center text-center px-6">
+          <h1 className="text-4xl md:text-5xl font-medium leading-tight max-w-md">
+            Master Your Pose. Instantly.
+          </h1>
+          <div className="mt-8">
+            <button
+              onClick={handleGetStarted}
+              disabled={isProcessingClick}
+              aria-label="Get started"
+              className="focus:outline-none focus:ring-2 focus:ring-white/50 rounded-full"
             >
-                {isLoading ? <Loader2 className="h-8 w-8 animate-spin" /> : <MoveUpRight className="h-8 w-8" />}
-            </Button>
-        )}
+              <RightArrowIcon animationState={arrowAnimationState} className="text-white h-16 w-16" />
+            </button>
+          </div>
+        </main>
+        
+        {/* Footer with dots */}
+        <footer className="p-6 md:p-8">
+          <div className="flex gap-2">
+            <div className="w-2.5 h-2.5 rounded-full bg-white"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-white/50"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-white/50"></div>
+          </div>
+        </footer>
 
+      </div>
     </div>
   );
 }
