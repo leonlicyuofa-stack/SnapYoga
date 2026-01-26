@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -9,16 +8,10 @@ import * as z from 'zod';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { AppShell } from '@/components/layout/app-shell';
-import { Target, ArrowRight, ArrowLeft, Wind, Spline, BrainCircuit, MoreHorizontal, Sparkles, MoveUpRight, Loader2, CheckCircle } from 'lucide-react';
+import { MoreHorizontal, Loader2, CheckCircle, ArrowRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
-import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
-import { Progress } from '@/components/ui/progress';
-import { BuildStrengthIcon } from '@/components/icons/BuildStrengthIcon';
-import { StressReliefIcon } from '@/components/icons/StressReliefIcon';
-import { ImproveFlexibilityIcon } from '@/components/icons/ImproveFlexibilityIcon';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -43,16 +36,6 @@ export default function YogaGoalPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [progress, setProgress] = useState(0);
-
-  const totalOnboardingSteps = 6;
-  const currentStep = 1;
-
-  useEffect(() => {
-    const calculatedProgress = (currentStep / totalOnboardingSteps) * 100;
-    const timer = setTimeout(() => setProgress(calculatedProgress), 100);
-    return () => clearTimeout(timer);
-  }, []);
 
   const { control, handleSubmit, formState: { errors, isValid }, setValue, watch } = useForm<YogaGoalsFormValues>({
     resolver: zodResolver(yogaGoalsSchema),
@@ -61,8 +44,6 @@ export default function YogaGoalPage() {
         mainGoals: [],
     }
   });
-
-  const selectedGoals = watch('mainGoals');
 
   useEffect(() => {
     if (user && !authLoading) {
@@ -76,13 +57,9 @@ export default function YogaGoalPage() {
   }, [user, authLoading, setValue]);
 
 
-  if (authLoading) {
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-16 w-16 animate-spin" /></div></AppShell>;
-  }
-
-  if (!user && !authLoading) {
-    router.replace('/auth/signin');
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><p>Redirecting to sign in...</p></div></AppShell>;
+  if (authLoading && !user) {
+    // Redirect or show loader if not authenticated
+    return <div className="flex justify-center items-center min-h-screen"><Loader2 className="h-16 w-16 animate-spin" /></div>;
   }
 
   const onSubmit: SubmitHandler<YogaGoalsFormValues> = async (data) => {
@@ -106,89 +83,83 @@ export default function YogaGoalPage() {
     }
   };
 
-  const handleBackNavigation = () => {
-    router.back();
-  };
-
   return (
-    <div className="relative flex min-h-screen items-center justify-center p-4 bg-background">
-       <Button
-            onClick={handleBackNavigation}
-            className="fixed top-8 left-8 rounded-full h-12 w-12 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40 z-20"
-            aria-label="Go back"
-        >
-            <ArrowLeft className="h-6 w-6" />
-        </Button>
-      <div className="relative z-10 w-full max-w-lg bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8 m-4">
-        <OnboardingHeader />
-        
-        <form id="yoga-goal-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full mt-8">
-            <Controller
-                name="mainGoals"
-                control={control}
-                render={({ field }) => (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                    {mainGoalOptions.map((option) => {
-                        const Icon = option.icon;
-                        const isChecked = field.value?.includes(option.value);
-                        return (
-                            <div key={option.value} className="relative">
-                                <Checkbox
-                                    id={option.value}
-                                    checked={isChecked}
-                                    onCheckedChange={(checked) => {
-                                        const currentValue = field.value || [];
-                                        const updatedValue = checked
-                                            ? [...currentValue, option.value]
-                                            : currentValue.filter(v => v !== option.value);
-                                        field.onChange(updatedValue);
-                                    }}
-                                    className="sr-only"
-                                />
-                                <Label
-                                htmlFor={option.value}
-                                className={cn(
-                                    "flex flex-col items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all h-32",
-                                    "hover:border-primary/50",
-                                    isChecked ? "border-primary bg-primary/10 shadow-md" : "border-muted"
-                                )}
-                                >
-                                {option.icon === 'image' && option.imagePath ? (
-                                    <Image src={option.imagePath} alt={option.label} width={48} height={48} data-ai-hint={option.imageHint} />
-                                ) : (
-                                    <Icon className="h-12 w-12 text-primary/80" />
-                                )}
-                                <span className="mt-2 text-center font-semibold text-sm">{option.label}</span>
-                                {isChecked && (
-                                    <div className="absolute top-2 right-2 h-5 w-5 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
-                                        <CheckCircle className="h-4 w-4" />
-                                    </div>
-                                )}
-                                </Label>
-                            </div>
-                        )
-                    })}
-                    </div>
-                )}
-            />
-            {errors.mainGoals && <p className="text-sm text-destructive text-center">{errors.mainGoals.message}</p>}
+    <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
+        <Image
+            src="https://picsum.photos/seed/yogawellness/1920/1080"
+            alt="A tranquil, modern space for practicing yoga."
+            fill
+            className="object-cover"
+            data-ai-hint="modern wellness room"
+            priority
+        />
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
+            <div className="w-full max-w-lg bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
+                <header className="text-center">
+                    <h1 className="text-3xl font-bold tracking-tight">Your Yoga Goal</h1>
+                    <p className="text-sm text-white/80">What do you want to achieve?</p>
+                </header>
 
-             <div className="px-8 pt-4">
-                <Button type="submit" form="yoga-goal-form" className="w-full h-12 text-base rounded-full" disabled={isSubmitting || authLoading || !isValid}>
-                    {isSubmitting || authLoading ? <Loader2 className="animate-spin" /> : 'Next'}
-                </Button>
-            </div>
-        </form>
+                <main>
+                    <form id="yoga-goal-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
+                        <Controller
+                            name="mainGoals"
+                            control={control}
+                            render={({ field }) => (
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                {mainGoalOptions.map((option) => {
+                                    const Icon = option.icon;
+                                    const isChecked = field.value?.includes(option.value);
+                                    return (
+                                        <div key={option.value} className="relative">
+                                            <Checkbox
+                                                id={option.value}
+                                                checked={isChecked}
+                                                onCheckedChange={(checked) => {
+                                                    const currentValue = field.value || [];
+                                                    const updatedValue = checked
+                                                        ? [...currentValue, option.value]
+                                                        : currentValue.filter(v => v !== option.value);
+                                                    field.onChange(updatedValue);
+                                                }}
+                                                className="sr-only"
+                                            />
+                                            <Label
+                                            htmlFor={option.value}
+                                            className={cn(
+                                                "flex flex-col items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all h-32 bg-white/10",
+                                                "hover:border-white/50",
+                                                isChecked ? "border-white bg-white/20" : "border-white/20"
+                                            )}
+                                            >
+                                            {option.icon === 'image' && option.imagePath ? (
+                                                <Image src={option.imagePath} alt={option.label} width={48} height={48} data-ai-hint={option.imageHint} className="opacity-80" />
+                                            ) : (
+                                                <Icon className="h-12 w-12 text-white/80" />
+                                            )}
+                                            <span className="mt-2 text-center font-semibold text-sm">{option.label}</span>
+                                            {isChecked && (
+                                                <div className="absolute top-2 right-2 h-5 w-5 bg-white text-black rounded-full flex items-center justify-center">
+                                                    <CheckCircle className="h-4 w-4" />
+                                                </div>
+                                            )}
+                                            </Label>
+                                        </div>
+                                    )
+                                })}
+                                </div>
+                            )}
+                        />
+                        {errors.mainGoals && <p className="text-sm text-red-400 text-center">{errors.mainGoals.message}</p>}
 
-        <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center items-center mt-4">
-            <div className="w-full sm:w-1/4">
-                <Progress value={progress} className="w-full h-2" />
-                <p className="text-xs text-muted-foreground mt-1 text-center sm:text-left">
-                    {Math.round(progress)}% Complete
-                </p>
+                        <Button type="submit" form="yoga-goal-form" className="w-full h-12 text-base rounded-full mt-8 bg-white/90 text-black hover:bg-white" disabled={isSubmitting || authLoading || !isValid}>
+                            {isSubmitting || authLoading ? <Loader2 className="animate-spin" /> : <>Next <ArrowRight className="ml-2" /></>}
+                        </Button>
+                    </form>
+                </main>
             </div>
         </div>
-      </div>
     </div>
   );
 }

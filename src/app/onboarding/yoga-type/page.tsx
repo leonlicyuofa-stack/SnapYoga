@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,11 +10,9 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { AppShell } from '@/components/layout/app-shell';
-import { ArrowRight, ArrowLeft, CheckCircle, MoveUpRight, Loader2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
-import { Progress } from '@/components/ui/progress';
+import Image from 'next/image';
 
 const interestedPosesSchema = z.object({
   interestedPoses: z.array(z.string()).min(1, { message: "Please select at least one category" }),
@@ -52,16 +49,6 @@ export default function InterestedPosesPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [progress, setProgress] = useState(0);
-
-  const totalOnboardingSteps = 6;
-  const currentStep = 2;
-
-  useEffect(() => {
-    const calculatedProgress = (currentStep / totalOnboardingSteps) * 100;
-    const timer = setTimeout(() => setProgress(calculatedProgress), 100);
-    return () => clearTimeout(timer);
-  }, []);
 
   const { control, handleSubmit, formState: { errors, isValid } } = useForm<InterestedPosesFormValues>({
     resolver: zodResolver(interestedPosesSchema),
@@ -71,13 +58,8 @@ export default function InterestedPosesPage() {
     }
   });
 
-  if (authLoading) {
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-16 w-16 animate-spin" /></div></AppShell>;
-  }
-
-  if (!user && !authLoading) {
-    router.replace('/auth/signin');
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><p>Redirecting to sign in...</p></div></AppShell>;
+  if (authLoading && !user) {
+    return <div className="flex justify-center items-center min-h-screen"><Loader2 className="h-16 w-16 animate-spin" /></div>;
   }
 
   const onSubmit: SubmitHandler<InterestedPosesFormValues> = async (data) => {
@@ -101,89 +83,96 @@ export default function InterestedPosesPage() {
     }
   };
   
-    const handleBackNavigation = () => {
-      router.back();
-    };
+  const handleBackNavigation = () => {
+    router.back();
+  };
 
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center p-4 bg-background">
-       <Button
+    <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
+        <Image
+            src="https://picsum.photos/seed/yogawellness/1920/1080"
+            alt="A tranquil, modern space for practicing yoga."
+            fill
+            className="object-cover"
+            data-ai-hint="modern wellness room"
+            priority
+        />
+        <div className="absolute inset-0 bg-black/40" />
+        <Button
             onClick={handleBackNavigation}
-            className="fixed top-8 left-8 rounded-full h-12 w-12 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40 z-20"
+            variant="ghost"
+            className="absolute top-8 left-8 rounded-full h-12 w-12 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20"
             aria-label="Go back"
         >
             <ArrowLeft className="h-6 w-6" />
         </Button>
-      <div className="relative z-10 w-full max-w-2xl bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8 m-4">
-        <OnboardingHeader />
-        
-        <form id="yoga-type-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full mt-8">
-          <Controller
-            name="interestedPoses"
-            control={control}
-            render={({ field }) => (
-              <div className="grid grid-cols-2 gap-4">
-                {poseCategoryOptions.map((item) => {
-                  const isChecked = field.value?.includes(item.id);
-                  return (
-                    <div key={item.id} className="relative">
-                      <Checkbox
-                        id={item.id}
-                        className="sr-only"
-                        checked={isChecked}
-                        onCheckedChange={(checked) => {
-                          const currentValue = field.value || [];
-                          const updatedValue = checked
-                            ? [...currentValue, item.id]
-                            : currentValue.filter((value) => value !== item.id);
-                          field.onChange(updatedValue);
-                        }}
-                      />
-                      <Label
-                        htmlFor={item.id}
-                        className={cn(
-                          "flex flex-col justify-center p-4 border-2 rounded-lg cursor-pointer transition-all h-full min-h-[160px] bg-card/80 backdrop-blur-sm",
-                          "hover:border-primary/50",
-                          isChecked ? "border-primary bg-primary/10 shadow-md" : "border-muted"
-                        )}
-                      >
-                        <div>
-                           <h3 className="font-bold text-lg text-primary">{item.label}</h3>
-                           <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
-                        </div>
-                        {isChecked && (
-                            <div className="absolute top-3 right-3 h-6 w-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
-                                <CheckCircle className="h-4 w-4" />
-                            </div>
-                        )}
-                      </Label>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          />
+        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
+            <div className="w-full max-w-2xl bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
+                <header className="text-center">
+                    <h1 className="text-3xl font-bold tracking-tight">Pose Interests</h1>
+                    <p className="text-sm text-white/80">What poses excite you?</p>
+                </header>
 
-          {errors.interestedPoses && <p className="text-sm text-destructive text-center">{errors.interestedPoses.message}</p>}
-        </form>
-         <div className="px-8 pt-4">
-            <Button type="submit" form="yoga-type-form" className="w-full h-12 text-base rounded-full" disabled={isSubmitting || authLoading || !isValid}>
-                {isSubmitting || authLoading ? <Loader2 className="animate-spin" /> : 'Next'}
-            </Button>
-        </div>
-         <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center items-center mt-4">
-            <div className="w-full sm:w-1/4">
-                <Progress value={progress} className="w-full h-2" />
-                <p className="text-xs text-muted-foreground mt-1 text-center sm:text-left">
-                    {Math.round(progress)}% Complete
-                </p>
+                <main>
+                    <form id="yoga-type-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
+                      <Controller
+                        name="interestedPoses"
+                        control={control}
+                        render={({ field }) => (
+                          <div className="grid grid-cols-2 gap-4">
+                            {poseCategoryOptions.map((item) => {
+                              const isChecked = field.value?.includes(item.id);
+                              return (
+                                <div key={item.id} className="relative">
+                                  <Checkbox
+                                    id={item.id}
+                                    className="sr-only"
+                                    checked={isChecked}
+                                    onCheckedChange={(checked) => {
+                                      const currentValue = field.value || [];
+                                      const updatedValue = checked
+                                        ? [...currentValue, item.id]
+                                        : currentValue.filter((value) => value !== item.id);
+                                      field.onChange(updatedValue);
+                                    }}
+                                  />
+                                  <Label
+                                    htmlFor={item.id}
+                                    className={cn(
+                                      "flex flex-col justify-center p-4 border-2 rounded-lg cursor-pointer transition-all h-full min-h-[160px] bg-white/10",
+                                      "hover:border-white/50",
+                                      isChecked ? "border-white bg-white/20" : "border-white/20"
+                                    )}
+                                  >
+                                    <div>
+                                       <h3 className="font-bold text-lg text-white">{item.label}</h3>
+                                       <p className="text-sm text-white/80 mt-1">{item.description}</p>
+                                    </div>
+                                    {isChecked && (
+                                        <div className="absolute top-3 right-3 h-6 w-6 bg-white text-black rounded-full flex items-center justify-center">
+                                            <CheckCircle className="h-4 w-4" />
+                                        </div>
+                                    )}
+                                  </Label>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      />
+
+                      {errors.interestedPoses && <p className="text-sm text-red-400 text-center">{errors.interestedPoses.message}</p>}
+                      <Button type="submit" form="yoga-type-form" className="w-full h-12 text-base rounded-full mt-8 bg-white/90 text-black hover:bg-white" disabled={isSubmitting || authLoading || !isValid}>
+                          {isSubmitting || authLoading ? <Loader2 className="animate-spin" /> : <>Next <ArrowRight className="ml-2" /></>}
+                      </Button>
+                    </form>
+                    <p className="text-xs text-white/60 text-center w-full mt-6">
+                      This helps us recommend suitable poses and challenges.
+                    </p>
+                </main>
             </div>
         </div>
-        <p className="text-xs text-muted-foreground text-center w-full mt-6">
-          This helps us recommend suitable poses and challenges.
-        </p>
-      </div>
     </div>
   );
 }

@@ -1,31 +1,23 @@
-
 "use client";
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { AppShell } from '@/components/layout/app-shell';
-import { Check, Star, ArrowRight, ArrowLeft, MoveUpRight, Loader2 } from 'lucide-react';
-import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
+import { Check, Star, ArrowRight, Loader2 } from 'lucide-react';
+import Image from 'next/image';
+
 
 export default function SubscriptionPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isNavigatingBack, setIsNavigatingBack] = useState(false);
-  const [isNavigatingNext, setIsNavigatingNext] = useState(false);
 
-  if (authLoading) {
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><Loader2 className="h-16 w-16 animate-spin" /></div></AppShell>;
-  }
-
-  if (!user && !authLoading) {
+  if (authLoading && !user) {
     router.replace('/auth/signin');
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><p>Redirecting to sign in...</p></div></AppShell>;
+    return <div className="flex justify-center items-center min-h-screen"><Loader2 className="h-16 w-16 animate-spin" /></div>;
   }
 
   const handleStartFreeTrial = async () => {
@@ -48,72 +40,54 @@ export default function SubscriptionPage() {
       setIsSubmitting(false);
     }
   };
-  
-  const handleProceedToNextStep = () => {
-      setIsNavigatingNext(true);
-      setTimeout(() => {
-        router.push('/onboarding/pick-a-prize');
-      }, 500);
-  }
-
-  const handleBackNavigation = () => {
-    setIsNavigatingBack(true);
-    setTimeout(() => {
-      router.back();
-    }, 500);
-  };
-
-  const anyLoading = isSubmitting || isNavigatingBack || isNavigatingNext;
 
   return (
-    <AppShell>
-      <div className="relative flex flex-col min-h-[calc(100vh-10rem)] items-center justify-center py-12 px-4 bg-background">
-        <div className="w-full max-w-md flex flex-col items-center">
-            <OnboardingHeader />
-            <div className="w-full shadow-xl z-10 bg-card/80 backdrop-blur-sm p-6 rounded-lg">
-                <div className="text-center mb-6">
-                    <p className="text-muted-foreground">Choose your plan to continue.</p>
-                </div>
-                <div className="space-y-6">
-                    <div className="p-6 border rounded-lg bg-primary/5 text-center">
-                    <h3 className="text-2xl font-semibold text-primary">Monthly Subscription</h3>
-                    <p className="text-4xl font-bold my-2 text-accent">IDR 100,000</p>
-                    <p className="text-muted-foreground text-sm">per month</p>
-                    <ul className="text-left space-y-2 mt-4 text-sm text-foreground/80">
-                        <li className="flex items-center"><Check className="h-5 w-5 text-green-500 mr-2" /> Unlimited Pose Analysis</li>
-                        <li className="flex items-center"><Check className="h-5 w-5 text-green-500 mr-2" /> Advanced Feedback</li>
-                        <li className="flex items-center"><Check className="h-5 w-5 text-green-500 mr-2" /> Progress Tracking & History</li>
-                        <li className="flex items-center"><Check className="h-5 w-5 text-green-500 mr-2" /> Exclusive Challenges</li>
-                    </ul>
+    <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
+        <Image
+            src="https://picsum.photos/seed/yogawellness/1920/1080"
+            alt="A tranquil, modern space for practicing yoga."
+            fill
+            className="object-cover"
+            data-ai-hint="modern wellness room"
+            priority
+        />
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
+            <div className="w-full max-w-md bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
+                <header className="text-center">
+                    <h1 className="text-3xl font-bold tracking-tight">Unlock SnapYoga Premium</h1>
+                    <p className="text-sm text-white/80">Choose your plan to continue.</p>
+                </header>
+                
+                <main className="space-y-6">
+                    <div className="p-6 border border-white/20 rounded-lg bg-white/10 text-center">
+                        <h3 className="text-2xl font-semibold">Monthly Subscription</h3>
+                        <p className="text-4xl font-bold my-2 text-white">IDR 100,000</p>
+                        <p className="text-white/80 text-sm">per month</p>
+                        <ul className="text-left space-y-2 mt-4 text-sm text-white/90">
+                            <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Unlimited Pose Analysis</li>
+                            <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Advanced Feedback</li>
+                            <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Progress Tracking & History</li>
+                            <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Exclusive Challenges</li>
+                        </ul>
                     </div>
 
                     <Button 
-                    onClick={handleStartFreeTrial} 
-                    className="w-full bg-green-600 hover:bg-green-700 text-white"
-                    isLoadingWithBar={isSubmitting}
-                    disabled={anyLoading}
+                        onClick={handleStartFreeTrial} 
+                        className="w-full h-12 bg-green-500 hover:bg-green-600 text-white"
+                        disabled={isSubmitting}
                     >
-                    <Star className="mr-2 h-5 w-5" />
-                    Start 7-Day Free Trial (Mock)
+                        {isSubmitting ? <Loader2 className="animate-spin" /> : <><Star className="mr-2 h-5 w-5" /> Start 7-Day Free Trial (Mock)</>}
                     </Button>
-                    
-                </div>
-                <div className="mt-6">
-                    <p className="text-xs text-muted-foreground text-center w-full">
+                </main>
+                
+                <footer className="text-center">
+                    <p className="text-xs text-white/60">
                     Cancel anytime. Payment will be processed after the trial if not cancelled (mock).
                     </p>
-                </div>
+                </footer>
             </div>
         </div>
-         <Button
-            onClick={handleProceedToNextStep}
-            className="fixed bottom-8 right-8 rounded-full h-16 w-16 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40"
-            aria-label="Next"
-            disabled={anyLoading}
-        >
-            {isNavigatingNext ? <Loader2 className="h-8 w-8 animate-spin" /> : <MoveUpRight className="h-8 w-8" />}
-        </Button>
-      </div>
-    </AppShell>
+    </div>
   );
 }
