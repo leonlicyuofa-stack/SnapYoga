@@ -8,7 +8,7 @@ import * as z from 'zod';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { MoreHorizontal, Loader2, CheckCircle, ArrowRight } from 'lucide-react';
+import { Loader2, Check, ArrowRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
@@ -23,13 +23,14 @@ const yogaGoalsSchema = z.object({
 type YogaGoalsFormValues = z.infer<typeof yogaGoalsSchema>;
 
 const mainGoalOptions = [
-  { value: "fitness", label: "Stay Fit", icon: 'image', imagePath: '/images/stayfit_1.png', imageHint: 'stay fit' },
-  { value: "stress-relief", label: "Stress Relief", icon: 'image', imagePath: '/images/stayfit_1.png', imageHint: 'stress relief' },
-  { value: "flexibility", label: "Improve Flexibility", icon: 'image', imagePath: '/images/stayfit_1.png', imageHint: 'flexibility' },
-  { value: "strength", label: "Build Strength", icon: 'image', imagePath: '/images/stayfit_1.png', imageHint: 'strength' },
-  { value: "mindfulness", label: "Mindfulness", icon: 'image', imagePath: '/images/stayfit_1.png', imageHint: 'mindfulness' },
-  { value: "other", label: "Other", icon: MoreHorizontal },
+  { value: "fitness", label: "Stay Fit", image: { src: "https://picsum.photos/seed/fitnessgoal/400/600", width: 400, height: 600, hint: "woman stretching" } },
+  { value: "stress-relief", label: "Stress Relief", image: { src: "https://picsum.photos/seed/stressgoal/400/500", width: 400, height: 500, hint: "calm meditation" } },
+  { value: "flexibility", label: "Improve Flexibility", image: { src: "https://picsum.photos/seed/flexibilitygoal/400/700", width: 400, height: 700, hint: "yoga flexibility" } },
+  { value: "strength", label: "Build Strength", image: { src: "https://picsum.photos/seed/strengthgoal/400/550", width: 400, height: 550, hint: "yoga strength" } },
+  { value: "mindfulness", label: "Mindfulness", image: { src: "https://picsum.photos/seed/mindfulgoal/400/650", width: 400, height: 650, hint: "mindful yoga" } },
+  { value: "other", label: "Other", image: { src: "https://picsum.photos/seed/othergoal/400/450", width: 400, height: 450, hint: "yoga journal" } },
 ];
+
 
 export default function YogaGoalPage() {
   const { user, loading: authLoading } = useAuth();
@@ -95,7 +96,7 @@ export default function YogaGoalPage() {
         />
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-lg bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
+            <div className="w-full max-w-4xl bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
                 <header className="text-center">
                     <h1 className="text-3xl font-bold tracking-tight">Your Yoga Goal</h1>
                     <p className="text-sm text-white/80">What do you want to achieve?</p>
@@ -107,12 +108,11 @@ export default function YogaGoalPage() {
                             name="mainGoals"
                             control={control}
                             render={({ field }) => (
-                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                <div className="columns-2 sm:columns-3 gap-4 space-y-4">
                                 {mainGoalOptions.map((option) => {
-                                    const Icon = option.icon;
                                     const isChecked = field.value?.includes(option.value);
                                     return (
-                                        <div key={option.value} className="relative">
+                                        <div key={option.value} className="relative break-inside-avoid group">
                                             <Checkbox
                                                 id={option.value}
                                                 checked={isChecked}
@@ -126,24 +126,27 @@ export default function YogaGoalPage() {
                                                 className="sr-only"
                                             />
                                             <Label
-                                            htmlFor={option.value}
-                                            className={cn(
-                                                "flex flex-col items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all h-32 bg-white/10",
-                                                "hover:border-white/50",
-                                                isChecked ? "border-white bg-white/20" : "border-white/20"
-                                            )}
+                                                htmlFor={option.value}
+                                                className={cn(
+                                                    "block cursor-pointer overflow-hidden rounded-2xl relative transition-all duration-300",
+                                                    isChecked ? 'ring-2 ring-offset-2 ring-offset-black/20 ring-white' : 'ring-0'
+                                                )}
                                             >
-                                            {option.icon === 'image' && option.imagePath ? (
-                                                <Image src={option.imagePath} alt={option.label} width={48} height={48} data-ai-hint={option.imageHint} className="opacity-80" />
-                                            ) : (
-                                                <Icon className="h-12 w-12 text-white/80" />
-                                            )}
-                                            <span className="mt-2 text-center font-semibold text-sm">{option.label}</span>
-                                            {isChecked && (
-                                                <div className="absolute top-2 right-2 h-5 w-5 bg-white text-black rounded-full flex items-center justify-center">
-                                                    <CheckCircle className="h-4 w-4" />
-                                                </div>
-                                            )}
+                                                <Image 
+                                                    src={option.image.src} 
+                                                    alt={option.label}
+                                                    width={option.image.width}
+                                                    height={option.image.height}
+                                                    data-ai-hint={option.image.hint}
+                                                    className="w-full h-auto transition-transform duration-300 group-hover:scale-105"
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent group-hover:from-black/60 transition-colors" />
+                                                <h3 className="absolute bottom-4 left-4 text-white font-bold text-lg drop-shadow-sm">{option.label}</h3>
+                                                {isChecked && (
+                                                    <div className="absolute top-3 right-3 h-6 w-6 bg-white/90 backdrop-blur-sm text-black rounded-full flex items-center justify-center shadow-lg">
+                                                        <Check className="h-4 w-4" />
+                                                    </div>
+                                                )}
                                             </Label>
                                         </div>
                                     )
