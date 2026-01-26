@@ -16,7 +16,6 @@ import { cn } from '@/lib/utils';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
-import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
@@ -132,7 +131,6 @@ export default function GenderProfilePage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center p-4 bg-background">
-      <QuadrantBackground />
       <div className="fixed top-8 left-8 right-8 z-20 flex justify-between items-center">
         <Button
             onClick={() => router.back()}

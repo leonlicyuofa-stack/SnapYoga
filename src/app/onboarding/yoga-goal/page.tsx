@@ -20,7 +20,6 @@ import { BuildStrengthIcon } from '@/components/icons/BuildStrengthIcon';
 import { StressReliefIcon } from '@/components/icons/StressReliefIcon';
 import { ImproveFlexibilityIcon } from '@/components/icons/ImproveFlexibilityIcon';
 import Image from 'next/image';
-import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 import { cn } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
 
@@ -113,7 +112,6 @@ export default function YogaGoalPage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center p-4 bg-background">
-      <QuadrantBackground />
        <Button
             onClick={handleBackNavigation}
             className="fixed top-8 left-8 rounded-full h-12 w-12 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40 z-20"

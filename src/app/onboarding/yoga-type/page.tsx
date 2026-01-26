@@ -16,7 +16,6 @@ import { ArrowRight, ArrowLeft, CheckCircle, MoveUpRight, Loader2 } from 'lucide
 import { cn } from '@/lib/utils';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
 import { Progress } from '@/components/ui/progress';
-import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 
 const interestedPosesSchema = z.object({
   interestedPoses: z.array(z.string()).min(1, { message: "Please select at least one category" }),
@@ -109,7 +108,6 @@ export default function InterestedPosesPage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center p-4 bg-background">
-      <QuadrantBackground />
        <Button
             onClick={handleBackNavigation}
             className="fixed top-8 left-8 rounded-full h-12 w-12 p-0 bg-white/30 hover:bg-white/50 text-splash-foreground shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/40 z-20"

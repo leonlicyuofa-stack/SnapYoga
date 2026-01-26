@@ -20,7 +20,6 @@ import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { cn } from '@/lib/utils';
-import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 
 const signUpSchema = z.object({
@@ -62,7 +61,6 @@ export default function SignUpPage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center p-4 bg-background">
-      <QuadrantBackground />
       <div className="relative z-10 w-full max-w-md bg-card/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8 m-4">
         
         <div className="mx-auto mb-4 flex justify-center">

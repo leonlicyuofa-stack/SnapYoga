@@ -10,7 +10,6 @@ import { AppShell } from '@/components/layout/app-shell';
 import { CheckCircle, XCircle, Gift, ArrowRight, MoveUpRight, Loader2, UserCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
-import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 
@@ -77,7 +76,6 @@ export default function DrawResultPage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center p-4 bg-background">
-      <QuadrantBackground />
       <div className="relative z-10 w-full max-w-md bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8 m-4">
         <OnboardingHeader />
         <div className="w-full text-center mt-8">

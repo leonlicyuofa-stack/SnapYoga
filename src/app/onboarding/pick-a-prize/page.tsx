@@ -7,7 +7,6 @@ import { AppShell } from '@/components/layout/app-shell';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { OnboardingHeader } from '@/components/features/onboarding/OnboardingHeader';
-import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 import { YogaMatMascot } from '@/components/icons/YogaMatMascot';
 
 const LeftPattern = () => (
@@ -93,8 +92,7 @@ export default function PickAPrizePage() {
 
   return (
     <AppShell>
-      <div className="relative flex flex-col min-h-screen">
-          <QuadrantBackground />
+      <div className="relative flex flex-col min-h-screen bg-background">
           <div className="absolute top-20 left-1/2 -translate-x-1/2 z-20 w-full max-w-sm">
             <OnboardingHeader />
           </div>

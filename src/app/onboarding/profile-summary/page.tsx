@@ -18,7 +18,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 
 interface UserProfile extends DocumentData {
   displayName?: string;
@@ -286,7 +285,6 @@ export default function ProfileSummaryPage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center p-4 bg-background">
-      <QuadrantBackground />
       <div className="relative z-10 w-full max-w-2xl bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8 m-4">
         <OnboardingHeader />
         <div className="w-full mt-8">

@@ -18,7 +18,6 @@ import { useState } from 'react';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
-import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 
 const signInSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -46,7 +45,6 @@ export default function SignInPage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center py-12 bg-background p-4">
-        <QuadrantBackground />
         <Card className="relative z-10 w-full max-w-md shadow-2xl border-border/20 bg-card/80 backdrop-blur-sm rounded-2xl">
            <CardHeader className="text-center">
             <div className="mx-auto mb-4">

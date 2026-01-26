@@ -23,7 +23,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Calendar } from '@/components/ui/calendar';
-import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 import { Button } from '@/components/ui/button';
 import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
 
@@ -163,84 +162,88 @@ export default function PracticeCalendarPage() {
 
   return (
     <AppShell>
-       <div className="relative min-h-[calc(100vh-8rem)]">
-        <QuadrantBackground />
-        <div className="container mx-auto px-4 py-8 relative z-10">
-            <header className="flex justify-between items-center mb-8">
-                <div className="flex items-center gap-4">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline" className="flex items-center gap-2">
-                                {viewMode === 'mood' ? <Smile className="h-5 w-5"/> : <Activity className="h-5 w-5"/>}
-                                <span className="capitalize">{viewMode}</span>
-                                <ChevronDown className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuLabel>View Type</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuRadioGroup value={viewMode} onValueChange={(value) => setViewMode(value as ViewMode)}>
-                                <DropdownMenuRadioItem value="mood">
-                                    <Smile className="mr-2 h-4 w-4" />
-                                    Mood
-                                </DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="practice">
-                                    <Activity className="mr-2 h-4 w-4" />
-                                    Practice
-                                </DropdownMenuRadioItem>
-                            </DropdownMenuRadioGroup>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                     <Button variant="ghost" size="icon">
-                        <RefreshCcw className="h-5 w-5 text-muted-foreground"/>
-                    </Button>
-                </div>
-                <h1 className="text-2xl font-bold text-foreground">
-                    {format(currentMonth, 'MMMM yyyy')}
-                </h1>
-                <Button variant="outline">
-                    <Upload className="h-5 w-5"/>
-                </Button>
+       <div className="relative min-h-[calc(100vh-4rem)]">
+         <div className="absolute top-0 left-0 right-0 h-[25vh] bg-secondary rounded-b-3xl" />
+         <div className="relative z-10 flex flex-col h-full">
+            <header className="container mx-auto px-4 pt-8 pb-4 text-primary-foreground">
+                <h1 className="text-3xl font-bold text-primary">Practice Calendar</h1>
+                <p className="text-md text-primary/80">Review your practice and mood history.</p>
             </header>
+            <main className="flex-grow container mx-auto px-4 mt-8">
+              <div className="flex justify-between items-center mb-8">
+                  <div className="flex items-center gap-4">
+                      <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                              <Button variant="outline" className="flex items-center gap-2">
+                                  {viewMode === 'mood' ? <Smile className="h-5 w-5"/> : <Activity className="h-5 w-5"/>}
+                                  <span className="capitalize">{viewMode}</span>
+                                  <ChevronDown className="h-4 w-4" />
+                              </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                              <DropdownMenuLabel>View Type</DropdownMenuLabel>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuRadioGroup value={viewMode} onValueChange={(value) => setViewMode(value as ViewMode)}>
+                                  <DropdownMenuRadioItem value="mood">
+                                      <Smile className="mr-2 h-4 w-4" />
+                                      Mood
+                                  </DropdownMenuRadioItem>
+                                  <DropdownMenuRadioItem value="practice">
+                                      <Activity className="mr-2 h-4 w-4" />
+                                      Practice
+                                  </DropdownMenuRadioItem>
+                              </DropdownMenuRadioGroup>
+                          </DropdownMenuContent>
+                      </DropdownMenu>
+                      <Button variant="ghost" size="icon">
+                          <RefreshCcw className="h-5 w-5 text-muted-foreground"/>
+                      </Button>
+                  </div>
+                  <h2 className="text-2xl font-bold text-foreground">
+                      {format(currentMonth, 'MMMM yyyy')}
+                  </h2>
+                  <Button variant="outline">
+                      <Upload className="h-5 w-5"/>
+                  </Button>
+              </div>
 
-            <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                month={currentMonth}
-                onMonthChange={setCurrentMonth}
-                className="rounded-md bg-transparent p-0"
-                classNames={{
-                    months: 'p-0',
-                    month: 'p-0 space-y-4',
-                    caption: "hidden", // We have a custom header now
-                    head_row: "flex justify-around",
-                    head_cell: "text-muted-foreground font-semibold w-full uppercase text-sm",
-                    row: "flex w-full mt-2 justify-around",
-                    cell: "h-24 w-24 text-center text-sm p-0 relative rounded-full",
-                    day: "h-24 w-24 p-0 font-normal rounded-full focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2",
-                    day_selected: "bg-primary/10", // Highlight selected day
-                    day_today: "", // Today is handled by day content
-                    day_outside: "opacity-30",
-                    day_disabled: "text-muted-foreground opacity-50",
-                    day_hidden: "invisible",
-                }}
-                components={{
-                    DayContent: DayContent,
-                }}
-            />
+              <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  month={currentMonth}
+                  onMonthChange={setCurrentMonth}
+                  className="rounded-md bg-card/80 backdrop-blur-sm shadow-xl border p-4"
+                  classNames={{
+                      months: 'p-0',
+                      month: 'p-0 space-y-4',
+                      caption: "hidden", // We have a custom header now
+                      head_row: "flex justify-around",
+                      head_cell: "text-muted-foreground font-semibold w-full uppercase text-sm",
+                      row: "flex w-full mt-2 justify-around",
+                      cell: "h-24 w-24 text-center text-sm p-0 relative rounded-lg",
+                      day: "h-24 w-24 p-0 font-normal rounded-lg focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2",
+                      day_selected: "bg-primary/10", // Highlight selected day
+                      day_today: "", // Today is handled by day content
+                      day_outside: "opacity-30",
+                      day_disabled: "text-muted-foreground opacity-50",
+                      day_hidden: "invisible",
+                  }}
+                  components={{
+                      DayContent: DayContent,
+                  }}
+              />
 
-            {error && (
-            <Alert variant="destructive" className="max-w-xl mx-auto mt-8">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-            </Alert>
-            )}
-        </div>
+              {error && (
+              <Alert variant="destructive" className="max-w-xl mx-auto mt-8">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>{error}</AlertDescription>
+              </Alert>
+              )}
+            </main>
+          </div>
       </div>
     </AppShell>
   );
 }
-
-    
