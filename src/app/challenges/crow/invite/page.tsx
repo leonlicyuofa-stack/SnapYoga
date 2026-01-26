@@ -20,6 +20,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { errorEmitter } from '@/lib/firebase/error-emitter';
+import { FirestorePermissionError } from '@/lib/firebase/errors';
 
 
 interface UserProfile {
@@ -155,59 +157,46 @@ export default function CrowPoseInvitePage() {
       toast({ title: "No Selection", description: "Please select at least one friend to invite.", variant: "destructive" });
       return;
     }
+    if (!currentUser) {
+        toast({ title: "Not Authenticated", description: "You must be logged in to send invitations.", variant: "destructive" });
+        return;
+    }
     setSendingInvites(true);
     
-    // Simulate sending invitations - In a real app, this is where you'd write to Firestore
-    console.log("Attempting to send invitations to:", selectedFriends.map(f => f.displayName || f.email));
-    const challengeId = pathname.split('/')[2] || 'crow'; // e.g., 'crow'
+    const challengeId = pathname.split('/')[2] || 'crow';
 
-    // Placeholder: create invitation documents in Firestore
-    // This part is for demonstration and would need more robust error handling and user feedback.
-    let successCount = 0;
-    try {
-        for (const friend of selectedFriends) {
-          const invitationRef = doc(collection(firestore, 'invitations')); // Creates a ref with a new auto-generated ID
-          await setDoc(invitationRef, {
-            challengeId,
-            challengeName,
-            inviterUid: currentUser?.uid,
-            inviterName: currentUser?.displayName || currentUser?.email,
-            inviteeUid: friend.uid,
-            inviteeEmail: friend.email, // Store email for potential notifications
-            inviteeName: friend.displayName || friend.email,
-            status: 'pending', // e.g., pending, accepted, declined
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
+    for (const friend of selectedFriends) {
+      const invitationRef = doc(collection(firestore, 'invitations'));
+      const invitationData = {
+        challengeId,
+        challengeName,
+        inviterUid: currentUser.uid,
+        inviterName: currentUser.displayName || currentUser.email,
+        inviteeUid: friend.uid,
+        inviteeEmail: friend.email,
+        inviteeName: friend.displayName || friend.email,
+        status: 'pending',
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      };
+
+      setDoc(invitationRef, invitationData)
+        .catch(async (serverError) => {
+          const permissionError = new FirestorePermissionError({
+            path: invitationRef.path,
+            operation: 'create',
+            requestResourceData: invitationData,
           });
-          successCount++;
-        }
-        if (successCount > 0) {
-             toast({
-                title: "Invitations Sent (Simulated)",
-                description: `Invites for ${challengeName} sent to ${successCount} friend(s).`,
-            });
-        }
-        if (successCount < selectedFriends.length) {
-             toast({
-                title: "Some Invitations Failed",
-                description: `${selectedFriends.length - successCount} invitation(s) could not be sent.`,
-                variant: "destructive"
-            });
-        }
-       
-    } catch (error) {
-        console.error("Error sending invitations:", error);
-        toast({
-            title: "Invitation Error",
-            description: "An error occurred while trying to send invitations. Please try again.",
-            variant: "destructive"
+          errorEmitter.emit('permission-error', permissionError);
         });
     }
 
+    toast({
+        title: "Invitations Sent",
+        description: `Your invites to ${selectedFriends.length} friend(s) are being sent.`,
+    });
 
-    setSelectedFriends([]); // Clear selection after attempting to send
-    // setSearchResults([]); // Optionally clear search results
-    // setFriendSearchQuery(''); // Optionally clear search query
+    setSelectedFriends([]);
     setSendingInvites(false);
   };
 

@@ -29,6 +29,7 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
 import { getAvatarDataUri } from '@/lib/avatar-utils.tsx';
+import { FirebaseErrorListener } from '@/components/layout/FirebaseErrorListener';
 
 
 interface AuthContextType {
@@ -388,7 +389,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     updateUserDisplayName,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+        {children}
+        <FirebaseErrorListener />
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = (): AuthContextType => {

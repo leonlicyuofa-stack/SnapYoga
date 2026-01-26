@@ -20,6 +20,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { errorEmitter } from '@/lib/firebase/error-emitter';
+import { FirestorePermissionError } from '@/lib/firebase/errors';
 
 
 interface UserProfile {
@@ -153,50 +155,45 @@ export default function HeadstandInvitePage() {
       toast({ title: "No Selection", description: "Please select at least one friend to invite.", variant: "destructive" });
       return;
     }
+    if (!currentUser) {
+      toast({ title: "Not Authenticated", description: "You must be logged in to send invitations.", variant: "destructive" });
+      return;
+    }
     setSendingInvites(true);
-    console.log("Attempting to send invitations to:", selectedFriends.map(f => f.displayName || f.email));
+    
     const challengeId = pathname.split('/')[2] || 'headstand'; 
 
-    let successCount = 0;
-    try {
-        for (const friend of selectedFriends) {
-          const invitationRef = doc(collection(firestore, 'invitations'));
-          await setDoc(invitationRef, {
+    for (const friend of selectedFriends) {
+        const invitationRef = doc(collection(firestore, 'invitations'));
+        const invitationData = {
             challengeId,
             challengeName,
-            inviterUid: currentUser?.uid,
-            inviterName: currentUser?.displayName || currentUser?.email,
+            inviterUid: currentUser.uid,
+            inviterName: currentUser.displayName || currentUser.email,
             inviteeUid: friend.uid,
             inviteeEmail: friend.email,
             inviteeName: friend.displayName || friend.email,
             status: 'pending',
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
-          });
-          successCount++;
-        }
-        if (successCount > 0) {
-            toast({
-                title: "Invitations Sent (Simulated)",
-                description: `Invites for ${challengeName} sent to ${successCount} friend(s).`,
+        };
+
+        setDoc(invitationRef, invitationData)
+            .catch(async (serverError) => {
+            const permissionError = new FirestorePermissionError({
+                path: invitationRef.path,
+                operation: 'create',
+                requestResourceData: invitationData,
             });
-        }
-        if (successCount < selectedFriends.length) {
-            toast({
-                title: "Some Invitations Failed",
-                description: `${selectedFriends.length - successCount} invitation(s) could not be sent.`,
-                variant: "destructive"
+            errorEmitter.emit('permission-error', permissionError);
             });
-        }
-    } catch (error) {
-        console.error("Error sending invitations:", error);
-        toast({
-            title: "Invitation Error",
-            description: "An error occurred while trying to send invitations. Please try again.",
-            variant: "destructive"
-        });
     }
     
+    toast({
+        title: "Invitations Sent",
+        description: `Your invites to ${selectedFriends.length} friend(s) are being sent.`,
+    });
+
     setSelectedFriends([]);
     setSendingInvites(false);
   };
