@@ -1,4 +1,3 @@
-
 "use client";
 
 import { cn } from "@/lib/utils";
@@ -26,27 +25,21 @@ export function RightArrowIcon({ animationState, className }: RightArrowIconProp
         viewBox="0 0 80 80"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="drop-shadow-[0_0_8px_rgba(0,0,0,0.2)]"
       >
         <title>Get Started</title>
-        {/* Circle */}
-        <circle 
-            cx="40" 
-            cy="40" 
-            r="37" 
-            stroke="currentColor" 
-            strokeWidth="3"
-            className="transition-transform duration-300 group-hover:scale-105"
-        />
-        {/* Arrow */}
-        <path
-          d="M35 28 L47 40 L35 52"
+        {/* New Arrow Shape */}
+        <g 
+          className="transition-transform duration-300 group-hover:translate-x-1"
           stroke="currentColor"
-          strokeWidth="6"
+          strokeWidth="4"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="transition-transform duration-300 group-hover:translate-x-1"
-        />
+          fill="none"
+        >
+          <path d="M20 40 H 60" />
+          <path d="M45 25 C 55 30, 60 35, 60 40" />
+          <path d="M45 55 C 55 50, 60 45, 60 40" />
+        </g>
       </svg>
     </div>
   );
