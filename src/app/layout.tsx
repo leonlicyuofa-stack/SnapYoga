@@ -1,16 +1,16 @@
 
 import type {Metadata} from 'next';
-import { Lexend, Shadows_Into_Light } from 'next/font/google';
+import { Lora, Shadows_Into_Light } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/contexts/AuthContext'; 
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 
-const lexend = Lexend({
+const lora = Lora({
   subsets: ['latin'],
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-  variable: '--font-lexend',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-lora',
 });
 
 const shadowsIntoLight = Shadows_Into_Light({
@@ -31,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${lexend.variable} ${shadowsIntoLight.variable} font-sans antialiased`}>
+      <body className={`${lora.variable} ${shadowsIntoLight.variable} font-serif antialiased`}>
         <div className="relative z-10">
           <AuthProvider>
             <LanguageProvider>
