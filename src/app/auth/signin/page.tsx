@@ -16,9 +16,9 @@ import { AppleIcon } from '@/components/icons/AppleIcon';
 import { Mail, KeyRound } from 'lucide-react';
 import { useState } from 'react';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
-import { ZenRock } from '@/components/icons/rocks/zen-rock';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { SmileyPebbleIcon } from '@/components/icons/smiley-pebble-icon';
+import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
+import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
 
 const signInSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -45,23 +45,22 @@ export default function SignInPage() {
   const isLoading = authLoading || isSubmitting;
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center py-12 bg-background overflow-hidden">
-        {/* Animated Background */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-primary/10 via-background to-accent/10 animate-breathing-bg">
-            
-        </div>
-        <Card className="relative z-10 w-full max-w-md shadow-xl border-border/60 bg-card/80 backdrop-blur-sm">
+    <div className="relative flex min-h-screen items-center justify-center py-12 bg-background p-4">
+        <QuadrantBackground />
+        <Card className="relative z-10 w-full max-w-md shadow-2xl border-border/20 bg-card/80 backdrop-blur-sm rounded-2xl">
            <CardHeader className="text-center">
-            <ZenRock progress={0} isSuccess={false} className="mx-auto h-24 w-24 text-primary mb-2" />
+            <div className="mx-auto mb-4">
+              <SnapYogaLogo />
+            </div>
             <CardTitle className="text-3xl font-bold">{t('authWelcomeBack')}</CardTitle>
             <CardDescription>{t('authWelcomeBackDesc')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
              <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" onClick={signInWithGoogle} disabled={isLoading} className="py-6 text-base h-auto">
+              <Button variant="outline" onClick={signInWithGoogle} disabled={isLoading} className="py-6 text-base h-auto rounded-lg">
                 <GoogleIcon className="mr-2 h-5 w-5" /> {t('authGoogle')}
               </Button>
-              <Button variant="outline" onClick={signInWithApple} disabled={isLoading} className="py-6 text-base h-auto">
+              <Button variant="outline" onClick={signInWithApple} disabled={isLoading} className="py-6 text-base h-auto rounded-lg">
                  <AppleIcon className="mr-2 h-5 w-5" /> {t('authApple')}
               </Button>
             </div>
@@ -83,7 +82,7 @@ export default function SignInPage() {
                     type="email" 
                     placeholder="you@example.com" 
                     {...register("email")}
-                    className="pl-10" 
+                    className="pl-10 h-12 text-base rounded-lg" 
                   />
                 </div>
                 {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
@@ -97,12 +96,12 @@ export default function SignInPage() {
                     type="password" 
                     placeholder="••••••••" 
                     {...register("password")}
-                    className="pl-10"
+                    className="pl-10 h-12 text-base rounded-lg"
                   />
                 </div>
                 {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
               </div>
-              <Button type="submit" className="w-full text-lg py-6" disabled={isLoading}>
+              <Button type="submit" className="w-full text-lg py-6 h-auto rounded-lg" disabled={isLoading}>
                 {isLoading ? <SmileyRockLoader /> : t('signIn')}
               </Button>
             </form>

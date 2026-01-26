@@ -19,7 +19,7 @@ interface RecommendedVideosCardProps {
 
 export function RecommendedVideosCard({ videos, isLoading }: RecommendedVideosCardProps) {
   const ContentContainer = ({ children }: { children: React.ReactNode }) => (
-    <div className="w-full p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
+    <div className="w-full p-6 bg-card/90 backdrop-blur-sm rounded-2xl shadow-xl border">
       {children}
     </div>
   );

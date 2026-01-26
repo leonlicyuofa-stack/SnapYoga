@@ -22,7 +22,7 @@ import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { RockWheelDialog } from '@/components/features/dashboard/rock-wheel-dialog';
 import { RewardDialog } from '@/components/features/dashboard/reward-dialog';
 import type { Collectible } from '@/components/features/dashboard/rock-data';
-import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
+import { OnboardingBackground } from '@/components/layout/OnboardingBackground';
 
 interface Friend {
   id: string;
@@ -208,12 +208,12 @@ function InviteFriendDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="lg" className="w-full sm:w-auto text-base px-6 py-6">
+        <Button variant="outline" size="lg" className="w-full sm:w-auto text-base px-6 py-6 rounded-xl">
           <PlusCircle className="mr-2 h-5 w-5" />
           Add Friend
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md rounded-2xl">
         <DialogHeader>
           <DialogTitle>Invite a Friend</DialogTitle>
           <DialogDescription>
@@ -221,7 +221,7 @@ function InviteFriendDialog() {
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
-          <div className="text-center p-3 bg-green-100/50 text-green-800 border border-green-200 rounded-md text-sm font-medium">
+          <div className="text-center p-3 bg-green-100/50 text-green-800 border border-green-200 rounded-lg text-sm font-medium">
               {t('referralBonusText')}
           </div>
           <div className="space-y-2">
@@ -231,27 +231,28 @@ function InviteFriendDialog() {
                 id="invite-link"
                 value={inviteLink}
                 readOnly
+                className="h-11 rounded-lg text-base"
               />
-              <Button type="button" size="icon" onClick={handleCopyLink}>
+              <Button type="button" size="icon" onClick={handleCopyLink} className="rounded-lg">
                 <Copy className="h-4 w-4" />
               </Button>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
-             <Button variant="outline" asChild>
+             <Button variant="outline" asChild className="rounded-lg h-11">
               <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
                 <Share2 className="mr-2 h-4 w-4" /> WhatsApp
               </a>
             </Button>
-             <Button variant="outline" asChild>
+             <Button variant="outline" asChild className="rounded-lg h-11">
               <a href={mailtoLink} target="_blank" rel="noopener noreferrer">
                 <Mail className="mr-2 h-4 w-4" /> Email
               </a>
             </Button>
-             <Button variant="outline" onClick={handleInstagramShare}>
+             <Button variant="outline" onClick={handleInstagramShare} className="rounded-lg h-11">
               <Share2 className="mr-2 h-4 w-4" /> Instagram
             </Button>
-             <Button variant="outline" asChild>
+             <Button variant="outline" asChild className="rounded-lg h-11">
               <a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer">
                 <PinterestIcon className="mr-2 h-4 w-4" /> Pinterest
               </a>
@@ -317,8 +318,8 @@ export default function ChallengesPage() {
             rock={rewardedRock} 
           />
       )}
-      <div className="relative min-h-[calc(100vh-8rem)]">
-        <QuadrantBackground />
+      <div className="relative min-h-[calc(100vh-4rem)]">
+        <OnboardingBackground />
         <div className="container mx-auto px-4 py-12 space-y-12 relative z-10">
           <div className="text-center">
             <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl flex items-center justify-center gap-3">
@@ -330,24 +331,7 @@ export default function ChallengesPage() {
             </p>
           </div>
 
-          <Card className="w-full shadow-lg">
-              <CardHeader>
-                  <CardTitle className="flex items-center text-xl md:text-2xl">
-                      <Gift className="mr-3 h-7 w-7 text-primary" />
-                      Challenge Rewards
-                  </CardTitle>
-                  <CardDescription>
-                      You've completed the Headstand Challenge! Claim your reward.
-                  </CardDescription>
-              </CardHeader>
-              <CardContent>
-                  <Button onClick={() => setShowRockWheelDialog(true)} className="w-full" size="lg">
-                      Claim Your Item!
-                  </Button>
-              </CardContent>
-          </Card>
-
-          <Card className="w-full shadow-2xl overflow-hidden bg-card/80 backdrop-blur-sm">
+          <Card className="w-full shadow-2xl overflow-hidden bg-card/80 backdrop-blur-sm rounded-2xl border">
             <CardHeader className="text-center pt-8">
               <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
                 <Users className="h-8 w-8 text-primary" />
@@ -370,6 +354,23 @@ export default function ChallengesPage() {
             </CardContent>
           </Card>
 
+          <Card className="w-full shadow-lg rounded-2xl border bg-card/80 backdrop-blur-sm">
+              <CardHeader>
+                  <CardTitle className="flex items-center text-xl md:text-2xl">
+                      <Gift className="mr-3 h-7 w-7 text-primary" />
+                      Challenge Rewards
+                  </CardTitle>
+                  <CardDescription>
+                      You've completed the Headstand Challenge! Claim your reward.
+                  </CardDescription>
+              </CardHeader>
+              <CardContent>
+                  <Button onClick={() => setShowRockWheelDialog(true)} className="w-full rounded-lg" size="lg">
+                      Claim Your Item!
+                  </Button>
+              </CardContent>
+          </Card>
+
           <div className="space-y-12">
             {categoryOrder.map((category) => {
               const challengesInCategory = challengesByCategory[category];
@@ -383,7 +384,7 @@ export default function ChallengesPage() {
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {challengesInCategory.map((challenge, index) => (
-                      <Card key={challenge.id} className="overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group rounded-lg flex flex-col bg-card/80 backdrop-blur-sm">
+                      <Card key={challenge.id} className="overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group rounded-2xl flex flex-col bg-card/80 backdrop-blur-sm border">
                         <div className="relative w-full h-64">
                           <Image
                             src={typeof challenge.imageUrl === 'string' ? challenge.imageUrl : challenge.imageUrl.src}
@@ -427,7 +428,7 @@ export default function ChallengesPage() {
                           <Link href={challenge.detailLink} passHref>
                             <Button
                               size="lg"
-                              className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md hover:shadow-lg transition-all transform hover:scale-105"
+                              className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md hover:shadow-lg transition-all transform hover:scale-105 rounded-lg"
                               aria-label={`Action for ${challenge.name}`}
                               disabled={challenge.detailLink === '#'}
                             >

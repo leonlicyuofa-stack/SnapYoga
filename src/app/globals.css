@@ -5,41 +5,41 @@
 
 @layer base {
   :root {
-    --background: 350 33% 95%; /* Previous value: 0 0% 100%; */
-    --foreground: 349 13% 44%;
+    --background: 350 33% 97%; /* Lighter, almost white cream */
+    --foreground: 25 25% 35%; /* Dark Brown */
 
-    --card: 0 0% 100% / 0; /* Set card to transparent */
-    --card-foreground: 349 13% 44%;
+    --card: 0 0% 100%;
+    --card-foreground: 25 25% 35%;
 
-    --popover: 0 100% 99%;
-    --popover-foreground: 349 13% 44%;
+    --popover: 40 50% 95%;
+    --popover-foreground: 25 25% 35%;
 
-    --primary: 17 20% 33%; /* Cocoa */
-    --primary-foreground: 0 0% 100%; /* White */
+    --primary: 25 25% 35%; /* Dark Brown */
+    --primary-foreground: 40 50% 95%; /* Cream */
 
-    --secondary: 353 24% 91%; /* Pink - #E5C5C1 */
-    --secondary-foreground: 349 13% 44%;
+    --secondary: 25 30% 88%; /* Pastel Brown */
+    --secondary-foreground: 25 25% 35%;
 
-    --muted: 353 24% 91%;
-    --muted-foreground: 349 13% 55%; 
+    --muted: 25 30% 92%; /* Lighter Pastel Brown */
+    --muted-foreground: 25 25% 55%; 
 
-    --accent: 240 5% 65%; /* Neutral Gray */
-    --accent-foreground: 349 13% 20%;
+    --accent: 45 90% 85%; /* Soft Yellow */
+    --accent-foreground: 25 25% 35%;
 
     --destructive: 0 84% 60%; 
     --destructive-foreground: 0 0% 98%;
 
-    --border: 353 24% 91%;
-    --input: 353 24% 93%;
-    --ring: 349 13% 44%;
+    --border: 25 30% 90%;
+    --input: 25 30% 94%;
+    --ring: 25 25% 35%;
     
-    --chart-1: 17 20% 33%;
-    --chart-2: 99 6% 64%;
-    --chart-3: 6 25% 64%; /* Mauve - #BD8E89 */
-    --chart-4: 353 24% 91%;
-    --chart-5: 350 33% 95%;
+    --chart-1: 25 25% 35%;
+    --chart-2: 25 30% 88%;
+    --chart-3: 45 90% 85%;
+    --chart-4: 25 30% 92%;
+    --chart-5: 25 25% 55%;
 
-    --radius: 0.75rem;
+    --radius: 1rem; /* Increased for a softer, more modern look */
     
     /* Splash Screen colors */
     --splash-background: 350 33% 95%;
@@ -67,39 +67,39 @@
   }
 
   .dark {
-    --background: 349 15% 15%; 
-    --foreground: 350 33% 95%; 
+    --background: 25 10% 12%; 
+    --foreground: 40 30% 90%; 
 
-    --card: 349 15% 15% / 0; /* Set card to transparent */
-    --card-foreground: 350 33% 95%;
+    --card: 25 10% 15%;
+    --card-foreground: 40 30% 90%;
 
-    --popover: 349 15% 15%;
-    --popover-foreground: 350 33% 95%;
+    --popover: 25 10% 12%;
+    --popover-foreground: 40 30% 90%;
 
-    --primary: 17 20% 33%; /* Cocoa */
-    --primary-foreground: 0 0% 100%; /* White */
+    --primary: 40 50% 95%;
+    --primary-foreground: 25 25% 20%;
 
-    --secondary: 349 15% 25%; 
-    --secondary-foreground: 350 33% 95%;
+    --secondary: 25 15% 22%;
+    --secondary-foreground: 40 30% 90%;
 
-    --muted: 349 15% 30%;
-    --muted-foreground: 350 20% 70%; 
+    --muted: 25 15% 25%;
+    --muted-foreground: 40 20% 70%; 
 
-    --accent: 99 10% 75%; /* Lighter Pistachio for dark mode */
-    --accent-foreground: 349 13% 15%;
+    --accent: 45 90% 75%;
+    --accent-foreground: 25 25% 20%;
 
     --destructive: 0 72% 51%; 
     --destructive-foreground: 0 0% 98%;
 
-    --border: 349 15% 30%;
-    --input: 349 15% 30%;
-    --ring: 350 33% 95%;
+    --border: 25 15% 30%;
+    --input: 25 15% 25%;
+    --ring: 40 50% 95%;
     
-    --chart-1: 17 20% 33%;
-    --chart-2: 99 10% 75%;
-    --chart-3: 6 30% 75%;
-    --chart-4: 353 24% 85%;
-    --chart-5: 350 33% 90%;
+    --chart-1: 40 50% 95%;
+    --chart-2: 25 30% 80%;
+    --chart-3: 45 90% 75%;
+    --chart-4: 25 30% 85%;
+    --chart-5: 40 20% 70%;
 
     /* Splash Screen colors - Dark mode adaptation */
     --splash-background: 349 15% 15%;
@@ -149,10 +149,10 @@
 @layer components {
     /* Bottom Navigation Bar Styles */
   .btm-nav {
-    @apply fixed bottom-0 left-0 right-0 z-40 flex h-16 items-stretch justify-around border-t bg-white/80 backdrop-blur-sm shadow-[0_-1px_4px_rgba(0,0,0,0.05)];
+    @apply fixed bottom-0 left-0 right-0 z-40 flex h-20 items-stretch justify-around border-t bg-background/80 backdrop-blur-sm shadow-[0_-2px_8px_rgba(0,0,0,0.05)];
   }
   .btm-nav-label {
-    @apply text-xs transition-opacity duration-200 sm:text-sm;
+    @apply text-xs transition-opacity duration-200;
   }
   .no-scrollbar::-webkit-scrollbar {
     display: none;

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Sparkles, Trophy, Users, CalendarDays, Moon, BarChart2 } from 'lucide-react';
+import { Sparkles, Trophy, Users, CalendarDays, Search, Gem, Activity } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState, useEffect } from 'react';
 import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
@@ -16,121 +16,22 @@ import type { DocumentData } from 'firebase/firestore';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { PracticeAnalytics } from '@/components/features/dashboard/PracticeAnalytics';
+import { Input } from '@/components/ui/input';
 import { RockCollectionCard } from '@/components/features/dashboard/rock-collection-card';
 import { allCollectibles } from '@/components/features/dashboard/rock-data';
-import { QuoteCarousel } from '@/components/features/dashboard/QuoteCarousel';
-import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
-import { MoodChart } from '@/components/features/dashboard/MoodChart';
 import { UserCircle } from 'lucide-react';
-import { OnboardingBackground } from '@/components/layout/OnboardingBackground';
 
-interface UserProfileData extends DocumentData {
-  displayName?: string;
-}
-
-const projects = [
-  {
-    component: PracticeAnalytics,
-    title: "Profile",
-    category: "Overview",
-    bgColor: "bg-pistachio-background", 
-    href: "/profile",
-    className: "col-span-1 row-span-1",
-  },
-  {
-    component: RockCollectionCard,
-    title: "Yoga Collection",
-    category: "Collectibles",
-    bgColor: "bg-rose-200",
-    href: "/yoga-collection",
-    className: "col-span-1 row-span-2",
-    props: { collectibles: allCollectibles },
-  },
-  {
-    component: MoodChart,
-    title: "Mood Analysis",
-    category: "Log your mood to see your daily trend.",
-    bgColor: "bg-fuchsia-200",
-    href: "/practice-calendar",
-    className: "col-span-1 row-span-2"
-  },
-  {
-    component: QuoteCarousel,
-    title: "Quote for the day",
-    category: "Inspiration",
-    bgColor: "bg-violet-200",
-    href: "/practice-calendar",
-    className: "col-span-1 row-span-1"
-  },
-]
-
-const moods = [
-    { name: 'Angry', emoji: '😠' },
-    { name: 'Happy', emoji: '😊' },
-    { name: 'Sad', emoji: '😢' },
-    { name: 'Relaxed', emoji: '😌' },
-]
+const gridItems: { title: string; href: string, icon: React.ElementType, bgColor: string, description: string }[] = [
+  { title: "Profile & Stats", href: "/profile", icon: Activity, bgColor: "bg-emerald-100/50", description: "View your progress" },
+  { title: "Challenges", href: "/challenges", icon: Trophy, bgColor: "bg-rose-100/50", description: "Join a new challenge" },
+  { title: "Collection", href: "/yoga-collection", icon: Gem, bgColor: "bg-sky-100/50", description: "See your equipment" },
+  { title: "Practice Log", href: "/practice-calendar", icon: CalendarDays, bgColor: "bg-purple-100/50", description: "Review your calendar" },
+];
 
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth();
-  const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
-  const [selectedMood, setSelectedMood] = useState<{ name: string; emoji: string } | null>(null);
-  const { toast } = useToast();
   
-  const welcomeName = userProfile?.displayName || user?.displayName || user?.email?.split('@')[0] || 'User';
-
-  useEffect(() => {
-    // Fetch today's mood when the component mounts
-    if (user) {
-      const todayStr = format(new Date(), 'yyyy-MM-dd');
-      const moodDocRef = doc(firestore, `users/${user.uid}/moods/${todayStr}`);
-      getDoc(moodDocRef).then(docSnap => {
-        if (docSnap.exists()) {
-          const moodData = docSnap.data();
-          const foundMood = moods.find(m => m.name === moodData.name);
-          if(foundMood) {
-            setSelectedMood(foundMood);
-          }
-        }
-      });
-    }
-  }, [user]);
-
-  const handleMoodSelection = async (mood: { name: string; emoji: string }) => {
-    if (!user) {
-      toast({
-        title: "Not Logged In",
-        description: "You must be logged in to track your mood.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    setSelectedMood(mood);
-    const todayStr = format(new Date(), 'yyyy-MM-dd');
-    const moodDocRef = doc(firestore, `users/${user.uid}/moods/${todayStr}`);
-    try {
-      await setDoc(moodDocRef, { 
-        name: mood.name,
-        emoji: mood.emoji,
-        loggedAt: serverTimestamp() 
-      }, { merge: true });
-      
-      toast({
-          title: "Mood Saved!",
-          description: `Your mood has been set to: ${mood.emoji} ${mood.name}. Refresh to see your mood chart update!`,
-      });
-
-    } catch (error) {
-      console.error("Error saving mood:", error);
-      toast({
-        title: "Error",
-        description: "Could not save your mood. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
+  const welcomeName = user?.displayName || user?.email?.split('@')[0] || 'Yogi';
 
   const getInitials = (email?: string | null, displayName?: string | null) => {
     if (displayName) {
@@ -152,63 +53,61 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <div className="relative h-full">
-        <OnboardingBackground />
-        <div className="relative z-10 container mx-auto px-4 py-6 space-y-4">
+      <div className="relative min-h-[calc(100vh-4rem)]">
+        {/* Top Orange Section */}
+        <div className="absolute top-0 left-0 right-0 h-[35vh] bg-secondary rounded-b-3xl" />
 
-          
-          {/* Greeting */}
-          <div className="flex items-center gap-4 pt-4">
-              <div>
-                <h2 className="text-xl font-bold text-foreground">Welcome back!</h2>
-                <p className="text-muted-foreground">{welcomeName}</p>
-              </div>
-          </div>
-
-          
-          {/* Mood Tracker */}
-          <div className="space-y-4">
-              <p className="text-muted-foreground">How do you feel today?</p>
-              <div className="grid grid-cols-4 gap-4">
-                  {moods.map((mood) => (
-                      <button 
-                        key={mood.name} 
-                        onClick={() => handleMoodSelection(mood)}
-                        className={cn(
-                          "flex flex-col items-center justify-center gap-2 p-4 bg-card border rounded-lg shadow-sm hover:bg-accent/50 hover:border-primary transition-all",
-                          selectedMood?.name === mood.name && "bg-accent/80 border-primary"
-                        )}
-                      >
-                          <span className="text-4xl">{mood.emoji}</span>
-                          <span className="text-sm font-medium text-muted-foreground">{mood.name}</span>
-                      </button>
-                  ))}
-              </div>
-          </div>
-
-
-          
-          {/* Ongoing Projects */}
-            <div className="grid grid-cols-2 grid-rows-3 gap-4 h-[30rem]">
-              {projects.map((project, index) => {
-                const Component = project.component
-                const CardProps = project.component ? project.props : {};
-                return (
-                  <div key={index} className={cn("block transition-transform duration-200", project.className)}>
-                    <Card className={cn(project.bgColor, "rounded-xl shadow-sm p-4 flex flex-col h-full relative overflow-hidden")}>
-                     
-                      <CardHeader className="flex-1 p-2 z-10">
-                        <CardTitle className="text-card-foreground font-semibold">{project.title}</CardTitle>
-                        <p className="text-sm text-card-foreground/90">{project.category}</p>
-                      </CardHeader>
-                      <CardContent className="p-2 flex justify-center items-center flex-1">
-                        {Component ? <Component {...CardProps} className="h-full w-full text-card-foreground/80" /> : null}
-                      </CardContent>
-                    </Card>
-                  </div>
-                )
-              })}
+        <div className="relative z-10 flex flex-col h-full">
+            {/* Header */}
+            <header className="container mx-auto px-4 pt-8 pb-4 text-primary-foreground">
+            <div className="flex justify-between items-center">
+                <div>
+                <h1 className="text-3xl font-bold text-primary">Good Morning, {welcomeName}</h1>
+                <p className="text-md text-primary/80">What are you up to today?</p>
+                </div>
+                <Avatar className="h-16 w-16 border-4 border-background">
+                    <AvatarImage src={user?.photoURL ?? undefined} alt={user?.displayName ?? "user"} />
+                    <AvatarFallback className="text-xl">{getInitials(user?.email, user?.displayName)}</AvatarFallback>
+                </Avatar>
             </div>
+            <div className="relative mt-6">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                type="search"
+                placeholder="Search for exercises..."
+                className="w-full rounded-full bg-background/80 text-foreground pl-12 pr-4 py-7 shadow-md text-base"
+                />
+            </div>
+            </header>
+
+            {/* Main Content Area */}
+            <main className="flex-grow container mx-auto px-4 mt-8">
+                <div className="mb-8">
+                    <RockCollectionCard collectibles={allCollectibles} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                    {gridItems.map((item, index) => {
+                    const Icon = item.icon;
+                    return (
+                        <Link href={item.href} key={index}>
+                            <Card
+                                className="rounded-2xl shadow-lg bg-card/90 backdrop-blur-sm border-border/20 h-full"
+                            >
+                                <CardContent className="flex flex-col items-center justify-center p-4 gap-3 text-center h-full">
+                                    <div className={cn("p-4 rounded-full", item.bgColor)}>
+                                    <Icon className="h-8 w-8 text-primary" />
+                                    </div>
+                                    <div className="mt-2">
+                                        <p className="font-semibold text-md text-foreground">{item.title}</p>
+                                        <p className="text-xs text-muted-foreground">{item.description}</p>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </Link>
+                    );
+                    })}
+                </div>
+            </main>
 
         </div>
       </div>

@@ -33,7 +33,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
   const videoSrc = videoDataUri;
 
   return (
-    <div className="w-full shadow-lg p-6 bg-card/80 backdrop-blur-sm rounded-lg">
+    <div className="w-full shadow-xl p-6 bg-card/90 backdrop-blur-sm rounded-2xl border">
       <CardHeader className="p-0">
         <CardTitle className="flex items-center gap-2 text-2xl">
           <Activity className="h-7 w-7 text-primary" />
@@ -44,7 +44,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
         </CardDescription>
       </CardHeader>
       <CardContent className="p-0 space-y-6 mt-6">
-        <div className="aspect-video w-full bg-muted rounded-md overflow-hidden flex items-center justify-center border border-dashed">
+        <div className="aspect-video w-full bg-muted rounded-xl overflow-hidden flex items-center justify-center border border-dashed">
           {isLoading && !videoSrc && (
             <div className="flex flex-col items-center text-muted-foreground p-4">
               <Skeleton className="h-12 w-12 rounded-full bg-gray-300 mb-2" />
@@ -96,7 +96,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
         {!isLoading && analysis && (
           <>
             {typeof score === 'number' && (
-              <div className="space-y-2 p-4 bg-secondary/30 rounded-md border border-border">
+              <div className="space-y-2 p-4 bg-secondary/30 rounded-xl border border-border">
                 <h3 className="text-xl font-semibold flex items-center gap-2 text-primary">
                   <Award className="h-6 w-6" />
                   Pose Score
@@ -112,7 +112,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
               </div>
             )}
             {identifiedPose && (
-              <div className="space-y-2 p-4 bg-secondary/30 rounded-md border border-border">
+              <div className="space-y-2 p-4 bg-secondary/30 rounded-xl border border-border">
                 <h3 className="text-xl font-semibold flex items-center gap-2 text-primary">
                   <Activity className="h-6 w-6" /> Identified Pose
                 </h3>
@@ -126,7 +126,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
                   <Button variant="outline" size="sm" onClick={() => console.log('Incorrect Pose clicked')}>No</Button>
                 </div>
               </div>)}
-            <div className="space-y-3 p-4 bg-primary/5 rounded-md border border-primary/20">
+            <div className="space-y-3 p-4 bg-primary/5 rounded-xl border border-primary/20">
               <h3 className="text-xl font-semibold flex items-center gap-2 text-primary">
                 <MessageSquareText className="h-6 w-6" />
                 AI Feedback

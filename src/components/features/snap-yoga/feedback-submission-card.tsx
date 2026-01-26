@@ -37,7 +37,7 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
 
   if (!isAnalysisDone) {
     return (
-      <div className="w-full p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl opacity-50 cursor-not-allowed">
+      <div className="w-full p-6 bg-card/90 backdrop-blur-sm rounded-2xl shadow-xl opacity-50 cursor-not-allowed border">
         <CardHeader className="p-0">
           <CardTitle className="flex items-center gap-2 text-2xl">
             <MessageCircleQuestion className="h-7 w-7 text-primary" />
@@ -56,7 +56,7 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
   }
 
   return (
-    <div className="w-full p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
+    <div className="w-full p-6 bg-card/90 backdrop-blur-sm rounded-2xl shadow-xl border">
       <CardHeader className="p-0">
         <CardTitle className="flex items-center gap-2 text-2xl">
           <MessageCircleQuestion className="h-7 w-7 text-primary" />
@@ -75,7 +75,7 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
             onChange={(e) => setFeedbackText(e.target.value)}
             placeholder="E.g., The cue about my shoulder alignment was very helpful!"
             rows={4}
-            className="mt-1 focus:ring-primary focus:border-primary"
+            className="mt-1 focus:ring-primary focus:border-primary rounded-lg text-base"
             aria-describedby="feedback-text-help"
           />
           <p id="feedback-text-help" className="text-sm text-muted-foreground mt-1">
@@ -85,7 +85,7 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
         <Button
           onClick={handleSubmit}
           disabled={isLoading || !feedbackText.trim()}
-          className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6 rounded-md shadow-md transition-all duration-150 ease-in-out transform hover:scale-105 active:scale-95"
+          className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6 rounded-lg shadow-md transition-all duration-150 ease-in-out transform hover:scale-105 active:scale-95"
           aria-label="Submit Feedback"
         >
           {isLoading ? (
@@ -97,7 +97,7 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
         </Button>
 
         {isLoading && summary === null && (
-            <div className="space-y-3 p-4 bg-secondary/50 rounded-md border border-dashed">
+            <div className="space-y-3 p-4 bg-secondary/50 rounded-xl border border-dashed">
                 <h3 className="text-xl font-semibold flex items-center gap-2 text-primary">
                     <Sparkles className="h-6 w-6" />
                     Feedback Summary
@@ -108,7 +108,7 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
         )}
 
         {summary && (
-          <div className="mt-6 space-y-3 p-4 bg-primary/5 rounded-md border border-primary/20">
+          <div className="mt-6 space-y-3 p-4 bg-primary/5 rounded-xl border border-primary/20">
             <h3 className="text-xl font-semibold flex items-center gap-2 text-primary">
               <Sparkles className="h-6 w-6" />
               Feedback Summary

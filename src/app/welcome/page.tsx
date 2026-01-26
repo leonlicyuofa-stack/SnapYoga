@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ChevronRight } from 'lucide-react';
+import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 
 export default function WelcomePage() {
   return (
@@ -13,7 +14,9 @@ export default function WelcomePage() {
       
       {/* Top curved section */}
       <header className="relative w-full bg-[hsl(var(--welcome-pastel-brown))] text-center pt-16 pb-32">
-        <h1 className="text-4xl font-bold">SnapYoga</h1>
+        <div className="flex justify-center">
+            <SnapYogaLogo />
+        </div>
         <p className="mt-2 text-lg opacity-80">your AI companion for mindfulness</p>
         <div 
           className="absolute bottom-0 left-0 w-full h-24 bg-transparent"

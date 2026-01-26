@@ -21,6 +21,7 @@ import { Loader2 } from 'lucide-react';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { cn } from '@/lib/utils';
 import { QuadrantBackground } from '@/components/layout/QuadrantBackground';
+import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 
 const signUpSchema = z.object({
   username: z.string().min(2, { message: "Username must be at least 2 characters" }),
@@ -62,8 +63,11 @@ export default function SignUpPage() {
   return (
     <div className="relative flex min-h-screen items-center justify-center p-4 bg-background">
       <QuadrantBackground />
-      <div className="relative z-10 w-full max-w-sm bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8 m-4">
+      <div className="relative z-10 w-full max-w-md bg-card/90 backdrop-blur-sm shadow-2xl rounded-2xl p-8 m-4">
         
+        <div className="mx-auto mb-4 flex justify-center">
+            <SnapYogaLogo />
+        </div>
         <h2 className="text-center text-3xl font-bold tracking-tight text-foreground mb-2">Create Account</h2>
         <p className="text-center text-sm text-muted-foreground mb-8">Let's get started on your journey.</p>
         
@@ -77,7 +81,7 @@ export default function SignUpPage() {
                           type="text" 
                           placeholder="Username" 
                           {...register("username")}
-                          className="bg-gray-100/80 border-border/50 rounded-full h-12 pl-12 shadow-inner"
+                          className="bg-input/80 border-border/50 rounded-lg h-12 pl-12 shadow-inner text-base"
                       />
                  </div>
                 {errors.username && <p className="text-sm text-destructive text-left mt-1 pl-4">{errors.username.message}</p>}
@@ -91,7 +95,7 @@ export default function SignUpPage() {
                           type="email" 
                           placeholder="Email" 
                           {...register("email")}
-                          className="bg-gray-100/80 border-border/50 rounded-full h-12 pl-12 shadow-inner"
+                          className="bg-input/80 border-border/50 rounded-lg h-12 pl-12 shadow-inner text-base"
                       />
                  </div>
                 {errors.email && <p className="text-sm text-destructive text-left mt-1 pl-4">{errors.email.message}</p>}
@@ -104,7 +108,7 @@ export default function SignUpPage() {
                         id="password" 
                         type={showPassword ? "text" : "password"} 
                         {...register("password")} 
-                        className="bg-gray-100/80 border-border/50 rounded-full h-12 pl-12 pr-12 shadow-inner" 
+                        className="bg-input/80 border-border/50 rounded-lg h-12 pl-12 pr-12 shadow-inner text-base" 
                         placeholder="Password"
                     />
                     <Button type="button" variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8" onClick={() => setShowPassword(!showPassword)}>
@@ -115,7 +119,7 @@ export default function SignUpPage() {
             </div>
 
             <div className="px-8">
-              <Button type="submit" className="w-full h-12 text-base rounded-full mt-8" disabled={isLoading || !isValid}>
+              <Button type="submit" className="w-full h-12 text-base rounded-lg mt-8" disabled={isLoading || !isValid}>
                   {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Sign Up'}
               </Button>
             </div>
@@ -127,11 +131,11 @@ export default function SignUpPage() {
                 <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-muted-foreground">Or sign up with</span>
+                <span className="bg-card px-2 text-muted-foreground">Or sign up with</span>
             </div>
         </div>
 
-        <div className="flex justify-center gap-6 my-4">
+        <div className="flex justify-center gap-4 my-4">
             <Button variant="outline" size="icon" onClick={signInWithApple} disabled={authLoading} className="w-14 h-14 rounded-full border-2">
                 <AppleIcon className="h-6 w-6" />
                  <span className="sr-only">Sign in with Apple</span>
@@ -140,17 +144,7 @@ export default function SignUpPage() {
                 <GoogleIcon className="h-6 w-6" />
                 <span className="sr-only">Sign in with Google</span>
             </Button>
-            {/* Facebook Icon Placeholder */}
-            <Button variant="outline" size="icon" disabled className="w-14 h-14 rounded-full border-2">
-                <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"></path></svg>
-                <span className="sr-only">Sign in with Facebook</span>
-            </Button>
-             <Button variant="outline" size="icon" disabled className="w-14 h-14 rounded-full border-2">
-                <TikTokIcon className="h-6 w-6" />
-                <span className="sr-only">Sign in with TikTok</span>
-            </Button>
         </div>
-
 
         <p className="text-sm text-muted-foreground mt-8 text-center">
             {t('authAlreadyHaveAccount')}{' '}

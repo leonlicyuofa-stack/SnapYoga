@@ -8,7 +8,7 @@ import { summarizeFeedback, type SummarizeFeedbackInput, type SummarizeFeedbackO
 import { VideoUploadCard } from './video-upload-card';
 import { PoseAnalysisCard } from './pose-analysis-card';
 import { FeedbackSubmissionCard } from './feedback-submission-card';
-import { RecommendedVideosCard, type YouTubeVideo } from './recommended-videos-card';
+import { RecommendedVideosCard, type StorageVideo } from './recommended-videos-card';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
@@ -24,7 +24,7 @@ export function SnapYogaPageClient() {
   const [videoFileName, setVideoFileName] = useState<string | null>(null);
   const [analysisResult, setAnalysisResult] = useState<AnalysisServiceOutput | null>(null);
   const [summaryResult, setSummaryResult] = useState<SummarizeFeedbackOutput | null>(null);
-  const [recommendedVideos, setRecommendedVideos] = useState<YouTubeVideo[]>([]);
+  const [recommendedVideos, setRecommendedVideos] = useState<StorageVideo[]>([]);
   
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
@@ -62,7 +62,7 @@ export function SnapYogaPageClient() {
       setAnalysisResult(result);
       toast({
         title: "Analysis Complete",
-        description: `Your yoga pose has been analyzed. Score: ${result.score !== undefined ? result.score + '/100' : 'N/A'}`,
+        description: `Your yoga pose has been analyzed. Score: ${result.score !== undefined ? Math.round(result.score) + '/100' : 'N/A'}`,
       });
 
       // Save the analysis result to Firestore
@@ -91,14 +91,9 @@ export function SnapYogaPageClient() {
         });
       }
 
-      // Simulate fetching recommended videos based on the result
-      setTimeout(() => {
-          setRecommendedVideos([
-            { id: 'vid1', title: `Tips for ${result.identifiedPose}`, embedUrl: 'https://www.youtube.com/embed/tKAs69_N3aE' },
-            { id: 'vid2', title: `Common Mistakes in ${result.identifiedPose}`, embedUrl: 'https://www.youtube.com/embed/jK0arm2R2gU' },
-          ]);
-          setIsLoadingRecommendations(false);
-      }, 1500);
+      // We no longer use youtube videos
+      setIsLoadingRecommendations(false);
+
 
     } catch (e: any) {
       console.error("Error analyzing pose:", e);
@@ -184,7 +179,7 @@ export function SnapYogaPageClient() {
       {analysisResult && (
         <>
           <Separator className="my-8" />
-          <RecommendedVideosCard videos={recommendedVideos} isLoading={isLoadingRecommendations} />
+          <RecommendedVideosCard videos={[]} isLoading={isLoadingRecommendations} />
         </>
       )}
     </div>

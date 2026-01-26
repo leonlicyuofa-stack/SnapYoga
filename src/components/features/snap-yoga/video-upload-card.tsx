@@ -62,7 +62,7 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
   };
 
   return (
-    <div className="w-full p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
+    <div className="w-full p-6 bg-card/90 backdrop-blur-sm rounded-2xl shadow-xl border">
       <CardHeader className="p-0">
         <CardTitle className="flex items-center gap-2 text-2xl">
           <UploadCloud className="h-7 w-7 text-primary" />
@@ -80,7 +80,7 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
             type="file"
             accept="video/*"
             onChange={handleFileChange}
-            className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
+            className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer h-12"
             aria-describedby="video-upload-help"
             disabled={isLoading}
           />
@@ -92,7 +92,7 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
         <Button
           onClick={handleSubmit}
           disabled={isLoading || !selectedFile}
-          className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6 rounded-md shadow-md transition-all duration-150 ease-in-out transform hover:scale-105 active:scale-95"
+          className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6 rounded-lg shadow-md transition-all duration-150 ease-in-out transform hover:scale-105 active:scale-95"
           aria-label="Analyze Pose"
         >
           {isLoading ? (

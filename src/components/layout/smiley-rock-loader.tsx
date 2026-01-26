@@ -22,14 +22,9 @@ export function SmileyRockLoader({ className, text }: SmileyRockLoaderProps) {
   return (
     <div className={cn("flex flex-col items-center justify-center gap-4", className)}>
       <div className="flex items-center justify-center gap-2">
-        <LoadingDot delay="0s" />
-        <LoadingDot delay="0.1s" />
-        <LoadingDot delay="0.2s" />
         <YogaMatMascot className="h-16 w-16" />
-        <LoadingDot delay="0s" />
-        <LoadingDot delay="0.1s" />
-        <LoadingDot delay="0.2s" />
       </div>
+      {text && <p className="text-sm text-muted-foreground animate-pulse">{text}</p>}
     </div>
   );
 }
