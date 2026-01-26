@@ -9,6 +9,14 @@ service firebase.storage {
       allow read, write: if false;
     }
 
+    // Avatars
+    // - Authenticated users can write to their own avatar folder.
+    // - Anyone can read avatars (e.g., for displaying profile pictures).
+    match /avatars/{userId}/{allPaths=**} {
+      allow write: if request.auth != null && request.auth.uid == userId;
+      allow read;
+    }
+
     // Allow authenticated users to write to their own video folder.
     // The path is /user-videos/{userId}/{videoId}
     // This rule ensures that a user can only upload to their own directory.
