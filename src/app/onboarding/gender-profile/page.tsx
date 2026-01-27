@@ -30,7 +30,6 @@ const avatars = [
     { id: 'avatar3', imagePath: '/images/avatar3.png', bgColor: 'bg-white' },
     { id: 'avatar4', imagePath: '/images/avatar4.png', bgColor: 'bg-white' },
     { id: 'avatar5', imagePath: '/images/avatar5.png', bgColor: 'bg-white' },
-    { id: 'avatar6', imagePath: '/images/avatar6.png', bgColor: 'bg-white' },
 ];
 
 export default function GenderProfilePage() {
