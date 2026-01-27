@@ -22,7 +22,7 @@ const profileSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 const avatars = [
-    { id: 'avatar1', imagePath: '/girl 1.png', hint: 'girl portrait' },
+    { id: 'avatar1', imagePath: '/images/girl 1.png', hint: 'girl portrait' },
     { id: 'avatar2', imagePath: 'https://picsum.photos/seed/avatar2/120/120', hint: 'nature landscape' },
     { id: 'avatar3', imagePath: 'https://picsum.photos/seed/avatar3/120/120', hint: 'animal portrait' },
     { id: 'avatar4', imagePath: 'https://picsum.photos/seed/avatar4/120/120', hint: 'minimalist design' },
