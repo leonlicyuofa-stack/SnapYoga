@@ -15,6 +15,7 @@ import { firestore } from '@/lib/firebase/clientApp';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
+import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 
 const yogaGoalsSchema = z.object({
   mainGoals: z.array(z.string()).min(1, { message: "Please select at least one goal" }),
@@ -109,6 +110,9 @@ export default function YogaGoalPage() {
                 </Button>
                 <div className="bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
                     <header className="text-center">
+                         <div className="mx-auto mb-4 inline-block">
+                            <SnapYogaLogo />
+                        </div>
                         <h1 className="text-3xl font-bold tracking-tight">Your Yoga Goal</h1>
                         <p className="text-sm text-white/80">What do you want to achieve?</p>
                     </header>

@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowRight, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 
 const interestedPosesSchema = z.object({
   interestedPoses: z.array(z.string()).min(1, { message: "Please select at least one category" }),
@@ -111,6 +112,9 @@ export default function InterestedPosesPage() {
                 </Button>
                 <div className="bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
                     <header className="text-center">
+                        <div className="mx-auto mb-4 inline-block">
+                            <SnapYogaLogo />
+                        </div>
                         <h1 className="text-3xl font-bold tracking-tight">Pose Interests</h1>
                         <p className="text-sm text-white/80">What poses excite you?</p>
                     </header>

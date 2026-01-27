@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import Image from 'next/image';
+import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 
 interface UserProfile extends DocumentData {
   displayName?: string;
@@ -292,6 +293,9 @@ export default function ProfileSummaryPage() {
                 </Button>
                 <div className="bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
                     <header className="text-center">
+                         <div className="mx-auto mb-4 inline-block">
+                            <SnapYogaLogo />
+                        </div>
                         <h1 className="text-3xl font-bold tracking-tight">Your Summary</h1>
                         <p className="text-sm text-white/80">Let's review your profile.</p>
                     </header>

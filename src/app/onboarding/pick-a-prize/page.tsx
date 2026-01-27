@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 
 export default function PickAPrizePage() {
   const router = useRouter();
@@ -48,8 +49,11 @@ export default function PickAPrizePage() {
                 >
                     <ArrowLeft className="h-6 w-6" />
                 </Button>
-                <div className="text-center">
+                <div className="bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8 text-center">
                     <header className="mb-12">
+                         <div className="mx-auto mb-4 inline-block">
+                            <SnapYogaLogo />
+                        </div>
                         <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Pick a Prize!</h1>
                         <p className="text-lg text-white/80">A special reward just for you.</p>
                     </header>

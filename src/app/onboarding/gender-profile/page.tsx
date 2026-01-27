@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import Image from 'next/image';
+import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 
 const profileSchema = z.object({
   displayName: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -135,6 +136,9 @@ export default function GenderProfilePage() {
                 </Button>
                 <div className="bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
                     <header className="text-center">
+                        <div className="mx-auto mb-4 inline-block">
+                            <SnapYogaLogo />
+                        </div>
                         <h1 className="text-3xl font-bold tracking-tight">Choose your avatar</h1>
                         <p className="text-sm text-white/80">Let's start with the basics.</p>
                     </header>

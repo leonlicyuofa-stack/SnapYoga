@@ -8,6 +8,7 @@ import { CheckCircle, XCircle, ArrowRight, Loader2, UserCircle, Gift } from 'luc
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Image from 'next/image';
+import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 
 function DrawResultContent() {
   const { user, loading: authLoading } = useAuth();
@@ -84,6 +85,9 @@ function DrawResultContent() {
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
             <div className="w-full max-w-md bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8 text-center">
                 <header>
+                    <div className="mx-auto mb-4 inline-block">
+                        <SnapYogaLogo />
+                    </div>
                     <h1 className="text-3xl font-bold tracking-tight">Congratulations!</h1>
                     <p className="text-sm text-white/80">Here's what you've got!</p>
                 </header>
@@ -126,4 +130,3 @@ export default function DrawResultPage() {
         </Suspense>
     );
 }
-

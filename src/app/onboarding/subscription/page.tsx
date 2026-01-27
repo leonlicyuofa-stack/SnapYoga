@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Check, Star, ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
 import Image from 'next/image';
+import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 
 
 export default function SubscriptionPage() {
@@ -68,6 +69,9 @@ export default function SubscriptionPage() {
                 </Button>
                 <div className="bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
                     <header className="text-center">
+                        <div className="mx-auto mb-4 inline-block">
+                            <SnapYogaLogo />
+                        </div>
                         <h1 className="text-3xl font-bold tracking-tight">Unlock SnapYoga Premium</h1>
                         <p className="text-sm text-white/80">Choose your plan to continue.</p>
                     </header>

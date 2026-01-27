@@ -13,6 +13,7 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Ruler, Scale, ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
 import Image from 'next/image';
+import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 
 const measurementsSchema = z.object({
   height: z.preprocess(
@@ -105,9 +106,8 @@ export default function MeasurementsPage() {
                 </Button>
                 <div className="bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
                     <header className="text-center">
-                        <div className="flex items-center justify-center gap-4 mb-4">
-                            <Ruler className="h-10 w-10 text-white/80" />
-                            <Scale className="h-10 w-10 text-white/80" />
+                        <div className="mx-auto mb-4 inline-block">
+                            <SnapYogaLogo />
                         </div>
                         <h1 className="text-3xl font-bold">Your Measurements</h1>
                         <p className="text-white/80 mt-2">Provide your height and weight (optional).</p>
