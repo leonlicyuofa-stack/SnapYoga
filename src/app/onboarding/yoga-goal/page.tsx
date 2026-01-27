@@ -23,10 +23,10 @@ const yogaGoalsSchema = z.object({
 type YogaGoalsFormValues = z.infer<typeof yogaGoalsSchema>;
 
 const mainGoalOptions = [
-  { value: "fitness", label: "Stay Fit", image: { src: "https://picsum.photos/seed/fitnessgoal/400/600", width: 400, height: 600, hint: "woman stretching" } },
-  { value: "stress-relief", label: "Stress Relief", image: { src: "https://picsum.photos/seed/stressgoal/400/500", width: 400, height: 500, hint: "calm meditation" } },
-  { value: "flexibility", label: "Improve Flexibility", image: { src: "https://picsum.photos/seed/flexibilitygoal/400/700", width: 400, height: 700, hint: "yoga flexibility" } },
-  { value: "strength", label: "Build Strength", image: { src: "https://picsum.photos/seed/strengthgoal/400/550", width: 400, height: 550, hint: "yoga strength" } },
+  { value: "mobility", label: "Mobility", image: { src: "https://picsum.photos/seed/mobility/400/400", width: 400, height: 400, hint: "yoga mobility" } },
+  { value: "nourishment", label: "Nourishment", image: { src: "https://picsum.photos/seed/nourishment/400/400", width: 400, height: 400, hint: "healthy food" } },
+  { value: "flexibility", label: "Flexibility", image: { src: "https://picsum.photos/seed/flexibility/400/400", width: 400, height: 400, hint: "yoga flexibility" } },
+  { value: "strength", label: "Strength", image: { src: "https://picsum.photos/seed/strength/400/400", width: 400, height: 400, hint: "yoga strength" } },
 ];
 
 
@@ -126,7 +126,7 @@ export default function YogaGoalPage() {
                                             <Label
                                                 htmlFor={option.value}
                                                 className={cn(
-                                                    "block cursor-pointer overflow-hidden rounded-2xl relative transition-all duration-300",
+                                                    "block cursor-pointer overflow-hidden rounded-2xl relative transition-all duration-300 aspect-square",
                                                     isChecked ? 'ring-2 ring-offset-2 ring-offset-black/20 ring-white' : 'ring-0'
                                                 )}
                                             >
@@ -136,7 +136,7 @@ export default function YogaGoalPage() {
                                                     width={option.image.width}
                                                     height={option.image.height}
                                                     data-ai-hint={option.image.hint}
-                                                    className="w-full h-auto transition-transform duration-300 group-hover:scale-105"
+                                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                                                 />
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent group-hover:from-black/60 transition-colors" />
                                                 <h3 className="absolute bottom-4 left-4 text-white font-bold text-lg drop-shadow-sm">{option.label}</h3>
