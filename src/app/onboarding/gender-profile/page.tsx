@@ -25,11 +25,11 @@ const profileSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 const avatars = [
-    { id: 'avatar1', imagePath: '/images/avatar1.png', bgColor: 'bg-white' },
-    { id: 'avatar2', imagePath: '/images/avatar2.png', bgColor: 'bg-white' },
-    { id: 'avatar3', imagePath: '/images/avatar3.png', bgColor: 'bg-white' },
-    { id: 'avatar4', imagePath: '/images/avatar4.png', bgColor: 'bg-white' },
-    { id: 'avatar5', imagePath: '/images/avatar5.png', bgColor: 'bg-white' },
+    { id: 'avatar1', imagePath: 'https://picsum.photos/seed/avatar1/120/120', bgColor: 'bg-white', hint: 'abstract art' },
+    { id: 'avatar2', imagePath: 'https://picsum.photos/seed/avatar2/120/120', bgColor: 'bg-white', hint: 'nature landscape' },
+    { id: 'avatar3', imagePath: 'https://picsum.photos/seed/avatar3/120/120', bgColor: 'bg-white', hint: 'animal portrait' },
+    { id: 'avatar4', imagePath: 'https://picsum.photos/seed/avatar4/120/120', bgColor: 'bg-white', hint: 'minimalist design' },
+    { id: 'avatar5', imagePath: 'https://picsum.photos/seed/avatar5/120/120', bgColor: 'bg-white', hint: 'galaxy space' },
 ];
 
 export default function GenderProfilePage() {
@@ -156,7 +156,7 @@ export default function GenderProfilePage() {
                                         onClick={() => setValue('avatar', avatar.id, { shouldValidate: true })}
                                     >
                                         <div className={cn("rounded-full w-full h-full flex items-center justify-center overflow-hidden", avatar.bgColor)}>
-                                            <Image src={avatar.imagePath} alt={avatar.id} width={120} height={120} className="object-cover" />
+                                            <Image src={avatar.imagePath} alt={avatar.id} width={120} height={120} className="object-cover" data-ai-hint={avatar.hint} />
                                         </div>
                                     </div>
                                 )
