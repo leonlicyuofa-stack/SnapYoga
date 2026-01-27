@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 export default function PickAPrizePage() {
   const router = useRouter();
@@ -21,6 +22,10 @@ export default function PickAPrizePage() {
       router.push(`/onboarding/draw-result?prize=${encodeURIComponent(prizeName)}`);
     }, 1000);
   };
+  
+  const handleBackNavigation = () => {
+    router.back();
+  };
 
   return (
     <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
@@ -34,42 +39,52 @@ export default function PickAPrizePage() {
         />
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-lg text-center">
-                <header className="mb-12">
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Pick a Prize!</h1>
-                    <p className="text-lg text-white/80">A special reward just for you.</p>
-                </header>
+            <div className="w-full max-w-lg">
+                <Button
+                    onClick={handleBackNavigation}
+                    variant="ghost"
+                    className="mb-4 rounded-full h-12 w-12 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20"
+                    aria-label="Go back"
+                >
+                    <ArrowLeft className="h-6 w-6" />
+                </Button>
+                <div className="text-center">
+                    <header className="mb-12">
+                        <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Pick a Prize!</h1>
+                        <p className="text-lg text-white/80">A special reward just for you.</p>
+                    </header>
 
-                <main className="grid grid-cols-2 gap-4 md:gap-8">
-                    {/* Left Prize */}
-                    <div 
-                        className="relative aspect-square cursor-pointer group"
-                        onClick={() => handlePrizeSelection("3-month free trial", 'left')}
-                    >
-                        <div className={cn(
-                            "absolute inset-0 bg-white/20 backdrop-blur-md rounded-2xl transition-all duration-500 flex items-center justify-center",
-                            selectedSide === 'left' ? 'scale-105 shadow-2xl' : 'group-hover:scale-105'
-                        )}>
-                            <span className="text-4xl font-bold">This</span>
+                    <main className="grid grid-cols-2 gap-4 md:gap-8">
+                        {/* Left Prize */}
+                        <div 
+                            className="relative aspect-square cursor-pointer group"
+                            onClick={() => handlePrizeSelection("3-month free trial", 'left')}
+                        >
+                            <div className={cn(
+                                "absolute inset-0 bg-white/20 backdrop-blur-md rounded-2xl transition-all duration-500 flex items-center justify-center",
+                                selectedSide === 'left' ? 'scale-105 shadow-2xl' : 'group-hover:scale-105'
+                            )}>
+                                <span className="text-4xl font-bold">This</span>
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Right Prize */}
-                    <div 
-                        className="relative aspect-square cursor-pointer group"
-                        onClick={() => handlePrizeSelection("A warm cup of Coffee!", 'right')}
-                    >
-                        <div className={cn(
-                            "absolute inset-0 bg-white/20 backdrop-blur-md rounded-2xl transition-all duration-500 flex items-center justify-center",
-                             selectedSide === 'right' ? 'scale-105 shadow-2xl' : 'group-hover:scale-105'
-                        )}>
-                             <span className="text-4xl font-bold">That</span>
+                        {/* Right Prize */}
+                        <div 
+                            className="relative aspect-square cursor-pointer group"
+                            onClick={() => handlePrizeSelection("A warm cup of Coffee!", 'right')}
+                        >
+                            <div className={cn(
+                                "absolute inset-0 bg-white/20 backdrop-blur-md rounded-2xl transition-all duration-500 flex items-center justify-center",
+                                 selectedSide === 'right' ? 'scale-105 shadow-2xl' : 'group-hover:scale-105'
+                            )}>
+                                 <span className="text-4xl font-bold">That</span>
+                            </div>
                         </div>
-                    </div>
-                </main>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
-                    <div className={cn("relative text-center text-white font-extrabold tracking-widest uppercase transition-opacity duration-300", selectedSide ? 'opacity-0' : 'opacity-100')}>
-                        <span className="relative block text-2xl my-1">or</span>
+                    </main>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
+                        <div className={cn("relative text-center text-white font-extrabold tracking-widest uppercase transition-opacity duration-300", selectedSide ? 'opacity-0' : 'opacity-100')}>
+                            <span className="relative block text-2xl my-1">or</span>
+                        </div>
                     </div>
                 </div>
             </div>

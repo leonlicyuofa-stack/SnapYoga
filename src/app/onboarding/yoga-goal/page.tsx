@@ -8,7 +8,7 @@ import * as z from 'zod';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Loader2, Check, ArrowRight } from 'lucide-react';
+import { Loader2, Check, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
@@ -81,6 +81,10 @@ export default function YogaGoalPage() {
       setIsSubmitting(false);
     }
   };
+  
+  const handleBackNavigation = () => {
+    router.back();
+  };
 
   return (
     <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
@@ -94,71 +98,81 @@ export default function YogaGoalPage() {
         />
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-2xl bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
-                <header className="text-center">
-                    <h1 className="text-3xl font-bold tracking-tight">Your Yoga Goal</h1>
-                    <p className="text-sm text-white/80">What do you want to achieve?</p>
-                </header>
+            <div className="w-full max-w-2xl">
+                 <Button
+                    onClick={handleBackNavigation}
+                    variant="ghost"
+                    className="mb-4 rounded-full h-12 w-12 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20"
+                    aria-label="Go back"
+                >
+                    <ArrowLeft className="h-6 w-6" />
+                </Button>
+                <div className="bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
+                    <header className="text-center">
+                        <h1 className="text-3xl font-bold tracking-tight">Your Yoga Goal</h1>
+                        <p className="text-sm text-white/80">What do you want to achieve?</p>
+                    </header>
 
-                <main>
-                    <form id="yoga-goal-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
-                        <Controller
-                            name="mainGoals"
-                            control={control}
-                            render={({ field }) => (
-                                <div className="grid grid-cols-2 gap-4">
-                                {mainGoalOptions.map((option) => {
-                                    const isChecked = field.value?.includes(option.value);
-                                    return (
-                                        <div key={option.value} className="relative group">
-                                            <Checkbox
-                                                id={option.value}
-                                                checked={isChecked}
-                                                onCheckedChange={(checked) => {
-                                                    const currentValue = field.value || [];
-                                                    const updatedValue = checked
-                                                        ? [...currentValue, option.value]
-                                                        : currentValue.filter(v => v !== option.value);
-                                                    field.onChange(updatedValue);
-                                                }}
-                                                className="sr-only"
-                                            />
-                                            <Label
-                                                htmlFor={option.value}
-                                                className={cn(
-                                                    "block cursor-pointer overflow-hidden rounded-2xl relative transition-all duration-300 aspect-square",
-                                                    isChecked ? 'ring-2 ring-offset-2 ring-offset-black/20 ring-white' : 'ring-0'
-                                                )}
-                                            >
-                                                <Image 
-                                                    src={option.image.src} 
-                                                    alt={option.label}
-                                                    width={option.image.width}
-                                                    height={option.image.height}
-                                                    data-ai-hint={option.image.hint}
-                                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    <main>
+                        <form id="yoga-goal-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
+                            <Controller
+                                name="mainGoals"
+                                control={control}
+                                render={({ field }) => (
+                                    <div className="grid grid-cols-2 gap-4">
+                                    {mainGoalOptions.map((option) => {
+                                        const isChecked = field.value?.includes(option.value);
+                                        return (
+                                            <div key={option.value} className="relative group">
+                                                <Checkbox
+                                                    id={option.value}
+                                                    checked={isChecked}
+                                                    onCheckedChange={(checked) => {
+                                                        const currentValue = field.value || [];
+                                                        const updatedValue = checked
+                                                            ? [...currentValue, option.value]
+                                                            : currentValue.filter(v => v !== option.value);
+                                                        field.onChange(updatedValue);
+                                                    }}
+                                                    className="sr-only"
                                                 />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent group-hover:from-black/60 transition-colors" />
-                                                <h3 className="absolute bottom-4 left-4 text-white font-bold text-lg drop-shadow-sm">{option.label}</h3>
-                                                {isChecked && (
-                                                    <div className="absolute top-3 right-3 h-6 w-6 bg-white/90 backdrop-blur-sm text-black rounded-full flex items-center justify-center shadow-lg">
-                                                        <Check className="h-4 w-4" />
-                                                    </div>
-                                                )}
-                                            </Label>
-                                        </div>
-                                    )
-                                })}
-                                </div>
-                            )}
-                        />
-                        {errors.mainGoals && <p className="text-sm text-red-400 text-center">{errors.mainGoals.message}</p>}
+                                                <Label
+                                                    htmlFor={option.value}
+                                                    className={cn(
+                                                        "block cursor-pointer overflow-hidden rounded-2xl relative transition-all duration-300 aspect-square",
+                                                        isChecked ? 'ring-2 ring-offset-2 ring-offset-black/20 ring-white' : 'ring-0'
+                                                    )}
+                                                >
+                                                    <Image 
+                                                        src={option.image.src} 
+                                                        alt={option.label}
+                                                        width={option.image.width}
+                                                        height={option.image.height}
+                                                        data-ai-hint={option.image.hint}
+                                                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                    />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent group-hover:from-black/60 transition-colors" />
+                                                    <h3 className="absolute bottom-4 left-4 text-white font-bold text-lg drop-shadow-sm">{option.label}</h3>
+                                                    {isChecked && (
+                                                        <div className="absolute top-3 right-3 h-6 w-6 bg-white/90 backdrop-blur-sm text-black rounded-full flex items-center justify-center shadow-lg">
+                                                            <Check className="h-4 w-4" />
+                                                        </div>
+                                                    )}
+                                                </Label>
+                                            </div>
+                                        )
+                                    })}
+                                    </div>
+                                )}
+                            />
+                            {errors.mainGoals && <p className="text-sm text-red-400 text-center">{errors.mainGoals.message}</p>}
 
-                        <Button type="submit" form="yoga-goal-form" className="w-full h-12 text-base rounded-full mt-8 bg-white/90 text-black hover:bg-white" disabled={isSubmitting || authLoading || !isValid}>
-                            {isSubmitting || authLoading ? <Loader2 className="animate-spin" /> : <>Next <ArrowRight className="ml-2" /></>}
-                        </Button>
-                    </form>
-                </main>
+                            <Button type="submit" form="yoga-goal-form" className="w-full h-12 text-base rounded-full mt-8 bg-white/90 text-black hover:bg-white" disabled={isSubmitting || authLoading || !isValid}>
+                                {isSubmitting || authLoading ? <Loader2 className="animate-spin" /> : <>Next <ArrowRight className="ml-2" /></>}
+                            </Button>
+                        </form>
+                    </main>
+                </div>
             </div>
         </div>
     </div>

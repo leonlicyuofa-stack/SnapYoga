@@ -6,7 +6,7 @@ import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc, type DocumentData } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
-import { UserCheck, ArrowRight, Edit3, Loader2, Save, X, Check, Spline, Dumbbell, BrainCircuit, MoreHorizontal, Wind, HeartPulse } from 'lucide-react';
+import { UserCheck, ArrowRight, ArrowLeft, Edit3, Loader2, Save, X, Check, Spline, Dumbbell, BrainCircuit, MoreHorizontal, Wind, HeartPulse } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -258,6 +258,10 @@ export default function ProfileSummaryPage() {
       </div>
     );
   };
+  
+  const handleBackNavigation = () => {
+    router.back();
+  };
 
   if (authLoading || isLoadingProfile) {
     return (
@@ -277,38 +281,48 @@ export default function ProfileSummaryPage() {
         />
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-2xl bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
-                <header className="text-center">
-                    <h1 className="text-3xl font-bold tracking-tight">Your Summary</h1>
-                    <p className="text-sm text-white/80">Let's review your profile.</p>
-                </header>
-                
-                <main>
-                    {profileData ? (
-                    <dl>
-                        {renderDetailItem("Username", "displayName", profileData.displayName)}
-                        {renderDetailItem("Email", "email", user.email)}
-                        {renderDetailItem("Gender", "gender", profileData.gender)}
-                        {renderDetailItem("Age", "age", profileData.age)}
-                        {renderDetailItem("Main Yoga Goals", "mainGoals", profileData.mainGoals)}
-                        {renderDetailItem("Interested Pose Types", "interestedPoses", profileData.interestedPoses)}
-                        {renderDetailItem("Current Body Shape", "currentBodyShape", profileData.currentBodyShape)}
-                    </dl>
-                    ) : (
-                    <p className="text-white/80 text-center">Could not load profile data.</p>
-                    )}
-                    <div className="mt-8">
-                        <Button 
-                            onClick={handleNext} 
-                            className="w-full h-12 text-base rounded-full bg-white/90 text-black hover:bg-white"
-                        >
-                            Next <ArrowRight className="ml-2 h-5 w-5" />
-                        </Button>
-                        <p className="text-xs text-white/60 text-center w-full mt-4">
-                            Ensure all details are correct before proceeding.
-                        </p>
-                    </div>
-                </main>
+            <div className="w-full max-w-2xl">
+                 <Button
+                    onClick={handleBackNavigation}
+                    variant="ghost"
+                    className="mb-4 rounded-full h-12 w-12 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20"
+                    aria-label="Go back"
+                >
+                    <ArrowLeft className="h-6 w-6" />
+                </Button>
+                <div className="bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
+                    <header className="text-center">
+                        <h1 className="text-3xl font-bold tracking-tight">Your Summary</h1>
+                        <p className="text-sm text-white/80">Let's review your profile.</p>
+                    </header>
+                    
+                    <main>
+                        {profileData ? (
+                        <dl>
+                            {renderDetailItem("Username", "displayName", profileData.displayName)}
+                            {renderDetailItem("Email", "email", user.email)}
+                            {renderDetailItem("Gender", "gender", profileData.gender)}
+                            {renderDetailItem("Age", "age", profileData.age)}
+                            {renderDetailItem("Main Yoga Goals", "mainGoals", profileData.mainGoals)}
+                            {renderDetailItem("Interested Pose Types", "interestedPoses", profileData.interestedPoses)}
+                            {renderDetailItem("Current Body Shape", "currentBodyShape", profileData.currentBodyShape)}
+                        </dl>
+                        ) : (
+                        <p className="text-white/80 text-center">Could not load profile data.</p>
+                        )}
+                        <div className="mt-8">
+                            <Button 
+                                onClick={handleNext} 
+                                className="w-full h-12 text-base rounded-full bg-white/90 text-black hover:bg-white"
+                            >
+                                Next <ArrowRight className="ml-2 h-5 w-5" />
+                            </Button>
+                            <p className="text-xs text-white/60 text-center w-full mt-4">
+                                Ensure all details are correct before proceeding.
+                            </p>
+                        </div>
+                    </main>
+                </div>
             </div>
         </div>
     </div>
