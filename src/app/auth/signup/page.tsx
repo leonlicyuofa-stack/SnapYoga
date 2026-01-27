@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -6,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon';
+import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { Mail, User, KeyRound, EyeOff, Eye } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useForm, type SubmitHandler } from 'react-hook-form';
@@ -28,7 +30,7 @@ type SignUpFormValues = z.infer<typeof signUpSchema>;
 
 export default function SignUpPage() {
   const router = useRouter();
-  const { signInWithGoogle, signInWithApple, signUpWithEmail, loading: authLoading } = useAuth();
+  const { signInWithGoogle, signInWithApple, signInWithTikTok, signUpWithEmail, loading: authLoading } = useAuth();
   const { t } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -146,6 +148,10 @@ export default function SignUpPage() {
                         <Button variant="outline" size="icon" onClick={signInWithGoogle} disabled={authLoading} className="w-14 h-14 rounded-full bg-white/10 border-white/20 hover:bg-white/20">
                             <GoogleIcon className="h-6 w-6" />
                             <span className="sr-only">Sign in with Google</span>
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={signInWithTikTok} disabled={authLoading} className="w-14 h-14 rounded-full bg-white/10 border-white/20 hover:bg-white/20">
+                            <TikTokIcon className="h-6 w-6" />
+                            <span className="sr-only">Sign in with TikTok</span>
                         </Button>
                     </div>
                 </main>

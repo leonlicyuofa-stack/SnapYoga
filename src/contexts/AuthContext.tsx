@@ -37,6 +37,7 @@ interface AuthContextType {
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithApple: () => Promise<void>;
+  signInWithTikTok: () => Promise<void>;
   signUpWithEmail: (email: string, pass: string, profileData: DocumentData) => Promise<UserCredential | null>;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
   signOutUser: () => Promise<void>;
@@ -257,6 +258,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return socialSignIn(provider, 'Apple');
   };
 
+  const signInWithTikTok = () => {
+    // Note: Firebase does not have a built-in TikTok provider.
+    // This uses the generic OAuth provider, but will require backend configuration
+    // in the Firebase console to work.
+    const provider = new OAuthProvider('tiktok.com');
+    return socialSignIn(provider, 'TikTok');
+  };
+
   const signUpWithEmail = async (email: string, pass: string, profileData: DocumentData): Promise<UserCredential | null> => {
     if (!checkFirebaseConfig()) {
       throw new Error("Firebase not configured");
@@ -382,6 +391,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loading,
     signInWithGoogle,
     signInWithApple,
+    signInWithTikTok,
     signUpWithEmail,
     signInWithEmail,
     signOutUser,
