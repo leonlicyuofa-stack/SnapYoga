@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -30,6 +29,8 @@ const avatars = [
     { id: 'avatar5', imagePath: 'https://picsum.photos/seed/avatar5/120/120', hint: 'galaxy space' },
 ];
 
+const displayItems = [...avatars, { id: 'custom', imagePath: null, hint: 'Upload your own' }];
+
 export default function GenderProfilePage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -40,8 +41,6 @@ export default function GenderProfilePage() {
   const [customAvatar, setCustomAvatar] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [animationDirection, setAnimationDirection] = useState<'left' | 'right' | 'none'>('none');
-
-  const displayItems = [...avatars, { id: 'custom', imagePath: null, hint: 'Upload your own' }];
 
   const { control, handleSubmit, setValue, watch, formState: { errors, isValid }, reset } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -80,7 +79,7 @@ export default function GenderProfilePage() {
     } else {
         setValue('avatar', '', { shouldValidate: true });
     }
-  }, [currentIndex, customAvatar, setValue, displayItems]);
+  }, [currentIndex, customAvatar, setValue]);
 
   const handleCustomAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
