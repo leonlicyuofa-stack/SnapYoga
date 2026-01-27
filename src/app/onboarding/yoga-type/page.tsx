@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowRight, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
@@ -25,22 +25,22 @@ const poseCategoryOptions = [
   {
     id: "standing",
     label: "Standing Poses",
-    description: "Build strength, stability, and balance; energize the body.",
+    image: { src: "https://picsum.photos/seed/standingyoga/400/400", width: 400, height: 400, hint: "standing yoga" }
   },
   {
     id: "seated",
     label: "Seated Poses",
-    description: "Promote flexibility in hips and spine; encourage calm.",
+    image: { src: "https://picsum.photos/seed/seatedyoga/400/400", width: 400, height: 400, hint: "seated yoga" }
   },
   {
     id: "backbends",
     label: "Backbends",
-    description: "Strengthen the back, open the chest and shoulders, boost energy.",
+    image: { src: "https://picsum.photos/seed/backbends/400/400", width: 400, height: 400, hint: "backbend yoga" }
   },
   {
     id: "inversions-balancing",
     label: "Inversions & Balancing",
-    description: "Improve circulation, build core strength, enhance focus.",
+    image: { src: "https://picsum.photos/seed/inversions/400/400", width: 400, height: 400, hint: "inversion yoga" }
   }
 ];
 
@@ -122,50 +122,55 @@ export default function InterestedPosesPage() {
                     <main>
                         <form id="yoga-type-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
                           <Controller
-                            name="interestedPoses"
-                            control={control}
-                            render={({ field }) => (
-                              <div className="grid grid-cols-2 gap-4">
-                                {poseCategoryOptions.map((item) => {
-                                  const isChecked = field.value?.includes(item.id);
-                                  return (
-                                    <div key={item.id} className="relative">
-                                      <Checkbox
-                                        id={item.id}
-                                        className="sr-only"
-                                        checked={isChecked}
-                                        onCheckedChange={(checked) => {
-                                          const currentValue = field.value || [];
-                                          const updatedValue = checked
-                                            ? [...currentValue, item.id]
-                                            : currentValue.filter((value) => value !== item.id);
-                                          field.onChange(updatedValue);
-                                        }}
-                                      />
-                                      <Label
-                                        htmlFor={item.id}
-                                        className={cn(
-                                          "flex flex-col justify-center p-4 border-2 rounded-lg cursor-pointer transition-all h-full min-h-[160px] bg-white/10",
-                                          "hover:border-white/50",
-                                          isChecked ? "border-white bg-white/20" : "border-white/20"
-                                        )}
-                                      >
-                                        <div>
-                                           <h3 className="font-bold text-lg text-white">{item.label}</h3>
-                                           <p className="text-sm text-white/80 mt-1">{item.description}</p>
-                                        </div>
-                                        {isChecked && (
-                                            <div className="absolute top-3 right-3 h-6 w-6 bg-white text-black rounded-full flex items-center justify-center">
-                                                <CheckCircle className="h-4 w-4" />
+                                name="interestedPoses"
+                                control={control}
+                                render={({ field }) => (
+                                    <div className="grid grid-cols-2 gap-4">
+                                    {poseCategoryOptions.map((option) => {
+                                        const isChecked = field.value?.includes(option.id);
+                                        return (
+                                            <div key={option.id} className="relative group">
+                                                <Checkbox
+                                                    id={option.id}
+                                                    checked={isChecked}
+                                                    onCheckedChange={(checked) => {
+                                                        const currentValue = field.value || [];
+                                                        const updatedValue = checked
+                                                            ? [...currentValue, option.id]
+                                                            : currentValue.filter(v => v !== option.id);
+                                                        field.onChange(updatedValue);
+                                                    }}
+                                                    className="sr-only"
+                                                />
+                                                <Label
+                                                    htmlFor={option.id}
+                                                    className={cn(
+                                                        "block cursor-pointer overflow-hidden rounded-2xl relative transition-all duration-300 aspect-square",
+                                                        isChecked ? 'ring-2 ring-offset-2 ring-offset-black/20 ring-white' : 'ring-0'
+                                                    )}
+                                                >
+                                                    <Image 
+                                                        src={option.image.src} 
+                                                        alt={option.label}
+                                                        width={option.image.width}
+                                                        height={option.image.height}
+                                                        data-ai-hint={option.image.hint}
+                                                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                    />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent group-hover:from-black/60 transition-colors" />
+                                                    <h3 className="absolute bottom-4 left-4 text-white font-bold text-lg drop-shadow-sm">{option.label}</h3>
+                                                    {isChecked && (
+                                                        <div className="absolute top-3 right-3 h-6 w-6 bg-white/90 backdrop-blur-sm text-black rounded-full flex items-center justify-center shadow-lg">
+                                                            <Check className="h-4 w-4" />
+                                                        </div>
+                                                    )}
+                                                </Label>
                                             </div>
-                                        )}
-                                      </Label>
+                                        )
+                                    })}
                                     </div>
-                                  );
-                                })}
-                              </div>
-                            )}
-                          />
+                                )}
+                            />
 
                           {errors.interestedPoses && <p className="text-sm text-red-400 text-center">{errors.interestedPoses.message}</p>}
                           <Button type="submit" form="yoga-type-form" className="w-full h-12 text-base rounded-full mt-8 bg-white/90 text-black hover:bg-white" disabled={isSubmitting || authLoading || !isValid}>
