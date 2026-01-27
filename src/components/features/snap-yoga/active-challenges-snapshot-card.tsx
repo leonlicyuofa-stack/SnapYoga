@@ -22,19 +22,19 @@ const activeChallenges = [
 
 export function ActiveChallengesSnapshotCard() {
     return (
-        <div className="w-full p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
+        <div className="w-full p-6 bg-black/20 backdrop-blur-lg border-white/20 text-white rounded-2xl shadow-xl">
             <CardHeader className="p-0">
                 <CardTitle className="flex items-center gap-2 text-2xl">
-                    <Trophy className="h-7 w-7 text-primary" />
+                    <Trophy className="h-7 w-7 text-white" />
                     Active Challenge Snapshot
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-white/80">
                     Working on a challenge? Analyze your pose and track your progress!
                 </CardDescription>
             </CardHeader>
             <CardContent className="p-0 mt-6 space-y-4">
                 {activeChallenges.map(challenge => (
-                    <div key={challenge.id} className="border rounded-lg p-4 flex flex-col sm:flex-row items-center gap-4 bg-background/50">
+                    <div key={challenge.id} className="border border-white/20 rounded-lg p-4 flex flex-col sm:flex-row items-center gap-4 bg-black/20">
                         <div className="relative w-full sm:w-32 h-24 rounded-md overflow-hidden flex-shrink-0">
                             <Image
                                 src={challenge.imageUrl}
@@ -47,11 +47,11 @@ export function ActiveChallengesSnapshotCard() {
                         <div className="flex-grow text-center sm:text-left">
                             <Badge variant="destructive" className="mb-1">Active</Badge>
                             <h3 className="font-semibold text-lg">{challenge.name}</h3>
-                            <p className="text-sm text-muted-foreground">{challenge.description}</p>
+                            <p className="text-sm text-white/70">{challenge.description}</p>
                         </div>
                     </div>
                 ))}
-                 <Button asChild className="w-full" variant="outline">
+                 <Button asChild className="w-full bg-transparent border-white/20 hover:bg-white/10" variant="outline">
                     <Link href="/challenges">
                         View All Challenges <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>

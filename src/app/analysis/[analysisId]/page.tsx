@@ -162,7 +162,7 @@ export default function PastAnalysisPage() {
     return (
       <AppShell>
         <div className="container mx-auto px-4 py-12 flex items-center justify-center min-h-[calc(100vh-10rem)]">
-          <SmileyRockLoader />
+          <SmileyRockLoader text="Loading Analysis..." />
         </div>
       </AppShell>
     );
@@ -172,11 +172,11 @@ export default function PastAnalysisPage() {
     return (
       <AppShell>
         <div className="container mx-auto px-4 py-12 text-center">
-           <Button variant="outline" onClick={() => router.back()} className="mb-8 group">
+           <Button variant="outline" onClick={() => router.back()} className="mb-8 group bg-transparent border-white/20 hover:bg-white/10">
             <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
             Go Back
           </Button>
-          <Alert variant="destructive" className="max-w-md mx-auto">
+          <Alert variant="destructive" className="max-w-md mx-auto bg-red-500/10 border-red-500/30 text-red-300">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
@@ -191,7 +191,7 @@ export default function PastAnalysisPage() {
       <AppShell>
         <div className="container mx-auto px-4 py-12 text-center">
           <p>No analysis data to display.</p>
-           <Button variant="outline" onClick={() => router.back()} className="mt-4 group">
+           <Button variant="outline" onClick={() => router.back()} className="mt-4 group bg-transparent border-white/20 hover:bg-white/10">
              <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
             Go Back
           </Button>
@@ -204,16 +204,16 @@ export default function PastAnalysisPage() {
     <AppShell>
       <div className="container mx-auto px-4 py-12">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-            <Button variant="outline" onClick={() => router.back()} className="group self-start sm:self-center">
+            <Button variant="outline" onClick={() => router.back()} className="group self-start sm:self-center bg-transparent border-white/20 hover:bg-white/10">
               <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
               Back to Dashboard
             </Button>
             <div className="flex gap-2">
-                <Button variant="outline" onClick={() => handleShare('link')} className="group self-start sm:self-center">
+                <Button variant="outline" onClick={() => handleShare('link')} className="group self-start sm:self-center bg-transparent border-white/20 hover:bg-white/10">
                   <Copy className="mr-2 h-4 w-4" />
                   Copy Link
                 </Button>
-                <Button variant="accent" onClick={() => handleShare('instagram')} className="group self-start sm:self-center">
+                <Button variant="outline" onClick={() => handleShare('instagram')} className="group self-start sm:self-center bg-white/90 text-black hover:bg-white">
                   <Share2 className="mr-2 h-4 w-4" />
                   Share to Instagram
                 </Button>
@@ -221,18 +221,18 @@ export default function PastAnalysisPage() {
         </div>
         
 
-        <div className="mb-8 p-6 bg-card/80 backdrop-blur-sm rounded-lg shadow-xl">
+        <div className="mb-8 p-6 bg-black/20 backdrop-blur-lg border border-white/20 rounded-lg shadow-xl">
           <CardHeader className="p-0">
-            <CardTitle className="flex items-center gap-2 text-3xl text-primary">
+            <CardTitle className="flex items-center gap-2 text-3xl text-white">
               <FileText className="h-8 w-8" />
               Pose Analysis Report
             </CardTitle>
             {analysisDetail.videoFileName && (
-              <CardDescription className="text-md">
+              <CardDescription className="text-md text-white/80">
                 For video: <span className="font-semibold">{analysisDetail.videoFileName}</span>
               </CardDescription>
             )}
-            <CardDescription className="text-md">
+            <CardDescription className="text-md text-white/80">
               Analyzed on: {format(analysisDetail.createdAt.toDate(), 'PPP p')}
             </CardDescription>
           </CardHeader>

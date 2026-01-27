@@ -62,13 +62,13 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
   };
 
   return (
-    <div className="w-full p-6 bg-card/90 backdrop-blur-sm rounded-2xl shadow-xl border">
+    <div className="w-full p-6 bg-black/20 backdrop-blur-lg border-white/20 text-white rounded-2xl shadow-xl">
       <CardHeader className="p-0">
         <CardTitle className="flex items-center gap-2 text-2xl">
-          <UploadCloud className="h-7 w-7 text-primary" />
+          <UploadCloud className="h-7 w-7 text-white" />
           Upload Your Yoga Pose Video
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-white/80">
           Select a video of your yoga pose. We'll analyze it and provide feedback using your custom service.
         </CardDescription>
       </CardHeader>
@@ -80,11 +80,11 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
             type="file"
             accept="video/*"
             onChange={handleFileChange}
-            className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer h-12"
+            className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 cursor-pointer h-12 border-white/20 placeholder:text-white/50"
             aria-describedby="video-upload-help"
             disabled={isLoading}
           />
-          <p id="video-upload-help" className="text-sm text-muted-foreground">
+          <p id="video-upload-help" className="text-sm text-white/70 mt-1">
             Supported formats: MP4, MOV, AVI, etc. Max file size: 50MB.
           </p>
         </div>
@@ -92,7 +92,7 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
         <Button
           onClick={handleSubmit}
           disabled={isLoading || !selectedFile}
-          className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-lg py-6 rounded-lg shadow-md transition-all duration-150 ease-in-out transform hover:scale-105 active:scale-95"
+          className="w-full bg-white/90 hover:bg-white text-black text-lg py-6 rounded-lg shadow-md transition-all duration-150 ease-in-out transform hover:scale-105 active:scale-95"
           aria-label="Analyze Pose"
         >
           {isLoading ? (

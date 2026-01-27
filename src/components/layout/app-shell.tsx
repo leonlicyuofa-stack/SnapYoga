@@ -1,8 +1,10 @@
+
 "use client"; 
 
 import * as React from 'react';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { LogOut, UserCircle, Home, Settings, CalendarDays, Trophy, Languages, Sparkles, Menu } from 'lucide-react';
@@ -43,10 +45,10 @@ export function AppShell({ children }: AppShellProps) {
 
   const navLinkClasses = (path: string) => 
     cn(
-      "flex items-center gap-4 rounded-lg px-4 py-3 text-lg transition-colors hover:bg-accent/50",
+      "flex items-center gap-4 rounded-lg px-4 py-3 text-lg transition-colors hover:bg-white/20",
       pathname === path 
-        ? "text-primary bg-primary/10 font-bold" 
-        : "text-muted-foreground hover:text-primary"
+        ? "text-white bg-white/10 font-bold" 
+        : "text-white/80 hover:text-white"
     );
 
   const homeLinkPath = user ? "/dashboard" : "/";
@@ -63,9 +65,9 @@ export function AppShell({ children }: AppShellProps) {
     signOutUser();
   }
 
-  if (noShellRoutes.includes(pathname) || pathname.startsWith('/home') || pathname === '/welcome' || pathname === '/testing-page-1') {
+  if (noShellRoutes.includes(pathname) || pathname.startsWith('/home') || pathname === '/welcome' || pathname.startsWith('/onboarding') || pathname === '/testing-page-1') {
       return (
-        <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
+        <div className="relative flex flex-col min-h-screen">
             {children}
         </div>
       );
@@ -80,78 +82,93 @@ export function AppShell({ children }: AppShellProps) {
   ];
 
   return (
-    <div className="relative flex flex-col min-h-screen selection:bg-primary/20 selection:text-primary">
-      <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
-        <Sheet open={isSheetOpen} onOpenChange={setSheetOpen}>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <Menu className="h-6 w-6" />
-              <span className="sr-only">Toggle Navigation</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="flex w-full max-w-sm flex-col p-6">
-              <SheetHeader>
-                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                <SheetDescription className="sr-only">A list of links to navigate the application.</SheetDescription>
-              </SheetHeader>
-              <div className="mb-8">
-                <SnapYogaLogo />
-              </div>
-              <nav className="flex-grow space-y-2">
-                {navItems.map(item => (
-                  user || (item.href !== '/practice-calendar' && item.href !== '/challenges' && item.href !== '/profile') 
-                  ? (
-                    <Link key={item.label} href={item.href} className={navLinkClasses(item.href)} onClick={() => setSheetOpen(false)}>
-                        <item.icon className="h-6 w-6" />
-                        <span>{item.label}</span>
-                    </Link>
-                  ) : null
-                ))}
-              </nav>
-              {user && (
-                <div className="mt-auto">
-                    <div className="flex items-center gap-3 p-3 mb-4 rounded-lg bg-secondary">
-                        <Avatar className="h-12 w-12 border-2 border-background">
-                            <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User avatar'} />
-                            <AvatarFallback>{getInitials(user.email, user.displayName)}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <p className="font-semibold">{user.displayName || 'User'}</p>
-                            <p className="text-xs text-muted-foreground">{user.email}</p>
-                        </div>
-                    </div>
-                    <Button variant="ghost" onClick={handleSignOut} className="w-full justify-start text-lg gap-4 px-4 py-3">
-                        <LogOut className="h-6 w-6"/>
-                        {t('signOut')}
-                    </Button>
-                </div>
-              )}
-          </SheetContent>
-        </Sheet>
-        <div className="hidden md:block">
-            <SnapYogaLogo />
-        </div>
-         <nav className="hidden items-center gap-2 md:flex">
-             {navItems.map(item => (
-                  user || (item.href !== '/practice-calendar' && item.href !== '/challenges' && item.href !== '/profile') 
-                  ? (
-                    <Button key={item.label} variant={pathname === item.href ? 'secondary' : 'ghost'} asChild>
-                        <Link href={item.href}>{item.label}</Link>
-                    </Button>
-                  ) : null
-            ))}
-        </nav>
-        {user && (
-             <Avatar className="h-10 w-10 border-2 border-border hidden md:block">
-                <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User avatar'} />
-                <AvatarFallback>{getInitials(user.email, user.displayName)}</AvatarFallback>
-            </Avatar>
-        )}
-      </header>
+    <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
+      <Image
+        src="https://picsum.photos/seed/yogainapp/1920/1080"
+        alt="A tranquil, modern yoga space."
+        fill
+        className="object-cover"
+        data-ai-hint="modern wellness room"
+        priority
+      />
+      <div className="absolute inset-0 bg-black/50" />
 
-      <main className="flex-grow">
-        {children}
-      </main>
+      <div className="relative z-20 flex flex-col min-h-screen">
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-white/20 bg-black/20 px-4 backdrop-blur-lg sm:px-6">
+          <Sheet open={isSheetOpen} onOpenChange={setSheetOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="md:hidden text-white hover:bg-white/20">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Toggle Navigation</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="flex w-full max-w-sm flex-col p-6 bg-black/80 backdrop-blur-lg border-r-white/20 text-white">
+                <SheetHeader>
+                  <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                  <SheetDescription className="sr-only">A list of links to navigate the application.</SheetDescription>
+                </SheetHeader>
+                <div className="mb-8">
+                  <SnapYogaLogo />
+                </div>
+                <nav className="flex-grow space-y-2">
+                  {navItems.map(item => (
+                    user || (item.href !== '/practice-calendar' && item.href !== '/challenges' && item.href !== '/profile') 
+                    ? (
+                      <Link key={item.label} href={item.href} className={navLinkClasses(item.href)} onClick={() => setSheetOpen(false)}>
+                          <item.icon className="h-6 w-6" />
+                          <span>{item.label}</span>
+                      </Link>
+                    ) : null
+                  ))}
+                </nav>
+                {user && (
+                  <div className="mt-auto">
+                      <div className="flex items-center gap-3 p-3 mb-4 rounded-lg bg-white/10">
+                          <Avatar className="h-12 w-12 border-2 border-background">
+                              <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User avatar'} />
+                              <AvatarFallback>{getInitials(user.email, user.displayName)}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                              <p className="font-semibold">{user.displayName || 'User'}</p>
+                              <p className="text-xs text-white/80">{user.email}</p>
+                          </div>
+                      </div>
+                      <Button variant="ghost" onClick={handleSignOut} className="w-full justify-start text-lg gap-4 px-4 py-3 text-white/80 hover:text-white hover:bg-white/10">
+                          <LogOut className="h-6 w-6"/>
+                          {t('signOut')}
+                      </Button>
+                  </div>
+                )}
+            </SheetContent>
+          </Sheet>
+          <div className="hidden md:block">
+              <SnapYogaLogo />
+          </div>
+           <nav className="hidden items-center gap-2 md:flex">
+               {navItems.map(item => (
+                    user || (item.href !== '/practice-calendar' && item.href !== '/challenges' && item.href !== '/profile') 
+                    ? (
+                      <Button key={item.label} variant={pathname === item.href ? 'outline' : 'ghost'} asChild className={cn(
+                        'text-white hover:bg-white/20', 
+                        pathname === item.href && 'bg-white/90 text-black hover:bg-white hover:text-black'
+                      )}>
+                          <Link href={item.href}>{item.label}</Link>
+                      </Button>
+                    ) : null
+              ))}
+          </nav>
+          {user && (
+               <Avatar className="h-10 w-10 border-2 border-white/20 hidden md:block">
+                  <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User avatar'} />
+                  <AvatarFallback>{getInitials(user.email, user.displayName)}</AvatarFallback>
+              </Avatar>
+          )}
+        </header>
+
+        <main className="flex-grow">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

@@ -207,20 +207,20 @@ function InviteFriendDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="lg" className="w-full sm:w-auto text-base px-6 py-6 rounded-xl">
+        <Button variant="outline" size="lg" className="w-full sm:w-auto text-base px-6 py-6 rounded-xl bg-transparent border-white/20 hover:bg-white/10">
           <PlusCircle className="mr-2 h-5 w-5" />
           Add Friend
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md rounded-2xl">
+      <DialogContent className="sm:max-w-md rounded-2xl bg-black/50 backdrop-blur-lg border-white/20 text-white">
         <DialogHeader>
           <DialogTitle>Invite a Friend</DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-white/80">
             Share your love for yoga! Invite friends to join you on SnapYoga using any of the options below.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
-          <div className="text-center p-3 bg-green-100/50 text-green-800 border border-green-200 rounded-lg text-sm font-medium">
+          <div className="text-center p-3 bg-green-500/20 text-green-300 border border-green-500/30 rounded-lg text-sm font-medium">
               {t('referralBonusText')}
           </div>
           <div className="space-y-2">
@@ -230,28 +230,28 @@ function InviteFriendDialog() {
                 id="invite-link"
                 value={inviteLink}
                 readOnly
-                className="h-11 rounded-lg text-base"
+                className="h-11 rounded-lg text-base bg-black/20 border-white/20"
               />
-              <Button type="button" size="icon" onClick={handleCopyLink} className="rounded-lg">
+              <Button type="button" size="icon" onClick={handleCopyLink} className="rounded-lg bg-white/20 hover:bg-white/30">
                 <Copy className="h-4 w-4" />
               </Button>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
-             <Button variant="outline" asChild className="rounded-lg h-11">
+             <Button variant="outline" asChild className="rounded-lg h-11 bg-transparent border-white/20 hover:bg-white/10">
               <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
                 <Share2 className="mr-2 h-4 w-4" /> WhatsApp
               </a>
             </Button>
-             <Button variant="outline" asChild className="rounded-lg h-11">
+             <Button variant="outline" asChild className="rounded-lg h-11 bg-transparent border-white/20 hover:bg-white/10">
               <a href={mailtoLink} target="_blank" rel="noopener noreferrer">
                 <Mail className="mr-2 h-4 w-4" /> Email
               </a>
             </Button>
-             <Button variant="outline" onClick={handleInstagramShare} className="rounded-lg h-11">
+             <Button variant="outline" onClick={handleInstagramShare} className="rounded-lg h-11 bg-transparent border-white/20 hover:bg-white/10">
               <Share2 className="mr-2 h-4 w-4" /> Instagram
             </Button>
-             <Button variant="outline" asChild className="rounded-lg h-11">
+             <Button variant="outline" asChild className="rounded-lg h-11 bg-transparent border-white/20 hover:bg-white/10">
               <a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer">
                 <PinterestIcon className="mr-2 h-4 w-4" /> Pinterest
               </a>
@@ -259,7 +259,7 @@ function InviteFriendDialog() {
           </div>
         </div>
         <DialogFooter>
-          <p className="text-xs text-muted-foreground text-center w-full">Sharing is caring! Grow your yoga community.</p>
+          <p className="text-xs text-white/70 text-center w-full">Sharing is caring! Grow your yoga community.</p>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -286,9 +286,9 @@ export default function ChallengesPage() {
       case 'active':
         return <Badge variant="default" className="bg-green-600 hover:bg-green-700">Active</Badge>;
       case 'upcoming':
-        return <Badge variant="secondary">Upcoming</Badge>;
+        return <Badge variant="secondary" className="bg-yellow-600 text-black">Upcoming</Badge>;
       case 'completed':
-        return <Badge variant="outline">Completed</Badge>;
+        return <Badge variant="outline" className="bg-white/10 text-white border-white/20">Completed</Badge>;
       default:
         return null;
     }
@@ -317,31 +317,29 @@ export default function ChallengesPage() {
             rock={rewardedRock} 
           />
       )}
-      <div className="relative min-h-[calc(100vh-4rem)]">
-        <div className="absolute top-0 left-0 right-0 h-[25vh] bg-secondary rounded-b-3xl" />
-        <div className="relative z-10 flex flex-col h-full">
-           <header className="container mx-auto px-4 pt-8 pb-4 text-primary-foreground">
-                <h1 className="text-3xl font-bold text-primary flex items-center gap-3">
+      <div className="container mx-auto px-4 py-8">
+          <header className="mb-8">
+                <h1 className="text-3xl font-bold text-white flex items-center gap-3">
                     <Crown className="h-8 w-8" />
                     Yoga Challenges
                 </h1>
-                <p className="text-md text-primary/80">Improve your practice, track your progress, and connect with friends.</p>
+                <p className="text-md text-white/80">Improve your practice, track your progress, and connect with friends.</p>
             </header>
-            <main className="flex-grow container mx-auto px-4 mt-8">
-              <Card className="w-full shadow-2xl overflow-hidden bg-card/80 backdrop-blur-sm rounded-2xl border mb-12">
+            <main className="flex-grow space-y-12">
+              <Card className="w-full shadow-2xl overflow-hidden bg-black/20 backdrop-blur-lg rounded-2xl border border-white/20 text-white">
                 <CardHeader className="text-center pt-8">
                   <CardTitle className="text-3xl font-semibold flex items-center justify-center gap-2">
-                    <Users className="h-8 w-8 text-primary" />
+                    <Users className="h-8 w-8 text-white" />
                     {t('challengesWithFriendsTitle')}
                   </CardTitle>
-                  <CardDescription className="text-lg text-muted-foreground mt-2 max-w-md mx-auto">
+                  <CardDescription className="text-lg text-white/80 mt-2 max-w-md mx-auto">
                     {t('challengesWithFriendsDesc')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col items-center space-y-6 p-8">
                   <div className="flex -space-x-6">
                     {friends.map(friend => (
-                      <Avatar key={friend.id} className="h-16 w-16 border-4 border-background hover:z-10 transition-transform hover:scale-110">
+                      <Avatar key={friend.id} className="h-16 w-16 border-4 border-black/50 hover:z-10 transition-transform hover:scale-110">
                         <AvatarImage src={friend.avatarUrl} alt={friend.name} data-ai-hint={friend.avatarHint} />
                         <AvatarFallback>{friend.name.charAt(0)}</AvatarFallback>
                       </Avatar>
@@ -351,18 +349,18 @@ export default function ChallengesPage() {
                 </CardContent>
               </Card>
 
-              <Card className="w-full shadow-lg rounded-2xl border bg-card/80 backdrop-blur-sm mb-12">
+              <Card className="w-full shadow-lg rounded-2xl border border-white/20 bg-black/20 backdrop-blur-lg text-white mb-12">
                   <CardHeader>
                       <CardTitle className="flex items-center text-xl md:text-2xl">
-                          <Gift className="mr-3 h-7 w-7 text-primary" />
+                          <Gift className="mr-3 h-7 w-7 text-white" />
                           Challenge Rewards
                       </CardTitle>
-                      <CardDescription>
+                      <CardDescription className="text-white/80">
                           You've completed the Headstand Challenge! Claim your reward.
                       </CardDescription>
                   </CardHeader>
                   <CardContent>
-                      <Button onClick={() => setShowRockWheelDialog(true)} className="w-full rounded-lg" size="lg">
+                      <Button onClick={() => setShowRockWheelDialog(true)} className="w-full rounded-lg bg-white/90 text-black hover:bg-white" size="lg">
                           Claim Your Item!
                       </Button>
                   </CardContent>
@@ -375,13 +373,13 @@ export default function ChallengesPage() {
                   const Icon = categoryIcons[category];
                   return (
                     <div key={category}>
-                      <h2 className="text-3xl font-bold tracking-tight mb-6 flex items-center gap-3">
-                        <Icon className="h-8 w-8 text-accent" />
+                      <h2 className="text-3xl font-bold tracking-tight mb-6 flex items-center gap-3 text-white">
+                        <Icon className="h-8 w-8 text-white/90" />
                         {category} Challenges
                       </h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {challengesInCategory.map((challenge, index) => (
-                          <Card key={challenge.id} className="overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group rounded-2xl flex flex-col bg-card/80 backdrop-blur-sm border">
+                          <Card key={challenge.id} className="overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group rounded-2xl flex flex-col bg-black/20 backdrop-blur-lg border border-white/20 text-white">
                             <div className="relative w-full h-64">
                               <Image
                                 src={typeof challenge.imageUrl === 'string' ? challenge.imageUrl : challenge.imageUrl.src}
@@ -404,9 +402,9 @@ export default function ChallengesPage() {
                                 <h2 className="text-2xl font-bold text-white mb-1">{challenge.name}</h2>
                               </div>
                             </div>
-                            <CardContent className="p-6 bg-card flex-grow flex flex-col">
+                            <CardContent className="p-6 bg-black/20 flex-grow flex flex-col">
                               <div className="flex justify-between items-center mb-4">
-                                <p className="text-muted-foreground text-sm">Difficulty:</p>
+                                <p className="text-white/70 text-sm">Difficulty:</p>
                                 <div className="flex items-center">
                                   {Array.from({ length: 5 }).map((_, i) => (
                                     <Star
@@ -415,17 +413,17 @@ export default function ChallengesPage() {
                                         "h-5 w-5",
                                         i < challenge.difficulty
                                           ? "text-yellow-400 fill-yellow-400"
-                                          : "text-muted-foreground/50"
+                                          : "text-white/30"
                                       )}
                                     />
                                   ))}
                                 </div>
                               </div>
-                              <p className="text-muted-foreground mb-6 flex-grow">{challenge.description}</p>
+                              <p className="text-white/80 mb-6 flex-grow">{challenge.description}</p>
                               <Link href={challenge.detailLink} passHref>
                                 <Button
                                   size="lg"
-                                  className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground shadow-md hover:shadow-lg transition-all transform hover:scale-105 rounded-lg"
+                                  className="w-full text-lg py-6 bg-white/90 hover:bg-white text-black shadow-md hover:shadow-lg transition-all transform hover:scale-105 rounded-lg"
                                   aria-label={`Action for ${challenge.name}`}
                                   disabled={challenge.detailLink === '#'}
                                 >
@@ -442,7 +440,6 @@ export default function ChallengesPage() {
                 })}
               </div>
             </main>
-        </div>
       </div>
     </AppShell>
   );
