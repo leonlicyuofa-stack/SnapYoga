@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -7,10 +8,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Loader2, UserCircle, PlusCircle } from 'lucide-react';
+import { ArrowLeft, Loader2, PlusCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
@@ -18,7 +17,6 @@ import Image from 'next/image';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 
 const profileSchema = z.object({
-  displayName: z.string().min(2, { message: "Name must be at least 2 characters" }),
   avatar: z.string().optional(),
 });
 
@@ -33,14 +31,14 @@ const avatars = [
 ];
 
 export default function GenderProfilePage() {
-  const { user, loading: authLoading, updateUserDisplayName } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [customAvatar, setCustomAvatar] = useState<string | null>(null);
   
-  const { control, register, handleSubmit, setValue, watch, formState: { errors, isValid }, reset } = useForm<ProfileFormValues>({
+  const { control, handleSubmit, setValue, watch, formState: { errors, isValid }, reset } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     mode: 'onChange',
   });
@@ -60,7 +58,6 @@ export default function GenderProfilePage() {
                     defaultValues.avatar = data.avatar;
                 }
                 
-                if (data.displayName) defaultValues.displayName = data.displayName;
                 reset(defaultValues);
             }
         });
@@ -91,11 +88,8 @@ export default function GenderProfilePage() {
     setIsSubmitting(true);
     try {
       
-      // Update both Auth profile and Firestore document
-      await updateUserDisplayName(data.displayName);
       await createUserProfileDocument(user, {
-          avatar: data.avatar, // This will be the data URI if a custom avatar is selected
-          displayName: data.displayName,
+          avatar: data.avatar,
       });
 
       router.push('/onboarding/yoga-goal');
@@ -183,20 +177,6 @@ export default function GenderProfilePage() {
                               </div>
                           </div>
                           {errors.avatar && <p className="text-sm text-red-400 text-center -mt-4">{errors.avatar.message}</p>}
-                          
-                          <div className="space-y-2">
-                               <Label htmlFor="displayName" className="text-center block">How should we address you?</Label>
-                               <div className="relative">
-                                    <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/50" />
-                                    <Input 
-                                        id="displayName" 
-                                        placeholder="Enter your name" 
-                                        {...register("displayName")}
-                                        className="bg-white/10 border-white/20 rounded-full h-12 pl-12 text-white placeholder:text-white/50 focus:bg-white/20"
-                                    />
-                               </div>
-                              {errors.displayName && <p className="text-sm text-red-400 pl-4">{errors.displayName.message}</p>}
-                            </div>
                             
                             <Button type="submit" form="gender-profile-form" className="w-full h-12 text-base rounded-full mt-8 bg-white/90 text-black hover:bg-white" disabled={isSubmitting || authLoading || !isValid}>
                                 {isSubmitting || authLoading ? <Loader2 className="animate-spin" /> : <>Next <ArrowLeft className="ml-2 -rotate-180" /></>}
