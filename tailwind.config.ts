@@ -9,6 +9,10 @@ export default {
   ],
   theme: {
   	extend: {
+        fontFamily: {
+            serif: ['var(--font-lora)'],
+            script: ['var(--font-shadows-into-light)'],
+        },
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',

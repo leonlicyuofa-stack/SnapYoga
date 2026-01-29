@@ -7,14 +7,16 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
-import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { RightArrowIcon } from '@/components/icons/RightArrowIcon';
 
 // Data for the animated headline
 const animatedWords = [
     { text: 'Pose.', color: '#fb7185' }, // text-rose-400
     { text: 'Flow.', color: '#38bdf8' }, // text-sky-400
     { text: 'Balance.', color: '#facc15' }, // text-amber-400
+    { text: 'Strength.', color: '#a78bfa' }, // text-violet-400
+    { text: 'Mobility.', color: '#34d399' }, // text-emerald-400
 ];
 
 export default function HomePage() {
@@ -57,11 +59,11 @@ export default function HomePage() {
         <main className="flex-grow flex flex-col items-start justify-center text-left px-6 md:px-12">
             <h1 className="text-4xl md:text-5xl font-medium leading-tight">
                 Master your
-                <div className="relative inline-block h-[48px] md:h-[60px] w-[200px] ml-3 align-bottom" style={{ perspective: '400px' }}>
+                <div className="relative inline-block h-[48px] md:h-[60px] w-[240px] ml-2 align-bottom font-script" style={{ perspective: '400px' }}>
                     {/* Previous Word (animating out) */}
                     <span
                         key={prevIndex}
-                        className="absolute inset-0 flex items-center justify-start [transform-style:preserve-3d] animate-flip-up-out"
+                        className="font-script absolute inset-0 flex items-center justify-start [transform-style:preserve-3d] animate-flip-up-out"
                         style={{
                             transformOrigin: 'bottom center',
                             color: animatedWords[prevIndex].color,
@@ -72,7 +74,7 @@ export default function HomePage() {
                     {/* Current Word (animating in) */}
                     <span
                         key={currentIndex}
-                        className="absolute inset-0 flex items-center justify-start [transform-style:preserve-3d] animate-flip-up-in"
+                        className="font-script absolute inset-0 flex items-center justify-start [transform-style:preserve-3d] animate-flip-up-in"
                         style={{
                             transformOrigin: 'bottom center',
                             color: animatedWords[currentIndex].color,
@@ -95,22 +97,18 @@ export default function HomePage() {
                 ></div>
               ))}
             </div>
-
-            <Button size="lg" className="mt-12 w-full max-w-xs text-lg py-7 bg-white/90 text-black hover:bg-white rounded-lg shadow-lg transform hover:scale-105 transition-transform" asChild>
-                <Link href="/auth/signup">
-                    Get Started
-                    <ChevronRight className="ml-2 h-6 w-6" />
-                </Link>
-            </Button>
         </main>
         
         {/* Footer */}
-        <footer className="p-6 md:p-8">
+        <footer className="relative p-6 md:p-8">
             <div className="flex gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-white/50"></div>
                 <div className="w-2.5 h-2.5 rounded-full bg-white/50"></div>
                 <div className="w-2.5 h-2.5 rounded-full bg-white/50"></div>
             </div>
+            <Link href="/auth/signup" className="absolute bottom-6 right-6 md:bottom-8 md:right-8" aria-label="Get Started">
+                <RightArrowIcon animationState='idle' className="text-white h-12 w-12" />
+            </Link>
         </footer>
 
       </div>
