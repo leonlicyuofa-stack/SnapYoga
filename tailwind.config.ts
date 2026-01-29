@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -122,6 +121,14 @@ export default {
                 '0%': { transform: 'scale(0.8)', opacity: '0' },
                 '100%': { transform: 'scale(1)', opacity: '1' },
             },
+            'flip-up-in': {
+                'from': { transform: 'rotateX(90deg)', opacity: '0' },
+                'to': { transform: 'rotateX(0deg)', opacity: '1' },
+            },
+            'flip-up-out': {
+                'from': { transform: 'rotateX(0deg)', opacity: '1' },
+                'to': { transform: 'rotateX(-90deg)', opacity: '0' },
+            },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
@@ -133,6 +140,8 @@ export default {
             'move-right-and-fade': 'move-right-and-fade 0.6s ease-in forwards',
             'swing': 'swing 1.5s ease-in-out infinite alternate',
             'zoom-in': 'zoom-in 0.7s ease-out forwards',
+            'flip-up-in': 'flip-up-in 0.5s ease-out forwards',
+            'flip-up-out': 'flip-up-out 0.5s ease-out forwards',
   		}
   	}
   },
