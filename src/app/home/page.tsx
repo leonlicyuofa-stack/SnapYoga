@@ -57,7 +57,7 @@ export default function HomePage() {
 
         {/* Hero Section */}
         <main className="flex-grow flex flex-col items-start justify-center text-left px-6 md:px-12">
-            <h1 className="text-4xl md:text-5xl font-medium leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold leading-tight">
                 Master your
                 <div className="relative inline-block h-[48px] md:h-[60px] w-[240px] ml-2 align-bottom font-script" style={{ perspective: '400px' }}>
                     {/* Previous Word (animating out) */}
