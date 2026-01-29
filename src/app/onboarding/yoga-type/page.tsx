@@ -101,11 +101,11 @@ export default function InterestedPosesPage() {
         />
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-2xl">
+            <div className="w-full max-w-2xl relative">
                  <Button
                     onClick={handleBackNavigation}
                     variant="ghost"
-                    className="mb-4 rounded-full h-12 w-12 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20"
+                    className="absolute top-4 left-4 rounded-full h-12 w-12 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20"
                     aria-label="Go back"
                 >
                     <ArrowLeft className="h-6 w-6" />
@@ -173,15 +173,22 @@ export default function InterestedPosesPage() {
                             />
 
                           {errors.interestedPoses && <p className="text-sm text-red-400 text-center">{errors.interestedPoses.message}</p>}
-                          <Button type="submit" form="yoga-type-form" className="w-full h-12 text-base rounded-full mt-8 bg-white/90 text-black hover:bg-white" disabled={isSubmitting || authLoading || !isValid}>
-                              {isSubmitting || authLoading ? <Loader2 className="animate-spin" /> : <>Next <ArrowRight className="ml-2" /></>}
-                          </Button>
                         </form>
                         <p className="text-xs text-white/60 text-center w-full mt-6">
                           This helps us recommend suitable poses and challenges.
                         </p>
                     </main>
                 </div>
+                 <Button
+                    type="submit"
+                    form="yoga-type-form"
+                    variant="ghost"
+                    className="absolute bottom-4 right-4 rounded-full h-14 w-14 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20"
+                    aria-label="Next"
+                    disabled={isSubmitting || authLoading || !isValid}
+                >
+                    {isSubmitting || authLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : <ArrowRight className="h-7 w-7" />}
+                </Button>
             </div>
         </div>
     </div>

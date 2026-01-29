@@ -95,11 +95,11 @@ export default function MeasurementsPage() {
         />
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-md">
+            <div className="w-full max-w-md relative">
                  <Button
                     onClick={handleBackNavigation}
                     variant="ghost"
-                    className="mb-4 rounded-full h-12 w-12 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20"
+                    className="absolute top-4 left-4 rounded-full h-12 w-12 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20"
                     aria-label="Go back"
                 >
                     <ArrowLeft className="h-6 w-6" />
@@ -114,7 +114,7 @@ export default function MeasurementsPage() {
                     </header>
 
                     <main>
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                        <form id="measurements-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                             <div className="space-y-2">
                               <div className="flex justify-between items-center">
                                 <Label htmlFor="height">Height ({heightUnit})</Label>
@@ -164,20 +164,22 @@ export default function MeasurementsPage() {
                               />
                               {errors.weight && <p className="text-sm text-red-400">{errors.weight.message}</p>}
                             </div>
-
-                            <Button 
-                                type="submit" 
-                                className="w-full h-12 text-base rounded-full mt-8 bg-white/90 text-black hover:bg-white"
-                                disabled={isSubmitting || authLoading}
-                            >
-                                {isSubmitting ? <Loader2 className="animate-spin" /> : <><span>Next</span><ArrowRight className="ml-2 h-5 w-5" /></>}
-                            </Button>
                         </form>
                         <p className="text-xs text-white/60 text-center w-full mt-6">
                             This data helps in providing more relevant suggestions.
                         </p>
                     </main>
                 </div>
+                 <Button
+                    type="submit"
+                    form="measurements-form"
+                    variant="ghost"
+                    className="absolute bottom-4 right-4 rounded-full h-14 w-14 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20"
+                    aria-label="Next"
+                    disabled={isSubmitting || authLoading}
+                >
+                    {isSubmitting || authLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : <ArrowRight className="h-7 w-7" />}
+                </Button>
             </div>
         </div>
     </div>

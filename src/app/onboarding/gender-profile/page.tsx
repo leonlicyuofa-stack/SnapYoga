@@ -8,7 +8,7 @@ import * as z from 'zod';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Loader2, PlusCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Loader2, PlusCircle, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
@@ -145,7 +145,7 @@ export default function GenderProfilePage() {
         />
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-lg">
+            <div className="w-full max-w-lg relative">
                  <Button
                     onClick={handleBackNavigation}
                     variant="ghost"
@@ -228,13 +228,19 @@ export default function GenderProfilePage() {
                             />
                           
                           {errors.avatar && <p className="text-sm text-red-400 text-center -mt-4">{errors.avatar.message}</p>}
-                            
-                          <Button type="submit" form="gender-profile-form" className="w-full h-12 text-base rounded-full mt-8 bg-white/90 text-black hover:bg-white" disabled={isSubmitting || authLoading || !isValid}>
-                                {isSubmitting || authLoading ? <Loader2 className="animate-spin" /> : <>Next <ArrowLeft className="ml-2 -rotate-180" /></>}
-                            </Button>
                         </form>
                     </main>
                 </div>
+                <Button
+                    type="submit"
+                    form="gender-profile-form"
+                    variant="ghost"
+                    className="absolute bottom-4 right-4 rounded-full h-14 w-14 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20"
+                    aria-label="Next"
+                    disabled={isSubmitting || authLoading || !isValid}
+                >
+                    {isSubmitting || authLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : <ArrowRight className="h-7 w-7" />}
+                </Button>
             </div>
         </div>
     </div>

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import { cn } from '@/lib/utils';
-import { RightArrowIcon } from '@/components/icons/RightArrowIcon';
+import { ArrowRight } from 'lucide-react';
 
 // Data for the animated headline
 const animatedWords = [
@@ -106,9 +106,15 @@ export default function HomePage() {
                 <div className="w-2.5 h-2.5 rounded-full bg-white/50"></div>
                 <div className="w-2.5 h-2.5 rounded-full bg-white/50"></div>
             </div>
-            <Link href="/auth/signup" className="absolute bottom-6 right-6 md:bottom-8 md:right-8" aria-label="Get Started">
-                <RightArrowIcon animationState='idle' className="text-white h-12 w-12" />
-            </Link>
+            <Button
+                asChild
+                variant="ghost"
+                className="absolute bottom-6 right-6 md:bottom-8 md:right-8 rounded-full h-14 w-14 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20"
+            >
+                <Link href="/auth/signup" aria-label="Get Started">
+                    <ArrowRight className="h-7 w-7" />
+                </Link>
+            </Button>
         </footer>
 
       </div>

@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -8,7 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
-import { Mail, User, KeyRound, EyeOff, Eye } from 'lucide-react';
+import { Mail, User, KeyRound, EyeOff, Eye, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -56,9 +55,21 @@ export default function SignUpPage() {
   };
   
   const isLoading = authLoading || isSubmitting;
+  
+  const handleBackNavigation = () => {
+    router.back();
+  };
 
   return (
     <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
+        <Button
+            onClick={handleBackNavigation}
+            variant="ghost"
+            className="absolute top-4 left-4 rounded-full h-12 w-12 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20"
+            aria-label="Go back"
+        >
+            <ArrowLeft className="h-6 w-6" />
+        </Button>
         {/* Background Image */}
         <Image
             src="https://picsum.photos/seed/yogawellness/1920/1080"

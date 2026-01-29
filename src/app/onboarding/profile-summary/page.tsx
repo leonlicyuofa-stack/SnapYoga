@@ -282,11 +282,11 @@ export default function ProfileSummaryPage() {
         />
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-2xl">
+            <div className="w-full max-w-2xl relative">
                  <Button
                     onClick={handleBackNavigation}
                     variant="ghost"
-                    className="mb-4 rounded-full h-12 w-12 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20"
+                    className="absolute top-4 left-4 rounded-full h-12 w-12 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20"
                     aria-label="Go back"
                 >
                     <ArrowLeft className="h-6 w-6" />
@@ -314,19 +314,19 @@ export default function ProfileSummaryPage() {
                         ) : (
                         <p className="text-white/80 text-center">Could not load profile data.</p>
                         )}
-                        <div className="mt-8">
-                            <Button 
-                                onClick={handleNext} 
-                                className="w-full h-12 text-base rounded-full bg-white/90 text-black hover:bg-white"
-                            >
-                                Next <ArrowRight className="ml-2 h-5 w-5" />
-                            </Button>
-                            <p className="text-xs text-white/60 text-center w-full mt-4">
-                                Ensure all details are correct before proceeding.
-                            </p>
-                        </div>
+                        <p className="text-xs text-white/60 text-center w-full mt-6">
+                            Ensure all details are correct before proceeding.
+                        </p>
                     </main>
                 </div>
+                 <Button
+                    onClick={handleNext}
+                    variant="ghost"
+                    className="absolute bottom-4 right-4 rounded-full h-14 w-14 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20"
+                    aria-label="Next"
+                >
+                    <ArrowRight className="h-7 w-7" />
+                </Button>
             </div>
         </div>
     </div>
