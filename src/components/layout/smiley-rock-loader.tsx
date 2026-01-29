@@ -21,7 +21,7 @@ const LoadingDot = ({ delay }: { delay: string }) => (
 export function SmileyRockLoader({ className, text }: SmileyRockLoaderProps) {
   return (
     <div className={cn("flex flex-col items-center justify-center gap-4", className)}>
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center justify-center gap-2 animate-pulse">
         <YogaMatMascot className="h-16 w-16" />
       </div>
       {text && <p className="text-sm text-muted-foreground animate-pulse">{text}</p>}
