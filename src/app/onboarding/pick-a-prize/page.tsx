@@ -40,17 +40,7 @@ export default function PickAPrizePage() {
     try {
       const prizeToSave = prizes[selectedSide].name;
       await createUserProfileDocument(user, { onboardingCompleted: true, luckyDrawResult: prizeToSave });
-      toast({
-        title: "🎉 Onboarding Complete! Welcome to SnapYoga! 🎉",
-        description: "You're all set to start your yoga journey. Let's explore your dashboard!",
-        duration: 5000,
-      });
-
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem('justCompletedOnboarding', 'true');
-      }
-
-      router.push('/dashboard');
+      router.push('/onboarding/complete');
     } catch (e) {
       console.error("Error finalizing onboarding:", e);
       toast({
@@ -58,7 +48,6 @@ export default function PickAPrizePage() {
         description: "Could not complete your setup. Please try again or contact support.",
         variant: "destructive",
       });
-    } finally {
       setIsFinalizing(false);
     }
   };
