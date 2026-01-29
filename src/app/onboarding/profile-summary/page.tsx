@@ -15,16 +15,15 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import Image from 'next/image';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
 
 interface UserProfile extends DocumentData {
   displayName?: string;
   email?: string;
-  gender?: string;
-  age?: number;
+  photoURL?: string;
   mainGoals?: string[];
   interestedPoses?: string[];
-  currentBodyShape?: string;
-  focusBodyParts?: string[];
 }
 
 const mainGoalOptions = [
@@ -42,16 +41,6 @@ const poseCategoryOptions = [
   { id: "backbends", label: "Backbends" },
   { id: "inversions-balancing", label: "Inversions & Balancing" },
 ];
-
-const bodyShapeOptions = [
-  { value: "inverted-triangle", label: "Inverted Triangle" },
-  { value: "hourglass", label: "Hourglass" },
-  { value: "triangle", label: "Triangle" },
-  { value: "round", label: "Round" },
-  { value: "rectangle", label: "Rectangle" },
-];
-
-const ageOptions = Array.from({ length: 83 }, (_, i) => (i + 18).toString());
 
 export default function ProfileSummaryPage() {
   const { user, loading: authLoading, updateUserDisplayName } = useAuth();
@@ -143,25 +132,6 @@ export default function ProfileSummaryPage() {
     switch(fieldName) {
       case 'displayName':
         return <Input value={fieldValue} onChange={(e) => setFieldValue(e.target.value)} onBlur={() => handleSave(fieldName, fieldValue)} className="max-w-xs bg-white/20 text-white placeholder:text-white/50" />;
-      case 'gender':
-        return (
-          <Select value={fieldValue} onValueChange={handleFieldChange}>
-            <SelectTrigger className="w-[180px] bg-white/20 text-white"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="male">Male</SelectItem>
-              <SelectItem value="female">Female</SelectItem>
-            </SelectContent>
-          </Select>
-        );
-      case 'age':
-         return (
-            <Select value={fieldValue.toString()} onValueChange={(val) => handleFieldChange(parseInt(val, 10))}>
-                <SelectTrigger className="w-[180px] bg-white/20 text-white"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                    {ageOptions.map(age => <SelectItem key={age} value={age}>{age}</SelectItem>)}
-                </SelectContent>
-            </Select>
-        );
       case 'mainGoals':
         return (
             <div className="flex flex-col gap-2">
@@ -201,16 +171,6 @@ export default function ProfileSummaryPage() {
                     </Label>
                 ))}
             </div>
-        );
-       case 'currentBodyShape':
-        return (
-            <Select value={fieldValue} onValueChange={handleFieldChange}>
-                <SelectTrigger className="w-full sm:w-[240px] bg-white/20 text-white"><SelectValue placeholder="Select a shape" /></SelectTrigger>
-                <SelectContent>
-                    {bodyShapeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
-                     <SelectItem value="not-provided">Prefer not to say</SelectItem>
-                </SelectContent>
-            </Select>
         );
       default:
         return <p>Editing not supported for this field.</p>
@@ -263,6 +223,24 @@ export default function ProfileSummaryPage() {
   const handleBackNavigation = () => {
     router.back();
   };
+  
+  const getInitials = (email?: string | null, displayName?: string | null) => {
+    if (displayName) {
+      const names = displayName.split(' ');
+      if (names.length > 1) {
+        return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+      }
+      return displayName.substring(0, 2).toUpperCase();
+    }
+    if (email) {
+      const parts = email.split('@')[0].split(/[._-]/);
+      if (parts.length > 1) {
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+      }
+      return email.substring(0, 2).toUpperCase();
+    }
+    return 'U';
+  };
 
   if (authLoading || isLoadingProfile) {
     return (
@@ -293,6 +271,14 @@ export default function ProfileSummaryPage() {
                 </Button>
                 <div className="bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
                     <header className="text-center">
+                         {profileData?.photoURL && (
+                            <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-white/20">
+                                <AvatarImage src={profileData.photoURL} alt={profileData.displayName || 'User Avatar'} />
+                                <AvatarFallback className="text-2xl bg-white/20">
+                                    {getInitials(profileData.email, profileData.displayName)}
+                                </AvatarFallback>
+                            </Avatar>
+                        )}
                          <div className="mx-auto mb-4 inline-block">
                             <SnapYogaLogo />
                         </div>
@@ -305,11 +291,8 @@ export default function ProfileSummaryPage() {
                         <dl>
                             {renderDetailItem("Username", "displayName", profileData.displayName)}
                             {renderDetailItem("Email", "email", user.email)}
-                            {renderDetailItem("Gender", "gender", profileData.gender)}
-                            {renderDetailItem("Age", "age", profileData.age)}
                             {renderDetailItem("Main Yoga Goals", "mainGoals", profileData.mainGoals)}
                             {renderDetailItem("Interested Pose Types", "interestedPoses", profileData.interestedPoses)}
-                            {renderDetailItem("Current Body Shape", "currentBodyShape", profileData.currentBodyShape)}
                         </dl>
                         ) : (
                         <p className="text-white/80 text-center">Could not load profile data.</p>
