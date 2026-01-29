@@ -26,7 +26,7 @@ type YogaGoalsFormValues = z.infer<typeof yogaGoalsSchema>;
 const mainGoalOptions = [
   { value: "mobility", label: "Mobility", image: { src: "https://picsum.photos/seed/mobility/400/400", width: 400, height: 400, hint: "yoga mobility" } },
   { value: "nourishment", label: "Nourishment", image: { src: "https://picsum.photos/seed/nourishment/400/400", width: 400, height: 400, hint: "healthy food" } },
-  { value: "flexibility", label: "Flexibility", image: { src: "https://picsum.photos/seed/flexibility/400/400", width: 400, height: 400, hint: "yoga flexibility" } },
+  { value: "flexibility", label: "Flexibility", image: { src: "/images/flexibility.png", width: 400, height: 400, hint: "yoga flexibility" } },
   { value: "strength", label: "Strength", image: { src: "https://picsum.photos/seed/strength/400/400", width: 400, height: 400, hint: "yoga strength" } },
 ];
 
