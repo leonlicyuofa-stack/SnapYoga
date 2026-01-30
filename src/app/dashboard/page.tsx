@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { MoodChart } from '@/components/features/dashboard/MoodChart';
 import { PracticeCalendarSnapshot } from '@/components/features/dashboard/PracticeCalendarSnapshot';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // New moods based on user request
 const moods = [
@@ -26,15 +27,37 @@ const moods = [
 ];
 
 const WeeklyCalendar = () => {
-    const today = new Date();
-    const start = startOfWeek(today, { weekStartsOn: 1 }); // Monday
-    const weekDays = eachDayOfInterval({ start, end: endOfWeek(today, { weekStartsOn: 1 }) });
+    const [weekDays, setWeekDays] = useState<Date[]>([]);
+    const [today, setToday] = useState<Date | null>(null);
+
+    useEffect(() => {
+        const currentDate = new Date();
+        setToday(currentDate);
+        const start = startOfWeek(currentDate, { weekStartsOn: 1 });
+        const end = endOfWeek(currentDate, { weekStartsOn: 1 });
+        setWeekDays(eachDayOfInterval({ start, end }));
+    }, []);
+
+    if (weekDays.length === 0) {
+        return (
+            <Card className="bg-card/80 backdrop-blur-sm rounded-2xl shadow-xl border">
+                <CardContent className="p-2 sm:p-4 flex justify-around items-center h-[76px]">
+                    {Array.from({ length: 7 }).map((_, i) => (
+                        <div key={i} className="text-center p-2 w-14 flex flex-col items-center gap-2">
+                            <Skeleton className="h-3 w-8" />
+                            <Skeleton className="h-5 w-6" />
+                        </div>
+                    ))}
+                </CardContent>
+            </Card>
+        );
+    }
     
     return (
         <Card className="bg-card/80 backdrop-blur-sm rounded-2xl shadow-xl border">
             <CardContent className="p-2 sm:p-4 flex justify-around items-center">
                 {weekDays.map(day => {
-                    const isToday = isSameDay(day, today);
+                    const isToday = today ? isSameDay(day, today) : false;
                     return (
                         <div key={day.toISOString()} className={cn(
                             "text-center p-2 rounded-lg cursor-pointer transition-colors hover:bg-muted w-14", 
