@@ -19,10 +19,12 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import Image from 'next/image';
 import { mainBackground } from '@/lib/placeholder-images.json';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const signInSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z.string().min(1, { message: "Password is required" }),
+  remember: z.boolean().optional(),
 });
 
 type SignInFormValues = z.infer<typeof signInSchema>;
@@ -117,7 +119,16 @@ export default function SignInPage() {
                 </div>
                 {errors.password && <p className="text-sm text-red-400">{errors.password.message}</p>}
               </div>
-              <Button type="submit" className="w-full text-lg py-6 h-auto rounded-lg bg-white/90 text-black hover:bg-white" disabled={isLoading}>
+               <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="remember-me" className="border-white/50 data-[state=checked]:bg-white/80 data-[state=checked]:text-black" {...register("remember")} />
+                  <Label htmlFor="remember-me" className="text-sm font-medium leading-none text-white/80 peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Remember me</Label>
+                </div>
+                <Link href="#" className="text-sm font-medium text-white/80 hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
+              <Button type="submit" className="w-full h-12 text-base rounded-lg bg-white/90 text-black hover:bg-white" disabled={isLoading}>
                 {isLoading ? <SmileyRockLoader /> : t('signIn')}
               </Button>
             </form>
