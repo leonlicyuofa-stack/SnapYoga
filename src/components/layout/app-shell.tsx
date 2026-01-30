@@ -1,4 +1,3 @@
-
 "use client"; 
 
 import * as React from 'react';
@@ -84,7 +83,7 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
       <Image
-        src="https://picsum.photos/seed/yogainapp/1920/1080"
+        src="https://picsum.photos/seed/yogawellness/1920/1080"
         alt="A tranquil, modern yoga space."
         fill
         className="object-cover"
