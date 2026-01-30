@@ -1,10 +1,11 @@
+
 "use client";
 
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Smile, Wind, Frown, Activity, Goal, Trophy, Bot, Tired } from 'lucide-react';
+import { Smile, Wind, Frown, Activity, Goal, Trophy, Meh } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState, useEffect } from 'react';
 import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
@@ -21,7 +22,7 @@ const moods = [
   { name: 'Joyful', icon: Smile, emoji: '😊' },
   { name: 'Calm', icon: Wind, emoji: '😌' },
   { name: 'Emotional', icon: Frown, emoji: '😢' },
-  { name: 'Fatigue', icon: Tired, emoji: '😫' },
+  { name: 'Fatigue', icon: Meh, emoji: '😫' },
 ];
 
 const WeeklyCalendar = () => {
