@@ -1,2 +1,7 @@
-
-{}
+{
+  "mainBackground": {
+    "src": "/images/background.png",
+    "alt": "A tranquil, modern yoga space.",
+    "hint": "modern wellness room"
+  }
+}

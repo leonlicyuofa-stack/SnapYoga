@@ -18,7 +18,7 @@ import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import Image from 'next/image';
-import { allCollectibles } from '@/lib/placeholder-images.json';
+import { mainBackground } from '@/lib/placeholder-images.json';
 
 const signInSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -48,11 +48,11 @@ export default function SignInPage() {
     <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
       {/* Background Image */}
       <Image
-        src={allCollectibles[0].src}
-        alt={allCollectibles[0].alt}
+        src={mainBackground.src}
+        alt={mainBackground.alt}
         fill
         className="object-cover"
-        data-ai-hint={allCollectibles[0].hint}
+        data-ai-hint={mainBackground.hint}
         priority
       />
       <div className="absolute inset-0 bg-black/40" /> {/* Overlay for contrast */}

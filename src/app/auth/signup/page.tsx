@@ -19,7 +19,7 @@ import { Loader2 } from 'lucide-react';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import Image from 'next/image';
 import { Separator } from '@/components/ui/separator';
-import { allCollectibles } from '@/lib/placeholder-images.json';
+import { mainBackground } from '@/lib/placeholder-images.json';
 
 const signUpSchema = z.object({
   username: z.string().min(2, { message: "Username must be at least 2 characters" }),
@@ -74,11 +74,11 @@ export default function SignUpPage() {
         </Button>
         {/* Background Image */}
         <Image
-            src={allCollectibles[0].src}
-            alt={allCollectibles[0].alt}
+            src={mainBackground.src}
+            alt={mainBackground.alt}
             fill
             className="object-cover"
-            data-ai-hint={allCollectibles[0].hint}
+            data-ai-hint={mainBackground.hint}
             priority
         />
         <div className="absolute inset-0 bg-black/40" /> {/* Overlay for contrast */}
