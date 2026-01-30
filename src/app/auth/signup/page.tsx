@@ -18,6 +18,8 @@ import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import Image from 'next/image';
+import { Separator } from '@/components/ui/separator';
+import { allCollectibles } from '@/lib/placeholder-images.json';
 
 const signUpSchema = z.object({
   username: z.string().min(2, { message: "Username must be at least 2 characters" }),
@@ -72,11 +74,11 @@ export default function SignUpPage() {
         </Button>
         {/* Background Image */}
         <Image
-            src="https://picsum.photos/seed/yogawellness/1920/1080"
-            alt="A tranquil, modern space for practicing yoga."
+            src={allCollectibles[0].src}
+            alt={allCollectibles[0].alt}
             fill
             className="object-cover"
-            data-ai-hint="modern wellness room"
+            data-ai-hint={allCollectibles[0].hint}
             priority
         />
         <div className="absolute inset-0 bg-black/40" /> {/* Overlay for contrast */}
@@ -91,6 +93,30 @@ export default function SignUpPage() {
                 </header>
                 
                 <main className="space-y-6">
+                     <div className="flex justify-center gap-4">
+                        <Button variant="outline" size="icon" onClick={signInWithApple} disabled={authLoading} className="w-14 h-14 rounded-full bg-white/10 border-white/20 hover:bg-white/20">
+                            <AppleIcon className="h-6 w-6" />
+                             <span className="sr-only">Sign in with Apple</span>
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={signInWithGoogle} disabled={authLoading} className="w-14 h-14 rounded-full bg-white/10 border-white/20 hover:bg-white/20">
+                            <GoogleIcon className="h-6 w-6" />
+                            <span className="sr-only">Sign in with Google</span>
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={signInWithTikTok} disabled={authLoading} className="w-14 h-14 rounded-full bg-white/10 border-white/20 hover:bg-white/20">
+                            <TikTokIcon className="h-6 w-6" />
+                            <span className="sr-only">Sign in with TikTok</span>
+                        </Button>
+                    </div>
+
+                    <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                            <Separator className="bg-white/20" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-black/20 px-2 text-white/80">Or sign up with email</span>
+                        </div>
+                    </div>
+
                     <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4">
                         <div className="space-y-2">
                              <div className="relative">
@@ -141,30 +167,6 @@ export default function SignUpPage() {
                               {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Sign Up'}
                         </Button>
                     </form>
-                    
-                    <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t border-white/20" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-black/20 px-2 text-white/80">Or sign up with</span>
-                        </div>
-                    </div>
-
-                    <div className="flex justify-center gap-4">
-                        <Button variant="outline" size="icon" onClick={signInWithApple} disabled={authLoading} className="w-14 h-14 rounded-full bg-white/10 border-white/20 hover:bg-white/20">
-                            <AppleIcon className="h-6 w-6" />
-                             <span className="sr-only">Sign in with Apple</span>
-                        </Button>
-                        <Button variant="outline" size="icon" onClick={signInWithGoogle} disabled={authLoading} className="w-14 h-14 rounded-full bg-white/10 border-white/20 hover:bg-white/20">
-                            <GoogleIcon className="h-6 w-6" />
-                            <span className="sr-only">Sign in with Google</span>
-                        </Button>
-                        <Button variant="outline" size="icon" onClick={signInWithTikTok} disabled={authLoading} className="w-14 h-14 rounded-full bg-white/10 border-white/20 hover:bg-white/20">
-                            <TikTokIcon className="h-6 w-6" />
-                            <span className="sr-only">Sign in with TikTok</span>
-                        </Button>
-                    </div>
                 </main>
                 <footer className="text-center">
                     <p className="text-sm text-white/80">

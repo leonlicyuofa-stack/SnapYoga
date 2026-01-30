@@ -11,12 +11,14 @@ import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon';
+import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { Mail, KeyRound } from 'lucide-react';
 import { useState } from 'react';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import Image from 'next/image';
+import { allCollectibles } from '@/lib/placeholder-images.json';
 
 const signInSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -26,7 +28,7 @@ const signInSchema = z.object({
 type SignInFormValues = z.infer<typeof signInSchema>;
 
 export default function SignInPage() {
-  const { signInWithEmail, signInWithGoogle, signInWithApple, loading: authLoading } = useAuth();
+  const { signInWithEmail, signInWithGoogle, signInWithApple, signInWithTikTok, loading: authLoading } = useAuth();
   const { t } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -46,11 +48,11 @@ export default function SignInPage() {
     <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
       {/* Background Image */}
       <Image
-        src="https://picsum.photos/seed/yogawellness/1920/1080"
-        alt="A tranquil, modern space for practicing yoga."
+        src={allCollectibles[0].src}
+        alt={allCollectibles[0].alt}
         fill
         className="object-cover"
-        data-ai-hint="modern wellness room"
+        data-ai-hint={allCollectibles[0].hint}
         priority
       />
       <div className="absolute inset-0 bg-black/40" /> {/* Overlay for contrast */}
@@ -64,13 +66,19 @@ export default function SignInPage() {
             <p className="text-white/80">{t('authWelcomeBackDesc')}</p>
           </header>
           <main className="space-y-6">
-             <div className="grid grid-cols-2 gap-4">
-              <Button variant="outline" onClick={signInWithGoogle} disabled={isLoading} className="py-6 text-base h-auto rounded-lg bg-white/10 border-white/20 hover:bg-white/20">
-                <GoogleIcon className="mr-2 h-5 w-5" /> {t('authGoogle')}
-              </Button>
-              <Button variant="outline" onClick={signInWithApple} disabled={isLoading} className="py-6 text-base h-auto rounded-lg bg-white/10 border-white/20 hover:bg-white/20">
-                 <AppleIcon className="mr-2 h-5 w-5" /> {t('authApple')}
-              </Button>
+             <div className="flex justify-center gap-4">
+                <Button variant="outline" size="icon" onClick={signInWithApple} disabled={isLoading} className="w-14 h-14 rounded-full bg-white/10 border-white/20 hover:bg-white/20">
+                    <AppleIcon className="h-6 w-6" />
+                     <span className="sr-only">Sign in with Apple</span>
+                </Button>
+                <Button variant="outline" size="icon" onClick={signInWithGoogle} disabled={isLoading} className="w-14 h-14 rounded-full bg-white/10 border-white/20 hover:bg-white/20">
+                    <GoogleIcon className="h-6 w-6" />
+                    <span className="sr-only">Sign in with Google</span>
+                </Button>
+                <Button variant="outline" size="icon" onClick={signInWithTikTok} disabled={isLoading} className="w-14 h-14 rounded-full bg-white/10 border-white/20 hover:bg-white/20">
+                    <TikTokIcon className="h-6 w-6" />
+                    <span className="sr-only">Sign in with TikTok</span>
+                </Button>
             </div>
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
