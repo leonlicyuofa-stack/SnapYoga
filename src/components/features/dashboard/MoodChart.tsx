@@ -6,10 +6,7 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, DotProps, 
 import { useAuth } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
-import { format, startOfWeek, endOfWeek, eachDayOfInterval, subDays } from 'date-fns';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { format, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
 
 interface StoredMood {
   name: string;
@@ -18,17 +15,17 @@ interface StoredMood {
 }
 
 const moodToValue: { [key: string]: number } = {
-  'Happy': 4,
-  'Relaxed': 3,
-  'Angry': 1,
-  'Sad': 2,
+  'Joyful': 4,
+  'Calm': 3,
+  'Emotional': 2,
+  'Fatigue': 1,
 };
 
 const valueToEmoji: { [key: number]: string } = {
   4: '😊',
   3: '😌',
   2: '😢',
-  1: '😠',
+  1: '😫',
 };
 
 const valueToColor: { [key: number]: string } = {
@@ -124,44 +121,33 @@ export function MoodChart({ className }: { className?: string }) {
     fetchMoods();
   }, [user, week]);
 
-  const handlePrevWeek = () => {
-    setWeek(subDays(week, 7));
-  };
-
-  const handleNextWeek = () => {
-    setWeek(subDays(week, -7));
-  };
-
-
   return (
     <div className={className}>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={200}>
-          <AreaChart data={data} margin={{ top: 15, right: 20, left: -10, bottom: 5 }}>
-            <defs>
-                <linearGradient id="colorMood" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="hsl(var(--border))" />
-            <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
-            <YAxis hide={true} domain={[0, 5]} />
-            <Tooltip content={<CustomTooltip />} />
-            <Area 
-                type="monotone" 
-                dataKey="plotValue" // Use plotValue for the area
-                stroke="hsl(var(--primary))" 
-                strokeWidth={2.5}
-                fillOpacity={1} 
-                fill="url(#colorMood)" 
-                connectNulls
-                //@ts-ignore
-                dot={<CustomDot />} // CustomDot will use moodValue
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      </CardContent>
+      <ResponsiveContainer width="100%" height={200}>
+        <AreaChart data={data} margin={{ top: 15, right: 20, left: -10, bottom: 5 }}>
+          <defs>
+              <linearGradient id="colorMood" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
+                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+              </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="hsl(var(--border))" />
+          <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+          <YAxis hide={true} domain={[0, 5]} />
+          <Tooltip content={<CustomTooltip />} />
+          <Area 
+              type="monotone" 
+              dataKey="plotValue" // Use plotValue for the area
+              stroke="hsl(var(--primary))" 
+              strokeWidth={2.5}
+              fillOpacity={1} 
+              fill="url(#colorMood)" 
+              connectNulls
+              //@ts-ignore
+              dot={<CustomDot />} // CustomDot will use moodValue
+          />
+        </AreaChart>
+      </ResponsiveContainer>
     </div>
   );
 }
