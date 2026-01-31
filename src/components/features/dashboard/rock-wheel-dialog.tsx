@@ -78,7 +78,7 @@ export function RockWheelDialog({ isOpen, onClose, onReward }: YogaWheelDialogPr
         <div className="py-6 sm:py-8 px-4 sm:px-6 flex flex-col items-center justify-center space-y-6 sm:space-y-8">
             <div className="relative w-64 h-64 sm:w-72 sm:h-72">
                 <div
-                    className="w-full h-full rounded-full border-4 border-primary shadow-lg flex items-center justify-center transition-transform duration-[4000ms] ease-out relative"
+                    className="w-full h-full rounded-full border-4 border-primary shadow-lg flex items-center justify-center transition-transform duration-[4s] ease-out relative"
                     style={{ transform: `rotate(${rotation}deg)` }}
                 >
                     {allCollectibles.map((item, index, arr) => {
