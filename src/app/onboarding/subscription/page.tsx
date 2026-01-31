@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -8,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Check, Star, ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
+import { mainBackground } from '@/lib/placeholder-images.json';
 
 
 export default function SubscriptionPage() {
@@ -49,11 +51,11 @@ export default function SubscriptionPage() {
   return (
     <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
         <Image
-            src="https://picsum.photos/seed/yogawellness/1920/1080"
-            alt="A tranquil, modern space for practicing yoga."
+            src={mainBackground.src}
+            alt={mainBackground.alt}
             fill
             className="object-cover"
-            data-ai-hint="modern wellness room"
+            data-ai-hint={mainBackground.hint}
             priority
         />
         <div className="absolute inset-0 bg-black/40" />

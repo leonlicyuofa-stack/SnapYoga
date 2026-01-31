@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import Image from 'next/image';
+import { mainBackground } from '@/lib/placeholder-images.json';
 
 export default function HomePage() {
   const router = useRouter();
@@ -25,11 +26,11 @@ export default function HomePage() {
   return (
     <div className="relative flex flex-col min-h-screen items-center justify-center p-4 bg-home-dark-bg text-white overflow-hidden">
         <Image
-            src="https://picsum.photos/seed/yogainapp/1920/1080"
-            alt="A tranquil, modern yoga space."
+            src={mainBackground.src}
+            alt={mainBackground.alt}
             fill
             className="object-cover"
-            data-ai-hint="modern wellness room"
+            data-ai-hint={mainBackground.hint}
             priority
         />
         <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />

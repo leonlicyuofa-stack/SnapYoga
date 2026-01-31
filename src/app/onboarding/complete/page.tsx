@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useRouter } from 'next/navigation';
@@ -5,6 +6,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
+import { mainBackground } from '@/lib/placeholder-images.json';
 
 export default function OnboardingCompletePage() {
   const router = useRouter();
@@ -20,11 +22,11 @@ export default function OnboardingCompletePage() {
     >
       {/* Background Image */}
       <Image
-        src="https://picsum.photos/seed/yogawellness/1920/1080"
-        alt="A tranquil, modern space for practicing yoga."
+        src={mainBackground.src}
+        alt={mainBackground.alt}
         fill
         className="object-cover"
-        data-ai-hint="modern wellness room"
+        data-ai-hint={mainBackground.hint}
         priority
       />
       <div className="absolute inset-0 bg-black/40" /> {/* Overlay for contrast */}

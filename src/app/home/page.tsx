@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -9,6 +10,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import { cn } from '@/lib/utils';
 import { ArrowRight } from 'lucide-react';
+import { mainBackground } from '@/lib/placeholder-images.json';
 
 // Data for the animated headline
 const animatedWords = [
@@ -38,11 +40,11 @@ export default function HomePage() {
     <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
       {/* Background Image */}
       <Image
-        src="https://picsum.photos/seed/yogawellness/1920/1080"
-        alt="A tranquil, modern space for practicing yoga."
+        src={mainBackground.src}
+        alt={mainBackground.alt}
         fill
         className="object-cover"
-        data-ai-hint="modern wellness room"
+        data-ai-hint={mainBackground.hint}
         priority
       />
       <div className="absolute inset-0 bg-black/40" /> {/* Overlay for contrast */}
