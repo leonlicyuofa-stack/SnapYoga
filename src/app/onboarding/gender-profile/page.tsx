@@ -14,7 +14,6 @@ import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import Image from 'next/image';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
-import { mainBackground } from '@/lib/placeholder-images.json';
 
 const profileSchema = z.object({
   avatar: z.string().min(1, { message: "Please select an avatar" }),
@@ -137,11 +136,11 @@ export default function GenderProfilePage() {
   return (
     <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
         <Image
-            src={mainBackground.src}
-            alt={mainBackground.alt}
+            src="/images/background.png"
+            alt="A tranquil, modern yoga space."
             fill
             className="object-cover"
-            data-ai-hint={mainBackground.hint}
+            data-ai-hint="modern wellness room"
             priority
         />
         <div className="absolute inset-0 bg-black/40" />

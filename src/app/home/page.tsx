@@ -9,7 +9,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import { cn } from '@/lib/utils';
 import { ArrowRight } from 'lucide-react';
-import { mainBackground } from '@/lib/placeholder-images.json';
 
 // Data for the animated headline
 const animatedWords = [
@@ -39,11 +38,11 @@ export default function HomePage() {
     <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
       {/* Background Image */}
       <Image
-        src={mainBackground.src}
-        alt={mainBackground.alt}
+        src="/images/background.png"
+        alt="A tranquil, modern yoga space."
         fill
         className="object-cover"
-        data-ai-hint={mainBackground.hint}
+        data-ai-hint="modern wellness room"
         priority
       />
       <div className="absolute inset-0 bg-black/40" /> {/* Overlay for contrast */}

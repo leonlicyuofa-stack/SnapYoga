@@ -16,7 +16,6 @@ import { Label } from '@/components/ui/label';
 import Image from 'next/image';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { mainBackground } from '@/lib/placeholder-images.json';
 
 
 interface UserProfile extends DocumentData {
@@ -252,11 +251,11 @@ export default function ProfileSummaryPage() {
   return (
     <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
         <Image
-            src={mainBackground.src}
-            alt={mainBackground.alt}
+            src="/images/background.png"
+            alt="A tranquil, modern yoga space."
             fill
             className="object-cover"
-            data-ai-hint={mainBackground.hint}
+            data-ai-hint="modern wellness room"
             priority
         />
         <div className="absolute inset-0 bg-black/40" />

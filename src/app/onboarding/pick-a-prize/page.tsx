@@ -9,7 +9,6 @@ import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { mainBackground } from '@/lib/placeholder-images.json';
 
 // Define the structure for prizes
 const prizes = {
@@ -60,11 +59,11 @@ export default function PickAPrizePage() {
   return (
     <div className="relative min-h-screen font-serif text-white bg-home-dark-bg [perspective:1000px]">
         <Image
-            src={mainBackground.src}
-            alt={mainBackground.alt}
+            src="/images/background.png"
+            alt="A tranquil, modern yoga space."
             fill
             className="object-cover"
-            data-ai-hint={mainBackground.hint}
+            data-ai-hint="modern wellness room"
             priority
         />
         <div className="absolute inset-0 bg-black/40" />

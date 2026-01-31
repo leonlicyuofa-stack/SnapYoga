@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
-import { mainBackground } from '@/lib/placeholder-images.json';
 
 export default function OnboardingCompletePage() {
   const router = useRouter();
@@ -21,11 +20,11 @@ export default function OnboardingCompletePage() {
     >
       {/* Background Image */}
       <Image
-        src={mainBackground.src}
-        alt={mainBackground.alt}
+        src="/images/background.png"
+        alt="A tranquil, modern yoga space."
         fill
         className="object-cover"
-        data-ai-hint={mainBackground.hint}
+        data-ai-hint="modern wellness room"
         priority
       />
       <div className="absolute inset-0 bg-black/40" /> {/* Overlay for contrast */}
