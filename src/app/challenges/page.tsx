@@ -22,6 +22,7 @@ import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { RockWheelDialog } from '@/components/features/dashboard/rock-wheel-dialog';
 import { RewardDialog } from '@/components/features/dashboard/reward-dialog';
 import type { Collectible } from '@/components/features/dashboard/rock-data';
+import placeholderImages from '@/lib/placeholder-images.json';
 
 interface Friend {
   id: string;
@@ -34,7 +35,7 @@ interface Challenge {
   id:string;
   name: string;
   description: string;
-  imageUrl: string | { src: string; width: number; height: number };
+  imageUrl: { src: string; width: number; height: number, hint: string };
   imageHint: string;
   detailLink: string;
   inviteLink: string;
@@ -56,7 +57,7 @@ const challenges: Challenge[] = [
     id: 'headstand',
     name: 'Headstand (Sirsasana)',
     description: 'Master the headstand this month! Work on your balance and core strength. Practice safely against a wall if you\'re new.',
-    imageUrl: { src: '/images/headstand.png', width: 600, height: 400 },
+    imageUrl: { src: '/images/headstand.png', width: 600, height: 400, hint: 'headstand yoga silhouette' },
     imageHint: 'headstand yoga silhouette',
     detailLink: '/challenges/headstand',
     inviteLink: '/challenges/headstand/invite',
@@ -70,7 +71,7 @@ const challenges: Challenge[] = [
     id: 'crow',
     name: 'Crow Pose (Bakasana)',
     description: 'Take on the crow pose! Build arm strength and courage. Start by practicing tucking your knees into your armpits.',
-    imageUrl: { src: '/images/crow-pose-icon.jpg', width: 600, height: 400 },
+    imageUrl: { src: '/images/crow-pose-icon.jpg', width: 600, height: 400, hint: 'crow pose yoga practice' },
     imageHint: 'crow pose yoga practice',
     detailLink: '/challenges/crow',
     inviteLink: '/challenges/crow/invite',
@@ -82,8 +83,8 @@ const challenges: Challenge[] = [
     id: 'warrior',
     name: 'Warrior III (Virabhadrasana III)',
     description: 'A previous challenge to build strength and improve balance. Review your progress or try it again!',
-    imageUrl: { src: 'https://picsum.photos/seed/warrior3/600/400', width: 600, height: 400 },
-    imageHint: 'warrior 3 yoga pose',
+    imageUrl: placeholderImages.challengeImages.warrior3,
+    imageHint: placeholderImages.challengeImages.warrior3.hint,
     detailLink: '#',
     inviteLink: '#',
     status: 'completed',
@@ -94,8 +95,8 @@ const challenges: Challenge[] = [
     id: 'lotus',
     name: 'Lotus Pose (Padmasana)',
     description: 'A foundational meditation pose. Work on hip flexibility to sit comfortably and safely.',
-    imageUrl: { src: 'https://picsum.photos/seed/lotus/600/400', width: 600, height: 400 },
-    imageHint: 'yoga lotus pose',
+    imageUrl: placeholderImages.challengeImages.lotus,
+    imageHint: placeholderImages.challengeImages.lotus.hint,
     detailLink: '#',
     inviteLink: '#',
     status: 'upcoming',
@@ -106,8 +107,8 @@ const challenges: Challenge[] = [
     id: 'triangle',
     name: 'Triangle Pose (Trikonasana)',
     description: 'Improve your stability and stretch your hamstrings and spine with this classic standing pose.',
-    imageUrl: { src: 'https://picsum.photos/seed/trikonasana/600/400', width: 600, height: 400 },
-    imageHint: 'yoga triangle pose',
+    imageUrl: placeholderImages.challengeImages.triangle,
+    imageHint: placeholderImages.challengeImages.triangle.hint,
     detailLink: '#',
     inviteLink: '#',
     status: 'upcoming',
@@ -118,8 +119,8 @@ const challenges: Challenge[] = [
     id: 'pigeon',
     name: 'Pigeon Pose (Kapotasana)',
     description: 'A deep hip opener that helps relieve tension and increase flexibility in the hip flexors.',
-    imageUrl: { src: 'https://picsum.photos/seed/pigeonpose/600/400', width: 600, height: 400 },
-    imageHint: 'yoga pigeon pose',
+    imageUrl: placeholderImages.challengeImages.pigeon,
+    imageHint: placeholderImages.challengeImages.pigeon.hint,
     detailLink: '#',
     inviteLink: '#',
     status: 'upcoming',
@@ -130,8 +131,8 @@ const challenges: Challenge[] = [
     id: 'tree',
     name: 'Tree Pose (Vrikshasana)',
     description: 'Enhance your balance, focus, and concentration with this fundamental standing balance pose.',
-    imageUrl: { src: 'https://picsum.photos/seed/treepose/600/400', width: 600, height: 400 },
-    imageHint: 'yoga tree pose',
+    imageUrl: placeholderImages.challengeImages.tree,
+    imageHint: placeholderImages.challengeImages.tree.hint,
     detailLink: '#',
     inviteLink: '#',
     status: 'upcoming',
@@ -382,9 +383,10 @@ export default function ChallengesPage() {
                           <Card key={challenge.id} className="overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group rounded-2xl flex flex-col bg-black/20 backdrop-blur-lg border border-white/20 text-white">
                             <div className="relative w-full h-64">
                               <Image
-                                src={typeof challenge.imageUrl === 'string' ? challenge.imageUrl : challenge.imageUrl.src}
+                                src={challenge.imageUrl.src}
                                 alt={`${challenge.name} background`}
-                                fill
+                                width={challenge.imageUrl.width}
+                                height={challenge.imageUrl.height}
                                 sizes="(max-width: 768px) 100vw, 50vw"
                                 priority={index < 2}
                                 data-ai-hint={challenge.imageHint}

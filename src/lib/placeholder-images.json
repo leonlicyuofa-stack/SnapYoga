@@ -1,7 +1,80 @@
 {
-  "mainBackground": {
-    "src": "/images/background.png",
-    "alt": "A tranquil, modern yoga space.",
-    "hint": "modern wellness room"
+  "challengeImages": {
+    "warrior3": {
+      "src": "https://picsum.photos/seed/warrior3/600/400",
+      "width": 600,
+      "height": 400,
+      "hint": "warrior pose"
+    },
+    "lotus": {
+      "src": "https://picsum.photos/seed/lotus/600/400",
+      "width": 600,
+      "height": 400,
+      "hint": "lotus pose"
+    },
+    "triangle": {
+      "src": "https://picsum.photos/seed/trikonasana/600/400",
+      "width": 600,
+      "height": 400,
+      "hint": "triangle pose"
+    },
+    "pigeon": {
+      "src": "https://picsum.photos/seed/pigeonpose/600/400",
+      "width": 600,
+      "height": 400,
+      "hint": "pigeon pose"
+    },
+    "tree": {
+      "src": "https://picsum.photos/seed/treepose/600/400",
+      "width": 600,
+      "height": 400,
+      "hint": "tree pose"
+    }
+  },
+  "onboardingGoalImages": {
+    "mobility": {
+      "src": "https://picsum.photos/seed/mobility/400/400",
+      "width": 400,
+      "height": 400,
+      "hint": "yoga mobility"
+    },
+    "nourishment": {
+      "src": "https://picsum.photos/seed/nourishment/400/400",
+      "width": 400,
+      "height": 400,
+      "hint": "healthy food"
+    },
+    "strength": {
+      "src": "https://picsum.photos/seed/strength/400/400",
+      "width": 400,
+      "height": 400,
+      "hint": "yoga strength"
+    }
+  },
+  "onboardingPoseTypeImages": {
+    "standing": {
+      "src": "https://picsum.photos/seed/standingyoga/400/400",
+      "width": 400,
+      "height": 400,
+      "hint": "standing yoga"
+    },
+    "seated": {
+      "src": "https://picsum.photos/seed/seatedyoga/400/400",
+      "width": 400,
+      "height": 400,
+      "hint": "seated yoga"
+    },
+    "backbends": {
+      "src": "https://picsum.photos/seed/backbends/400/400",
+      "width": 400,
+      "height": 400,
+      "hint": "backbend yoga"
+    },
+    "inversions": {
+      "src": "https://picsum.photos/seed/inversions/400/400",
+      "width": 400,
+      "height": 400,
+      "hint": "inversion yoga"
+    }
   }
 }

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -14,6 +15,7 @@ import { ArrowRight, ArrowLeft, Check, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
+import placeholderImages from '@/lib/placeholder-images.json';
 
 const interestedPosesSchema = z.object({
   interestedPoses: z.array(z.string()).min(1, { message: "Please select at least one category" }),
@@ -25,22 +27,22 @@ const poseCategoryOptions = [
   {
     id: "standing",
     label: "Standing Poses",
-    image: { src: "https://picsum.photos/seed/standingyoga/400/400", width: 400, height: 400, hint: "standing yoga" }
+    image: placeholderImages.onboardingPoseTypeImages.standing
   },
   {
     id: "seated",
     label: "Seated Poses",
-    image: { src: "https://picsum.photos/seed/seatedyoga/400/400", width: 400, height: 400, hint: "seated yoga" }
+    image: placeholderImages.onboardingPoseTypeImages.seated
   },
   {
     id: "backbends",
     label: "Backbends",
-    image: { src: "https://picsum.photos/seed/backbends/400/400", width: 400, height: 400, hint: "backbend yoga" }
+    image: placeholderImages.onboardingPoseTypeImages.backbends
   },
   {
     id: "inversions-balancing",
     label: "Inversions & Balancing",
-    image: { src: "https://picsum.photos/seed/inversions/400/400", width: 400, height: 400, hint: "inversion yoga" }
+    image: placeholderImages.onboardingPoseTypeImages.inversions
   }
 ];
 

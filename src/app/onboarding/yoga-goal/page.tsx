@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -16,6 +17,7 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
+import placeholderImages from '@/lib/placeholder-images.json';
 
 const yogaGoalsSchema = z.object({
   mainGoals: z.array(z.string()).min(1, { message: "Please select at least one goal" }),
@@ -24,10 +26,10 @@ const yogaGoalsSchema = z.object({
 type YogaGoalsFormValues = z.infer<typeof yogaGoalsSchema>;
 
 const mainGoalOptions = [
-  { value: "mobility", label: "Mobility", image: { src: "https://picsum.photos/seed/mobility/400/400", width: 400, height: 400, hint: "yoga mobility" } },
-  { value: "nourishment", label: "Nourishment", image: { src: "https://picsum.photos/seed/nourishment/400/400", width: 400, height: 400, hint: "healthy food" } },
+  { value: "mobility", label: "Mobility", image: placeholderImages.onboardingGoalImages.mobility },
+  { value: "nourishment", label: "Nourishment", image: placeholderImages.onboardingGoalImages.nourishment },
   { value: "flexibility", label: "Flexibility", image: { src: "/images/flexibility.png", width: 400, height: 400, hint: "yoga flexibility" } },
-  { value: "strength", label: "Strength", image: { src: "https://picsum.photos/seed/strength/400/400", width: 400, height: 400, hint: "yoga strength" } },
+  { value: "strength", label: "Strength", image: placeholderImages.onboardingGoalImages.strength },
 ];
 
 
