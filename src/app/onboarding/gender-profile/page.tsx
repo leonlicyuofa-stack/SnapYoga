@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,7 +8,7 @@ import * as z from 'zod';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Loader2, PlusCircle, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Loader2, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
@@ -29,20 +29,16 @@ const avatars = [
     { id: 'avatar5', imagePath: '/images/guy 2.png', hint: 'guy portrait' },
 ];
 
-const displayItems = [...avatars, { id: 'custom', imagePath: null, hint: 'Upload your own' }];
-
 export default function GenderProfilePage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   
-  const [customAvatar, setCustomAvatar] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [animationDirection, setAnimationDirection] = useState<'left' | 'right' | 'none'>('none');
 
-  const { control, handleSubmit, setValue, watch, formState: { errors, isValid }, reset } = useForm<ProfileFormValues>({
+  const { control, handleSubmit, setValue, formState: { errors, isValid }, reset } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     mode: 'onChange',
   });
@@ -53,12 +49,7 @@ export default function GenderProfilePage() {
         getDoc(userDocRef).then(docSnap => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                // If photoURL is a custom one, set it as customAvatar and move to that page
-                if (data.photoURL && !data.photoURL.includes('googleusercontent.com') && !data.photoURL.includes('picsum.photos')) {
-                    setCustomAvatar(data.photoURL);
-                    setValue('avatar', data.photoURL, { shouldValidate: true });
-                    setCurrentIndex(avatars.length);
-                } else if (data.avatar) {
+                if (data.avatar) {
                     const foundIndex = avatars.findIndex(a => a.id === data.avatar);
                     if (foundIndex !== -1) {
                         setCurrentIndex(foundIndex);
@@ -71,29 +62,9 @@ export default function GenderProfilePage() {
   }, [user, authLoading, reset, setValue]);
   
   useEffect(() => {
-    const currentItem = displayItems[currentIndex];
-    if (currentItem.id === 'custom' && customAvatar) {
-        setValue('avatar', customAvatar, { shouldValidate: true });
-    } else if (currentItem.id !== 'custom') {
-        setValue('avatar', currentItem.id, { shouldValidate: true });
-    } else {
-        setValue('avatar', '', { shouldValidate: true });
-    }
-  }, [currentIndex, customAvatar, setValue]);
-
-  const handleCustomAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const dataUri = reader.result as string;
-        setCustomAvatar(dataUri);
-        setValue('avatar', dataUri, { shouldValidate: true });
-        setCurrentIndex(avatars.length); // Switch to the custom avatar "page"
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+    const currentAvatar = avatars[currentIndex];
+    setValue('avatar', currentAvatar.id, { shouldValidate: true });
+  }, [currentIndex, setValue]);
 
   const onSubmit: SubmitHandler<ProfileFormValues> = async (data) => {
     if (!user) {
@@ -123,15 +94,15 @@ export default function GenderProfilePage() {
   
   const handlePrevious = () => {
     setAnimationDirection('left');
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + displayItems.length) % displayItems.length);
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + avatars.length) % avatars.length);
   };
 
   const handleNext = () => {
     setAnimationDirection('right');
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % displayItems.length);
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % avatars.length);
   };
   
-  const currentItem = displayItems[currentIndex];
+  const currentItem = avatars[currentIndex];
 
   return (
     <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
@@ -183,27 +154,11 @@ export default function GenderProfilePage() {
                                         animationDirection === 'right' ? 'animate-in fade-in-0 slide-in-from-right-12 duration-300' : '',
                                         animationDirection === 'left' ? 'animate-in fade-in-0 slide-in-from-left-12 duration-300' : ''
                                     )}>
-                                        {currentItem.id === 'custom' ? (
-                                            <div
-                                                className="w-full h-full cursor-pointer p-2 rounded-full transition-all aspect-square flex items-center justify-center bg-white/10 hover:bg-white/20 border-2 border-dashed border-white/30 text-white/50 hover:border-white hover:text-white"
-                                                onClick={() => fileInputRef.current?.click()}
-                                            >
-                                                {customAvatar ? (
-                                                    <Image src={customAvatar} alt="Custom Avatar" width={192} height={192} className="rounded-full object-cover w-full h-full" />
-                                                ) : (
-                                                    <div className="text-center">
-                                                        <PlusCircle className="w-12 h-12 mx-auto" />
-                                                        <span className="text-xs mt-2 block">Upload Photo</span>
-                                                    </div>
-                                                )}
+                                        <div className="p-1 rounded-full aspect-square flex items-center justify-center bg-white/10 ring-2 ring-offset-2 ring-white ring-offset-black/20">
+                                            <div className="rounded-full w-full h-full flex items-center justify-center overflow-hidden bg-white">
+                                                <Image src={currentItem.imagePath} alt={currentItem.id} width={192} height={192} className="object-cover" data-ai-hint={currentItem.hint} />
                                             </div>
-                                        ) : (
-                                            <div className="p-1 rounded-full aspect-square flex items-center justify-center bg-white/10">
-                                                <div className="rounded-full w-full h-full flex items-center justify-center overflow-hidden bg-white">
-                                                    <Image src={currentItem.imagePath!} alt={currentItem.id} width={192} height={192} className="object-cover" data-ai-hint={currentItem.hint} />
-                                                </div>
-                                            </div>
-                                        )}
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -218,14 +173,6 @@ export default function GenderProfilePage() {
                                     <ChevronRight className="w-8 h-8" />
                                 </Button>
                             </div>
-                            
-                            <input
-                                type="file"
-                                ref={fileInputRef}
-                                onChange={handleCustomAvatarUpload}
-                                className="hidden"
-                                accept="image/*"
-                            />
                           
                           {errors.avatar && <p className="text-sm text-red-400 text-center -mt-4">{errors.avatar.message}</p>}
                         </form>
