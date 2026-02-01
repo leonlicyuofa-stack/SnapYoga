@@ -87,16 +87,16 @@ export const createUserProfileDocument = async (user: User, additionalData: Docu
     const userSnap = await getDoc(userRef);
 
     const { uid, email } = user;
-    let photoURL = user.photoURL;
-    let displayName = user.displayName || additionalData.displayName || email?.split('@')[0] || 'User';
+    // Prioritize existing Firestore URL, then auth profile URL, to prevent overwrites with stale context data.
+    let photoURL = userSnap.exists() ? userSnap.data().photoURL : user.photoURL;
+    let displayName = userSnap.exists() ? userSnap.data().displayName : (user.displayName || additionalData.displayName || email?.split('@')[0] || 'User');
+
 
     let dataUriForUpload: string | null = null;
     
-    // Handle custom avatar upload (if avatar is a data URI)
     if (additionalData.avatar && additionalData.avatar.startsWith('data:image')) {
         dataUriForUpload = additionalData.avatar;
     } 
-    // Handle preset avatar selection
     else if (additionalData.avatar && additionalData.avatar.startsWith('avatar')) {
         dataUriForUpload = await getAvatarDataUri(additionalData.avatar);
     }
@@ -110,6 +110,9 @@ export const createUserProfileDocument = async (user: User, additionalData: Docu
         // Update Auth profile with new photo URL
         await updateProfile(user, { photoURL: photoURL });
     }
+    
+    // Use the passed in display name if it exists, otherwise use the resolved one.
+    displayName = additionalData.displayName || displayName;
 
     const dataToSet: DocumentData = {
       uid,
@@ -123,7 +126,7 @@ export const createUserProfileDocument = async (user: User, additionalData: Docu
     // Store the avatar ID, not the data URI, in Firestore
     if (additionalData.avatar && !additionalData.avatar.startsWith('data:image')) {
       dataToSet.avatar = additionalData.avatar;
-    } else {
+    } else if (dataUriForUpload) {
       // If it was a custom upload, store the final URL.
       dataToSet.avatar = photoURL;
     }
