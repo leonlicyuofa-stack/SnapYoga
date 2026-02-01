@@ -26,7 +26,7 @@ const avatars = [
     { id: 'avatar2', imagePath: '/images/girl 2.png', hint: 'girl portrait' },
     { id: 'avatar3', imagePath: '/images/girl 3.png', hint: 'girl portrait' },
     { id: 'avatar4', imagePath: '/images/guy 1.png', hint: 'guy portrait' },
-    { id: 'avatar5', imagePath: 'https://picsum.photos/seed/avatar5/120/120', hint: 'galaxy space' },
+    { id: 'avatar5', imagePath: '/images/guy 2.png', hint: 'guy portrait' },
 ];
 
 const displayItems = [...avatars, { id: 'custom', imagePath: null, hint: 'Upload your own' }];
