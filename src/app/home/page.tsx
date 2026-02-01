@@ -35,7 +35,7 @@ export default function HomePage() {
   const prevIndex = (currentIndex - 1 + animatedWords.length) % animatedWords.length;
 
   return (
-    <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
+    <div className="relative min-h-screen font-serif text-white bg-black">
       {/* Background Image */}
       <Image
         src="/images/background.png"

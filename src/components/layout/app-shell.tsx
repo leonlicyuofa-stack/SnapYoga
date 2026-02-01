@@ -81,7 +81,7 @@ export function AppShell({ children }: AppShellProps) {
   ];
 
   return (
-    <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
+    <div className="relative min-h-screen font-serif text-white bg-black">
       <Image
         src="/images/background.png"
         alt="A tranquil, modern yoga space."

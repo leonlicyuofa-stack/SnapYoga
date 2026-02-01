@@ -9,7 +9,7 @@ import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 
 export default function WelcomePage() {
   return (
-    <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
+    <div className="relative min-h-screen font-serif text-white bg-black">
       {/* Background Image */}
       <Image
         src="/images/background.png"

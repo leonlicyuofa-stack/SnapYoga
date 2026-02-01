@@ -22,7 +22,7 @@ export default function HomePage() {
   }, [user, authLoading, router]);
 
   return (
-    <div className="relative flex flex-col min-h-screen items-center justify-center p-4 bg-home-dark-bg text-white overflow-hidden">
+    <div className="relative flex flex-col min-h-screen items-center justify-center p-4 bg-black text-white overflow-hidden">
         <Image
             src="/images/background.png"
             alt="A tranquil, modern yoga space."

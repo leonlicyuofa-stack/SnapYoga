@@ -62,7 +62,7 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="relative min-h-screen font-serif text-white bg-home-dark-bg">
+    <div className="relative min-h-screen font-serif text-white bg-black">
         <Button
             onClick={handleBackNavigation}
             variant="ghost"

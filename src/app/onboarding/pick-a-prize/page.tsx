@@ -57,7 +57,7 @@ export default function PickAPrizePage() {
   };
 
   return (
-    <div className="relative min-h-screen font-serif text-white bg-home-dark-bg [perspective:1000px]">
+    <div className="relative min-h-screen font-serif text-white bg-black [perspective:1000px]">
         <Image
             src="/images/background.png"
             alt="A tranquil, modern yoga space."

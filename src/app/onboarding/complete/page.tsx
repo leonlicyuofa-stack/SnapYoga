@@ -15,7 +15,7 @@ export default function OnboardingCompletePage() {
 
   return (
     <div 
-      className="relative min-h-screen font-serif text-white bg-home-dark-bg flex flex-col items-center justify-center p-4 cursor-pointer"
+      className="relative min-h-screen font-serif text-white bg-black flex flex-col items-center justify-center p-4 cursor-pointer"
       onClick={handleContinue}
     >
       {/* Background Image */}
