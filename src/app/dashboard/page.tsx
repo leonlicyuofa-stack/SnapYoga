@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -182,8 +181,8 @@ export default function DashboardPage() {
 
         <main className="flex-grow container mx-auto px-4 pb-20 space-y-2">
           {/* Row 1 — Mood (2/3) + Practice (1/3) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-            <GlassCard className="md:col-span-2 px-4 py-3" style={{ borderRadius: '32px 32px 16px 32px' }}>
+          <div className="grid grid-cols-3 gap-2">
+            <GlassCard className="col-span-2 px-4 py-3" style={{ borderRadius: '32px 32px 16px 32px' }}>
               <div className="flex items-center justify-between mb-2">
                 <CardLabel>How are you feeling?</CardLabel>
                 <div
@@ -299,9 +298,9 @@ export default function DashboardPage() {
           </div>
 
           {/* Row 2 — Monthly Goal (1/3) + Mood Flow (2/3) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             <GlassCard
-              className="px-4 py-3 flex flex-col gap-2"
+              className="col-span-1 px-4 py-3 flex flex-col gap-2"
               style={{
                 background: `${DEEP_BARK},0.50)`,
                 border: `0.5px solid ${GOLD},0.18)`,
@@ -358,7 +357,7 @@ export default function DashboardPage() {
             </GlassCard>
 
             <GlassCard
-              className="md:col-span-2 px-4 py-3"
+              className="col-span-2 px-4 py-3"
               style={{ borderRadius: '32px 32px 32px 16px' }}
             >
               <div className="flex items-center justify-between mb-2">
@@ -375,9 +374,9 @@ export default function DashboardPage() {
           </div>
 
           {/* Row 3 — Challenges CTA (2/3) + Stat Pills (1/3) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             <div
-              className="md:col-span-2 px-5 py-4 flex flex-col justify-between transition-transform duration-300 hover:scale-[1.015] relative"
+              className="col-span-2 px-5 py-4 flex flex-col justify-between transition-transform duration-300 hover:scale-[1.015] relative"
               style={{
                 background: `${DEEP_BARK},0.72)`,
                 border: `0.8px solid ${GOLD},0.28)`,
