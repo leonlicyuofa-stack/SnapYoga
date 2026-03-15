@@ -78,7 +78,7 @@ function GlassCard({
 }) {
   return (
     <div
-      className={cn('overflow-hidden transition-transform duration-300 hover:scale-[1.015]', className)}
+      className={cn('transition-transform duration-300 hover:scale-[1.015]', className)}
       style={{
         background: `${GOLD},0.07)`,
         border: `0.5px solid ${GOLD},0.20)`,
@@ -362,7 +362,7 @@ export default function DashboardPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div
-              className="md:col-span-2 p-6 flex flex-col justify-between transition-transform duration-300 hover:scale-[1.015] overflow-hidden relative"
+              className="md:col-span-2 p-6 flex flex-col justify-between transition-transform duration-300 hover:scale-[1.015] relative"
               style={{
                 background: `${DEEP_BARK},0.72)`,
                 border: `0.8px solid ${GOLD},0.28)`,
