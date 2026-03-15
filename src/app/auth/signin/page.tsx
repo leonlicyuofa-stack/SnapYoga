@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -47,7 +48,7 @@ export default function SignInPage() {
   return (
     <div className="relative min-h-screen font-serif text-white">
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-        <div className="w-full max-w-md bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-6">
+        <div className="w-full max-w-md bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-6 shadow-xl border border-white/10">
            <header className="text-center">
             <div className="mx-auto mb-4 inline-block">
               <SnapYogaLogo />
@@ -122,7 +123,7 @@ export default function SignInPage() {
                   <Checkbox id="remember-me" className="border-white/50 data-[state=checked]:bg-white/80 data-[state=checked]:text-black" {...register("remember")} />
                   <Label htmlFor="remember-me" className="text-sm font-medium leading-none text-white/80 peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Remember me</Label>
                 </div>
-                <Link href="#" className="text-sm font-medium text-white/80 hover:underline">
+                <Link href="/auth/forgot-password" title="Go to password recovery" className="text-sm font-medium text-white/80 hover:underline">
                   Forgot password?
                 </Link>
               </div>

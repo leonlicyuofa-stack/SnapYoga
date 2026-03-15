@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -44,7 +45,7 @@ export default function SignUpPage() {
     try {
         const userCredential = await signUpWithEmail(data.email, data.password, { displayName: data.username });
         if (userCredential) {
-            router.push('/onboarding/gender-profile');
+            router.push('/auth/verify-email');
         }
     } catch(error) {
         // Error is handled in the context with a toast, so we don't need to show another one here.
@@ -71,7 +72,7 @@ export default function SignUpPage() {
             <ArrowLeft className="h-6 w-6" />
         </Button>
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-md bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-6">
+            <div className="w-full max-w-md bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-6 shadow-xl border border-white/10">
                 <header className="text-center">
                     <div className="mx-auto mb-4 inline-block">
                         <SnapYogaLogo />

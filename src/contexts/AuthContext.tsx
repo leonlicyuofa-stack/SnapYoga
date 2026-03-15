@@ -18,6 +18,7 @@ import {
   reauthenticateWithCredential,
   updatePassword,
   sendEmailVerification,
+  sendPasswordResetEmail,
   updateProfile,
   type UserCredential,
 } from 'firebase/auth';
@@ -42,6 +43,8 @@ interface AuthContextType {
   signOutUser: () => Promise<void>;
   updateUserPassword: (currentPassword: string, newPassword: string) => Promise<boolean>;
   updateUserDisplayName: (newDisplayName: string) => Promise<boolean>;
+  sendVerificationEmail: () => Promise<void>;
+  sendPasswordReset: (email: string) => Promise<void>;
 }
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
@@ -260,7 +263,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return socialSignIn(provider, 'Apple');
   };
 
-  // TikTok login: coming soon — requires custom OAuth backend
+  const sendVerificationEmail = async () => {
+    if (!user) return;
+    try {
+      await sendEmailVerification(user);
+      toast({ title: 'Verification Email Sent', description: 'Please check your inbox and verify your email.' });
+    } catch (error) {
+      handleAuthError(error, 'Failed to send verification email.');
+    }
+  };
+
+  const sendPasswordReset = async (email: string) => {
+    if (!checkFirebaseConfig()) return;
+    try {
+      await sendPasswordResetEmail(auth, email);
+      toast({ title: 'Reset Email Sent', description: 'Check your inbox for a password reset link.' });
+    } catch (error) {
+      handleAuthError(error, 'Failed to send password reset email.');
+    }
+  };
 
   const signUpWithEmail = async (email: string, pass: string, profileData: DocumentData): Promise<UserCredential | null> => {
     if (!checkFirebaseConfig()) {
@@ -276,6 +297,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       await createUserProfileDocument(userCredential.user, { ...profileData, displayName, email });
       
+      // Send email verification after account creation
+      await sendEmailVerification(userCredential.user);
+
       return userCredential;
     } catch (error: any) {
       if (error.code === 'auth/email-already-in-use') {
@@ -392,6 +416,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     signOutUser,
     updateUserPassword,
     updateUserDisplayName,
+    sendVerificationEmail,
+    sendPasswordReset,
   };
 
   return (
