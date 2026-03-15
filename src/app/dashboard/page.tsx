@@ -143,34 +143,34 @@ export default function DashboardPage() {
   return (
     <AppShell>
       <div className="flex flex-col min-h-screen">
-        <header className="container mx-auto px-4 pt-4 pb-3">
+        <header className="container mx-auto px-4 pt-6 pb-4">
           <div className="flex items-center justify-between">
             <div>
               <h1
-                className="text-2xl font-serif font-semibold tracking-tight"
+                className="text-4xl font-serif font-semibold tracking-tight"
                 style={{ color: `${PARCHMENT},0.92)` }}
               >
                 Hey, {welcomeName}!
               </h1>
               <p
-                className="text-xs font-serif italic mt-0.5"
+                className="text-base font-serif italic mt-1"
                 style={{ color: `${PARCHMENT},0.38)` }}
               >
                 Your practice is waiting for you.
               </p>
             </div>
             <Avatar
-              className="h-14 w-14 border-2"
-              style={{ borderColor: `${GOLD},0.35)` }}
+              className="h-24 w-24 border-4 shadow-xl"
+              style={{ borderColor: `${GOLD},0.40)` }}
             >
               <AvatarImage
                 src={user?.photoURL ?? undefined}
                 alt={user?.displayName ?? 'user'}
               />
               <AvatarFallback
-                className="font-serif text-base"
+                className="font-serif text-3xl"
                 style={{
-                  background: `${GOLD},0.20)`,
+                  background: `${GOLD},0.25)`,
                   color: `${GOLD},0.95)`,
                 }}
               >
@@ -213,7 +213,7 @@ export default function DashboardPage() {
                           background: isActive ? mood.fillColor : `${PARCHMENT},0.04)`,
                           border: `1px solid ${isActive ? mood.ringColor : `${PARCHMENT},0.10)`}`,
                           boxShadow: isActive
-                            ? `0 0 10px ${mood.fillColor}`
+                            ? `0 0 12px ${mood.fillColor}`
                             : 'none',
                           transform: isActive ? 'scale(1.08)' : 'scale(1)',
                         }}
