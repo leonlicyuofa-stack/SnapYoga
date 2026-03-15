@@ -1,128 +1,66 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 350 33% 97%; /* Lighter, almost white cream */
-    --foreground: 25 25% 35%; /* Dark Brown */
+    --background: 35 30% 96%; /* Parchment-like background */
+    --foreground: 25 25% 15%; /* Deep Bark */
 
     --card: 0 0% 100%;
-    --card-foreground: 25 25% 35%;
+    --card-foreground: 25 25% 15%;
 
     --popover: 40 50% 95%;
-    --popover-foreground: 25 25% 35%;
+    --popover-foreground: 25 25% 15%;
 
-    --primary: 25 25% 35%; /* Dark Brown */
-    --primary-foreground: 40 50% 95%; /* Cream */
+    --primary: 33 43% 59%; /* Warm Gold #C19A6B */
+    --primary-foreground: 40 50% 95%;
 
-    --secondary: 25 30% 88%; /* Pastel Brown */
-    --secondary-foreground: 25 25% 35%;
+    --secondary: 24 47% 48%; /* Terracotta */
+    --secondary-foreground: 40 50% 95%;
 
-    --muted: 25 30% 92%; /* Lighter Pastel Brown */
-    --muted-foreground: 25 25% 55%; 
+    --muted: 33 20% 90%;
+    --muted-foreground: 33 10% 40%; 
 
-    --accent: 45 90% 85%; /* Soft Yellow */
-    --accent-foreground: 25 25% 35%;
+    --accent: 85 20% 50%; /* Sage */
+    --accent-foreground: 40 50% 95%;
 
     --destructive: 0 84% 60%; 
     --destructive-foreground: 0 0% 98%;
 
-    --border: 25 30% 90%;
-    --input: 25 30% 94%;
-    --ring: 25 25% 35%;
+    --border: 33 20% 85%;
+    --input: 33 20% 94%;
+    --ring: 33 43% 59%;
     
-    --chart-1: 25 25% 35%;
-    --chart-2: 25 30% 88%;
-    --chart-3: 45 90% 85%;
-    --chart-4: 25 30% 92%;
-    --chart-5: 25 25% 55%;
-
-    --radius: 1rem; /* Increased for a softer, more modern look */
-    
-    /* Splash Screen colors */
-    --splash-background: 350 33% 95%;
-    --splash-foreground: 349 13% 44%;
-    --splash-blob-1: 353 24% 91%;
-    --splash-blob-2: 38 41% 94%;
-    --splash-blob-3: 25 19% 30%;
-
-    /* Pistachio color */
-    --pistachio-background: 99 14% 88%;
-
-    /* New Homepage Colors */
-    --home-dark-bg: 220 15% 18%;
-    --home-dark-fg: 0 0% 100%;
-
-    /* New Orange for Test Page */
-    --home-orange-bg: 24 100% 85%;
-
-    /* New Welcome Page Colors */
-    --welcome-cream: 40 50% 95%;
-    --welcome-pastel-brown: 25 30% 88%;
-    --welcome-dark-brown: 25 25% 35%;
-    --welcome-button-yellow: 45 90% 75%;
-    --welcome-button-yellow-darker: 40 85% 65%;
+    --radius: 1rem;
   }
 
   .dark {
-    --background: 25 10% 12%; 
-    --foreground: 40 30% 90%; 
+    --background: 25 25% 8%; /* Deep Bark Base */
+    --foreground: 40 50% 95%; /* Parchment Text */
 
-    --card: 25 10% 15%;
-    --card-foreground: 40 30% 90%;
+    --card: 25 25% 12%;
+    --card-foreground: 40 50% 95%;
 
-    --popover: 25 10% 12%;
-    --popover-foreground: 40 30% 90%;
+    --popover: 25 25% 10%;
+    --popover-foreground: 40 50% 95%;
 
-    --primary: 40 50% 95%;
-    --primary-foreground: 25 25% 20%;
+    --primary: 33 43% 59%;
+    --primary-foreground: 25 25% 10%;
 
-    --secondary: 25 15% 22%;
-    --secondary-foreground: 40 30% 90%;
+    --secondary: 24 47% 48%;
+    --secondary-foreground: 40 50% 95%;
 
-    --muted: 25 15% 25%;
-    --muted-foreground: 40 20% 70%; 
+    --muted: 25 25% 20%;
+    --muted-foreground: 25 10% 70%; 
 
-    --accent: 45 90% 75%;
-    --accent-foreground: 25 25% 20%;
+    --accent: 85 20% 55%;
+    --accent-foreground: 25 25% 10%;
 
-    --destructive: 0 72% 51%; 
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 25 15% 30%;
-    --input: 25 15% 25%;
-    --ring: 40 50% 95%;
-    
-    --chart-1: 40 50% 95%;
-    --chart-2: 25 30% 80%;
-    --chart-3: 45 90% 75%;
-    --chart-4: 25 30% 85%;
-    --chart-5: 40 20% 70%;
-
-    /* Splash Screen colors - Dark mode adaptation */
-    --splash-background: 349 15% 15%;
-    --splash-foreground: 350 33% 95%;
-    --splash-blob-1: 353 15% 25%;
-    --splash-blob-2: 38 15% 20%;
-    --splash-blob-3: 25 19% 30%;
-    
-    /* Pistachio color */
-    --pistachio-background: 99 10% 30%;
-
-    /* New Homepage Colors - Dark Mode */
-    --home-dark-bg: 220 15% 10%;
-    --home-dark-fg: 0 0% 100%;
-
-    /* New Orange for Test Page - Dark Mode */
-    --home-orange-bg: 24 80% 30%;
-
-    /* New Welcome Page Colors - Dark Mode */
-    --welcome-cream: 30 10% 12%;
-    --welcome-pastel-brown: 25 15% 22%;
-    --welcome-dark-brown: 30 20% 90%;
-    --welcome-button-yellow: 45 90% 75%;
-    --welcome-button-yellow-darker: 40 85% 65%;
+    --border: 25 25% 25%;
+    --input: 25 25% 20%;
+    --ring: 33 43% 59%;
   }
 }
 
@@ -135,25 +73,9 @@
     background-color: transparent;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
-  /* Remove browser autofill background color */
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus,
-  input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px hsl(var(--background)) inset !important;
-    box-shadow: 0 0 0 30px hsl(var(--background)) inset !important;
-    -webkit-text-fill-color: hsl(var(--foreground)) !important;
-  }
 }
 
 @layer components {
-    /* Bottom Navigation Bar Styles */
-  .btm-nav {
-    @apply fixed bottom-0 left-0 right-0 z-40 flex h-20 items-stretch justify-around border-t bg-background/80 backdrop-blur-sm shadow-[0_-2px_8px_rgba(0,0,0,0.05)];
-  }
-  .btm-nav-label {
-    @apply text-xs transition-opacity duration-200;
-  }
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -161,20 +83,4 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
-  /* New form styles for sign-up page */
-  .form-group {
-      @apply relative w-full;
-  }
-
-  .form-input {
-      @apply w-full border-0 border-b border-dotted border-muted-foreground/50 bg-transparent text-base text-foreground transition-colors duration-300;
-      @apply focus:outline-none focus:ring-0 focus:border-primary focus:border-solid;
-      @apply rounded-none px-0.5 py-2;
-  }
-
-  .form-input::placeholder {
-      @apply text-muted-foreground/80;
-  }
-  
 }

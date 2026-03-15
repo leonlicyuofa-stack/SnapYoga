@@ -8,20 +8,19 @@ import {
 } from "@/components/ui/chart";
 import { PieChart, Pie, Cell } from "recharts";
 
-// Mock data for the pie chart
 const monthlyProgress = 72;
 const chartData = [
-  { name: 'Completed', value: monthlyProgress, fill: 'hsl(var(--primary))' },
-  { name: 'Remaining', value: 100 - monthlyProgress, fill: 'hsl(var(--muted))' },
+  { name: 'Completed', value: monthlyProgress, fill: 'rgba(193,154,107,0.85)' },
+  { name: 'Remaining', value: 100 - monthlyProgress, fill: 'rgba(255,240,215,0.08)' },
 ];
 const chartConfig = {
   progress: {
     label: 'Progress',
-    color: 'hsl(var(--primary))',
+    color: 'rgba(193,154,107,0.85)',
   },
   remaining: {
     label: 'Remaining',
-    color: 'hsl(var(--muted))',
+    color: 'rgba(255,240,215,0.08)',
   }
 }
 
@@ -31,16 +30,15 @@ export function PracticeCalendarSnapshot() {
         <ChartContainer config={chartConfig} className="mx-auto aspect-square h-full w-full">
             <PieChart>
                 <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                <Pie data={chartData} dataKey="value" nameKey="name" innerRadius={25} outerRadius={35} strokeWidth={2}>
+                <Pie data={chartData} dataKey="value" nameKey="name" innerRadius={35} outerRadius={45} stroke="none" strokeWidth={0}>
                     <Cell key="completed" fill="var(--color-progress)" />
                     <Cell key="remaining" fill="var(--color-remaining)" />
                 </Pie>
-                 <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="fill-foreground text-xl font-bold">
+                 <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="font-serif text-lg font-bold" style={{ fill: 'rgba(255,240,215,0.92)' }}>
                     {monthlyProgress}%
                 </text>
             </PieChart>
         </ChartContainer>
-        <p className="text-xs text-muted-foreground mt-1 text-center">Monthly Goal</p>
     </div>
   );
 }

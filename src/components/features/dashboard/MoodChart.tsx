@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -30,6 +31,7 @@ const valueToEmoji: { [key: number]: string } = {
 
 const CustomDot = (props: DotProps & { payload: any }) => {
     const { cx, cy, payload } = props;
+    if (cx === undefined || cy === undefined) return null;
     if (payload.moodValue) {
       return (
         <g transform={`translate(${cx},${cy})`}>
@@ -40,7 +42,7 @@ const CustomDot = (props: DotProps & { payload: any }) => {
       );
     }
     return (
-      <circle cx={cx} cy={cy} r={4} fill="hsl(var(--muted))" opacity={0.3} />
+      <circle cx={cx} cy={cy} r={4} fill="rgba(255,240,215,0.2)" />
     );
 };
 
@@ -48,15 +50,15 @@ const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white/90 backdrop-blur-md p-3 border-none rounded-2xl shadow-xl">
-          <p className="font-bold text-primary">{data.dayFull}</p>
+        <div className="bg-black/80 backdrop-blur-md p-3 border border-white/10 rounded-xl shadow-xl">
+          <p className="font-bold text-white/90 text-xs">{data.dayFull}</p>
           {data.moodValue ? (
             <div className="flex items-center gap-2 mt-1">
-                <span className="text-2xl">{valueToEmoji[data.moodValue]}</span>
-                <span className="font-medium text-muted-foreground">{data.moodName}</span>
+                <span className="text-xl">{valueToEmoji[data.moodValue]}</span>
+                <span className="font-medium text-white/70 text-xs">{data.moodName}</span>
             </div>
           ) : (
-            <p className="text-xs text-muted-foreground mt-1">No data</p>
+            <p className="text-[10px] text-white/40 mt-1 italic">No mood logged</p>
           )}
         </div>
       );
@@ -116,25 +118,25 @@ export function MoodChart({ className }: { className?: string }) {
         <AreaChart data={data} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
           <defs>
               <linearGradient id="colorMood" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="rgba(193,154,107,0.4)" stopOpacity={0.4}/>
+                  <stop offset="95%" stopColor="rgba(193,154,107,0)" stopOpacity={0}/>
               </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.5} />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,240,215,0.05)" />
           <XAxis 
             dataKey="day" 
             axisLine={false} 
             tickLine={false} 
-            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12, fontWeight: 600 }} 
+            tick={{ fill: 'rgba(255,240,215,0.3)', fontSize: 10, fontWeight: 500 }} 
             dy={10}
           />
           <YAxis hide={true} domain={[0, 5]} />
-          <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'hsl(var(--primary))', strokeWidth: 1, strokeDasharray: '5 5' }} />
+          <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(193,154,107,0.3)', strokeWidth: 1, strokeDasharray: '5 5' }} />
           <Area 
               type="monotone" 
               dataKey="plotValue" 
-              stroke="hsl(var(--primary))" 
-              strokeWidth={4}
+              stroke="rgba(193,154,107,0.6)" 
+              strokeWidth={2}
               fillOpacity={1} 
               fill="url(#colorMood)" 
               connectNulls
