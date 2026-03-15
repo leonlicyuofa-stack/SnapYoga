@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
@@ -57,17 +56,7 @@ export default function PickAPrizePage() {
   };
 
   return (
-    <div className="relative min-h-screen font-serif text-white bg-black [perspective:1000px]">
-        <Image
-            src="/images/background.png"
-            alt="A tranquil, modern yoga space."
-            fill
-            className="object-cover"
-            data-ai-hint="modern wellness room"
-            priority
-            sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-black/40" />
+    <div className="relative min-h-screen font-serif text-white [perspective:1000px]">
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
             <div className="w-full max-w-lg relative">
                  <Button

@@ -17,7 +17,6 @@ import { Label } from '@/components/ui/label';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
-import Image from 'next/image';
 import { Separator } from '@/components/ui/separator';
 
 const signUpSchema = z.object({
@@ -62,7 +61,7 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="relative min-h-screen font-serif text-white bg-black">
+    <div className="relative min-h-screen font-serif text-white">
         <Button
             onClick={handleBackNavigation}
             variant="ghost"
@@ -71,17 +70,6 @@ export default function SignUpPage() {
         >
             <ArrowLeft className="h-6 w-6" />
         </Button>
-        {/* Background Image */}
-        <Image
-            src="/images/background.png"
-            alt="A tranquil, modern yoga space."
-            fill
-            className="object-cover"
-            data-ai-hint="modern wellness room"
-            priority
-            sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-black/40" /> {/* Overlay for contrast */}
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
             <div className="w-full max-w-md bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-6">
                 <header className="text-center">

@@ -6,15 +6,12 @@ import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc, type DocumentData } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
-import { UserCheck, ArrowRight, ArrowLeft, Edit3, Loader2, Save, X, Check, Spline, Dumbbell, BrainCircuit, MoreHorizontal, Wind, HeartPulse } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Edit3, Loader2, Spline, Dumbbell, BrainCircuit, MoreHorizontal, Wind, HeartPulse } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import Image from 'next/image';
-import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 
@@ -249,17 +246,7 @@ export default function ProfileSummaryPage() {
   }
 
   return (
-    <div className="relative min-h-screen font-serif text-white bg-black">
-        <Image
-            src="/images/background.png"
-            alt="A tranquil, modern yoga space."
-            fill
-            className="object-cover"
-            data-ai-hint="modern wellness room"
-            priority
-            sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-black/40" />
+    <div className="relative min-h-screen font-serif text-white">
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
             <div className="w-full max-w-2xl relative">
                  <Button

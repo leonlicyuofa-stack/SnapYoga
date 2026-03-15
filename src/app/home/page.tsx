@@ -1,9 +1,8 @@
 "use client";
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
@@ -34,26 +33,8 @@ export default function HomePage() {
 
   const prevIndex = (currentIndex - 1 + animatedWords.length) % animatedWords.length;
 
-  // Memoize the background to prevent flickering during text animation re-renders
-  const Background = useMemo(() => (
-    <>
-      <Image
-        src="/images/background.png"
-        alt="A tranquil, modern yoga space."
-        fill
-        className="object-cover"
-        data-ai-hint="modern wellness room"
-        priority
-        sizes="100vw"
-      />
-      <div className="absolute inset-0 bg-black/40" />
-    </>
-  ), []);
-
   return (
-    <div className="relative min-h-screen font-serif text-white bg-black overflow-hidden">
-      {Background}
-
+    <div className="relative min-h-screen font-serif text-white overflow-hidden">
       {/* Main Content Panel */}
       <div className="absolute inset-y-0 left-0 w-full md:w-1/2 flex flex-col bg-black/20 backdrop-blur-lg z-10">
         

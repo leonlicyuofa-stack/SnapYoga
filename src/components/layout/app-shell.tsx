@@ -3,7 +3,6 @@
 import * as React from 'react';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { LogOut, UserCircle, Home, Settings, CalendarDays, Trophy, Languages, Sparkles, Menu } from 'lucide-react';
@@ -81,18 +80,7 @@ export function AppShell({ children }: AppShellProps) {
   ];
 
   return (
-    <div className="relative min-h-screen font-serif text-white bg-black">
-      <Image
-        src="/images/background.png"
-        alt="A tranquil, modern yoga space."
-        fill
-        className="object-cover"
-        data-ai-hint="modern wellness room"
-        priority
-        sizes="100vw"
-      />
-      <div className="absolute inset-0 bg-black/50" />
-
+    <div className="relative min-h-screen font-serif text-white">
       <div className="relative z-20 flex flex-col min-h-screen">
         <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-white/20 bg-black/20 px-4 backdrop-blur-lg sm:px-6">
           <Sheet open={isSheetOpen} onOpenChange={setSheetOpen}>
@@ -102,7 +90,7 @@ export function AppShell({ children }: AppShellProps) {
                 <span className="sr-only">Toggle Navigation</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="flex w-full max-w-sm flex-col p-6 bg-black/80 backdrop-blur-lg border-r-white/20 text-white">
+            <SheetContent side="left" className="flex w-full max-sm flex-col p-6 bg-black/80 backdrop-blur-lg border-r-white/20 text-white">
                 <SheetHeader>
                   <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                   <SheetDescription className="sr-only">A list of links to navigate the application.</SheetDescription>

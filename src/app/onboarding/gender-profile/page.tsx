@@ -105,17 +105,7 @@ export default function GenderProfilePage() {
   const currentItem = avatars[currentIndex];
 
   return (
-    <div className="relative min-h-screen font-serif text-white bg-black">
-        <Image
-            src="/images/background.png"
-            alt="A tranquil, modern yoga space."
-            fill
-            className="object-cover"
-            data-ai-hint="modern wellness room"
-            priority
-            sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-black/40" />
+    <div className="relative min-h-screen font-serif text-white">
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
             <div className="w-full max-w-lg relative">
                  <Button

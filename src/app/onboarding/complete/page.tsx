@@ -1,8 +1,6 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 
@@ -15,21 +13,9 @@ export default function OnboardingCompletePage() {
 
   return (
     <div 
-      className="relative min-h-screen font-serif text-white bg-black flex flex-col items-center justify-center p-4 cursor-pointer"
+      className="relative min-h-screen font-serif text-white flex flex-col items-center justify-center p-4 cursor-pointer"
       onClick={handleContinue}
     >
-      {/* Background Image */}
-      <Image
-        src="/images/background.png"
-        alt="A tranquil, modern yoga space."
-        fill
-        className="object-cover"
-        data-ai-hint="modern wellness room"
-        priority
-        sizes="100vw"
-      />
-      <div className="absolute inset-0 bg-black/40" /> {/* Overlay for contrast */}
-
       <div className="relative z-10 w-full max-w-md animate-in fade-in duration-1000">
         <div className="bg-black/20 backdrop-blur-lg rounded-2xl p-8 text-center">
             <header className="mb-8">

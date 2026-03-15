@@ -1,27 +1,13 @@
 "use client";
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import { ChevronRight } from 'lucide-react';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 
 export default function WelcomePage() {
   return (
-    <div className="relative min-h-screen font-serif text-white bg-black">
-      {/* Background Image */}
-      <Image
-        src="/images/background.png"
-        alt="A tranquil, modern yoga space."
-        fill
-        className="object-cover"
-        data-ai-hint="modern wellness room"
-        priority
-        sizes="100vw"
-      />
-      <div className="absolute inset-0 bg-black/40" /> {/* Overlay for contrast */}
-
+    <div className="relative min-h-screen font-serif text-white">
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
         <div className="w-full max-w-md bg-black/20 backdrop-blur-lg rounded-2xl p-8 text-center">
             <header className="flex flex-col items-center justify-center">
