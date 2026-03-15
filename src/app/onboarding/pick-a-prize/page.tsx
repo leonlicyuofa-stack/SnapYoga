@@ -115,11 +115,6 @@ export default function PickAPrizePage() {
                             </div>
                         </div>
                     </main>
-                    <div className={cn("absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none transition-opacity duration-300", selectedSide ? 'opacity-0' : 'opacity-100')}>
-                        <div className="relative text-center text-white font-extrabold tracking-widest uppercase">
-                            <span className="relative block text-2xl my-1">or</span>
-                        </div>
-                    </div>
                 </div>
                 {selectedSide && (
                      <Button
