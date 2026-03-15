@@ -1,12 +1,12 @@
-
 "use client";
 
 import { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, DotProps, CartesianGrid } from 'recharts';
 import { useAuth } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
-import { collection, query, where, Timestamp, onSnapshot, startOfWeek, endOfWeek, eachDayOfInterval } from 'firebase/firestore';
-import { format } from 'date-fns';
+import { collection, query, where, Timestamp, onSnapshot } from 'firebase/firestore';
+import { format, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 interface StoredMood {
   name: string;
@@ -81,7 +81,6 @@ export function MoodChart({ className }: { className?: string }) {
       where('loggedAt', '<=', end)
     );
 
-    // Using onSnapshot for real-time updates upon selection
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const moods: { [key: string]: StoredMood } = {};
       querySnapshot.forEach((doc) => {
