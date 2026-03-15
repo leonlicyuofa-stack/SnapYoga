@@ -17,11 +17,11 @@ import { MoodChart } from '@/components/features/dashboard/MoodChart';
 import { PracticeCalendarSnapshot } from '@/components/features/dashboard/PracticeCalendarSnapshot';
 
 // ─── Brand colour tokens ────────────────────────────────────────────────────
-const GOLD        = 'rgba(193,154,107';   // Warm Gold #C19A6B
-const PARCHMENT   = 'rgba(255,240,215';   // Parchment
-const TERRACOTTA  = 'rgba(180,110,65';    // Terracotta
-const SAGE        = 'rgba(120,140,100';    // Sage
-const DEEP_BARK   = 'rgba(25,16,8';       // Deep Bark
+const GOLD        = 'rgba(193,154,107';   // append opacity: `${GOLD},0.8)`
+const PARCHMENT   = 'rgba(255,240,215';
+const TERRACOTTA  = 'rgba(180,110,65';
+const SAGE        = 'rgba(120,140,100';
+const DEEP_BARK   = 'rgba(25,16,8';
 
 // ─── Mood definitions ────────────────────────────────────────────────────────
 const moods = [
@@ -139,11 +139,14 @@ export default function DashboardPage() {
     }
   };
 
-  const welcomeName = user?.displayName || user?.email?.split('@')[0] || 'Yogi';
+  const welcomeName =
+    user?.displayName || user?.email?.split('@')[0] || 'Yogi';
 
   return (
     <AppShell>
       <div className="flex flex-col min-h-screen">
+
+        {/* ── HEADER ─────────────────────────────────────────────────────── */}
         <header className="container mx-auto px-4 pt-6 pb-4">
           <div className="flex items-center justify-between">
             <div>
@@ -161,7 +164,7 @@ export default function DashboardPage() {
               </p>
             </div>
             <Avatar
-              className="h-60 w-60 border-4 shadow-xl"
+              className="h-[180px] w-[180px] border-4 shadow-xl"
               style={{ borderColor: `${GOLD},0.40)` }}
             >
               <AvatarImage
@@ -169,7 +172,7 @@ export default function DashboardPage() {
                 alt={user?.displayName ?? 'user'}
               />
               <AvatarFallback
-                className="font-serif text-7xl"
+                className="font-serif text-6xl"
                 style={{
                   background: `${GOLD},0.25)`,
                   color: `${GOLD},0.95)`,
@@ -181,9 +184,12 @@ export default function DashboardPage() {
           </div>
         </header>
 
+        {/* ── BENTO GRID ─────────────────────────────────────────────────── */}
         <main className="flex-grow container mx-auto px-4 pb-20 space-y-2">
-          {/* Row 1 — Mood (2/3) + Practice (1/3) */}
+
+          {/* ROW 1 — Mood (2/3) + Practice (1/3) */}
           <div className="grid grid-cols-3 gap-2">
+
             <GlassCard className="col-span-2 px-4 py-3" style={{ borderRadius: '32px 32px 16px 32px' }}>
               <div className="flex items-center justify-between mb-2">
                 <CardLabel>How are you feeling?</CardLabel>
@@ -213,27 +219,21 @@ export default function DashboardPage() {
                         style={{
                           background: isActive ? mood.fillColor : `${PARCHMENT},0.04)`,
                           border: `1px solid ${isActive ? mood.ringColor : `${PARCHMENT},0.10)`}`,
-                          boxShadow: isActive
-                            ? `0 0 12px ${mood.fillColor}`
-                            : 'none',
+                          boxShadow: isActive ? `0 0 12px ${mood.fillColor}` : 'none',
                           transform: isActive ? 'scale(1.08)' : 'scale(1)',
                         }}
                       >
                         <mood.icon
                           className="h-5 w-5 transition-all duration-300"
                           style={{
-                            color: isActive
-                              ? mood.textColor
-                              : `${PARCHMENT},0.45)`,
+                            color: isActive ? mood.textColor : `${PARCHMENT},0.45)`,
                           }}
                         />
                       </div>
                       <span
                         className="text-[8px] uppercase tracking-widest font-medium font-serif"
                         style={{
-                          color: isActive
-                            ? mood.textColor
-                            : `${PARCHMENT},0.30)`,
+                          color: isActive ? mood.textColor : `${PARCHMENT},0.30)`,
                         }}
                       >
                         {mood.name}
@@ -255,52 +255,26 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between">
                 <CardLabel>Practice</CardLabel>
                 <svg width="38" height="38" viewBox="0 0 44 44">
-                  <circle
-                    cx="22" cy="22" r="18"
-                    fill="none"
-                    stroke={`${GOLD},0.15)`}
-                    strokeWidth="3.5"
-                  />
-                  <circle
-                    cx="22" cy="22" r="18"
-                    fill="none"
-                    stroke={`${GOLD},0.80)`}
-                    strokeWidth="3.5"
-                    strokeDasharray="75 38"
-                    strokeDashoffset="14"
-                    strokeLinecap="round"
-                  />
-                  <text
-                    x="22" y="26"
-                    textAnchor="middle"
-                    fontSize="9"
-                    fontFamily="Georgia, serif"
-                    fill={`${GOLD},0.85)`}
-                  >
-                    68%
-                  </text>
+                  <circle cx="22" cy="22" r="18" fill="none" stroke={`${GOLD},0.15)`} strokeWidth="3.5" />
+                  <circle cx="22" cy="22" r="18" fill="none" stroke={`${GOLD},0.80)`} strokeWidth="3.5"
+                    strokeDasharray="75 38" strokeDashoffset="14" strokeLinecap="round" />
+                  <text x="22" y="26" textAnchor="middle" fontSize="9" fontFamily="Georgia, serif" fill={`${GOLD},0.85)`}>68%</text>
                 </svg>
               </div>
-
               <div className="mt-2">
-                <p
-                  className="text-3xl font-serif font-semibold tracking-tight"
-                  style={{ color: `${PARCHMENT},0.92)` }}
-                >
+                <p className="text-3xl font-serif font-semibold tracking-tight" style={{ color: `${PARCHMENT},0.92)` }}>
                   1,240
                 </p>
-                <p
-                  className="text-[10px] font-serif italic mt-0.5"
-                  style={{ color: `${PARCHMENT},0.40)` }}
-                >
+                <p className="text-[10px] font-serif italic mt-0.5" style={{ color: `${PARCHMENT},0.40)` }}>
                   mins this month
                 </p>
               </div>
             </GlassCard>
           </div>
 
-          {/* Row 2 — Monthly Goal (1/3) + Mood Flow (2/3) */}
+          {/* ROW 2 — Monthly Goal (1/3) + Mood Flow (2/3) */}
           <div className="grid grid-cols-3 gap-2">
+
             <GlassCard
               className="col-span-1 px-4 py-3 flex flex-col gap-2"
               style={{
@@ -311,10 +285,7 @@ export default function DashboardPage() {
             >
               <div className="flex items-center justify-between">
                 <CardLabel>Monthly Goal</CardLabel>
-                <Clock
-                  className="h-3 w-3"
-                  style={{ color: `${GOLD},0.45)` }}
-                />
+                <Clock className="h-3 w-3" style={{ color: `${GOLD},0.45)` }} />
               </div>
 
               <div className="space-y-2 py-1">
@@ -337,17 +308,8 @@ export default function DashboardPage() {
               </div>
 
               <div>
-                <div
-                  className="w-full h-1 rounded-full mb-1"
-                  style={{ background: `${PARCHMENT},0.08)` }}
-                >
-                  <div
-                    className="h-full rounded-full"
-                    style={{
-                      width: '65%',
-                      background: `${GOLD},0.80)`,
-                    }}
-                  />
+                <div className="w-full h-1 rounded-full mb-1" style={{ background: `${PARCHMENT},0.08)` }}>
+                  <div className="h-full rounded-full" style={{ width: '65%', background: `${GOLD},0.80)` }} />
                 </div>
                 <div className="flex justify-between items-baseline">
                   <p className="text-[10px] font-serif italic" style={{ color: `${PARCHMENT},0.32)` }}>
@@ -364,10 +326,7 @@ export default function DashboardPage() {
             >
               <div className="flex items-center justify-between mb-2">
                 <CardLabel>Weekly Mood Flow</CardLabel>
-                <Activity
-                  className="h-3 w-3"
-                  style={{ color: `${GOLD},0.45)` }}
-                />
+                <Activity className="h-3 w-3" style={{ color: `${GOLD},0.45)` }} />
               </div>
               <div className="h-[140px]">
                 <MoodChart />
@@ -375,8 +334,9 @@ export default function DashboardPage() {
             </GlassCard>
           </div>
 
-          {/* Row 3 — Challenges CTA (2/3) + Stat Pills (1/3) */}
+          {/* ROW 3 — Challenges CTA (2/3) + 2 stat pills (1/3) */}
           <div className="grid grid-cols-3 gap-2">
+
             <div
               className="col-span-2 px-5 py-4 flex flex-col justify-between transition-transform duration-300 hover:scale-[1.015] relative"
               style={{
@@ -389,24 +349,15 @@ export default function DashboardPage() {
             >
               <div
                 className="absolute inset-x-0 top-0 h-8 pointer-events-none"
-                style={{
-                  background: `${GOLD},0.06)`,
-                  borderRadius: '32px 16px 0 0',
-                }}
+                style={{ background: `${GOLD},0.06)`, borderRadius: '32px 16px 0 0' }}
               />
 
               <div className="relative z-10 flex items-start gap-3">
                 <div className="flex-grow">
-                  <h3
-                    className="text-xl font-serif font-semibold leading-snug"
-                    style={{ color: `${PARCHMENT},0.92)` }}
-                  >
+                  <h3 className="text-xl font-serif font-semibold leading-snug" style={{ color: `${PARCHMENT},0.92)` }}>
                     Join new challenges
                   </h3>
-                  <p
-                    className="text-sm font-serif italic mt-0.5"
-                    style={{ color: `${PARCHMENT},0.38)` }}
-                  >
+                  <p className="text-sm font-serif italic mt-0.5" style={{ color: `${PARCHMENT},0.38)` }}>
                     Connect with friends and master new poses.
                   </p>
                 </div>
@@ -414,10 +365,7 @@ export default function DashboardPage() {
                   className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
                   style={{ background: `${GOLD},0.10)` }}
                 >
-                  <Trophy
-                    className="h-5 w-5 opacity-40"
-                    style={{ color: `${GOLD},0.85)` }}
-                  />
+                  <Trophy className="h-5 w-5 opacity-40" style={{ color: `${GOLD},0.85)` }} />
                 </div>
               </div>
 
@@ -442,7 +390,7 @@ export default function DashboardPage() {
                 style={{
                   background: `${SAGE},0.18)`,
                   border: `0.5px solid ${SAGE},0.32)`,
-                  borderRadius: '28px',
+                  borderRadius: '999px',
                 }}
               >
                 <CardLabel>Current Streak</CardLabel>
@@ -462,7 +410,7 @@ export default function DashboardPage() {
                 style={{
                   background: `${TERRACOTTA},0.18)`,
                   border: `0.5px solid ${GOLD},0.25)`,
-                  borderRadius: '12px 12px 28px 28px',
+                  borderRadius: '6px 6px 999px 999px',
                 }}
               >
                 <CardLabel>Poses analysed</CardLabel>
@@ -477,6 +425,7 @@ export default function DashboardPage() {
               </GlassCard>
             </div>
           </div>
+
         </main>
       </div>
     </AppShell>
