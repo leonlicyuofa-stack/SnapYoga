@@ -14,7 +14,6 @@ import { format } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { MoodChart } from '@/components/features/dashboard/MoodChart';
-import { PracticeCalendarSnapshot } from '@/components/features/dashboard/PracticeCalendarSnapshot';
 
 // ─── Brand colour tokens ────────────────────────────────────────────────────
 const GOLD        = 'rgba(193,154,107';   // Warm Gold #C19A6B
@@ -182,6 +181,7 @@ export default function DashboardPage() {
         </header>
 
         <main className="flex-grow container mx-auto px-4 pb-20 space-y-2">
+          {/* Row 1 — Mood (2/3) + Practice (1/3) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
             <GlassCard className="md:col-span-2 px-4 py-3" style={{ borderRadius: '32px 32px 16px 32px' }}>
               <div className="flex items-center justify-between mb-2">
@@ -298,6 +298,7 @@ export default function DashboardPage() {
             </GlassCard>
           </div>
 
+          {/* Row 2 — Monthly Goal (1/3) + Mood Flow (2/3) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
             <GlassCard
               className="px-4 py-3 flex flex-col gap-2"
@@ -315,9 +316,22 @@ export default function DashboardPage() {
                 />
               </div>
 
-              <div className="flex items-center justify-center">
-                <div className="h-[80px] w-[80px]">
-                  <PracticeCalendarSnapshot />
+              <div className="space-y-2 py-1">
+                <div className="text-[10px] font-serif text-white/40 flex justify-between uppercase tracking-tighter">
+                  <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+                </div>
+                <div className="grid grid-cols-7 gap-1.5">
+                  {Array.from({ length: 21 }).map((_, i) => (
+                    <div 
+                      key={i} 
+                      className={cn(
+                        "h-2 w-2 rounded-full",
+                        [0, 2, 4, 7, 10, 12, 14, 15, 18, 20].includes(i) 
+                          ? "bg-primary/80" 
+                          : "bg-white/10"
+                      )} 
+                    />
+                  ))}
                 </div>
               </div>
 
@@ -334,12 +348,12 @@ export default function DashboardPage() {
                     }}
                   />
                 </div>
-                <p
-                  className="text-[9px] font-serif italic"
-                  style={{ color: `${PARCHMENT},0.32)` }}
-                >
-                  17 of 26 sessions
-                </p>
+                <div className="flex justify-between items-baseline">
+                  <p className="text-[10px] font-serif italic" style={{ color: `${PARCHMENT},0.32)` }}>
+                    17 of 26 sessions
+                  </p>
+                  <p className="text-[8px] font-serif uppercase tracking-widest text-white/20">65% of goal</p>
+                </div>
               </div>
             </GlassCard>
 
@@ -360,6 +374,7 @@ export default function DashboardPage() {
             </GlassCard>
           </div>
 
+          {/* Row 3 — Challenges CTA (2/3) + Stat Pills (1/3) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
             <div
               className="md:col-span-2 px-5 py-4 flex flex-col justify-between transition-transform duration-300 hover:scale-[1.015] relative"
@@ -380,36 +395,35 @@ export default function DashboardPage() {
               />
 
               <div className="relative z-10 flex items-start gap-3">
-                <div
-                  className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
-                  style={{ background: `${GOLD},0.15)` }}
-                >
-                  <Trophy
-                    className="h-4 w-4"
-                    style={{ color: `${GOLD},0.85)` }}
-                  />
-                </div>
-
-                <div>
+                <div className="flex-grow">
                   <h3
-                    className="text-base font-serif font-semibold leading-snug"
+                    className="text-xl font-serif font-semibold leading-snug"
                     style={{ color: `${PARCHMENT},0.92)` }}
                   >
                     Join new challenges
                   </h3>
                   <p
-                    className="text-xs font-serif italic mt-0.5"
+                    className="text-sm font-serif italic mt-0.5"
                     style={{ color: `${PARCHMENT},0.38)` }}
                   >
                     Connect with friends and master new poses.
                   </p>
+                </div>
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
+                  style={{ background: `${GOLD},0.10)` }}
+                >
+                  <Trophy
+                    className="h-5 w-5 opacity-40"
+                    style={{ color: `${GOLD},0.85)` }}
+                  />
                 </div>
               </div>
 
               <div className="relative z-10 mt-3">
                 <Button
                   asChild
-                  className="rounded-full h-8 px-5 text-xs font-serif font-semibold transition-all hover:opacity-90"
+                  className="rounded-full h-10 px-8 text-sm font-serif font-semibold transition-all hover:opacity-90"
                   style={{
                     background: `${GOLD},0.85)`,
                     color: `${DEEP_BARK},0.95)`,
@@ -438,10 +452,7 @@ export default function DashboardPage() {
                   >
                     7 days
                   </p>
-                  <Flame
-                    className="h-4 w-4 mb-0.5"
-                    style={{ color: `${GOLD},0.75)` }}
-                  />
+                  <span className="text-xl mb-0.5">🔥</span>
                 </div>
               </GlassCard>
 
