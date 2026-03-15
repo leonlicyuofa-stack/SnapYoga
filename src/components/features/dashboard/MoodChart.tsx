@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, DotProps, CartesianGrid } from 'recharts';
 import { useAuth } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
-import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
-import { format, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
+import { collection, query, where, Timestamp, onSnapshot, startOfWeek, endOfWeek, eachDayOfInterval } from 'firebase/firestore';
+import { format } from 'date-fns';
 
 interface StoredMood {
   name: string;
@@ -28,77 +28,68 @@ const valueToEmoji: { [key: number]: string } = {
   1: '😫',
 };
 
-const valueToColor: { [key: number]: string } = {
-    4: '#4ade80', // green-400
-    3: '#a7f3d0', // emerald-200
-    2: '#93c5fd', // blue-300
-    1: '#facc15', // yellow-400
-}
-
 const CustomDot = (props: DotProps & { payload: any }) => {
     const { cx, cy, payload } = props;
-  
-    // If moodValue exists, render the emoji.
     if (payload.moodValue) {
       return (
         <g transform={`translate(${cx},${cy})`}>
-          {/* Increased foreignObject size and adjusted y to prevent clipping */}
-          <foreignObject x={-14} y={-14} width={28} height={28}>
-            <div className="text-2xl text-center">{valueToEmoji[payload.moodValue]}</div>
+          <foreignObject x={-15} y={-15} width={30} height={30}>
+            <div className="text-2xl flex items-center justify-center drop-shadow-md">{valueToEmoji[payload.moodValue]}</div>
           </foreignObject>
         </g>
       );
     }
-  
-    // If no moodValue, render a placeholder grey dot.
     return (
-      <circle cx={cx} cy={cy} r={5} fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth={1} />
+      <circle cx={cx} cy={cy} r={4} fill="hsl(var(--muted))" opacity={0.3} />
     );
 };
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-background/80 backdrop-blur-sm p-2 border border-border rounded-md shadow-lg">
-          <p className="font-bold">{data.day}</p>
+        <div className="bg-white/90 backdrop-blur-md p-3 border-none rounded-2xl shadow-xl">
+          <p className="font-bold text-primary">{data.dayFull}</p>
           {data.moodValue ? (
-            <p className="flex items-center">Mood: <span className="text-xl ml-1">{valueToEmoji[data.moodValue]}</span></p>
+            <div className="flex items-center gap-2 mt-1">
+                <span className="text-2xl">{valueToEmoji[data.moodValue]}</span>
+                <span className="font-medium text-muted-foreground">{data.moodName}</span>
+            </div>
           ) : (
-            <p className="text-muted-foreground">No mood logged</p>
+            <p className="text-xs text-muted-foreground mt-1">No data</p>
           )}
         </div>
       );
     }
-  
     return null;
 };
 
 export function MoodChart({ className }: { className?: string }) {
   const { user } = useAuth();
   const [data, setData] = useState<any[]>([]);
-  const [week, setWeek] = useState(new Date());
 
   useEffect(() => {
     if (!user) return;
 
-    const fetchMoods = async () => {
-      const start = startOfWeek(week, { weekStartsOn: 1 });
-      const end = endOfWeek(week, { weekStartsOn: 1 });
+    const start = startOfWeek(new Date(), { weekStartsOn: 1 });
+    const end = endOfWeek(new Date(), { weekStartsOn: 1 });
 
-      const moodsRef = collection(firestore, 'users', user.uid, 'moods');
-      const q = query(
-        moodsRef,
-        where('loggedAt', '>=', start),
-        where('loggedAt', '<=', end)
-      );
+    const moodsRef = collection(firestore, 'users', user.uid, 'moods');
+    const q = query(
+      moodsRef,
+      where('loggedAt', '>=', start),
+      where('loggedAt', '<=', end)
+    );
 
-      const querySnapshot = await getDocs(q);
+    // Using onSnapshot for real-time updates upon selection
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const moods: { [key: string]: StoredMood } = {};
       querySnapshot.forEach((doc) => {
         const moodData = doc.data() as StoredMood;
-        const dayKey = format(moodData.loggedAt.toDate(), 'yyyy-MM-dd');
-        moods[dayKey] = moodData;
+        if (moodData.loggedAt) {
+            const dayKey = format(moodData.loggedAt.toDate(), 'yyyy-MM-dd');
+            moods[dayKey] = moodData;
+        }
       });
       
       const weekDays = eachDayOfInterval({ start, end });
@@ -107,44 +98,49 @@ export function MoodChart({ className }: { className?: string }) {
         const moodData = moods[dayKey];
         return {
           day: format(day, 'EEE'),
-          // Ensure there's always a numeric value for the Area chart to connect smoothly
-          // We use moodValue for the dot and plotValue for the area.
+          dayFull: format(day, 'EEEE, MMM d'),
           moodValue: moodData ? moodToValue[moodData.name] : null,
-          plotValue: moodData ? moodToValue[moodData.name] : 2.5, // Center value for placeholder
-          fill: moodData ? valueToColor[moodToValue[moodData.name]] : 'transparent',
+          moodName: moodData ? moodData.name : null,
+          plotValue: moodData ? moodToValue[moodData.name] : 2.5,
         };
       });
       
       setData(chartData);
-    };
+    });
 
-    fetchMoods();
-  }, [user, week]);
+    return () => unsubscribe();
+  }, [user]);
 
   return (
-    <div className={className}>
-      <ResponsiveContainer width="100%" height={200}>
-        <AreaChart data={data} margin={{ top: 15, right: 20, left: -10, bottom: 5 }}>
+    <div className={cn("w-full h-full", className)}>
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={data} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
           <defs>
               <linearGradient id="colorMood" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
                   <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
               </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="hsl(var(--border))" />
-          <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.5} />
+          <XAxis 
+            dataKey="day" 
+            axisLine={false} 
+            tickLine={false} 
+            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12, fontWeight: 600 }} 
+            dy={10}
+          />
           <YAxis hide={true} domain={[0, 5]} />
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'hsl(var(--primary))', strokeWidth: 1, strokeDasharray: '5 5' }} />
           <Area 
               type="monotone" 
-              dataKey="plotValue" // Use plotValue for the area
+              dataKey="plotValue" 
               stroke="hsl(var(--primary))" 
-              strokeWidth={2.5}
+              strokeWidth={4}
               fillOpacity={1} 
               fill="url(#colorMood)" 
               connectNulls
               //@ts-ignore
-              dot={<CustomDot />} // CustomDot will use moodValue
+              dot={<CustomDot />}
           />
         </AreaChart>
       </ResponsiveContainer>
