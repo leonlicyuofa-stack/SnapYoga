@@ -160,7 +160,7 @@ export default function DashboardPage() {
               </p>
             </div>
             <Avatar
-              className="h-24 w-24 border-4 shadow-xl"
+              className="h-20 w-20 border-4 shadow-xl"
               style={{ borderColor: `${GOLD},0.40)` }}
             >
               <AvatarImage
@@ -168,7 +168,7 @@ export default function DashboardPage() {
                 alt={user?.displayName ?? 'user'}
               />
               <AvatarFallback
-                className="font-serif text-3xl"
+                className="font-serif text-2xl"
                 style={{
                   background: `${GOLD},0.25)`,
                   color: `${GOLD},0.95)`,
