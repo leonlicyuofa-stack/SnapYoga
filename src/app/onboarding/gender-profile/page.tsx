@@ -149,17 +149,18 @@ export default function GenderProfilePage() {
                             <SnapYogaLogo />
                         </div>
                         <h1 className="text-3xl font-bold tracking-tight">Choose your avatar</h1>
-                        <p className="text-sm text-white/80">Select one that represents you. Swipe to select.</p>
+                        <p className="text-sm text-white/80">Select one that represents you. Tap or swipe to select.</p>
                     </header>
                     
                     <main>
                         <form id="gender-profile-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
                             <div 
-                                className="relative w-full flex items-center justify-center cursor-grab active:cursor-grabbing" 
+                                className="relative w-full flex items-center justify-center cursor-pointer" 
                                 style={{ minHeight: '13rem' }}
                                 onTouchStart={onTouchStart}
                                 onTouchMove={onTouchMove}
                                 onTouchEnd={onTouchEnd}
+                                onClick={handleNext}
                             >
                                 <div className="relative w-48 h-48 md:w-52 md:h-52">
                                      <div key={currentIndex} className={cn(
