@@ -1,12 +1,12 @@
 
 // A map of avatar IDs to their corresponding image paths and background colors.
 const avatarComponents = {
-    avatar1: { imagePath: '/images/avatar1.png', bgColor: '#e9d5ff' }, // bg-purple-200
-    avatar2: { imagePath: '/images/avatar2.png', bgColor: '#fbcfe8' },   // bg-pink-200
-    avatar3: { imagePath: '/images/avatar3.png', bgColor: '#fed7aa' }, // bg-orange-200
-    avatar4: { imagePath: '/images/avatar4.png', bgColor: '#fecaca' },   // bg-rose-200
-    avatar5: { imagePath: '/images/avatar5.png', bgColor: '#d9f99d' },   // bg-green-200
-    avatar6: { imagePath: '/images/avatar6.png', bgColor: '#bae6fd' },   // bg-blue-200
+    avatar1: { imagePath: '/images/girl 1.png', bgColor: '#e9d5ff' }, // bg-purple-200
+    avatar2: { imagePath: '/images/girl 2.png', bgColor: '#fbcfe8' },   // bg-pink-200
+    avatar3: { imagePath: '/images/girl 3.png', bgColor: '#fed7aa' }, // bg-orange-200
+    avatar4: { imagePath: '/images/guy 1.png', bgColor: '#fecaca' },   // bg-rose-200
+    avatar5: { imagePath: '/images/guy 2.png', bgColor: '#d9f99d' },   // bg-green-200
+    avatar6: { imagePath: '/images/guy 3.png', bgColor: '#bae6fd' },   // bg-blue-200
 };
 
 /**

@@ -28,6 +28,7 @@ const avatars = [
     { id: 'avatar3', imagePath: '/images/girl 3.png', hint: 'girl portrait' },
     { id: 'avatar4', imagePath: '/images/guy 1.png', hint: 'guy portrait' },
     { id: 'avatar5', imagePath: '/images/guy 2.png', hint: 'guy portrait' },
+    { id: 'avatar6', imagePath: '/images/guy 3.png', hint: 'guy portrait' },
 ];
 
 export default function GenderProfilePage() {
