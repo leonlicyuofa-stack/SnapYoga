@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -163,6 +164,9 @@ export default function YogaGoalPage() {
                             />
                             {errors.mainGoals && <p className="text-sm text-red-400 text-center">{errors.mainGoals.message}</p>}
                         </form>
+                        <p className="text-xs text-white/60 text-center w-full mt-6">
+                            This helps us personalize your journey and recommendations.
+                        </p>
                     </main>
                 </div>
                 <Button
