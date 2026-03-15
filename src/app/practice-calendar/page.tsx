@@ -191,7 +191,7 @@ export default function PracticeCalendarPage() {
     habitDots:    weekDays.reduce((sum, d) => sum + (habitsByDate[format(d,'yyyy-MM-dd')] || []).length, 0),
   };
 
-  const weekLabel = `${format(weekStart, 'MMM d')} – ${format(endOfWeek(weekStart, { weekStartsOn: 1 }), 'MMM d, yyyy')}`;
+  const weekLabel = `${format(weekStart, 'dd/MM/yyyy')} – ${format(endOfWeek(weekStart, { weekStartsOn: 1 }), 'dd/MM/yyyy')}`;
   const isCurrentWeek = isSameDay(weekStart, startOfWeek(new Date(), { weekStartsOn: 1 }));
 
   return (
@@ -353,7 +353,7 @@ export default function PracticeCalendarPage() {
             }}
           >
             <p className="text-xs font-serif font-semibold mb-3" style={{ color: `${GOLD},0.80)` }}>
-              {isToday(selectedDay) ? 'Today — ' : ''}{format(selectedDay, 'EEEE, MMMM d')}
+              {isToday(selectedDay) ? 'Today — ' : ''}{format(selectedDay, 'dd/MM/yyyy')}
             </p>
 
             {/* Mood selector */}
