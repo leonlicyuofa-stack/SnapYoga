@@ -34,7 +34,7 @@ export default function HomePage() {
   const prevIndex = (currentIndex - 1 + animatedWords.length) % animatedWords.length;
 
   return (
-    <div className="relative min-h-screen font-serif text-white overflow-hidden">
+    <div className="relative min-h-screen font-serif text-white">
       {/* Main Content Panel */}
       <div className="absolute inset-y-0 left-0 w-full md:w-1/2 flex flex-col bg-black/20 backdrop-blur-lg z-10">
         
