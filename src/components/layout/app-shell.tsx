@@ -89,6 +89,7 @@ export function AppShell({ children }: AppShellProps) {
         className="object-cover"
         data-ai-hint="modern wellness room"
         priority
+        sizes="100vw"
       />
       <div className="absolute inset-0 bg-black/50" />
 

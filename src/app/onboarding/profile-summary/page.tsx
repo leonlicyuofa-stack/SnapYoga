@@ -257,6 +257,7 @@ export default function ProfileSummaryPage() {
             className="object-cover"
             data-ai-hint="modern wellness room"
             priority
+            sizes="100vw"
         />
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">

@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -80,6 +79,7 @@ export default function SignUpPage() {
             className="object-cover"
             data-ai-hint="modern wellness room"
             priority
+            sizes="100vw"
         />
         <div className="absolute inset-0 bg-black/40" /> {/* Overlay for contrast */}
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
