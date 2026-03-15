@@ -21,7 +21,7 @@ export default function HomePage() {
   }, [user, authLoading, router]);
 
   return (
-    <div className="relative flex flex-col min-h-screen items-center justify-center p-4 bg-black text-white overflow-hidden">
+    <div className="relative flex flex-col min-h-screen items-center justify-center p-4 bg-transparent text-white overflow-hidden">
         <div className="relative z-10">
             <SmileyRockLoader />
         </div>
