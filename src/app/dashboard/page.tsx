@@ -13,6 +13,7 @@ import { format } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { MoodChart } from '@/components/features/dashboard/MoodChart';
+import { PracticeCalendarSnapshot } from '@/components/features/dashboard/PracticeCalendarSnapshot';
 
 // ─── Brand colour tokens ────────────────────────────────────────────────────
 const GOLD        = 'rgba(193,154,107';   // Warm Gold #C19A6B
@@ -159,7 +160,7 @@ export default function DashboardPage() {
               </p>
             </div>
             <Avatar
-              className="h-10 w-10 border-2"
+              className="h-14 w-14 border-2"
               style={{ borderColor: `${GOLD},0.35)` }}
             >
               <AvatarImage
@@ -167,7 +168,7 @@ export default function DashboardPage() {
                 alt={user?.displayName ?? 'user'}
               />
               <AvatarFallback
-                className="font-serif text-xs"
+                className="font-serif text-base"
                 style={{
                   background: `${GOLD},0.20)`,
                   color: `${GOLD},0.95)`,
@@ -212,7 +213,7 @@ export default function DashboardPage() {
                           background: isActive ? mood.fillColor : `${PARCHMENT},0.04)`,
                           border: `1px solid ${isActive ? mood.ringColor : `${PARCHMENT},0.10)`}`,
                           boxShadow: isActive
-                            ? `0 0 12px ${mood.fillColor}`
+                            ? `0 0 10px ${mood.fillColor}`
                             : 'none',
                           transform: isActive ? 'scale(1.08)' : 'scale(1)',
                         }}
