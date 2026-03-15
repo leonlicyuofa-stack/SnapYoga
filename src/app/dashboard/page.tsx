@@ -78,12 +78,13 @@ function GlassCard({
 }) {
   return (
     <div
-      className={cn('rounded-2xl overflow-hidden transition-transform duration-300 hover:scale-[1.015]', className)}
+      className={cn('overflow-hidden transition-transform duration-300 hover:scale-[1.015]', className)}
       style={{
         background: `${GOLD},0.07)`,
         border: `0.5px solid ${GOLD},0.20)`,
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
+        borderRadius: '20px',
         ...style,
       }}
     >
@@ -142,7 +143,7 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <div className="flex flex-col min-h-screen bg-transparent">
+      <div className="flex flex-col min-h-screen">
         <header className="container mx-auto px-5 pt-8 pb-5">
           <div className="flex items-center justify-between">
             <div>
@@ -182,7 +183,7 @@ export default function DashboardPage() {
 
         <main className="flex-grow container mx-auto px-5 pb-28 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <GlassCard className="md:col-span-2 p-5">
+            <GlassCard className="md:col-span-2 p-5" style={{ borderRadius: '32px 32px 16px 32px' }}>
               <div className="flex items-center justify-between mb-4">
                 <CardLabel>How are you feeling?</CardLabel>
                 <div
@@ -247,6 +248,7 @@ export default function DashboardPage() {
               style={{
                 background: `${TERRACOTTA},0.18)`,
                 border: `0.5px solid ${GOLD},0.28)`,
+                borderRadius: '16px 32px 32px 16px',
               }}
             >
               <div className="flex items-center justify-between">
@@ -302,6 +304,7 @@ export default function DashboardPage() {
               style={{
                 background: `${DEEP_BARK},0.50)`,
                 border: `0.5px solid ${GOLD},0.18)`,
+                borderRadius: '16px 16px 32px 32px',
               }}
             >
               <div className="flex items-center justify-between">
@@ -340,7 +343,10 @@ export default function DashboardPage() {
               </div>
             </GlassCard>
 
-            <GlassCard className="md:col-span-2 p-5">
+            <GlassCard
+              className="md:col-span-2 p-5"
+              style={{ borderRadius: '32px 32px 32px 16px' }}
+            >
               <div className="flex items-center justify-between mb-3">
                 <CardLabel>Weekly Mood Flow</CardLabel>
                 <Activity
@@ -356,17 +362,21 @@ export default function DashboardPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div
-              className="md:col-span-2 rounded-2xl p-6 flex flex-col justify-between transition-transform duration-300 hover:scale-[1.015] overflow-hidden relative"
+              className="md:col-span-2 p-6 flex flex-col justify-between transition-transform duration-300 hover:scale-[1.015] overflow-hidden relative"
               style={{
                 background: `${DEEP_BARK},0.72)`,
                 border: `0.8px solid ${GOLD},0.28)`,
                 backdropFilter: 'blur(16px)',
                 WebkitBackdropFilter: 'blur(16px)',
+                borderRadius: '32px 16px 32px 32px',
               }}
             >
               <div
-                className="absolute inset-x-0 top-0 h-10 rounded-t-2xl pointer-events-none"
-                style={{ background: `${GOLD},0.06)` }}
+                className="absolute inset-x-0 top-0 h-10 pointer-events-none"
+                style={{
+                  background: `${GOLD},0.06)`,
+                  borderRadius: '32px 16px 0 0',
+                }}
               />
 
               <div className="relative z-10">
@@ -415,6 +425,7 @@ export default function DashboardPage() {
                 style={{
                   background: `${SAGE},0.18)`,
                   border: `0.5px solid ${SAGE},0.32)`,
+                  borderRadius: '28px',
                 }}
               >
                 <CardLabel>Current Streak</CardLabel>
@@ -437,6 +448,7 @@ export default function DashboardPage() {
                 style={{
                   background: `${TERRACOTTA},0.18)`,
                   border: `0.5px solid ${GOLD},0.25)`,
+                  borderRadius: '12px 12px 28px 28px',
                 }}
               >
                 <CardLabel>Poses analysed</CardLabel>
