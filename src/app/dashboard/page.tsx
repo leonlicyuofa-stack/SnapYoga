@@ -144,24 +144,24 @@ export default function DashboardPage() {
   return (
     <AppShell>
       <div className="flex flex-col min-h-screen">
-        <header className="container mx-auto px-5 pt-8 pb-5">
+        <header className="container mx-auto px-4 pt-4 pb-3">
           <div className="flex items-center justify-between">
             <div>
               <h1
-                className="text-3xl font-serif font-semibold tracking-tight"
+                className="text-2xl font-serif font-semibold tracking-tight"
                 style={{ color: `${PARCHMENT},0.92)` }}
               >
                 Hey, {welcomeName}!
               </h1>
               <p
-                className="text-sm font-serif italic mt-0.5"
+                className="text-xs font-serif italic mt-0.5"
                 style={{ color: `${PARCHMENT},0.38)` }}
               >
                 Your practice is waiting for you.
               </p>
             </div>
             <Avatar
-              className="h-12 w-12 border-2"
+              className="h-10 w-10 border-2"
               style={{ borderColor: `${GOLD},0.35)` }}
             >
               <AvatarImage
@@ -169,7 +169,7 @@ export default function DashboardPage() {
                 alt={user?.displayName ?? 'user'}
               />
               <AvatarFallback
-                className="font-serif text-sm"
+                className="font-serif text-xs"
                 style={{
                   background: `${GOLD},0.20)`,
                   color: `${GOLD},0.95)`,
@@ -181,23 +181,23 @@ export default function DashboardPage() {
           </div>
         </header>
 
-        <main className="flex-grow container mx-auto px-5 pb-28 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <GlassCard className="md:col-span-2 p-5" style={{ borderRadius: '32px 32px 16px 32px' }}>
-              <div className="flex items-center justify-between mb-4">
+        <main className="flex-grow container mx-auto px-4 pb-20 space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+            <GlassCard className="md:col-span-2 px-4 py-3" style={{ borderRadius: '32px 32px 16px 32px' }}>
+              <div className="flex items-center justify-between mb-2">
                 <CardLabel>How are you feeling?</CardLabel>
                 <div
-                  className="p-1.5 rounded-full"
+                  className="p-1 rounded-full"
                   style={{ background: `${GOLD},0.12)` }}
                 >
                   <Sparkles
-                    className="h-3.5 w-3.5"
+                    className="h-3 w-3"
                     style={{ color: `${GOLD},0.70)` }}
                   />
                 </div>
               </div>
 
-              <div className="flex justify-around items-center py-2">
+              <div className="flex justify-around items-center py-1">
                 {moods.map((mood) => {
                   const isActive = lastLoggedMood === mood.name;
                   return (
@@ -205,21 +205,21 @@ export default function DashboardPage() {
                       key={mood.name}
                       onClick={() => handleMoodSelect(mood.name, mood.emoji)}
                       disabled={isMoodLogging}
-                      className="flex flex-col items-center gap-2 group"
+                      className="flex flex-col items-center gap-1.5 group"
                     >
                       <div
-                        className="h-14 w-14 rounded-full flex items-center justify-center transition-all duration-300"
+                        className="h-11 w-11 rounded-full flex items-center justify-center transition-all duration-300"
                         style={{
                           background: isActive ? mood.fillColor : `${PARCHMENT},0.04)`,
                           border: `1px solid ${isActive ? mood.ringColor : `${PARCHMENT},0.10)`}`,
                           boxShadow: isActive
-                            ? `0 0 16px ${mood.fillColor}`
+                            ? `0 0 12px ${mood.fillColor}`
                             : 'none',
                           transform: isActive ? 'scale(1.08)' : 'scale(1)',
                         }}
                       >
                         <mood.icon
-                          className="h-6 w-6 transition-all duration-300"
+                          className="h-5 w-5 transition-all duration-300"
                           style={{
                             color: isActive
                               ? mood.textColor
@@ -228,7 +228,7 @@ export default function DashboardPage() {
                         />
                       </div>
                       <span
-                        className="text-[9px] uppercase tracking-widest font-medium font-serif"
+                        className="text-[8px] uppercase tracking-widest font-medium font-serif"
                         style={{
                           color: isActive
                             ? mood.textColor
@@ -244,7 +244,7 @@ export default function DashboardPage() {
             </GlassCard>
 
             <GlassCard
-              className="p-5 flex flex-col justify-between"
+              className="px-4 py-3 flex flex-col justify-between"
               style={{
                 background: `${TERRACOTTA},0.18)`,
                 border: `0.5px solid ${GOLD},0.28)`,
@@ -253,7 +253,7 @@ export default function DashboardPage() {
             >
               <div className="flex items-center justify-between">
                 <CardLabel>Practice</CardLabel>
-                <svg width="44" height="44" viewBox="0 0 44 44">
+                <svg width="38" height="38" viewBox="0 0 44 44">
                   <circle
                     cx="22" cy="22" r="18"
                     fill="none"
@@ -281,15 +281,15 @@ export default function DashboardPage() {
                 </svg>
               </div>
 
-              <div className="mt-3">
+              <div className="mt-2">
                 <p
-                  className="text-4xl font-serif font-semibold tracking-tight"
+                  className="text-3xl font-serif font-semibold tracking-tight"
                   style={{ color: `${PARCHMENT},0.92)` }}
                 >
                   1,240
                 </p>
                 <p
-                  className="text-xs font-serif italic mt-1"
+                  className="text-[10px] font-serif italic mt-0.5"
                   style={{ color: `${PARCHMENT},0.40)` }}
                 >
                   mins this month
@@ -298,9 +298,9 @@ export default function DashboardPage() {
             </GlassCard>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
             <GlassCard
-              className="p-5 flex flex-col gap-4"
+              className="px-4 py-3 flex flex-col gap-2"
               style={{
                 background: `${DEEP_BARK},0.50)`,
                 border: `0.5px solid ${GOLD},0.18)`,
@@ -310,20 +310,20 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between">
                 <CardLabel>Monthly Goal</CardLabel>
                 <Clock
-                  className="h-3.5 w-3.5"
+                  className="h-3 w-3"
                   style={{ color: `${GOLD},0.45)` }}
                 />
               </div>
 
-              <div className="flex-grow flex items-center justify-center">
-                <div className="h-[110px] w-[110px]">
+              <div className="flex items-center justify-center">
+                <div className="h-[80px] w-[80px]">
                   <PracticeCalendarSnapshot />
                 </div>
               </div>
 
               <div>
                 <div
-                  className="w-full h-1 rounded-full mb-2"
+                  className="w-full h-1 rounded-full mb-1"
                   style={{ background: `${PARCHMENT},0.08)` }}
                 >
                   <div
@@ -335,7 +335,7 @@ export default function DashboardPage() {
                   />
                 </div>
                 <p
-                  className="text-[10px] font-serif italic"
+                  className="text-[9px] font-serif italic"
                   style={{ color: `${PARCHMENT},0.32)` }}
                 >
                   17 of 26 sessions
@@ -344,25 +344,25 @@ export default function DashboardPage() {
             </GlassCard>
 
             <GlassCard
-              className="md:col-span-2 p-5"
+              className="md:col-span-2 px-4 py-3"
               style={{ borderRadius: '32px 32px 32px 16px' }}
             >
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-2">
                 <CardLabel>Weekly Mood Flow</CardLabel>
                 <Activity
-                  className="h-3.5 w-3.5"
+                  className="h-3 w-3"
                   style={{ color: `${GOLD},0.45)` }}
                 />
               </div>
-              <div className="h-[180px]">
+              <div className="h-[140px]">
                 <MoodChart />
               </div>
             </GlassCard>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
             <div
-              className="md:col-span-2 p-6 flex flex-col justify-between transition-transform duration-300 hover:scale-[1.015] relative"
+              className="md:col-span-2 px-5 py-4 flex flex-col justify-between transition-transform duration-300 hover:scale-[1.015] relative"
               style={{
                 background: `${DEEP_BARK},0.72)`,
                 border: `0.8px solid ${GOLD},0.28)`,
@@ -372,42 +372,44 @@ export default function DashboardPage() {
               }}
             >
               <div
-                className="absolute inset-x-0 top-0 h-10 pointer-events-none"
+                className="absolute inset-x-0 top-0 h-8 pointer-events-none"
                 style={{
                   background: `${GOLD},0.06)`,
                   borderRadius: '32px 16px 0 0',
                 }}
               />
 
-              <div className="relative z-10">
+              <div className="relative z-10 flex items-start gap-3">
                 <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+                  className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
                   style={{ background: `${GOLD},0.15)` }}
                 >
                   <Trophy
-                    className="h-5 w-5"
+                    className="h-4 w-4"
                     style={{ color: `${GOLD},0.85)` }}
                   />
                 </div>
 
-                <h3
-                  className="text-xl font-serif font-semibold leading-snug mb-1"
-                  style={{ color: `${PARCHMENT},0.92)` }}
-                >
-                  Join new challenges
-                </h3>
-                <p
-                  className="text-sm font-serif italic"
-                  style={{ color: `${PARCHMENT},0.38)` }}
-                >
-                  Connect with friends and master new poses.
-                </p>
+                <div>
+                  <h3
+                    className="text-base font-serif font-semibold leading-snug"
+                    style={{ color: `${PARCHMENT},0.92)` }}
+                  >
+                    Join new challenges
+                  </h3>
+                  <p
+                    className="text-xs font-serif italic mt-0.5"
+                    style={{ color: `${PARCHMENT},0.38)` }}
+                  >
+                    Connect with friends and master new poses.
+                  </p>
+                </div>
               </div>
 
-              <div className="relative z-10 mt-6">
+              <div className="relative z-10 mt-3">
                 <Button
                   asChild
-                  className="rounded-full h-10 px-7 text-sm font-serif font-semibold transition-all hover:opacity-90"
+                  className="rounded-full h-8 px-5 text-xs font-serif font-semibold transition-all hover:opacity-90"
                   style={{
                     background: `${GOLD},0.85)`,
                     color: `${DEEP_BARK},0.95)`,
@@ -419,9 +421,9 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
               <GlassCard
-                className="p-5 flex-1"
+                className="px-4 py-3 flex-1"
                 style={{
                   background: `${SAGE},0.18)`,
                   border: `0.5px solid ${SAGE},0.32)`,
@@ -429,22 +431,22 @@ export default function DashboardPage() {
                 }}
               >
                 <CardLabel>Current Streak</CardLabel>
-                <div className="flex items-end gap-2 mt-2">
+                <div className="flex items-end gap-1.5 mt-1">
                   <p
-                    className="text-2xl font-serif font-semibold"
+                    className="text-xl font-serif font-semibold"
                     style={{ color: 'rgba(160,195,130,0.92)' }}
                   >
                     7 days
                   </p>
                   <Flame
-                    className="h-5 w-5 mb-0.5"
+                    className="h-4 w-4 mb-0.5"
                     style={{ color: `${GOLD},0.75)` }}
                   />
                 </div>
               </GlassCard>
 
               <GlassCard
-                className="p-5 flex-1"
+                className="px-4 py-3 flex-1"
                 style={{
                   background: `${TERRACOTTA},0.18)`,
                   border: `0.5px solid ${GOLD},0.25)`,
@@ -452,9 +454,9 @@ export default function DashboardPage() {
                 }}
               >
                 <CardLabel>Poses analysed</CardLabel>
-                <div className="flex items-end gap-2 mt-2">
+                <div className="flex items-end gap-1.5 mt-1">
                   <p
-                    className="text-2xl font-serif font-semibold"
+                    className="text-xl font-serif font-semibold"
                     style={{ color: 'rgba(210,165,120,0.92)' }}
                   >
                     24 total
