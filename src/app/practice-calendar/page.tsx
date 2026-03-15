@@ -7,7 +7,7 @@ import { firestore } from '@/lib/firebase/clientApp';
 import { collection, getDocs, query, where, type Timestamp } from 'firebase/firestore';
 import { AppShell } from '@/components/layout/app-shell';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle, Activity, Smile, Clock, Sparkles, ChevronDown, RefreshCcw } from 'lucide-react';
+import { AlertCircle, Activity, Smile, Clock, Sparkles, ChevronDown, RefreshCcw, CalendarDays } from 'lucide-react';
 import { startOfDay, format, isSameDay, startOfMonth, endOfMonth } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
