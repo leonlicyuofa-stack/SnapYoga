@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -160,7 +161,7 @@ export default function DashboardPage() {
               </p>
             </div>
             <Avatar
-              className="h-[120px] w-[120px] border-4 shadow-xl"
+              className="h-60 w-60 border-4 shadow-xl"
               style={{ borderColor: `${GOLD},0.40)` }}
             >
               <AvatarImage
@@ -168,7 +169,7 @@ export default function DashboardPage() {
                 alt={user?.displayName ?? 'user'}
               />
               <AvatarFallback
-                className="font-serif text-4xl"
+                className="font-serif text-7xl"
                 style={{
                   background: `${GOLD},0.25)`,
                   color: `${GOLD},0.95)`,
