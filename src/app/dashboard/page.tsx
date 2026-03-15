@@ -337,6 +337,7 @@ export default function DashboardPage() {
           {/* ROW 3 — Challenges CTA (2/3) + 2 stat pills (1/3) */}
           <div className="grid grid-cols-3 gap-2">
 
+            {/* Challenges CTA — deep bark anchor card */}
             <div
               className="col-span-2 px-5 py-4 flex flex-col justify-between transition-transform duration-300 hover:scale-[1.015] relative"
               style={{
@@ -410,7 +411,7 @@ export default function DashboardPage() {
                 style={{
                   background: `${TERRACOTTA},0.18)`,
                   border: `0.5px solid ${GOLD},0.25)`,
-                  borderRadius: '6px 6px 999px 999px',
+                  borderRadius: '999px',
                 }}
               >
                 <CardLabel>Poses analysed</CardLabel>
