@@ -1,6 +1,7 @@
 
 "use client";
 
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,7 +15,6 @@ import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { Mail, KeyRound } from 'lucide-react';
-import { useState } from 'react';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
@@ -32,15 +32,35 @@ export default function SignInPage() {
   const { signInWithEmail, signInWithGoogle, signInWithApple, loading: authLoading } = useAuth();
   const { t } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<SignInFormValues>({
+  const { register, handleSubmit, formState: { errors }, watch } = useForm<SignInFormValues>({
     resolver: zodResolver(signInSchema),
   });
 
+  // Clear inline error when user edits email or password
+  const watchedFields = watch(['email', 'password']);
+  React.useEffect(() => {
+    setAuthError(null);
+  }, [watchedFields[0], watchedFields[1]]);
+
   const onSubmit: SubmitHandler<SignInFormValues> = async (data) => {
     setIsSubmitting(true);
-    await signInWithEmail(data.email, data.password);
-    setIsSubmitting(false);
+    setAuthError(null);
+    try {
+      await signInWithEmail(data.email, data.password);
+    } catch (error: any) {
+      // Show inline error for wrong password / wrong email
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+        setAuthError('Incorrect email or password. Please try again.');
+      } else if (error.code === 'auth/too-many-requests') {
+        setAuthError('Too many failed attempts. Please try again later or reset your password.');
+      } else {
+        setAuthError('Sign in failed. Please try again.');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const isLoading = authLoading || isSubmitting;
@@ -127,6 +147,13 @@ export default function SignInPage() {
                   Forgot password?
                 </Link>
               </div>
+              
+              {authError && (
+                <div className="rounded-lg bg-red-500/20 border border-red-500/30 px-4 py-3 text-sm text-red-300 text-center">
+                  {authError}
+                </div>
+              )}
+
               <Button type="submit" className="w-full h-12 text-base rounded-lg bg-white/90 text-black hover:bg-white" disabled={isLoading}>
                 {isLoading ? <SmileyRockLoader /> : t('signIn')}
               </Button>

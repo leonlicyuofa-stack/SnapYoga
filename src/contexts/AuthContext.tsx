@@ -328,6 +328,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+
+      // Check email verification first
+      if (!userCredential.user.emailVerified) {
+        // Send a fresh verification email and redirect to verify page
+        await sendEmailVerification(userCredential.user);
+        toast({
+          title: 'Email Not Verified',
+          description: 'We sent you a new verification email. Please check your inbox.',
+          variant: 'destructive',
+        });
+        router.push('/auth/verify-email');
+        return;
+      }
       
       await recordDailyLogin(userCredential.user.uid);
       await createUserProfileDocument(userCredential.user);
@@ -339,11 +352,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
          toast({ title: 'Success', description: 'Signed in successfully. Welcome back!' });
          router.push('/dashboard');
       } else {
-        toast({ title: 'Success', description: 'Signed in successfully. Let\'s complete your profile.' });
+        toast({ title: 'Success', description: "Signed in successfully. Let's complete your profile." });
         router.push('/onboarding/gender-profile');
       }
     } catch (error) {
-      handleAuthError(error, 'Failed to sign in.');
+      // Re-throw to be caught by the sign-in page for inline error handling
+      throw error;
     } finally {
       setLoading(false);
     }
