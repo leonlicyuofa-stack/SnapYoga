@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
@@ -34,9 +34,9 @@ export default function HomePage() {
 
   const prevIndex = (currentIndex - 1 + animatedWords.length) % animatedWords.length;
 
-  return (
-    <div className="relative min-h-screen font-serif text-white bg-black">
-      {/* Background Image */}
+  // Memoize the background to prevent flickering during text animation re-renders
+  const Background = useMemo(() => (
+    <>
       <Image
         src="/images/background.png"
         alt="A tranquil, modern yoga space."
@@ -45,14 +45,19 @@ export default function HomePage() {
         data-ai-hint="modern wellness room"
         priority
       />
-      <div className="absolute inset-0 bg-black/40" /> {/* Overlay for contrast */}
+      <div className="absolute inset-0 bg-black/40" />
+    </>
+  ), []);
+
+  return (
+    <div className="relative min-h-screen font-serif text-white bg-black overflow-hidden">
+      {Background}
 
       {/* Main Content Panel */}
-      <div className="absolute inset-y-0 left-0 w-full md:w-1/2 flex flex-col bg-black/20 backdrop-blur-lg">
+      <div className="absolute inset-y-0 left-0 w-full md:w-1/2 flex flex-col bg-black/20 backdrop-blur-lg z-10">
         
         <header className="flex justify-between items-center p-6 md:p-8">
           <SnapYogaLogo />
-          {/* Sign In button removed as requested */}
         </header>
 
         {/* Hero Section */}
@@ -62,7 +67,7 @@ export default function HomePage() {
                 <div className="relative inline-block h-[48px] md:h-[60px] w-[240px] ml-2 align-bottom font-script" style={{ perspective: '400px' }}>
                     {/* Previous Word (animating out) */}
                     <span
-                        key={prevIndex}
+                        key={`prev-${prevIndex}`}
                         className="font-script absolute inset-0 flex items-center justify-start [transform-style:preserve-3d] animate-flip-up-out"
                         style={{
                             transformOrigin: 'bottom center',
@@ -73,7 +78,7 @@ export default function HomePage() {
                     </span>
                     {/* Current Word (animating in) */}
                     <span
-                        key={currentIndex}
+                        key={`curr-${currentIndex}`}
                         className="font-script absolute inset-0 flex items-center justify-start [transform-style:preserve-3d] animate-flip-up-in"
                         style={{
                             transformOrigin: 'bottom center',
