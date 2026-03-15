@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -30,7 +31,7 @@ type SignUpFormValues = z.infer<typeof signUpSchema>;
 
 export default function SignUpPage() {
   const router = useRouter();
-  const { signInWithGoogle, signInWithApple, signInWithTikTok, signUpWithEmail, loading: authLoading } = useAuth();
+  const { signInWithGoogle, signInWithApple, signUpWithEmail, loading: authLoading } = useAuth();
   const { t } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -95,16 +96,26 @@ export default function SignUpPage() {
                      <div className="flex justify-center gap-4">
                         <Button variant="outline" size="icon" onClick={signInWithApple} disabled={authLoading} className="w-14 h-14 rounded-full bg-white/10 border-white/20 hover:bg-white/20">
                             <AppleIcon className="h-6 w-6" />
-                             <span className="sr-only">Sign in with Apple</span>
+                             <span className="sr-only">Sign up with Apple</span>
                         </Button>
                         <Button variant="outline" size="icon" onClick={signInWithGoogle} disabled={authLoading} className="w-14 h-14 rounded-full bg-white/10 border-white/20 hover:bg-white/20">
                             <GoogleIcon className="h-6 w-6" />
-                            <span className="sr-only">Sign in with Google</span>
+                            <span className="sr-only">Sign up with Google</span>
                         </Button>
-                        <Button variant="outline" size="icon" onClick={signInWithTikTok} disabled={authLoading} className="w-14 h-14 rounded-full bg-white/10 border-white/20 hover:bg-white/20">
+                        <div className="relative group">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            disabled
+                            className="w-14 h-14 rounded-full bg-white/5 border-white/10 opacity-50 cursor-not-allowed"
+                          >
                             <TikTokIcon className="h-6 w-6" />
-                            <span className="sr-only">Sign in with TikTok</span>
-                        </Button>
+                            <span className="sr-only">TikTok login coming soon</span>
+                          </Button>
+                          <div className="absolute -top-9 left-1/2 -translate-x-1/2 bg-black/80 text-white text-xs rounded-md px-2 py-1 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                            Coming soon
+                          </div>
+                        </div>
                     </div>
 
                     <div className="relative">

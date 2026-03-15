@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -29,7 +30,7 @@ const signInSchema = z.object({
 type SignInFormValues = z.infer<typeof signInSchema>;
 
 export default function SignInPage() {
-  const { signInWithEmail, signInWithGoogle, signInWithApple, signInWithTikTok, loading: authLoading } = useAuth();
+  const { signInWithEmail, signInWithGoogle, signInWithApple, loading: authLoading } = useAuth();
   const { t } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -76,10 +77,20 @@ export default function SignInPage() {
                     <GoogleIcon className="h-6 w-6" />
                     <span className="sr-only">Sign in with Google</span>
                 </Button>
-                <Button variant="outline" size="icon" onClick={signInWithTikTok} disabled={isLoading} className="w-14 h-14 rounded-full bg-white/10 border-white/20 hover:bg-white/20">
+                <div className="relative group">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    disabled
+                    className="w-14 h-14 rounded-full bg-white/5 border-white/10 opacity-50 cursor-not-allowed"
+                  >
                     <TikTokIcon className="h-6 w-6" />
-                    <span className="sr-only">Sign in with TikTok</span>
-                </Button>
+                    <span className="sr-only">TikTok login coming soon</span>
+                  </Button>
+                  <div className="absolute -top-9 left-1/2 -translate-x-1/2 bg-black/80 text-white text-xs rounded-md px-2 py-1 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                    Coming soon
+                  </div>
+                </div>
             </div>
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
