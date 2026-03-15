@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -8,7 +9,7 @@ import * as z from 'zod';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Loader2, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Loader2, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
@@ -37,6 +38,11 @@ export default function GenderProfilePage() {
   
   const [currentIndex, setCurrentIndex] = useState(0);
   const [animationDirection, setAnimationDirection] = useState<'left' | 'right' | 'none'>('none');
+
+  // Swipe logic states
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const minSwipeDistance = 50;
 
   const { control, handleSubmit, setValue, formState: { errors, isValid }, reset } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -101,6 +107,27 @@ export default function GenderProfilePage() {
     setAnimationDirection('right');
     setCurrentIndex((prevIndex) => (prevIndex + 1) % avatars.length);
   };
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    if (isLeftSwipe) {
+      handleNext();
+    } else if (isRightSwipe) {
+      handlePrevious();
+    }
+  };
   
   const currentItem = avatars[currentIndex];
 
@@ -122,23 +149,18 @@ export default function GenderProfilePage() {
                             <SnapYogaLogo />
                         </div>
                         <h1 className="text-3xl font-bold tracking-tight">Choose your avatar</h1>
-                        <p className="text-sm text-white/80">Select one that represents you.</p>
+                        <p className="text-sm text-white/80">Select one that represents you. Swipe to select.</p>
                     </header>
                     
                     <main>
                         <form id="gender-profile-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
-                            <div className="relative w-full flex items-center justify-center" style={{ minHeight: '13rem' }}>
-                                <Button
-                                    type="button"
-                                    onClick={handlePrevious}
-                                    variant="ghost"
-                                    size="icon"
-                                    className="absolute left-0 md:-left-8 top-1/2 -translate-y-1/2 h-14 w-14 rounded-full text-white/70 hover:bg-white/20 hover:text-white"
-                                    aria-label="Previous avatar"
-                                >
-                                    <ChevronLeft className="w-8 h-8" />
-                                </Button>
-
+                            <div 
+                                className="relative w-full flex items-center justify-center cursor-grab active:cursor-grabbing" 
+                                style={{ minHeight: '13rem' }}
+                                onTouchStart={onTouchStart}
+                                onTouchMove={onTouchMove}
+                                onTouchEnd={onTouchEnd}
+                            >
                                 <div className="relative w-48 h-48 md:w-52 md:h-52">
                                      <div key={currentIndex} className={cn(
                                         "w-full h-full",
@@ -152,17 +174,6 @@ export default function GenderProfilePage() {
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <Button
-                                    type="button"
-                                    onClick={handleNext}
-                                    variant="ghost"
-                                    size="icon"
-                                    className="absolute right-0 md:-right-8 top-1/2 -translate-y-1/2 h-14 w-14 rounded-full text-white/70 hover:bg-white/20 hover:text-white"
-                                    aria-label="Next avatar"
-                                >
-                                    <ChevronRight className="w-8 h-8" />
-                                </Button>
                             </div>
                           
                           {errors.avatar && <p className="text-sm text-red-400 text-center -mt-4">{errors.avatar.message}</p>}
