@@ -64,6 +64,24 @@
 }
 
 @layer base {
+  html {
+    background-image: url('/images/background.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100%;
+  }
+
+  html::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.50);
+    z-index: -1;
+    pointer-events: none;
+  }
+
   *, *::before, *::after {
     border-color: hsl(var(--border));
     box-sizing: border-box;

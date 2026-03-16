@@ -1,11 +1,9 @@
 import type {Metadata} from 'next';
 import { Lora, Shadows_Into_Light } from 'next/font/google';
-import Image from 'next/image';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/contexts/AuthContext'; 
 import { LanguageProvider } from '@/contexts/LanguageContext';
-import { cn } from '@/lib/utils';
 
 const lora = Lora({
   subsets: ['latin'],
@@ -32,15 +30,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${lora.variable} ${shadowsIntoLight.variable} font-serif antialiased`}>
-        <Image
-          src="/images/background.png"
-          alt=""
-          fill
-          className="object-cover fixed -z-10"
-          priority
-          sizes="100vw"
-        />
-        <div className="fixed inset-0 bg-black/50 -z-10" />
         <div className="relative z-10">
           <AuthProvider>
             <LanguageProvider>
