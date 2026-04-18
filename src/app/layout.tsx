@@ -41,7 +41,7 @@ export default function RootLayout({
           }}
         >
           <Image
-            src="/images/background2.png"
+            src="/images/darkbg.png"
             alt=""
             fill
             className="object-cover"
