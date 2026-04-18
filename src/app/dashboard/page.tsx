@@ -1,14 +1,12 @@
-
 "use client";
 
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
-import { Smile, Wind, Frown, Meh, Activity, Trophy, Clock, Flame, Sparkles } from 'lucide-react';
+import { Smile, Wind, Frown, Meh, Activity, Trophy, Clock, Sparkles } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState, useEffect } from 'react';
 import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
-import Link from 'next/link';
 import { firestore } from '@/lib/firebase/clientApp';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -16,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { MoodChart } from '@/components/features/dashboard/MoodChart';
 import { PracticeCalendarSnapshot } from '@/components/features/dashboard/PracticeCalendarSnapshot';
+import { UpgradeBanner } from '@/components/features/dashboard/UpgradeBanner';
 
 // ─── Brand colour tokens ────────────────────────────────────────────────────
 const GOLD        = 'rgba(193,154,107';   // append opacity: `${GOLD},0.8)`
@@ -110,8 +109,6 @@ export default function DashboardPage() {
   const { toast } = useToast();
   const [lastLoggedMood, setLastLoggedMood] = useState<string | null>(null);
   const [isMoodLogging, setIsMoodLogging] = useState(false);
-  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
-  const [upgradeDismissed, setUpgradeDismissed] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -119,9 +116,6 @@ export default function DashboardPage() {
     const moodDocRef = doc(firestore, 'users', user.uid, 'moods', todayStr);
     getDoc(moodDocRef).then((snap) => {
       if (snap.exists()) setLastLoggedMood(snap.data().name);
-    });
-    getDoc(doc(firestore, 'users', user.uid)).then((snap) => {
-      if (snap.exists()) setSubscriptionStatus(snap.data()?.subscriptionStatus ?? null);
     });
   }, [user]);
 
@@ -193,41 +187,8 @@ export default function DashboardPage() {
         {/* ── BENTO GRID ─────────────────────────────────────────────────── */}
         <main className="flex-grow container mx-auto px-4 pb-20 space-y-2">
 
-          {/* Upgrade banner — only for free users */}
-          {subscriptionStatus !== 'active' && !upgradeDismissed && (
-            <div
-              className="flex items-center justify-between px-4 py-2.5 rounded-2xl gap-3"
-              style={{
-                background: `${GOLD},0.12)`,
-                border: `0.5px solid ${GOLD},0.35)`,
-                backdropFilter: 'blur(12px)',
-              }}
-            >
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="text-base flex-shrink-0">⭐</span>
-                <p className="text-sm font-serif truncate" style={{ color: `${PARCHMENT},0.85)` }}>
-                  Unlock unlimited poses &amp; advanced feedback
-                </p>
-              </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <Link
-                  href="/upgrade"
-                  className="text-xs font-semibold font-serif px-3 py-1.5 rounded-full transition-opacity hover:opacity-80"
-                  style={{ background: `${GOLD},0.80)`, color: `${DEEP_BARK},0.95)` }}
-                >
-                  Upgrade
-                </Link>
-                <button
-                  onClick={() => setUpgradeDismissed(true)}
-                  className="text-xs opacity-40 hover:opacity-70 transition-opacity"
-                  style={{ color: `${PARCHMENT},0.70)` }}
-                  aria-label="Dismiss"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-          )}
+          {/* Upgrade banner — only renders for free users */}
+          <UpgradeBanner />
 
           {/* ROW 1 — Mood (2/3) + Practice (1/3) */}
           <div className="grid grid-cols-3 gap-2">
@@ -336,14 +297,14 @@ export default function DashboardPage() {
                 </div>
                 <div className="grid grid-cols-7 gap-1.5">
                   {Array.from({ length: 21 }).map((_, i) => (
-                    <div 
-                      key={i} 
+                    <div
+                      key={i}
                       className={cn(
                         "h-2 w-2 rounded-full",
-                        [0, 2, 4, 7, 10, 12, 14, 15, 18, 20].includes(i) 
-                          ? "bg-primary/80" 
+                        [0, 2, 4, 7, 10, 12, 14, 15, 18, 20].includes(i)
+                          ? "bg-primary/80"
                           : "bg-white/10"
-                      )} 
+                      )}
                     />
                   ))}
                 </div>
