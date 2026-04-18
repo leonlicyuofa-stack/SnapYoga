@@ -28,7 +28,7 @@ const mainGoalOptions = [
   { value: "mobility", label: "Mobility", image: placeholderImages.onboardingGoalImages.mobility },
   { value: "nourishment", label: "Nourishment", image: placeholderImages.onboardingGoalImages.nourishment },
   { value: "flexibility", label: "Flexibility", image: { src: "/images/flexibility.png", width: 400, height: 400, hint: "yoga flexibility" } },
-  { value: "strength", label: "Strength", image: placeholderImages.onboardingGoalImages.strength },
+  { value: "strength", label: "Strength", image: { src: "/images/strength.png", width: 400, height: 400, hint: "yoga strength" } },
 ];
 
 
