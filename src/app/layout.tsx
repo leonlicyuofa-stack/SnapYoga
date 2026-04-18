@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import { Lora, Shadows_Into_Light } from 'next/font/google';
+import Image from 'next/image';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/contexts/AuthContext'; 
@@ -30,6 +31,28 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${lora.variable} ${shadowsIntoLight.variable} font-serif antialiased`}>
+        {/* Persistent background — fixed wrapper div is the key */}
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: -10,
+            overflow: 'hidden',
+          }}
+        >
+          <Image
+            src="/images/background image 2.png"
+            alt=""
+            fill
+            className="object-cover"
+            priority
+            sizes="100vw"
+            quality={90}
+          />
+        </div>
+        {/* Dark overlay — also fixed */}
+        <div style={{ position: 'fixed', inset: 0, zIndex: -9, background: 'rgba(0,0,0,0.50)' }} />
+
         <div className="relative z-10">
           <AuthProvider>
             <LanguageProvider>
