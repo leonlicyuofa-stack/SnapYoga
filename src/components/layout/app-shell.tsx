@@ -12,6 +12,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SnapYogaLogo } from '../icons/snap-yoga-logo';
+import { ThemeToggle } from './ThemeToggle';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface AppShellProps {
   children: ReactNode;
@@ -21,6 +23,7 @@ export function AppShell({ children }: AppShellProps) {
   const { user, signOutUser, loading } = useAuth();
   const pathname = usePathname(); 
   const { language, setLanguage, t } = useLanguage();
+  const { theme } = useTheme();
   const [isSheetOpen, setSheetOpen] = React.useState(false);
 
   const getInitials = (email?: string | null, displayName?: string | null) => {
@@ -43,10 +46,11 @@ export function AppShell({ children }: AppShellProps) {
 
   const navLinkClasses = (path: string) => 
     cn(
-      "flex items-center gap-4 rounded-lg px-4 py-3 text-lg transition-colors hover:bg-white/20",
+      "flex items-center gap-4 rounded-lg px-4 py-3 text-lg transition-colors",
+      theme === 'dark' ? "hover:bg-white/20" : "hover:bg-black/10",
       pathname === path 
-        ? "text-white bg-white/10 font-bold" 
-        : "text-white/80 hover:text-white"
+        ? "font-bold " + (theme === 'dark' ? "text-white bg-white/10" : "text-black bg-black/5")
+        : (theme === 'dark' ? "text-white/80 hover:text-white" : "text-black/70 hover:text-black")
     );
 
   const homeLinkPath = user ? "/dashboard" : "/";
@@ -80,17 +84,23 @@ export function AppShell({ children }: AppShellProps) {
   ];
 
   return (
-    <div className="relative min-h-screen font-serif text-white">
+    <div className="relative min-h-screen font-serif">
       <div className="relative z-20 flex flex-col min-h-screen">
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-white/20 bg-black/20 px-4 backdrop-blur-lg sm:px-6">
+        <header className={cn(
+          "sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b px-4 backdrop-blur-lg sm:px-6 transition-colors duration-300",
+          theme === 'dark' ? "bg-black/20 border-white/10 text-white" : "bg-white/30 border-black/10 text-black"
+        )}>
           <Sheet open={isSheetOpen} onOpenChange={setSheetOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden text-white hover:bg-white/20">
+              <Button variant="ghost" size="icon" className="md:hidden text-current hover:bg-current/10">
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">Toggle Navigation</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="flex w-full max-sm flex-col p-6 bg-black/80 backdrop-blur-lg border-r-white/20 text-white">
+            <SheetContent side="left" className={cn(
+              "flex w-full max-sm flex-col p-6 backdrop-blur-lg border-r transition-colors duration-300",
+              theme === 'dark' ? "bg-black/80 border-white/10 text-white" : "bg-white/90 border-black/10 text-black"
+            )}>
                 <SheetHeader>
                   <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                   <SheetDescription className="sr-only">A list of links to navigate the application.</SheetDescription>
@@ -111,17 +121,17 @@ export function AppShell({ children }: AppShellProps) {
                 </nav>
                 {user && (
                   <div className="mt-auto">
-                      <div className="flex items-center gap-3 p-3 mb-4 rounded-lg bg-white/10">
+                      <div className={cn("flex items-center gap-3 p-3 mb-4 rounded-lg", theme === 'dark' ? "bg-white/10" : "bg-black/5")}>
                           <Avatar className="h-12 w-12 border-2 border-background">
                               <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User avatar'} />
                               <AvatarFallback>{getInitials(user.email, user.displayName)}</AvatarFallback>
                           </Avatar>
                           <div>
                               <p className="font-semibold">{user.displayName || 'User'}</p>
-                              <p className="text-xs text-white/80">{user.email}</p>
+                              <p className={cn("text-xs", theme === 'dark' ? "text-white/80" : "text-black/60")}>{user.email}</p>
                           </div>
                       </div>
-                      <Button variant="ghost" onClick={handleSignOut} className="w-full justify-start text-lg gap-4 px-4 py-3 text-white/80 hover:text-white hover:bg-white/10">
+                      <Button variant="ghost" onClick={handleSignOut} className="w-full justify-start text-lg gap-4 px-4 py-3 text-current hover:bg-current/10">
                           <LogOut className="h-6 w-6"/>
                           {t('signOut')}
                       </Button>
@@ -137,20 +147,24 @@ export function AppShell({ children }: AppShellProps) {
                     user || (item.href !== '/practice-calendar' && item.href !== '/challenges' && item.href !== '/profile') 
                     ? (
                       <Button key={item.label} variant={pathname === item.href ? 'outline' : 'ghost'} asChild className={cn(
-                        'text-white hover:bg-white/20', 
-                        pathname === item.href && 'bg-white/90 text-black hover:bg-white hover:text-black'
+                        'text-current hover:bg-current/10 transition-all', 
+                        pathname === item.href && (theme === 'dark' ? 'bg-white/90 text-black hover:bg-white' : 'bg-black/90 text-white hover:bg-black')
                       )}>
                           <Link href={item.href}>{item.label}</Link>
                       </Button>
                     ) : null
               ))}
           </nav>
-          {user && (
-               <Avatar className="h-10 w-10 border-2 border-white/20 hidden md:block">
-                  <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User avatar'} />
-                  <AvatarFallback>{getInitials(user.email, user.displayName)}</AvatarFallback>
-              </Avatar>
-          )}
+          
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            {user && (
+                <Avatar className="h-10 w-10 border-2 border-current hidden md:block">
+                    <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User avatar'} />
+                    <AvatarFallback>{getInitials(user.email, user.displayName)}</AvatarFallback>
+                </Avatar>
+            )}
+          </div>
         </header>
 
         <main className="flex-grow">

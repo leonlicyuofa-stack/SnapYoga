@@ -1,10 +1,11 @@
 import type {Metadata} from 'next';
 import { Lora, Shadows_Into_Light } from 'next/font/google';
-import Image from 'next/image';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/contexts/AuthContext'; 
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
+import { DynamicBackground } from '@/components/layout/DynamicBackground';
 
 const lora = Lora({
   subsets: ['latin'],
@@ -29,38 +30,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${lora.variable} ${shadowsIntoLight.variable} font-serif antialiased`}>
-        {/* Persistent background — fixed wrapper div is the key */}
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: -10,
-            overflow: 'hidden',
-          }}
-        >
-          <Image
-            src="/images/darkbg.png"
-            alt=""
-            fill
-            className="object-cover"
-            priority
-            sizes="100vw"
-            quality={90}
-          />
-        </div>
-        {/* Dark overlay — also fixed */}
-        <div style={{ position: 'fixed', inset: 0, zIndex: -9, background: 'rgba(0,0,0,0.50)' }} />
-
-        <div className="relative z-10">
-          <AuthProvider>
-            <LanguageProvider>
-              {children}
-              <Toaster />
-            </LanguageProvider>
-          </AuthProvider>
-        </div>
+        <ThemeProvider>
+          <DynamicBackground />
+          <div className="relative z-10">
+            <AuthProvider>
+              <LanguageProvider>
+                {children}
+                <Toaster />
+              </LanguageProvider>
+            </AuthProvider>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
