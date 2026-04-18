@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Check, Star, ArrowLeft, Loader2 } from 'lucide-react';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { app } from '@/lib/firebase/clientApp';
 
 export default function SubscriptionPage() {
   const { user, loading: authLoading } = useAuth();
@@ -23,19 +25,24 @@ export default function SubscriptionPage() {
     if (!user) return;
     setIsSubmitting(true);
     try {
-      await createUserProfileDocument(user, { 
-        trialStatus: 'active', 
-        trialStartDate: new Date().toISOString(), 
+      console.log('[Subscription] Creating Stripe checkout session for uid:', user.uid);
+      const functions = getFunctions(app);
+      const createStripeCheckoutSession = httpsCallable(functions, 'createStripeCheckoutSession');
+      const result = await createStripeCheckoutSession({
+        uid: user.uid,
+        email: user.email,
+        planId: 'monthly',
       });
-      router.push('/onboarding/pick-a-prize'); 
+      const { sessionUrl } = result.data as { sessionUrl: string };
+      console.log('[Subscription] Redirecting to Stripe checkout:', sessionUrl);
+      window.location.href = sessionUrl;
     } catch (error) {
-      console.error("Error activating free trial:", error);
+      console.error('[Subscription] Error creating checkout session:', error);
       toast({
         title: "Error",
-        description: "Could not activate free trial. Please try again.",
+        description: "Could not start checkout. Please try again.",
         variant: "destructive",
       });
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -83,13 +90,13 @@ export default function SubscriptionPage() {
                             className="w-full h-12 bg-green-500 hover:bg-green-600 text-white"
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? <Loader2 className="animate-spin" /> : <><Star className="mr-2 h-5 w-5" /> Start 7-Day Free Trial (Mock)</>}
+                            {isSubmitting ? <Loader2 className="animate-spin" /> : <><Star className="mr-2 h-5 w-5" /> Start 7-Day Free Trial</>}
                         </Button>
                     </main>
                     
                     <footer className="text-center">
                         <p className="text-xs text-white/60">
-                        Cancel anytime. Payment will be processed after the trial if not cancelled (mock).
+                        Cancel anytime. Payment will be processed after the 7-day trial if not cancelled.
                         </p>
                     </footer>
                 </div>
