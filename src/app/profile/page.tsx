@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { KeyRound, Save, Share2, Copy, MessageSquare, UserCircle, Ruler, FileText } from 'lucide-react'; 
+import { KeyRound, Save, Share2, Copy, MessageSquare, UserCircle, FileText, Star, Crown } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { firestore } from '@/lib/firebase/clientApp';
@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 
 const usernameChangeSchema = z.object({
@@ -64,6 +65,7 @@ export default function ProfilePage() {
   const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false);
   const [isUsernameSubmitting, setIsUsernameSubmitting] = useState(false);
   const [inviteLink, setInviteLink] = useState('');
+  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
 
   const { 
     register: registerUsername, 
@@ -88,7 +90,12 @@ export default function ProfilePage() {
       setInviteLink(window.location.origin);
     }
     if (user?.displayName) {
-        setUsernameValue('username', user.displayName);
+      setUsernameValue('username', user.displayName);
+    }
+    if (user) {
+      getDoc(doc(firestore, 'users', user.uid)).then((snap) => {
+        if (snap.exists()) setSubscriptionStatus(snap.data()?.subscriptionStatus ?? null);
+      });
     }
   }, [user, setUsernameValue]);
 
@@ -203,6 +210,42 @@ export default function ProfilePage() {
                                   {usernameErrors.username && <p className="text-sm text-destructive">{usernameErrors.username.message}</p>}
                               </div>
                           </form>
+                      </CardContent>
+                  </Card>
+
+                  {/* Subscription */}
+                  <Card className="bg-card/90 backdrop-blur-sm rounded-2xl shadow-xl border">
+                      <CardHeader>
+                          <CardTitle className="flex items-center gap-2 text-xl">
+                              <Crown className="h-6 w-6 text-primary" />
+                              Subscription
+                          </CardTitle>
+                          <CardDescription>Manage your SnapYoga plan.</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                          {subscriptionStatus === 'active' ? (
+                              <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                      <Badge className="bg-green-500 hover:bg-green-500 text-white gap-1">
+                                          <Star className="h-3 w-3" /> Premium Active
+                                      </Badge>
+                                      <span className="text-sm text-muted-foreground">Monthly plan</span>
+                                  </div>
+                                  <Button variant="outline" asChild className="h-9 rounded-lg text-sm">
+                                      <Link href="/upgrade">Manage</Link>
+                                  </Button>
+                              </div>
+                          ) : (
+                              <div className="flex items-center justify-between">
+                                  <div>
+                                      <p className="font-medium">Free Plan</p>
+                                      <p className="text-sm text-muted-foreground">Upgrade to unlock all features.</p>
+                                  </div>
+                                  <Button asChild className="h-10 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-semibold gap-1">
+                                      <Link href="/upgrade"><Star className="h-4 w-4" /> Upgrade</Link>
+                                  </Button>
+                              </div>
+                          )}
                       </CardContent>
                   </Card>
 

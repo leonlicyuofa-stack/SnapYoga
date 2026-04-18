@@ -12,6 +12,7 @@ function getStripe(): Stripe {
 }
 
 const MONTHLY_PRICE_ID = process.env.STRIPE_MONTHLY_PRICE_ID;
+const YEARLY_PRICE_ID = process.env.STRIPE_YEARLY_PRICE_ID;
 const SUCCESS_URL = 'https://snap-yoga.vercel.app/payment/success?session_id={CHECKOUT_SESSION_ID}';
 const CANCEL_URL = 'https://snap-yoga.vercel.app/payment/cancel';
 
@@ -26,10 +27,10 @@ export const createStripeCheckoutSession = onCall(async (request) => {
   console.log('[createStripeCheckoutSession] Creating session for uid:', uid, 'planId:', planId);
 
   const stripe = getStripe();
-  const priceId = MONTHLY_PRICE_ID;
+  const priceId = planId === 'yearly' ? YEARLY_PRICE_ID : MONTHLY_PRICE_ID;
 
   if (!priceId) {
-    throw new HttpsError('internal', 'Stripe price ID is not configured');
+    throw new HttpsError('internal', `Stripe price ID for plan "${planId}" is not configured`);
   }
 
   try {
