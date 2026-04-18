@@ -35,7 +35,9 @@ export default function SubscriptionPage() {
       });
       const { sessionUrl } = result.data as { sessionUrl: string };
       console.log('[Subscription] Redirecting to Stripe checkout:', sessionUrl);
-      window.location.href = sessionUrl;
+      if (typeof window !== 'undefined') {
+        window.location.href = sessionUrl;
+      }
     } catch (error) {
       console.error('[Subscription] Error creating checkout session:', error);
       toast({
