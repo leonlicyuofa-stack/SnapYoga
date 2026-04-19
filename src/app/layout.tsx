@@ -1,11 +1,11 @@
-import type {Metadata} from 'next';
+import type { Metadata } from 'next';
 import { Lora, Shadows_Into_Light } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
-import { AuthProvider } from '@/contexts/AuthContext'; 
+import { AuthProvider } from '@/contexts/AuthContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
-import { DynamicBackground } from '@/components/layout/DynamicBackground';
+import { ThemeBackground } from '@/components/layout/theme-background';
 
 const lora = Lora({
   subsets: ['latin'],
@@ -30,10 +30,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <body className={`${lora.variable} ${shadowsIntoLight.variable} font-serif antialiased`}>
         <ThemeProvider>
-          <DynamicBackground />
+          <ThemeBackground />
           <div className="relative z-10">
             <AuthProvider>
               <LanguageProvider>

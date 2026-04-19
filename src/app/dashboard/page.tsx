@@ -1,431 +1,323 @@
-
 "use client";
 
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
-import { Smile, Wind, Frown, Meh, Activity, Trophy, Clock, Flame, Sparkles } from 'lucide-react';
+import { Smile, Wind, Frown, Meh, Trophy, Sun, Moon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { useState, useEffect } from 'react';
-import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, getDoc, collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import { useToast } from '@/hooks/use-toast';
-import { format } from 'date-fns';
+import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { MoodChart } from '@/components/features/dashboard/MoodChart';
-import { PracticeCalendarSnapshot } from '@/components/features/dashboard/PracticeCalendarSnapshot';
 
-// ─── Brand colour tokens ────────────────────────────────────────────────────
-const GOLD        = 'rgba(193,154,107';   // append opacity: `${GOLD},0.8)`
-const PARCHMENT   = 'rgba(255,240,215';
-const TERRACOTTA  = 'rgba(180,110,65';
-const SAGE        = 'rgba(120,140,100';
-const DEEP_BARK   = 'rgba(25,16,8';
+const GOLD       = 'rgba(193,154,107';
+const PARCHMENT  = 'rgba(255,240,215';
+const TERRACOTTA = 'rgba(180,110,65';
+const SAGE       = 'rgba(120,140,100';
+const DEEP_BARK  = 'rgba(25,16,8';
+const BARK_L     = 'rgba(60,38,18';
 
-// ─── Mood definitions ────────────────────────────────────────────────────────
-const moods = [
-  {
-    name: 'Joyful',
-    icon: Smile,
-    emoji: '😊',
-    ringColor: `${SAGE},0.45)`,
-    fillColor: `${SAGE},0.20)`,
-    textColor: 'rgba(160,195,130,0.92)',
-  },
-  {
-    name: 'Calm',
-    icon: Wind,
-    emoji: '😌',
-    ringColor: 'rgba(130,165,195,0.45)',
-    fillColor: 'rgba(100,130,160,0.20)',
-    textColor: 'rgba(140,185,215,0.92)',
-  },
-  {
-    name: 'Emotional',
-    icon: Frown,
-    emoji: '😢',
-    ringColor: `${GOLD},0.45)`,
-    fillColor: `${TERRACOTTA},0.20)`,
-    textColor: `${GOLD},0.92)`,
-  },
-  {
-    name: 'Fatigue',
-    icon: Meh,
-    emoji: '😫',
-    ringColor: 'rgba(139,100,75,0.45)',
-    fillColor: 'rgba(139,100,75,0.18)',
-    textColor: 'rgba(200,160,120,0.92)',
-  },
-];
-
-function getInitials(email?: string | null, displayName?: string | null): string {
-  if (displayName) {
-    const names = displayName.split(' ');
-    return (names[0][0] + (names[names.length - 1][0] || '')).toUpperCase();
-  }
-  return email?.[0].toUpperCase() || 'U';
+function tok(isDark: boolean) {
+  return {
+    text:        isDark ? `${PARCHMENT},0.90)`  : `${BARK_L},0.90)`,
+    muted:       isDark ? `${PARCHMENT},0.38)`  : `${BARK_L},0.45)`,
+    gold:        isDark ? `${GOLD},0.90)`        : `rgba(140,100,55,0.90)`,
+    goldBorder:  isDark ? `${GOLD},0.22)`        : `rgba(140,100,55,0.30)`,
+    cardBg:      isDark ? `${GOLD},0.07)`        : `rgba(255,248,235,0.72)`,
+    cardTerra:   isDark ? `${TERRACOTTA},0.18)`  : `rgba(200,135,85,0.14)`,
+    cardSage:    isDark ? `${SAGE},0.18)`        : `rgba(120,155,95,0.16)`,
+    cardBark:    isDark ? `${DEEP_BARK},0.65)`   : `rgba(255,248,232,0.88)`,
+    cardDark:    isDark ? `${DEEP_BARK},0.50)`   : `rgba(248,240,225,0.80)`,
+  };
 }
 
-function GlassCard({
-  children,
-  className,
-  style,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  style?: React.CSSProperties;
-}) {
+const MOODS = [
+  { name: 'Joyful',    icon: Smile, emoji: '😊', ring: `${SAGE},0.45)`,          fill: `${SAGE},0.20)`,         text: 'rgba(160,195,130,0.92)' },
+  { name: 'Calm',      icon: Wind,  emoji: '😌', ring: 'rgba(130,165,195,0.45)', fill: 'rgba(100,130,160,0.20)', text: 'rgba(140,185,215,0.92)' },
+  { name: 'Emotional', icon: Frown, emoji: '😢', ring: `${GOLD},0.45)`,           fill: `${TERRACOTTA},0.20)`,   text: `${GOLD},0.92)` },
+  { name: 'Fatigue',   icon: Meh,   emoji: '😫', ring: 'rgba(139,100,75,0.45)',   fill: 'rgba(139,100,75,0.18)', text: 'rgba(200,160,120,0.92)' },
+];
+
+function GlassCard({ children, className, style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return (
     <div
-      className={cn('transition-transform duration-300 hover:scale-[1.015]', className)}
-      style={{
-        background: `${GOLD},0.07)`,
-        border: `0.5px solid ${GOLD},0.20)`,
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        borderRadius: '20px',
-        ...style,
-      }}
+      className={cn('transition-transform duration-300', className)}
+      style={{ backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', borderRadius: 20, ...style }}
     >
       {children}
     </div>
   );
 }
 
-function CardLabel({ children }: { children: React.ReactNode }) {
+function SectionHead({ children, t }: { children: React.ReactNode; t: ReturnType<typeof tok> }) {
+  return <p style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase' as const, fontStyle: 'italic', color: t.muted, marginBottom: 8, fontFamily: 'Georgia,serif' }}>{children}</p>;
+}
+
+function CardLabel({ children, color }: { children: React.ReactNode; color: string }) {
+  return <p style={{ fontSize: 9, letterSpacing: 2, textTransform: 'uppercase' as const, fontStyle: 'italic', color, margin: '0 0 3px', fontFamily: 'Georgia,serif' }}>{children}</p>;
+}
+
+function Bar({ pct, color }: { pct: number; color: string }) {
   return (
-    <p
-      className="text-xs tracking-widest uppercase font-medium font-serif italic"
-      style={{ color: `${PARCHMENT},0.40)` }}
-    >
-      {children}
-    </p>
+    <div style={{ height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.09)', marginTop: 6 }}>
+      <div style={{ height: 4, borderRadius: 2, width: `${Math.min(pct, 100)}%`, background: color, transition: 'width 0.9s ease' }} />
+    </div>
   );
 }
 
+function getInitials(email?: string | null, name?: string | null) {
+  if (name) { const n = name.split(' '); return (n[0][0] + (n[n.length-1][0]||'')).toUpperCase(); }
+  return email?.[0].toUpperCase() || 'U';
+}
+
 export default function DashboardPage() {
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const [lastLoggedMood, setLastLoggedMood] = useState<string | null>(null);
-  const [isMoodLogging, setIsMoodLogging] = useState(false);
+  const { user }                = useAuth();
+  const { isDark, toggleTheme } = useTheme();
+  const { toast }               = useToast();
+  const t                       = tok(isDark);
+
+  const [mood,          setMood]          = useState<string|null>(null);
+  const [moodLogging,   setMoodLogging]   = useState(false);
+  const [totalSessions, setTotalSessions] = useState(0);
+  const [monthSessions, setMonthSessions] = useState(0);
+  const [exerciseHrs,   setExerciseHrs]   = useState(0);
+  const [avgScore,      setAvgScore]      = useState(78);
+
+  const name = user?.displayName || user?.email?.split('@')[0] || 'Yogi';
 
   useEffect(() => {
     if (!user) return;
     const todayStr = format(new Date(), 'yyyy-MM-dd');
-    const moodDocRef = doc(firestore, 'users', user.uid, 'moods', todayStr);
-    getDoc(moodDocRef).then((snap) => {
-      if (snap.exists()) setLastLoggedMood(snap.data().name);
-    });
+    getDoc(doc(firestore, 'users', user.uid, 'moods', todayStr)).then(s => { if (s.exists()) setMood(s.data().name); });
   }, [user]);
 
-  const handleMoodSelect = async (moodName: string, moodEmoji: string) => {
-    if (!user || isMoodLogging) return;
-    setIsMoodLogging(true);
-    const todayStr = format(new Date(), 'yyyy-MM-dd');
-    const moodDocRef = doc(firestore, 'users', user.uid, 'moods', todayStr);
-    try {
-      await setDoc(moodDocRef, {
-        name: moodName,
-        emoji: moodEmoji,
-        loggedAt: serverTimestamp(),
-      });
-      setLastLoggedMood(moodName);
-      toast({ title: 'Mood Logged', description: `Feeling ${moodName} today.` });
-    } catch {
-      toast({ title: 'Error', description: 'Could not log mood.', variant: 'destructive' });
-    } finally {
-      setIsMoodLogging(false);
-    }
-  };
+  useEffect(() => {
+    if (!user) return;
+    const ref = collection(firestore, 'users', user.uid, 'poseAnalyses');
+    getDocs(query(ref, orderBy('createdAt', 'desc'))).then(snap => {
+      const all = snap.docs.map(d => d.data());
+      setTotalSessions(all.length);
+      const scores = all.filter(a => typeof a.score === 'number').map(a => a.score as number);
+      if (scores.length) setAvgScore(Math.round(scores.reduce((a,b)=>a+b,0)/scores.length));
+      setExerciseHrs(Math.round((all.length * 15) / 60 * 10) / 10);
+    });
+    const mStart = startOfMonth(new Date()), mEnd = endOfMonth(new Date());
+    getDocs(query(ref, where('createdAt','>=',mStart), where('createdAt','<=',mEnd))).then(s => setMonthSessions(s.size));
+  }, [user]);
 
-  const welcomeName =
-    user?.displayName || user?.email?.split('@')[0] || 'Yogi';
+  const logMood = async (moodName: string, emoji: string) => {
+    if (!user || moodLogging) return;
+    setMoodLogging(true);
+    try {
+      await setDoc(doc(firestore, 'users', user.uid, 'moods', format(new Date(),'yyyy-MM-dd')), { name: moodName, emoji, loggedAt: serverTimestamp() });
+      setMood(moodName);
+      toast({ title: 'Mood logged', description: `Feeling ${moodName} today.` });
+    } catch { toast({ title: 'Error', description: 'Could not log mood.', variant: 'destructive' }); }
+    finally { setMoodLogging(false); }
+  };
 
   return (
     <AppShell>
-      <div className="flex flex-col min-h-screen">
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
 
-        {/* ── HEADER ─────────────────────────────────────────────────────── */}
-        <header className="container mx-auto px-4 pt-6 pb-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1
-                className="text-4xl font-serif font-semibold tracking-tight"
-                style={{ color: `${PARCHMENT},0.92)` }}
-              >
-                Hey, {welcomeName}!
-              </h1>
-              <p
-                className="text-base font-serif italic mt-1"
-                style={{ color: `${PARCHMENT},0.38)` }}
-              >
-                Your practice is waiting for you.
-              </p>
-            </div>
-            <Avatar
-              className="h-[180px] w-[180px] border-4 shadow-xl"
-              style={{ borderColor: `${GOLD},0.40)` }}
+        {/* HEADER */}
+        <header style={{ padding: '14px 16px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <h1 style={{ fontSize: 21, fontWeight: 500, color: t.text, fontFamily: 'Georgia,serif', margin: 0 }}>Hey, {name}!</h1>
+            <p  style={{ fontSize: 11, fontStyle: 'italic', color: t.muted, margin: '2px 0 0', fontFamily: 'Georgia,serif' }}>Your practice is waiting.</p>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle light/dark mode"
+              style={{ width: 34, height: 34, borderRadius: 17, background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
             >
-              <AvatarImage
-                src={user?.photoURL ?? undefined}
-                alt={user?.displayName ?? 'user'}
-              />
-              <AvatarFallback
-                className="font-serif text-6xl"
-                style={{
-                  background: `${GOLD},0.25)`,
-                  color: `${GOLD},0.95)`,
-                }}
-              >
+              {isDark ? <Sun style={{ width: 15, height: 15, color: t.gold }} /> : <Moon style={{ width: 15, height: 15, color: t.gold }} />}
+            </button>
+            <Avatar style={{ width: 34, height: 34, border: `1.5px solid ${t.goldBorder}` }}>
+              <AvatarImage src={user?.photoURL ?? undefined} alt={name} />
+              <AvatarFallback style={{ background: `${GOLD},0.18)`, color: t.gold, fontSize: 11, fontFamily: 'Georgia,serif' }}>
                 {getInitials(user?.email, user?.displayName)}
               </AvatarFallback>
             </Avatar>
           </div>
         </header>
 
-        {/* ── BENTO GRID ─────────────────────────────────────────────────── */}
-        <main className="flex-grow container mx-auto px-4 pb-20 space-y-2">
+        {/* SCROLLABLE CONTENT */}
+        <main style={{ flex: 1, padding: '4px 14px 120px', display: 'flex', flexDirection: 'column', gap: 22 }}>
 
-          {/* ROW 1 — Mood (2/3) + Practice (1/3) */}
-          <div className="grid grid-cols-3 gap-2">
-
-            <GlassCard className="col-span-2 px-4 py-3" style={{ borderRadius: '32px 32px 16px 32px' }}>
-              <div className="flex items-center justify-between mb-2">
-                <CardLabel>How are you feeling?</CardLabel>
-                <div
-                  className="p-1 rounded-full"
-                  style={{ background: `${GOLD},0.12)` }}
-                >
-                  <Sparkles
-                    className="h-3 w-3"
-                    style={{ color: `${GOLD},0.70)` }}
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-around items-center py-1">
-                {moods.map((mood) => {
-                  const isActive = lastLoggedMood === mood.name;
+          {/* §1 MOOD */}
+          <section>
+            <SectionHead t={t}>How are you feeling?</SectionHead>
+            <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '24px 12px 24px 24px', padding: '12px 8px 14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                {MOODS.map(m => {
+                  const on = mood === m.name;
                   return (
-                    <button
-                      key={mood.name}
-                      onClick={() => handleMoodSelect(mood.name, mood.emoji)}
-                      disabled={isMoodLogging}
-                      className="flex flex-col items-center gap-1.5 group"
+                    <button key={m.name} onClick={() => logMood(m.name, m.emoji)} disabled={moodLogging}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}
                     >
-                      <div
-                        className="h-11 w-11 rounded-full flex items-center justify-center transition-all duration-300"
-                        style={{
-                          background: isActive ? mood.fillColor : `${PARCHMENT},0.04)`,
-                          border: `1px solid ${isActive ? mood.ringColor : `${PARCHMENT},0.10)`}`,
-                          boxShadow: isActive ? `0 0 12px ${mood.fillColor}` : 'none',
-                          transform: isActive ? 'scale(1.08)' : 'scale(1)',
-                        }}
-                      >
-                        <mood.icon
-                          className="h-5 w-5 transition-all duration-300"
-                          style={{
-                            color: isActive ? mood.textColor : `${PARCHMENT},0.45)`,
-                          }}
-                        />
+                      <div style={{ width: 44, height: 44, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.25s ease',
+                        background: on ? m.fill : `${PARCHMENT},0.04)`,
+                        border: `1px solid ${on ? m.ring : `${PARCHMENT},0.10)`}`,
+                        boxShadow: on ? `0 0 12px ${m.fill}` : 'none',
+                        transform: on ? 'scale(1.10)' : 'scale(1)',
+                      }}>
+                        <m.icon style={{ width: 20, height: 20, color: on ? m.text : `${PARCHMENT},0.45)` }} />
                       </div>
-                      <span
-                        className="text-[8px] uppercase tracking-widest font-medium font-serif"
-                        style={{
-                          color: isActive ? mood.textColor : `${PARCHMENT},0.30)`,
-                        }}
-                      >
-                        {mood.name}
-                      </span>
+                      <span style={{ fontSize: 8, letterSpacing: 1.5, textTransform: 'uppercase' as const, fontFamily: 'Georgia,serif', color: on ? m.text : t.muted }}>{m.name}</span>
                     </button>
                   );
                 })}
               </div>
             </GlassCard>
+          </section>
 
-            <GlassCard
-              className="px-4 py-3 flex flex-col justify-between"
-              style={{
-                background: `${TERRACOTTA},0.18)`,
-                border: `0.5px solid ${GOLD},0.28)`,
-                borderRadius: '16px 32px 32px 16px',
-              }}
-            >
-              <div className="flex items-center justify-between">
-                <CardLabel>Practice</CardLabel>
-                <svg width="38" height="38" viewBox="0 0 44 44">
-                  <circle cx="22" cy="22" r="18" fill="none" stroke={`${GOLD},0.15)`} strokeWidth="3.5" />
-                  <circle cx="22" cy="22" r="18" fill="none" stroke={`${GOLD},0.80)`} strokeWidth="3.5"
-                    strokeDasharray="75 38" strokeDashoffset="14" strokeLinecap="round" />
-                  <text x="22" y="26" textAnchor="middle" fontSize="9" fontFamily="Georgia, serif" fill={`${GOLD},0.85)`}>68%</text>
-                </svg>
-              </div>
-              <div className="mt-2">
-                <p className="text-3xl font-serif font-semibold tracking-tight" style={{ color: `${PARCHMENT},0.92)` }}>
-                  1,240
+          {/* §2 MY PROGRESS */}
+          <section>
+            <SectionHead t={t}>My Progress</SectionHead>
+
+            {/* Row A: Exercise hours + Poses */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+              <GlassCard style={{ background: t.cardTerra, border: `0.5px solid ${t.goldBorder}`, borderRadius: '20px 8px 20px 20px', padding: '12px 14px' }}>
+                <CardLabel color={t.gold}>Exercise hours</CardLabel>
+                <p style={{ fontSize: 28, fontWeight: 500, color: t.gold, lineHeight: 1.1, margin: '2px 0 0', fontFamily: 'Georgia,serif' }}>
+                  {exerciseHrs}<span style={{ fontSize: 12, opacity: 0.55, marginLeft: 2 }}> hrs</span>
                 </p>
-                <p className="text-[10px] font-serif italic mt-0.5" style={{ color: `${PARCHMENT},0.40)` }}>
-                  mins this month
-                </p>
-              </div>
-            </GlassCard>
-          </div>
-
-          {/* ROW 2 — Monthly Goal (1/3) + Mood Flow (2/3) */}
-          <div className="grid grid-cols-3 gap-2">
-
-            <GlassCard
-              className="col-span-1 px-4 py-3 flex flex-col gap-2"
-              style={{
-                background: `${DEEP_BARK},0.50)`,
-                border: `0.5px solid ${GOLD},0.18)`,
-                borderRadius: '16px 16px 32px 32px',
-              }}
-            >
-              <div className="flex items-center justify-between">
-                <CardLabel>Monthly Goal</CardLabel>
-                <Clock className="h-3 w-3" style={{ color: `${GOLD},0.45)` }} />
-              </div>
-
-              <div className="space-y-2 py-1">
-                <div className="text-[10px] font-serif text-white/40 flex justify-between uppercase tracking-tighter">
-                  <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+                <p style={{ fontSize: 9, color: t.muted, fontStyle: 'italic', margin: '2px 0 0', fontFamily: 'Georgia,serif' }}>this month</p>
+                <Bar pct={(exerciseHrs / 30) * 100} color={`${GOLD},0.78)`} />
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 3 }}>
+                  <span style={{ fontSize: 8, color: t.muted }}>goal 30h</span>
+                  <span style={{ fontSize: 8, color: t.gold }}>{Math.round((exerciseHrs/30)*100)}%</span>
                 </div>
-                <div className="grid grid-cols-7 gap-1.5">
-                  {Array.from({ length: 21 }).map((_, i) => (
-                    <div 
-                      key={i} 
-                      className={cn(
-                        "h-2 w-2 rounded-full",
-                        [0, 2, 4, 7, 10, 12, 14, 15, 18, 20].includes(i) 
-                          ? "bg-primary/80" 
-                          : "bg-white/10"
-                      )} 
-                    />
+              </GlassCard>
+
+              <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '8px 20px 20px 20px', padding: '12px 14px' }}>
+                <CardLabel color={t.muted}>Poses analysed</CardLabel>
+                <p style={{ fontSize: 28, fontWeight: 500, color: t.text, lineHeight: 1.1, margin: '2px 0 0', fontFamily: 'Georgia,serif' }}>{totalSessions}</p>
+                <p style={{ fontSize: 9, color: t.muted, fontStyle: 'italic', margin: '2px 0 0', fontFamily: 'Georgia,serif' }}>all time</p>
+                <div style={{ marginTop: 8 }}>
+                  <span style={{ fontSize: 8, padding: '2px 7px', borderRadius: 999, background: `${GOLD},0.14)`, color: t.gold, border: `0.5px solid ${t.goldBorder}`, letterSpacing: 1, textTransform: 'uppercase' as const }}>
+                    +{monthSessions} this month
+                  </span>
+                </div>
+              </GlassCard>
+            </div>
+
+            {/* Row B: Streak + Avg score */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+              <GlassCard style={{ background: t.cardSage, border: `0.5px solid rgba(140,170,115,0.32)`, borderRadius: '20px 20px 8px 20px', padding: '12px 14px' }}>
+                <CardLabel color="rgba(160,195,130,0.75)">Current streak</CardLabel>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, margin: '2px 0 0' }}>
+                  <p style={{ fontSize: 28, fontWeight: 500, color: 'rgba(160,195,130,0.92)', lineHeight: 1.1, margin: 0, fontFamily: 'Georgia,serif' }}>7</p>
+                  <div>
+                    <div style={{ fontSize: 11, color: 'rgba(160,195,130,0.70)', fontFamily: 'Georgia,serif' }}>days</div>
+                    <div style={{ fontSize: 16 }}>🔥</div>
+                  </div>
+                </div>
+                <p style={{ fontSize: 9, color: t.muted, fontStyle: 'italic', margin: '3px 0 0', fontFamily: 'Georgia,serif' }}>best: 14 days</p>
+              </GlassCard>
+
+              <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '20px 20px 20px 8px', padding: '12px 14px' }}>
+                <CardLabel color={t.muted}>Avg pose score</CardLabel>
+                <p style={{ fontSize: 28, fontWeight: 500, color: t.gold, lineHeight: 1.1, margin: '2px 0 0', fontFamily: 'Georgia,serif' }}>
+                  {avgScore}<span style={{ fontSize: 12, opacity: 0.50, marginLeft: 1 }}>/100</span>
+                </p>
+                <p style={{ fontSize: 9, color: t.muted, fontStyle: 'italic', margin: '2px 0 0', fontFamily: 'Georgia,serif' }}>↑ improving</p>
+                <Bar pct={avgScore} color={`${GOLD},0.72)`} />
+              </GlassCard>
+            </div>
+
+            {/* Row C: Monthly sessions full-width */}
+            <GlassCard style={{ background: t.cardDark, border: `0.5px solid ${t.goldBorder}`, borderRadius: '12px 24px 24px 12px', padding: '14px 16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ flex: 1 }}>
+                  <CardLabel color={t.muted}>Monthly sessions</CardLabel>
+                  <p style={{ fontSize: 22, fontWeight: 500, color: t.text, fontFamily: 'Georgia,serif', margin: 0 }}>
+                    {monthSessions} <span style={{ fontSize: 13, color: t.muted, fontWeight: 400 }}>/ 26 goal</span>
+                  </p>
+                  <p style={{ fontSize: 10, color: t.muted, fontStyle: 'italic', margin: '3px 0 0', fontFamily: 'Georgia,serif' }}>
+                    {Math.round((monthSessions/26)*100)}% of monthly goal
+                  </p>
+                  <Bar pct={(monthSessions/26)*100} color={`${GOLD},0.78)`} />
+                </div>
+                <div style={{ display: 'flex', gap: 4, marginLeft: 16, alignItems: 'flex-end' }}>
+                  {[1,1,0,1,0,1,1].map((done,i)=>(
+                    <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: done ? `${GOLD},0.80)` : `${PARCHMENT},0.12)` }} />
                   ))}
                 </div>
               </div>
-
-              <div>
-                <div className="w-full h-1 rounded-full mb-1" style={{ background: `${PARCHMENT},0.08)` }}>
-                  <div className="h-full rounded-full" style={{ width: '65%', background: `${GOLD},0.80)` }} />
-                </div>
-                <div className="flex justify-between items-baseline">
-                  <p className="text-[10px] font-serif italic" style={{ color: `${PARCHMENT},0.32)` }}>
-                    17 of 26 sessions
-                  </p>
-                  <p className="text-[8px] font-serif uppercase tracking-widest text-white/20">65% of goal</p>
-                </div>
-              </div>
             </GlassCard>
+          </section>
 
-            <GlassCard
-              className="col-span-2 px-4 py-3"
-              style={{ borderRadius: '32px 32px 32px 16px' }}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <CardLabel>Weekly Mood Flow</CardLabel>
-                <Activity className="h-3 w-3" style={{ color: `${GOLD},0.45)` }} />
+          {/* §3 TODAY'S HABITS */}
+          <section>
+            <SectionHead t={t}>Today's habits</SectionHead>
+            <GlassCard style={{ background: t.cardDark, border: `0.5px solid ${t.goldBorder}`, borderRadius: '20px 20px 12px 20px', padding: '12px 10px 14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                {[
+                  { label: 'Practice', emoji: '🧘', done: true,  color: `${TERRACOTTA},0.85)` },
+                  { label: 'Hydrate',  emoji: '💧', done: true,  color: 'rgba(100,160,200,0.85)' },
+                  { label: 'Rest',     emoji: '🌙', done: false, color: `${GOLD},0.85)` },
+                  { label: 'Sunlight', emoji: '☀️', done: false, color: 'rgba(220,180,80,0.85)' },
+                  { label: 'Active',   emoji: '🔥', done: false, color: `${SAGE},0.85)` },
+                ].map(h => (
+                  <div key={h.label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+                    <div style={{ width: 38, height: 38, borderRadius: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, transition: 'all 0.2s',
+                      background: h.done ? h.color : `${PARCHMENT},0.05)`,
+                      border: `0.5px solid ${h.done ? h.color : `${PARCHMENT},0.10)`}`,
+                      transform: h.done ? 'scale(1.08)' : 'scale(1)',
+                    }}>{h.emoji}</div>
+                    <span style={{ fontSize: 7, letterSpacing: 1, textTransform: 'uppercase' as const, fontFamily: 'Georgia,serif', color: h.done ? t.text : t.muted }}>{h.label}</span>
+                  </div>
+                ))}
               </div>
-              <div className="h-[140px]">
+              <div style={{ display: 'flex', gap: 4, marginTop: 10 }}>
+                {[1,1,0,0,0].map((d,i) => <div key={i} style={{ flex:1, height:3, borderRadius:2, background: d ? `${GOLD},0.72)` : `${PARCHMENT},0.10)` }} />)}
+              </div>
+              <p style={{ fontSize: 9, color: t.muted, fontStyle: 'italic', marginTop: 4, fontFamily: 'Georgia,serif' }}>2 of 5 habits done today</p>
+            </GlassCard>
+          </section>
+
+          {/* §4 WEEKLY MOOD FLOW */}
+          <section>
+            <SectionHead t={t}>Weekly mood flow</SectionHead>
+            <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '24px 24px 24px 12px', padding: '12px 14px 8px' }}>
+              <div style={{ height: 150 }}>
                 <MoodChart />
               </div>
             </GlassCard>
-          </div>
+          </section>
 
-          {/* ROW 3 — Challenges CTA (2/3) + 2 stat pills (1/3) */}
-          <div className="grid grid-cols-3 gap-2">
-
-            {/* Challenges CTA — deep bark anchor card */}
-            <div
-              className="col-span-2 px-5 py-4 flex flex-col justify-between transition-transform duration-300 hover:scale-[1.015] relative"
-              style={{
-                background: `${DEEP_BARK},0.72)`,
-                border: `0.8px solid ${GOLD},0.28)`,
-                backdropFilter: 'blur(16px)',
-                WebkitBackdropFilter: 'blur(16px)',
-                borderRadius: '32px 16px 32px 32px',
-              }}
-            >
-              <div
-                className="absolute inset-x-0 top-0 h-8 pointer-events-none"
-                style={{ background: `${GOLD},0.06)`, borderRadius: '32px 16px 0 0' }}
-              />
-
-              <div className="relative z-10 flex items-start gap-3">
-                <div className="flex-grow">
-                  <h3 className="text-xl font-serif font-semibold leading-snug" style={{ color: `${PARCHMENT},0.92)` }}>
-                    Join new challenges
-                  </h3>
-                  <p className="text-sm font-serif italic mt-0.5" style={{ color: `${PARCHMENT},0.38)` }}>
-                    Connect with friends and master new poses.
-                  </p>
+          {/* §5 CHALLENGES */}
+          <section>
+            <SectionHead t={t}>Challenges</SectionHead>
+            <GlassCard style={{ background: t.cardBark, border: `0.8px solid ${t.goldBorder}`, borderRadius: '28px 12px 28px 28px', padding: '16px', position: 'relative' as const }}>
+              <div style={{ position: 'absolute' as const, inset: 0, top: 0, height: 42, borderRadius: '28px 12px 0 0', background: `${GOLD},0.06)`, pointerEvents: 'none' as const }} />
+              <div style={{ position: 'relative' as const, zIndex: 1, display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 14, background: `${GOLD},0.14)`, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Trophy style={{ width: 20, height: 20, color: t.gold }} />
                 </div>
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
-                  style={{ background: `${GOLD},0.10)` }}
-                >
-                  <Trophy className="h-5 w-5 opacity-40" style={{ color: `${GOLD},0.85)` }} />
+                <div>
+                  <h3 style={{ fontSize: 16, fontWeight: 500, color: t.text, fontFamily: 'Georgia,serif', margin: '0 0 4px' }}>Join new challenges</h3>
+                  <p  style={{ fontSize: 11, color: t.muted, fontStyle: 'italic', fontFamily: 'Georgia,serif', margin: 0 }}>Connect with friends and master new poses.</p>
                 </div>
               </div>
-
-              <div className="relative z-10 mt-3">
-                <Button
-                  asChild
-                  className="rounded-full h-10 px-8 text-sm font-serif font-semibold transition-all hover:opacity-90"
-                  style={{
-                    background: `${GOLD},0.85)`,
-                    color: `${DEEP_BARK},0.95)`,
-                    border: 'none',
-                  }}
-                >
+              <div style={{ position: 'relative' as const, zIndex: 1, marginTop: 14, display: 'flex', gap: 10 }}>
+                <Button asChild style={{ flex: 1, height: 42, borderRadius: 21, background: `${GOLD},0.80)`, color: `${DEEP_BARK},0.95)`, border: 'none', fontFamily: 'Georgia,serif', fontSize: 13, letterSpacing: 1 }}>
                   <Link href="/challenges">Explore</Link>
                 </Button>
+                <Link href="/challenges" style={{ width: 42, height: 42, borderRadius: 21, flexShrink: 0, background: `${GOLD},0.12)`, border: `0.5px solid ${t.goldBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
+                  👥
+                </Link>
               </div>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <GlassCard
-                className="px-4 py-3 flex-1"
-                style={{
-                  background: `${SAGE},0.18)`,
-                  border: `0.5px solid ${SAGE},0.32)`,
-                  borderRadius: '999px',
-                }}
-              >
-                <CardLabel>Current Streak</CardLabel>
-                <div className="flex items-end gap-1.5 mt-1">
-                  <p
-                    className="text-xl font-serif font-semibold"
-                    style={{ color: 'rgba(160,195,130,0.92)' }}
-                  >
-                    7 days
-                  </p>
-                  <span className="text-xl mb-0.5">🔥</span>
-                </div>
-              </GlassCard>
-
-              <GlassCard
-                className="px-4 py-3 flex-1"
-                style={{
-                  background: `${TERRACOTTA},0.18)`,
-                  border: `0.5px solid ${GOLD},0.25)`,
-                  borderRadius: '999px',
-                }}
-              >
-                <CardLabel>Poses analysed</CardLabel>
-                <div className="flex items-end gap-1.5 mt-1">
-                  <p
-                    className="text-xl font-serif font-semibold"
-                    style={{ color: 'rgba(210,165,120,0.92)' }}
-                  >
-                    24 total
-                  </p>
-                </div>
-              </GlassCard>
-            </div>
-          </div>
+            </GlassCard>
+          </section>
 
         </main>
       </div>
