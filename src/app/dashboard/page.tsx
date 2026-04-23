@@ -3,11 +3,11 @@
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
-import { Smile, Wind, Frown, Meh, Trophy, Sun, Moon } from 'lucide-react';
+import { Smile, Wind, Frown, Meh, Trophy, Sun, Moon, MessageSquare, ArrowRight, Sparkles } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useState, useEffect } from 'react';
-import { doc, setDoc, serverTimestamp, getDoc, collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import { useToast } from '@/hooks/use-toast';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
@@ -39,13 +39,6 @@ function tok(isDark: boolean) {
     cardDark:    isDark ? `${DEEP_BARK},0.50)`   : `rgba(248,240,225,0.80)`,
   };
 }
-
-const MOODS = [
-  { name: 'Joyful',    icon: Smile, emoji: '😊', ring: `${SAGE},0.45)`,          fill: `${SAGE},0.20)`,         text: 'rgba(160,195,130,0.92)' },
-  { name: 'Calm',      icon: Wind,  emoji: '😌', ring: 'rgba(130,165,195,0.45)', fill: 'rgba(100,130,160,0.20)', text: 'rgba(140,185,215,0.92)' },
-  { name: 'Emotional', icon: Frown, emoji: '😢', ring: `${GOLD},0.45)`,           fill: `${TERRACOTTA},0.20)`,   text: `${GOLD},0.92)` },
-  { name: 'Fatigue',   icon: Meh,   emoji: '😫', ring: 'rgba(139,100,75,0.45)',   fill: 'rgba(139,100,75,0.18)', text: 'rgba(200,160,120,0.92)' },
-];
 
 function GlassCard({ children, className, style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return (
@@ -109,8 +102,7 @@ export default function DashboardPage() {
   const { toast }               = useToast();
   const t                       = tok(isDark);
 
-  const [mood,          setMood]          = useState<string|null>(null);
-  const [moodLogging,   setMoodLogging]   = useState(false);
+  const [moodData,      setMoodData]      = useState<any|null>(null);
   const [totalSessions, setTotalSessions] = useState(0);
   const [monthSessions, setMonthSessions] = useState(0);
   const [exerciseHrs,   setExerciseHrs]   = useState(0);
@@ -121,7 +113,9 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!user) return;
     const todayStr = format(new Date(), 'yyyy-MM-dd');
-    getDoc(doc(firestore, 'users', user.uid, 'moods', todayStr)).then(s => { if (s.exists()) setMood(s.data().name); });
+    getDoc(doc(firestore, 'users', user.uid, 'moods', todayStr)).then(s => { 
+      if (s.exists()) setMoodData(s.data()); 
+    });
   }, [user]);
 
   useEffect(() => {
@@ -137,17 +131,6 @@ export default function DashboardPage() {
     const mStart = startOfMonth(new Date()), mEnd = endOfMonth(new Date());
     getDocs(query(ref, where('createdAt','>=',mStart), where('createdAt','<=',mEnd))).then(s => setMonthSessions(s.size));
   }, [user]);
-
-  const logMood = async (moodName: string, emoji: string) => {
-    if (!user || moodLogging) return;
-    setMoodLogging(true);
-    try {
-      await setDoc(doc(firestore, 'users', user.uid, 'moods', format(new Date(),'yyyy-MM-dd')), { name: moodName, emoji, loggedAt: serverTimestamp() });
-      setMood(moodName);
-      toast({ title: 'Mood logged', description: `Feeling ${moodName} today.` });
-    } catch { toast({ title: 'Error', description: 'Could not log mood.', variant: 'destructive' }); }
-    finally { setMoodLogging(false); }
-  };
 
   return (
     <AppShell>
@@ -172,29 +155,41 @@ export default function DashboardPage() {
         {/* SCROLLABLE CONTENT */}
         <main style={{ flex: 1, padding: '4px 14px 120px', display: 'flex', flexDirection: 'column', gap: 22 }}>
 
-          {/* §1 MOOD */}
+          {/* §1 MOOD & REFLECTIONS */}
           <section>
-            <SectionHead t={t}>How are you feeling?</SectionHead>
-            <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '24px 12px 24px 24px', padding: '12px 8px 14px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                {MOODS.map(m => {
-                  const on = mood === m.name;
-                  return (
-                    <button key={m.name} onClick={() => logMood(m.name, m.emoji)} disabled={moodLogging}
-                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}
-                    >
-                      <div style={{ width: 44, height: 44, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.25s ease',
-                        background: on ? m.fill : `${PARCHMENT},0.04)`,
-                        border: `1px solid ${on ? m.ring : `${PARCHMENT},0.10)`}`,
-                        boxShadow: on ? `0 0 12px ${m.fill}` : 'none',
-                        transform: on ? 'scale(1.10)' : 'scale(1)',
-                      }}>
-                        <m.icon style={{ width: 20, height: 20, color: on ? m.text : `${PARCHMENT},0.45)` }} />
-                      </div>
-                      <span style={{ fontSize: 8, letterSpacing: 1.5, textTransform: 'uppercase' as const, fontFamily: FONT_CASUAL, fontWeight: 500, color: on ? m.text : t.muted }}>{m.name}</span>
-                    </button>
-                  );
-                })}
+            <SectionHead t={t}>Mood & Reflections</SectionHead>
+            <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '24px 12px 24px 24px', padding: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <h3 style={{ fontSize: 16, fontWeight: 600, color: t.text, fontFamily: FONT_PANCAKE }}>Daily Check-in</h3>
+                    <p style={{ fontSize: 11, color: t.muted, fontFamily: FONT_CASUAL }}>How is your spirit today?</p>
+                  </div>
+                  <Button asChild style={{ height: 32, borderRadius: 16, background: `${GOLD},0.15)`, color: t.gold, border: `0.5px solid ${t.goldBorder}`, padding: '0 12px', fontSize: 11, fontWeight: 600 }}>
+                    <Link href="/mood-tracker">
+                      {moodData ? 'Update' : 'Start'}
+                    </Link>
+                  </Button>
+                </div>
+
+                {moodData ? (
+                  <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: 12, border: `0.5px solid ${t.goldBorder}` }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                      <span style={{ fontSize: 20 }}>{moodData.emoji}</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: t.gold, textTransform: 'uppercase', letterSpacing: 1, fontFamily: FONT_CASUAL }}>{moodData.name}</span>
+                    </div>
+                    {moodData.reflection && (
+                      <p style={{ fontSize: 12, color: t.text, fontStyle: 'italic', margin: 0, opacity: 0.8, lineHeight: 1.4 }}>
+                        "{moodData.reflection.length > 80 ? moodData.reflection.substring(0, 80) + '...' : moodData.reflection}"
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px', background: 'rgba(255,255,255,0.02)', borderRadius: 12, border: '0.5px dashed rgba(255,255,255,0.1)' }}>
+                    <MessageSquare style={{ width: 18, height: 18, color: t.muted }} />
+                    <p style={{ fontSize: 11, color: t.muted, margin: 0 }}>No reflection logged yet. Checking in helps track your mindful progress.</p>
+                  </div>
+                )}
               </div>
             </GlassCard>
           </section>
