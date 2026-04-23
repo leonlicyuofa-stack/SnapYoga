@@ -1,12 +1,12 @@
 "use client";
 
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
-import { Smile, Wind, Frown, Meh, Trophy, Sun, Moon, TrendingUp } from 'lucide-react';
+import { Smile, Wind, Frown, Meh, Trophy, Sun, Moon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { useState, useEffect } from 'react';
 import { doc, setDoc, serverTimestamp, getDoc, collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import { useToast } from '@/hooks/use-toast';
@@ -54,12 +54,12 @@ function GlassCard({ children, className, style }: { children: React.ReactNode; 
   );
 }
 
-function SectionHead({ children, t }: { children: React.ReactNode; t: ReturnType<typeof tok> }) {
-  return <p style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase' as const, fontStyle: 'italic', color: t.muted, marginBottom: 8, fontFamily: 'Georgia,serif' }}>{children}</p>;
+function SectionHead({ children, t }: { children: React.ReactNode; t: any }) {
+  return <p style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase', fontStyle: 'italic', color: t.muted, marginBottom: 8 }}>{children}</p>;
 }
 
 function CardLabel({ children, color }: { children: React.ReactNode; color: string }) {
-  return <p style={{ fontSize: 9, letterSpacing: 2, textTransform: 'uppercase' as const, fontStyle: 'italic', color, margin: '0 0 3px', fontFamily: 'Georgia,serif' }}>{children}</p>;
+  return <p style={{ fontSize: 9, letterSpacing: 2, textTransform: 'uppercase', fontStyle: 'italic', color, margin: '0 0 3px' }}>{children}</p>;
 }
 
 function Bar({ pct, color }: { pct: number; color: string }) {
@@ -77,7 +77,7 @@ function getInitials(email?: string | null, name?: string | null) {
 
 export default function DashboardPage() {
   const { user }                = useAuth();
-  const { isDark, toggleTheme } = useTheme();
+  const { isDark }              = useTheme();
   const { toast }               = useToast();
   const t                       = tok(isDark);
 
@@ -117,8 +117,11 @@ export default function DashboardPage() {
       await setDoc(doc(firestore, 'users', user.uid, 'moods', format(new Date(),'yyyy-MM-dd')), { name: moodName, emoji, loggedAt: serverTimestamp() });
       setMood(moodName);
       toast({ title: 'Mood logged', description: `Feeling ${moodName} today.` });
-    } catch { toast({ title: 'Error', description: 'Could not log mood.', variant: 'destructive' }); }
-    finally { setMoodLogging(false); }
+    } catch (e) { 
+      toast({ title: 'Error', description: 'Could not log mood.', variant: 'destructive' }); 
+    } finally { 
+      setMoodLogging(false); 
+    }
   };
 
   return (
@@ -128,13 +131,13 @@ export default function DashboardPage() {
         {/* HEADER */}
         <header style={{ padding: '14px 16px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <h1 style={{ fontSize: 21, fontWeight: 500, color: t.text, fontFamily: 'Georgia,serif', margin: 0 }}>Hey, {name}!</h1>
-            <p  style={{ fontSize: 11, fontStyle: 'italic', color: t.muted, margin: '2px 0 0', fontFamily: 'Georgia,serif' }}>Your practice is waiting.</p>
+            <h1 style={{ fontSize: 21, fontWeight: 500, color: t.text, margin: 0 }}>Hey, {name}!</h1>
+            <p  style={{ fontSize: 11, fontStyle: 'italic', color: t.muted, margin: '2px 0 0' }}>Your practice is waiting.</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <Avatar style={{ width: 34, height: 34, border: `1.5px solid ${t.goldBorder}` }}>
               <AvatarImage src={user?.photoURL ?? undefined} alt={name} />
-              <AvatarFallback style={{ background: `${GOLD},0.18)`, color: t.gold, fontSize: 11, fontFamily: 'Georgia,serif' }}>
+              <AvatarFallback style={{ background: `${GOLD},0.18)`, color: t.gold, fontSize: 11 }}>
                 {getInitials(user?.email, user?.displayName)}
               </AvatarFallback>
             </Avatar>
@@ -163,7 +166,7 @@ export default function DashboardPage() {
                       }}>
                         <m.icon style={{ width: 20, height: 20, color: on ? m.text : `${PARCHMENT},0.45)` }} />
                       </div>
-                      <span style={{ fontSize: 8, letterSpacing: 1.5, textTransform: 'uppercase' as const, fontFamily: 'Georgia,serif', color: on ? m.text : t.muted }}>{m.name}</span>
+                      <span style={{ fontSize: 8, letterSpacing: 1.5, textTransform: 'uppercase', color: on ? m.text : t.muted }}>{m.name}</span>
                     </button>
                   );
                 })}
@@ -179,10 +182,10 @@ export default function DashboardPage() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
               <GlassCard style={{ background: t.cardTerra, border: `0.5px solid ${t.goldBorder}`, borderRadius: '20px 8px 20px 20px', padding: '12px 14px' }}>
                 <CardLabel color={t.gold}>Exercise hours</CardLabel>
-                <p style={{ fontSize: 28, fontWeight: 500, color: t.gold, lineHeight: 1.1, margin: '2px 0 0', fontFamily: 'Georgia,serif' }}>
+                <p style={{ fontSize: 28, fontWeight: 500, color: t.gold, lineHeight: 1.1, margin: '2px 0 0' }}>
                   {exerciseHrs}<span style={{ fontSize: 12, opacity: 0.55, marginLeft: 2 }}> hrs</span>
                 </p>
-                <p style={{ fontSize: 9, color: t.muted, fontStyle: 'italic', margin: '2px 0 0', fontFamily: 'Georgia,serif' }}>this month</p>
+                <p style={{ fontSize: 9, color: t.muted, fontStyle: 'italic', margin: '2px 0 0' }}>this month</p>
                 <Bar pct={(exerciseHrs / 30) * 100} color={`${GOLD},0.78)`} />
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 3 }}>
                   <span style={{ fontSize: 8, color: t.muted }}>goal 30h</span>
@@ -192,10 +195,10 @@ export default function DashboardPage() {
 
               <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '8px 20px 20px 20px', padding: '12px 14px' }}>
                 <CardLabel color={t.muted}>Poses analysed</CardLabel>
-                <p style={{ fontSize: 28, fontWeight: 500, color: t.text, lineHeight: 1.1, margin: '2px 0 0', fontFamily: 'Georgia,serif' }}>{totalSessions}</p>
-                <p style={{ fontSize: 9, color: t.muted, fontStyle: 'italic', margin: '2px 0 0', fontFamily: 'Georgia,serif' }}>all time</p>
+                <p style={{ fontSize: 28, fontWeight: 500, color: t.text, lineHeight: 1.1, margin: '2px 0 0' }}>{totalSessions}</p>
+                <p style={{ fontSize: 9, color: t.muted, fontStyle: 'italic', margin: '2px 0 0' }}>all time</p>
                 <div style={{ marginTop: 8 }}>
-                  <span style={{ fontSize: 8, padding: '2px 7px', borderRadius: 999, background: `${GOLD},0.14)`, color: t.gold, border: `0.5px solid ${t.goldBorder}`, letterSpacing: 1, textTransform: 'uppercase' as const }}>
+                  <span style={{ fontSize: 8, padding: '2px 7px', borderRadius: 999, background: `${GOLD},0.14)`, color: t.gold, border: `0.5px solid ${t.goldBorder}`, letterSpacing: 1, textTransform: 'uppercase' }}>
                     +{monthSessions} this month
                   </span>
                 </div>
@@ -207,21 +210,21 @@ export default function DashboardPage() {
               <GlassCard style={{ background: t.cardSage, border: `0.5px solid rgba(140,170,115,0.32)`, borderRadius: '20px 20px 8px 20px', padding: '12px 14px' }}>
                 <CardLabel color="rgba(160,195,130,0.75)">Current streak</CardLabel>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, margin: '2px 0 0' }}>
-                  <p style={{ fontSize: 28, fontWeight: 500, color: 'rgba(160,195,130,0.92)', lineHeight: 1.1, margin: 0, fontFamily: 'Georgia,serif' }}>7</p>
+                  <p style={{ fontSize: 28, fontWeight: 500, color: 'rgba(160,195,130,0.92)', lineHeight: 1.1, margin: 0 }}>7</p>
                   <div>
-                    <div style={{ fontSize: 11, color: 'rgba(160,195,130,0.70)', fontFamily: 'Georgia,serif' }}>days</div>
+                    <div style={{ fontSize: 11, color: 'rgba(160,195,130,0.70)' }}>days</div>
                     <div style={{ fontSize: 16 }}>🔥</div>
                   </div>
                 </div>
-                <p style={{ fontSize: 9, color: t.muted, fontStyle: 'italic', margin: '3px 0 0', fontFamily: 'Georgia,serif' }}>best: 14 days</p>
+                <p style={{ fontSize: 9, color: t.muted, fontStyle: 'italic', margin: '3px 0 0' }}>best: 14 days</p>
               </GlassCard>
 
               <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '20px 20px 20px 8px', padding: '12px 14px' }}>
                 <CardLabel color={t.muted}>Avg pose score</CardLabel>
-                <p style={{ fontSize: 28, fontWeight: 500, color: t.gold, lineHeight: 1.1, margin: '2px 0 0', fontFamily: 'Georgia,serif' }}>
+                <p style={{ fontSize: 28, fontWeight: 500, color: t.gold, lineHeight: 1.1, margin: '2px 0 0' }}>
                   {avgScore}<span style={{ fontSize: 12, opacity: 0.50, marginLeft: 1 }}>/100</span>
                 </p>
-                <p style={{ fontSize: 9, color: t.muted, fontStyle: 'italic', margin: '2px 0 0', fontFamily: 'Georgia,serif' }}>↑ improving</p>
+                <p style={{ fontSize: 9, color: t.muted, fontStyle: 'italic', margin: '2px 0 0' }}>↑ improving</p>
                 <Bar pct={avgScore} color={`${GOLD},0.72)`} />
               </GlassCard>
             </div>
@@ -231,10 +234,10 @@ export default function DashboardPage() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ flex: 1 }}>
                   <CardLabel color={t.muted}>Monthly sessions</CardLabel>
-                  <p style={{ fontSize: 22, fontWeight: 500, color: t.text, fontFamily: 'Georgia,serif', margin: 0 }}>
+                  <p style={{ fontSize: 22, fontWeight: 500, color: t.text, margin: 0 }}>
                     {monthSessions} <span style={{ fontSize: 13, color: t.muted, fontWeight: 400 }}>/ 26 goal</span>
                   </p>
-                  <p style={{ fontSize: 10, color: t.muted, fontStyle: 'italic', margin: '3px 0 0', fontFamily: 'Georgia,serif' }}>
+                  <p style={{ fontSize: 10, color: t.muted, fontStyle: 'italic', margin: '3px 0 0' }}>
                     {Math.round((monthSessions/26)*100)}% of monthly goal
                   </p>
                   <Bar pct={(monthSessions/26)*100} color={`${GOLD},0.78)`} />
@@ -266,14 +269,14 @@ export default function DashboardPage() {
                       border: `0.5px solid ${h.done ? h.color : `${PARCHMENT},0.10)`}`,
                       transform: h.done ? 'scale(1.08)' : 'scale(1)',
                     }}>{h.emoji}</div>
-                    <span style={{ fontSize: 7, letterSpacing: 1, textTransform: 'uppercase' as const, fontFamily: 'Georgia,serif', color: h.done ? t.text : t.muted }}>{h.label}</span>
+                    <span style={{ fontSize: 7, letterSpacing: 1, textTransform: 'uppercase', color: h.done ? t.text : t.muted }}>{h.label}</span>
                   </div>
                 ))}
               </div>
               <div style={{ display: 'flex', gap: 4, marginTop: 10 }}>
                 {[1,1,0,0,0].map((d,i) => <div key={i} style={{ flex:1, height:3, borderRadius:2, background: d ? `${GOLD},0.72)` : `${PARCHMENT},0.10)` }} />)}
               </div>
-              <p style={{ fontSize: 9, color: t.muted, fontStyle: 'italic', marginTop: 4, fontFamily: 'Georgia,serif' }}>2 of 5 habits done today</p>
+              <p style={{ fontSize: 9, color: t.muted, fontStyle: 'italic', marginTop: 4 }}>2 of 5 habits done today</p>
             </GlassCard>
           </section>
 
@@ -290,19 +293,19 @@ export default function DashboardPage() {
           {/* §5 CHALLENGES */}
           <section>
             <SectionHead t={t}>Challenges</SectionHead>
-            <GlassCard style={{ background: t.cardBark, border: `0.8px solid ${t.goldBorder}`, borderRadius: '28px 12px 28px 28px', padding: '16px', position: 'relative' as const }}>
-              <div style={{ position: 'absolute' as const, inset: 0, top: 0, height: 42, borderRadius: '28px 12px 0 0', background: `${GOLD},0.06)`, pointerEvents: 'none' as const }} />
-              <div style={{ position: 'relative' as const, zIndex: 1, display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+            <GlassCard style={{ background: t.cardBark, border: `0.8px solid ${t.goldBorder}`, borderRadius: '28px 12px 28px 28px', padding: '16px', position: 'relative' }}>
+              <div style={{ position: 'absolute', inset: 0, top: 0, height: 42, borderRadius: '28px 12px 0 0', background: `${GOLD},0.06)`, pointerEvents: 'none' }} />
+              <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'flex-start', gap: 12 }}>
                 <div style={{ width: 40, height: 40, borderRadius: 14, background: `${GOLD},0.14)`, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Trophy style={{ width: 20, height: 20, color: t.gold }} />
                 </div>
                 <div>
-                  <h3 style={{ fontSize: 16, fontWeight: 500, color: t.text, fontFamily: 'Georgia,serif', margin: '0 0 4px' }}>Join new challenges</h3>
-                  <p  style={{ fontSize: 11, color: t.muted, fontStyle: 'italic', fontFamily: 'Georgia,serif', margin: 0 }}>Connect with friends and master new poses.</p>
+                  <h3 style={{ fontSize: 16, fontWeight: 500, color: t.text, margin: '0 0 4px' }}>Join new challenges</h3>
+                  <p  style={{ fontSize: 11, color: t.muted, fontStyle: 'italic', margin: 0 }}>Connect with friends and master new poses.</p>
                 </div>
               </div>
-              <div style={{ position: 'relative' as const, zIndex: 1, marginTop: 14, display: 'flex', gap: 10 }}>
-                <Button asChild style={{ flex: 1, height: 42, borderRadius: 21, background: `${GOLD},0.80)`, color: `${DEEP_BARK},0.95)`, border: 'none', fontFamily: 'Georgia,serif', fontSize: 13, letterSpacing: 1 }}>
+              <div style={{ position: 'relative', zIndex: 1, marginTop: 14, display: 'flex', gap: 10 }}>
+                <Button asChild style={{ flex: 1, height: 42, borderRadius: 21, background: `${GOLD},0.80)`, color: `${DEEP_BARK},0.95)`, border: 'none', fontSize: 13, letterSpacing: 1 }}>
                   <Link href="/challenges">Explore</Link>
                 </Button>
                 <Link href="/challenges" style={{ width: 42, height: 42, borderRadius: 21, flexShrink: 0, background: `${GOLD},0.12)`, border: `0.5px solid ${t.goldBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
