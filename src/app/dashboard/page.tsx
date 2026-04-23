@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
-import { Smile, Wind, Frown, Meh, Trophy, Sun, Moon } from 'lucide-react';
+import { Smile, Wind, Frown, Meh, Trophy, Sun, Moon, TrendingUp } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useState, useEffect } from 'react';
@@ -15,33 +15,31 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { MoodChart } from '@/components/features/dashboard/MoodChart';
 
-// Refined Metallic Gold tokens
-const GOLD       = 'rgba(212,175,55'; 
-const PARCHMENT  = 'rgba(255,245,230';
-const TERRACOTTA = 'rgba(180,110,65';
-const SAGE       = 'rgba(140,160,120';
-const DEEP_BARK  = 'rgba(15,12,5';
-const BARK_L     = 'rgba(60,45,30';
+const GOLD       = 'rgba(212, 175, 55'; 
+const PARCHMENT  = 'rgba(252, 248, 240';
+const TERRACOTTA = 'rgba(180, 110, 65';
+const SAGE       = 'rgba(120, 140, 100';
+const DEEP_BARK  = 'rgba(10, 10, 10';
 
 function tok(isDark: boolean) {
   return {
-    text:        isDark ? `${PARCHMENT},0.92)`  : `${BARK_L},0.92)`,
-    muted:       isDark ? `${PARCHMENT},0.40)`  : `${BARK_L},0.48)`,
-    gold:        isDark ? `${GOLD},1.0)`         : `rgba(160,130,60,1.0)`,
-    goldBorder:  isDark ? `${GOLD},0.28)`        : `rgba(160,130,60,0.25)`,
-    cardBg:      isDark ? 'rgba(20,20,20,0.45)'  : `rgba(255,250,240,0.75)`,
-    cardTerra:   isDark ? `${TERRACOTTA},0.22)`  : `rgba(200,135,85,0.15)`,
-    cardSage:    isDark ? `${SAGE},0.22)`        : `rgba(120,155,95,0.18)`,
-    cardBark:    isDark ? `${DEEP_BARK},0.75)`   : `rgba(255,248,235,0.92)`,
-    cardDark:    isDark ? 'rgba(10,10,10,0.55)'  : `rgba(248,242,230,0.85)`,
+    text:        isDark ? `${PARCHMENT},0.92)`  : `${DEEP_BARK},0.90)`,
+    muted:       isDark ? `${PARCHMENT},0.40)`  : `${DEEP_BARK},0.50)`,
+    gold:        isDark ? `${GOLD},1.0)`         : `rgba(160, 130, 60, 1.0)`,
+    goldBorder:  isDark ? `${GOLD},0.25)`        : `rgba(160, 130, 60, 0.30)`,
+    cardBg:      isDark ? 'rgba(15, 15, 15, 0.6)' : `rgba(255, 255, 255, 0.7)`,
+    cardTerra:   isDark ? `${TERRACOTTA},0.20)`  : `rgba(200, 135, 85, 0.14)`,
+    cardSage:    isDark ? `${SAGE},0.20)`        : `rgba(120, 155, 95, 0.16)`,
+    cardBark:    isDark ? 'rgba(20, 20, 20, 0.8)' : `rgba(255, 251, 245, 0.9)`,
+    cardDark:    isDark ? 'rgba(10, 10, 10, 0.7)' : `rgba(248, 243, 230, 0.85)`,
   };
 }
 
 const MOODS = [
-  { name: 'Joyful',    icon: Smile, emoji: '😊', ring: `${SAGE},0.55)`,          fill: `${SAGE},0.25)`,         text: 'rgba(165,200,135,1)' },
-  { name: 'Calm',      icon: Wind,  emoji: '😌', ring: 'rgba(140,175,205,0.55)', fill: 'rgba(110,140,170,0.25)', text: 'rgba(150,195,225,1)' },
-  { name: 'Emotional', icon: Frown, emoji: '😢', ring: `${GOLD},0.55)`,           fill: `${TERRACOTTA},0.25)`,   text: `${GOLD},1)` },
-  { name: 'Fatigue',   icon: Meh,   emoji: '😫', ring: 'rgba(150,110,85,0.55)',   fill: 'rgba(150,110,85,0.22)', text: 'rgba(210,170,130,1)' },
+  { name: 'Joyful',    icon: Smile, emoji: '😊', ring: `${SAGE},0.50)`,          fill: `${SAGE},0.22)`,         text: 'rgba(160, 195, 130, 1)' },
+  { name: 'Calm',      icon: Wind,  emoji: '😌', ring: 'rgba(130, 165, 195, 0.5)', fill: 'rgba(100, 130, 160, 0.22)', text: 'rgba(140, 185, 215, 1)' },
+  { name: 'Emotional', icon: Frown, emoji: '😢', ring: `${GOLD},0.50)`,           fill: `${TERRACOTTA},0.22)`,   text: `${GOLD},1)` },
+  { name: 'Fatigue',   icon: Meh,   emoji: '😫', ring: 'rgba(139, 100, 75, 0.5)',  fill: 'rgba(139, 100, 75, 0.20)', text: 'rgba(200, 160, 120, 1)' },
 ];
 
 function GlassCard({ children, className, style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
@@ -52,7 +50,7 @@ function GlassCard({ children, className, style }: { children: React.ReactNode; 
         backdropFilter: 'blur(16px)', 
         WebkitBackdropFilter: 'blur(16px)', 
         borderRadius: 24,
-        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)',
+        boxShadow: '0 4px 24px -1px rgba(0, 0, 0, 0.1)',
         ...style 
       }}
     >
@@ -133,7 +131,7 @@ export default function DashboardPage() {
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
 
         {/* HEADER */}
-        <header style={{ padding: '20px 20px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <header style={{ padding: '20px 20px 10px', display: 'flex', alignItems: 'center', justifyBetween: 'space-between' }}>
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 600, color: t.text, fontFamily: 'var(--font-lora),serif', margin: 0, letterSpacing: -0.5 }}>Hey, {name}!</h1>
             <p  style={{ fontSize: 12, fontStyle: 'italic', color: t.muted, margin: '4px 0 0' }}>Your practice is waiting.</p>
