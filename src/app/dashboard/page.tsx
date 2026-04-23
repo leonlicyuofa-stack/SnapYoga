@@ -1,9 +1,10 @@
+
 "use client";
 
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
-import { Smile, Wind, Frown, Meh, Trophy, Sun, Moon, MessageSquare, ArrowRight, Sparkles } from 'lucide-react';
+import { Smile, Wind, Frown, Meh, Trophy, Sun, Moon, MessageSquare, ArrowRight, Sparkles, Zap } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useState, useEffect } from 'react';
@@ -99,10 +100,10 @@ function getInitials(email?: string | null, name?: string | null) {
 export default function DashboardPage() {
   const { user }                = useAuth();
   const { isDark }              = useTheme();
-  const { toast }               = useToast();
   const t                       = tok(isDark);
 
   const [moodData,      setMoodData]      = useState<any|null>(null);
+  const [completedHabits, setCompletedHabits] = useState<string[]>([]);
   const [totalSessions, setTotalSessions] = useState(0);
   const [monthSessions, setMonthSessions] = useState(0);
   const [exerciseHrs,   setExerciseHrs]   = useState(0);
@@ -113,8 +114,15 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!user) return;
     const todayStr = format(new Date(), 'yyyy-MM-dd');
+    
+    // Fetch Mood
     getDoc(doc(firestore, 'users', user.uid, 'moods', todayStr)).then(s => { 
       if (s.exists()) setMoodData(s.data()); 
+    });
+
+    // Fetch Habits
+    getDoc(doc(firestore, 'users', user.uid, 'habits', todayStr)).then(s => {
+      if (s.exists()) setCompletedHabits(s.data().completed || []);
     });
   }, [user]);
 
@@ -131,6 +139,14 @@ export default function DashboardPage() {
     const mStart = startOfMonth(new Date()), mEnd = endOfMonth(new Date());
     getDocs(query(ref, where('createdAt','>=',mStart), where('createdAt','<=',mEnd))).then(s => setMonthSessions(s.size));
   }, [user]);
+
+  const habitsList = [
+    { id: 'practice', label: 'Practice', emoji: '🧘', color: `${TERRACOTTA},0.85)` },
+    { id: 'hydrate',  label: 'Hydrate',  emoji: '💧', color: 'rgba(100,160,200,0.85)' },
+    { id: 'rest',     label: 'Rest',     emoji: '🌙', color: `${GOLD},0.85)` },
+    { id: 'sunlight', label: 'Sunlight', emoji: '☀️', color: 'rgba(220,180,80,0.85)' },
+    { id: 'active',   label: 'Active',   emoji: '🔥', color: `${SAGE},0.85)` },
+  ];
 
   return (
     <AppShell>
@@ -194,7 +210,40 @@ export default function DashboardPage() {
             </GlassCard>
           </section>
 
-          {/* §2 MY PROGRESS */}
+          {/* §2 TODAY'S HABITS */}
+          <section>
+            <SectionHead t={t}>Today's habits</SectionHead>
+            <Link href="/mood-tracker" className="block active:scale-95 transition-transform">
+              <GlassCard style={{ background: t.cardDark, border: `0.5px solid ${t.goldBorder}`, borderRadius: '20px 20px 12px 20px', padding: '16px 10px 18px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                  {habitsList.map(h => {
+                    const done = completedHabits.includes(h.id);
+                    return (
+                      <div key={h.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                        <div style={{ width: 40, height: 40, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                          background: done ? h.color : `${PARCHMENT},0.05)`,
+                          border: `0.5px solid ${done ? h.color : `${PARCHMENT},0.10)`}`,
+                          transform: done ? 'scale(1.1)' : 'scale(1)',
+                          boxShadow: done ? `0 4px 12px ${h.color}` : 'none'
+                        }}>{h.emoji}</div>
+                        <span style={{ fontSize: 7, letterSpacing: 1.2, textTransform: 'uppercase' as const, fontFamily: FONT_CASUAL, fontWeight: 600, color: done ? t.text : t.muted }}>{h.label}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div style={{ display: 'flex', gap: 4, marginTop: 14 }}>
+                  {habitsList.map((h, i) => (
+                    <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: completedHabits.includes(h.id) ? `${GOLD},0.72)` : `${PARCHMENT},0.10)` }} />
+                  ))}
+                </div>
+                <p style={{ fontSize: 9, color: t.muted, margin: '6px 0 0', fontFamily: FONT_CASUAL, textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'center' as const }}>
+                  {completedHabits.length} of 5 habits done today
+                </p>
+              </GlassCard>
+            </Link>
+          </section>
+
+          {/* §3 MY PROGRESS */}
           <section>
             <SectionHead t={t}>My Progress</SectionHead>
 
@@ -268,35 +317,6 @@ export default function DashboardPage() {
                   ))}
                 </div>
               </div>
-            </GlassCard>
-          </section>
-
-          {/* §3 TODAY'S HABITS */}
-          <section>
-            <SectionHead t={t}>Today's habits</SectionHead>
-            <GlassCard style={{ background: t.cardDark, border: `0.5px solid ${t.goldBorder}`, borderRadius: '20px 20px 12px 20px', padding: '12px 10px 14px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                {[
-                  { label: 'Practice', emoji: '🧘', done: true,  color: `${TERRACOTTA},0.85)` },
-                  { label: 'Hydrate',  emoji: '💧', done: true,  color: 'rgba(100,160,200,0.85)' },
-                  { label: 'Rest',     emoji: '🌙', done: false, color: `${GOLD},0.85)` },
-                  { label: 'Sunlight', emoji: '☀️', done: false, color: 'rgba(220,180,80,0.85)' },
-                  { label: 'Active',   emoji: '🔥', done: false, color: `${SAGE},0.85)` },
-                ].map(h => (
-                  <div key={h.label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
-                    <div style={{ width: 38, height: 38, borderRadius: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, transition: 'all 0.2s',
-                      background: h.done ? h.color : `${PARCHMENT},0.05)`,
-                      border: `0.5px solid ${h.done ? h.color : `${PARCHMENT},0.10)`}`,
-                      transform: h.done ? 'scale(1.08)' : 'scale(1)',
-                    }}>{h.emoji}</div>
-                    <span style={{ fontSize: 7, letterSpacing: 1.2, textTransform: 'uppercase' as const, fontFamily: FONT_CASUAL, fontWeight: 600, color: h.done ? t.text : t.muted }}>{h.label}</span>
-                  </div>
-                ))}
-              </div>
-              <div style={{ display: 'flex', gap: 4, marginTop: 10 }}>
-                {[1,1,0,0,0].map((d,i) => <div key={i} style={{ flex:1, height:3, borderRadius:2, background: d ? `${GOLD},0.72)` : `${PARCHMENT},0.10)` }} />)}
-              </div>
-              <p style={{ fontSize: 9, color: t.muted, margin: '4px 0 0', fontFamily: FONT_CASUAL, textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'center' as const }}>2 of 5 habits done today</p>
             </GlassCard>
           </section>
 

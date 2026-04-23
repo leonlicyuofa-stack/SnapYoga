@@ -10,54 +10,46 @@ service cloud.firestore {
     }
 
     // Users collection
-    // - Authenticated users can read profiles (e.g., for friend search functionality).
-    // - Users can only create and update their own profile document.
     match /users/{userId} {
       allow read: if request.auth != null;
       allow create, update: if request.auth != null && request.auth.uid == userId;
-      // Deleting user profiles from the client-side is generally not recommended for safety.
     }
 
-    // Pose Analyses subcollection (under each user)
-    // Users can manage (create, read, update, delete) their own pose analyses.
+    // Pose Analyses subcollection
     match /users/{userId}/poseAnalyses/{analysisId} {
       allow read, create, update, delete: if request.auth != null && request.auth.uid == userId;
     }
     
-    // Moods subcollection (under each user)
-    // Users can create and read their own mood entries.
+    // Moods subcollection
     match /users/{userId}/moods/{moodId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Daily Logins subcollection (under each user)
-    // Users can create and read their own daily login records.
-    // (Write access includes create and update. Delete is not typically needed here from client.)
+    // Habits subcollection
+    match /users/{userId}/habits/{dayId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Daily Logins subcollection
     match /users/{userId}/dailyLogins/{dayId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
     // Invitations collection
-    // - Authenticated users can create invitations, but only if they set themselves as the inviter
-    //   and correctly set initial status and server timestamps.
-    // - The inviter or the invitee can read an invitation.
-    // - Only the invitee can update an invitation's status, and only 'status' and 'updatedAt' can be changed,
-    //   with 'updatedAt' being a server timestamp.
     match /invitations/{invitationId} {
       allow create: if request.auth != null
                       && request.resource.data.inviterUid == request.auth.uid
                       && request.resource.data.status == 'pending'
-                      && request.resource.data.createdAt == request.time  // Enforce server timestamp
-                      && request.resource.data.updatedAt == request.time;  // Enforce server timestamp
+                      && request.resource.data.createdAt == request.time
+                      && request.resource.data.updatedAt == request.time;
 
       allow read: if request.auth != null
                     && (request.auth.uid == resource.data.inviterUid || request.auth.uid == resource.data.inviteeUid);
 
-      allow update: if request.auth != null && request.auth.uid == resource.data.inviteeUid // Only invitee can update
-                      && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt']) // Only status and updatedAt fields are being modified
-                      && request.resource.data.status != resource.data.status // Ensures status is actually changing
-                      && request.resource.data.updatedAt == request.time; // Enforce server timestamp for updatedAt
-      // Deleting invitations from client-side can be complex (who can delete?); generally handled by server functions or TTL policies if needed.
+      allow update: if request.auth != null && request.auth.uid == resource.data.inviteeUid
+                      && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
+                      && request.resource.data.status != resource.data.status
+                      && request.resource.data.updatedAt == request.time;
     }
   }
 }
