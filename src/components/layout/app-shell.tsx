@@ -1,3 +1,4 @@
+
 "use client"; 
 
 import * as React from 'react';
@@ -6,7 +7,6 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { LogOut, UserCircle, Home, Settings, CalendarDays, Trophy, Languages, Sparkles, Menu } from 'lucide-react';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname, useRouter } from 'next/navigation'; 
 import { cn } from '@/lib/utils';
@@ -24,7 +24,6 @@ export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname(); 
   const { language, setLanguage, t } = useLanguage();
   const { theme } = useTheme();
-  const [isSheetOpen, setSheetOpen] = React.useState(false);
 
   const getInitials = (email?: string | null, displayName?: string | null) => {
     if (displayName) {
@@ -44,29 +43,10 @@ export function AppShell({ children }: AppShellProps) {
     return 'U';
   };
 
-  const navLinkClasses = (path: string) => 
-    cn(
-      "flex items-center gap-4 rounded-lg px-4 py-3 text-lg transition-colors",
-      theme === 'dark' ? "hover:bg-white/20" : "hover:bg-black/10",
-      pathname === path 
-        ? "font-bold " + (theme === 'dark' ? "text-white bg-white/10" : "text-black bg-black/5")
-        : (theme === 'dark' ? "text-white/80 hover:text-white" : "text-black/70 hover:text-black")
-    );
-
   const homeLinkPath = user ? "/dashboard" : "/";
-  
-  const handleLanguageSwitch = () => {
-    const newLang = language === 'en' ? 'id' : 'en';
-    setLanguage(newLang);
-  };
   
   const noShellRoutes = ['/auth/signin', '/auth/signup', '/auth/verify-email', '/'];
   
-  const handleSignOut = () => {
-    setSheetOpen(false);
-    signOutUser();
-  }
-
   if (noShellRoutes.includes(pathname) || pathname.startsWith('/home') || pathname === '/welcome' || pathname.startsWith('/onboarding') || pathname === '/testing-page-1') {
       return (
         <div className="relative flex flex-col min-h-screen">
@@ -83,72 +63,27 @@ export function AppShell({ children }: AppShellProps) {
     { href: "/profile", label: t('profile'), icon: Settings },
   ];
 
+  const isActive = (path: string) => pathname === path;
+
   return (
     <div className="relative min-h-screen font-serif">
       <div className="relative z-20 flex flex-col min-h-screen">
+        {/* HEADER */}
         <header className={cn(
           "sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b px-4 backdrop-blur-lg sm:px-6 transition-colors duration-300",
           theme === 'dark' ? "bg-black/20 border-white/10 text-white" : "bg-white/30 border-black/10 text-black"
         )}>
-          <Sheet open={isSheetOpen} onOpenChange={setSheetOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden text-current hover:bg-current/10">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle Navigation</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className={cn(
-              "flex w-full max-sm flex-col p-6 backdrop-blur-lg border-r transition-colors duration-300",
-              theme === 'dark' ? "bg-black/80 border-white/10 text-white" : "bg-white/90 border-black/10 text-black"
-            )}>
-                <SheetHeader>
-                  <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                  <SheetDescription className="sr-only">A list of links to navigate the application.</SheetDescription>
-                </SheetHeader>
-                <div className="mb-8">
-                  <SnapYogaLogo />
-                </div>
-                <nav className="flex-grow space-y-2">
-                  {navItems.map(item => (
-                    user || (item.href !== '/practice-calendar' && item.href !== '/challenges' && item.href !== '/profile') 
-                    ? (
-                      <Link key={item.label} href={item.href} className={navLinkClasses(item.href)} onClick={() => setSheetOpen(false)}>
-                          <item.icon className="h-6 w-6" />
-                          <span>{item.label}</span>
-                      </Link>
-                    ) : null
-                  ))}
-                </nav>
-                {user && (
-                  <div className="mt-auto">
-                      <div className={cn("flex items-center gap-3 p-3 mb-4 rounded-lg", theme === 'dark' ? "bg-white/10" : "bg-black/5")}>
-                          <Avatar className="h-12 w-12 border-2 border-background">
-                              <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User avatar'} />
-                              <AvatarFallback>{getInitials(user.email, user.displayName)}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                              <p className="font-semibold">{user.displayName || 'User'}</p>
-                              <p className={cn("text-xs", theme === 'dark' ? "text-white/80" : "text-black/60")}>{user.email}</p>
-                          </div>
-                      </div>
-                      <Button variant="ghost" onClick={handleSignOut} className="w-full justify-start text-lg gap-4 px-4 py-3 text-current hover:bg-current/10">
-                          <LogOut className="h-6 w-6"/>
-                          {t('signOut')}
-                      </Button>
-                  </div>
-                )}
-            </SheetContent>
-          </Sheet>
-          <div className="hidden md:block">
+          <div className="flex items-center">
               <SnapYogaLogo />
           </div>
-           <nav className="hidden items-center gap-2 md:flex">
+
+          <nav className="hidden items-center gap-2 md:flex">
                {navItems.map(item => (
                     user || (item.href !== '/practice-calendar' && item.href !== '/challenges' && item.href !== '/profile') 
                     ? (
-                      <Button key={item.label} variant={pathname === item.href ? 'outline' : 'ghost'} asChild className={cn(
-                        'text-current hover:bg-current/10 transition-all', 
-                        pathname === item.href && (theme === 'dark' ? 'bg-white/90 text-black hover:bg-white' : 'bg-black/90 text-white hover:bg-black')
+                      <Button key={item.label} variant={isActive(item.href) ? 'outline' : 'ghost'} asChild className={cn(
+                        'text-current hover:bg-current/10 transition-all font-medium', 
+                        isActive(item.href) && (theme === 'dark' ? 'bg-white/90 text-black hover:bg-white border-none' : 'bg-black/90 text-white hover:bg-black border-none')
                       )}>
                           <Link href={item.href}>{item.label}</Link>
                       </Button>
@@ -159,7 +94,7 @@ export function AppShell({ children }: AppShellProps) {
           <div className="flex items-center gap-2">
             <ThemeToggle />
             {user && (
-                <Avatar className="h-10 w-10 border-2 border-current hidden md:block">
+                <Avatar className="h-10 w-10 border-2 border-primary/30 hidden md:block">
                     <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User avatar'} />
                     <AvatarFallback>{getInitials(user.email, user.displayName)}</AvatarFallback>
                 </Avatar>
@@ -167,9 +102,43 @@ export function AppShell({ children }: AppShellProps) {
           </div>
         </header>
 
-        <main className="flex-grow">
+        {/* MAIN CONTENT */}
+        <main className="flex-grow pb-24 md:pb-0">
           {children}
         </main>
+
+        {/* MOBILE BOTTOM NAVIGATION */}
+        <nav className={cn(
+          "fixed bottom-0 left-0 right-0 z-40 flex h-20 items-center justify-around border-t px-2 backdrop-blur-xl md:hidden transition-colors duration-300",
+          theme === 'dark' ? "bg-black/40 border-white/10 text-white" : "bg-white/60 border-black/10 text-black"
+        )}>
+          {navItems.map((item) => {
+            const active = isActive(item.href);
+            return (
+              <Link 
+                key={item.label} 
+                href={item.href} 
+                className="flex flex-col items-center justify-center gap-1 w-full h-full transition-all active:scale-90"
+              >
+                <item.icon 
+                  className={cn(
+                    "h-6 w-6 transition-colors duration-300",
+                    active ? "text-primary fill-primary/10" : (theme === 'dark' ? "text-white/40" : "text-black/40")
+                  )} 
+                />
+                <span className={cn(
+                  "text-[10px] uppercase tracking-widest font-sans font-semibold transition-colors duration-300",
+                  active ? "text-primary" : (theme === 'dark' ? "text-white/30" : "text-black/30")
+                )}>
+                  {item.label}
+                </span>
+                {active && (
+                  <div className="absolute bottom-2 h-1 w-1 rounded-full bg-primary" />
+                )}
+              </Link>
+            );
+          })}
+        </nav>
       </div>
     </div>
   );
