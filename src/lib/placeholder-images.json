@@ -1,4 +1,12 @@
 {
+  "homeImages": {
+    "yogiSplit": {
+      "src": "https://picsum.photos/seed/yogisplit/1200/400",
+      "width": 1200,
+      "height": 400,
+      "hint": "yoga split"
+    }
+  },
   "challengeImages": {
     "warrior3": {
       "src": "https://picsum.photos/seed/warrior3/600/400",

@@ -1,7 +1,7 @@
-
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import { cn } from '@/lib/utils';
 import { ArrowRight } from 'lucide-react';
+import placeholderImages from '@/lib/placeholder-images.json';
 
 // Data for the animated headline
 const animatedWords = [
@@ -35,17 +36,17 @@ export default function HomePage() {
   const prevIndex = (currentIndex - 1 + animatedWords.length) % animatedWords.length;
 
   return (
-    <div className="relative min-h-screen font-serif text-white">
-      {/* Main Content Panel - Now centered and full width */}
+    <div className="relative min-h-screen font-serif text-white overflow-hidden">
+      {/* Main Content Panel - Centered and full width */}
       <div className="absolute inset-0 w-full flex flex-col bg-black/20 backdrop-blur-lg z-10">
         
-        {/* Centered Header */}
-        <header className="flex justify-center items-center p-8 md:p-12">
-          <SnapYogaLogo />
-        </header>
-
         {/* Centered Hero Section */}
-        <main className="flex-grow flex flex-col items-center justify-center text-center px-6">
+        <main className="flex-grow flex flex-col items-center justify-center text-center px-6 mt-12">
+            {/* Logo repositioned directly above headline */}
+            <div className="mb-8 animate-in fade-in zoom-in duration-1000">
+                <SnapYogaLogo />
+            </div>
+
             <h1 className="text-4xl md:text-6xl font-bold leading-tight flex flex-col items-center">
                 <span>Master your</span>
                 <div className="relative h-[60px] md:h-[80px] w-full max-w-[300px] mt-2 font-script" style={{ perspective: '400px' }}>
@@ -74,7 +75,7 @@ export default function HomePage() {
                 </div>
             </h1>
           
-            {/* Centered Pagination Dots */}
+            {/* Pagination Dots */}
             <div className="flex gap-2 mt-8 justify-center">
               {animatedWords.map((word, index) => (
                 <div
@@ -89,8 +90,20 @@ export default function HomePage() {
             </div>
         </main>
         
-        {/* Centered Footer/Action Button */}
-        <footer className="relative p-12 flex flex-col items-center gap-6">
+        {/* Footer with Yogi Split Image and Action Button */}
+        <footer className="relative flex flex-col items-center gap-6 pb-12">
+            {/* Yogi Split Image - artistic anchor */}
+            <div className="relative w-full max-w-4xl h-48 md:h-64 mb-4 transition-opacity duration-1000 animate-in fade-in slide-in-from-bottom-8">
+                <Image
+                    src={placeholderImages.homeImages.yogiSplit.src}
+                    alt="Yogi performing artistic split"
+                    width={placeholderImages.homeImages.yogiSplit.width}
+                    height={placeholderImages.homeImages.yogiSplit.height}
+                    className="w-full h-full object-contain opacity-80"
+                    data-ai-hint={placeholderImages.homeImages.yogiSplit.hint}
+                />
+            </div>
+
             <Button
                 asChild
                 variant="ghost"
