@@ -91,11 +91,6 @@ export default function HomePage() {
         
         {/* Centered Footer/Action Button */}
         <footer className="relative p-12 flex flex-col items-center gap-6">
-            <div className="flex gap-2 opacity-30">
-                <div className="w-1.5 h-1.5 rounded-full bg-white"></div>
-                <div className="w-1.5 h-1.5 rounded-full bg-white"></div>
-                <div className="w-1.5 h-1.5 rounded-full bg-white"></div>
-            </div>
             <Button
                 asChild
                 variant="ghost"
