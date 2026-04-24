@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -35,22 +36,23 @@ export default function HomePage() {
 
   return (
     <div className="relative min-h-screen font-serif text-white">
-      {/* Main Content Panel */}
-      <div className="absolute inset-y-0 left-0 w-full md:w-1/2 flex flex-col bg-black/20 backdrop-blur-lg z-10">
+      {/* Main Content Panel - Now centered and full width */}
+      <div className="absolute inset-0 w-full flex flex-col bg-black/20 backdrop-blur-lg z-10">
         
-        <header className="flex justify-between items-center p-6 md:p-8">
+        {/* Centered Header */}
+        <header className="flex justify-center items-center p-8 md:p-12">
           <SnapYogaLogo />
         </header>
 
-        {/* Hero Section */}
-        <main className="flex-grow flex flex-col items-start justify-center text-left px-6 md:px-12">
-            <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-                Master your
-                <div className="relative inline-block h-[48px] md:h-[60px] w-[240px] ml-2 align-bottom font-script" style={{ perspective: '400px' }}>
+        {/* Centered Hero Section */}
+        <main className="flex-grow flex flex-col items-center justify-center text-center px-6">
+            <h1 className="text-4xl md:text-6xl font-bold leading-tight flex flex-col items-center">
+                <span>Master your</span>
+                <div className="relative h-[60px] md:h-[80px] w-full max-w-[300px] mt-2 font-script" style={{ perspective: '400px' }}>
                     {/* Previous Word (animating out) */}
                     <span
                         key={`prev-${prevIndex}`}
-                        className="font-script absolute inset-0 flex items-center justify-start [transform-style:preserve-3d] animate-flip-up-out"
+                        className="font-script absolute inset-0 flex items-center justify-center [transform-style:preserve-3d] animate-flip-up-out"
                         style={{
                             transformOrigin: 'bottom center',
                             color: animatedWords[prevIndex].color,
@@ -61,7 +63,7 @@ export default function HomePage() {
                     {/* Current Word (animating in) */}
                     <span
                         key={`curr-${currentIndex}`}
-                        className="font-script absolute inset-0 flex items-center justify-start [transform-style:preserve-3d] animate-flip-up-in"
+                        className="font-script absolute inset-0 flex items-center justify-center [transform-style:preserve-3d] animate-flip-up-in"
                         style={{
                             transformOrigin: 'bottom center',
                             color: animatedWords[currentIndex].color,
@@ -72,13 +74,14 @@ export default function HomePage() {
                 </div>
             </h1>
           
-            <div className="flex gap-2 mt-4">
+            {/* Centered Pagination Dots */}
+            <div className="flex gap-2 mt-8 justify-center">
               {animatedWords.map((word, index) => (
                 <div
                   key={index}
                   className={cn(
                     "w-2.5 h-2.5 rounded-full transition-all duration-500",
-                    index === currentIndex ? 'opacity-100' : 'bg-white/50 opacity-50'
+                    index === currentIndex ? 'opacity-100 scale-125' : 'bg-white/30 opacity-50'
                   )}
                   style={{ backgroundColor: index === currentIndex ? word.color : undefined }}
                 ></div>
@@ -86,20 +89,20 @@ export default function HomePage() {
             </div>
         </main>
         
-        {/* Footer */}
-        <footer className="relative p-6 md:p-8">
-            <div className="flex gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-white/50"></div>
-                <div className="w-2.5 h-2.5 rounded-full bg-white/50"></div>
-                <div className="w-2.5 h-2.5 rounded-full bg-white/50"></div>
+        {/* Centered Footer/Action Button */}
+        <footer className="relative p-12 flex flex-col items-center gap-6">
+            <div className="flex gap-2 opacity-30">
+                <div className="w-1.5 h-1.5 rounded-full bg-white"></div>
+                <div className="w-1.5 h-1.5 rounded-full bg-white"></div>
+                <div className="w-1.5 h-1.5 rounded-full bg-white"></div>
             </div>
             <Button
                 asChild
                 variant="ghost"
-                className="absolute bottom-6 right-6 md:bottom-8 md:right-8 rounded-full h-14 w-14 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20"
+                className="rounded-full h-16 w-16 p-0 bg-white/10 hover:bg-white/20 text-white shadow-2xl transition-all hover:scale-110 backdrop-blur-md border border-white/20"
             >
                 <Link href="/auth/signup" aria-label="Get Started">
-                    <ArrowRight className="h-7 w-7" />
+                    <ArrowRight className="h-8 w-8" />
                 </Link>
             </Button>
         </footer>
