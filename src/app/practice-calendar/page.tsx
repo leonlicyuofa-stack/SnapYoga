@@ -157,7 +157,7 @@ export default function PracticeCalendarPage() {
         ...prev,
         [dateStr]: { name: moodName, emoji: moodEmoji, loggedAt: {} as Timestamp },
       }));
-      toast({ title: 'Mood saved', description: `${moodEmoji} ${moodName}` });
+      // Removed the 'Mood saved' toast here as requested.
     } catch { toast({ title: 'Error', description: 'Could not save mood.', variant: 'destructive' }); }
     finally { setIsLogging(false); }
   };
