@@ -8,22 +8,30 @@ export function SnapYogaLogo() {
   return (
     <div className="flex items-center" aria-label={t('snapYogaTitle')}>
       <svg
-        width="180" 
-        height="40"
-        viewBox="0 0 180 40"
-        fill="hsl(var(--primary))"
+        width="220" 
+        height="50"
+        viewBox="0 0 220 50"
+        fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="h-8 w-auto"
+        className="h-10 w-auto"
       >
         <title>SnapYoga</title>
-        {/* Using a font stack that mimics high-contrast serif fonts like Didot or Bodoni to replicate the desired style. */}
+        <defs>
+            <linearGradient id="logo-gold" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#D4AF37" />
+                <stop offset="50%" stopColor="#F5E0A3" />
+                <stop offset="100%" stopColor="#B8860B" />
+            </linearGradient>
+        </defs>
         <text 
           x="50%" 
-          y="32"
+          y="38"
           textAnchor="middle"
           fontFamily="Didot, 'Bodoni MT', 'Century Schoolbook', 'Palatino Linotype', Georgia, serif"
-          fontSize="36"
-          letterSpacing="-1"
+          fontSize="42"
+          letterSpacing="-1.5"
+          fill="url(#logo-gold)"
+          className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
         >
           SnapYoga
         </text>
