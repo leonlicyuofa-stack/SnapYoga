@@ -21,10 +21,10 @@ const animatedWords = [
 ];
 
 /**
- * High-end Metallic Monogram SVG component
+ * High-end Metallic S/Y Monogram SVG component
  */
 const MetallicMonogram = () => (
-    <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-[0_0_15px_rgba(212,175,55,0.4)]">
+    <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]">
         <defs>
             <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#D4AF37" />
@@ -34,22 +34,29 @@ const MetallicMonogram = () => (
                 <stop offset="100%" stopColor="#8B6914" />
             </linearGradient>
             <filter id="rim-light">
-                <feGaussianBlur stdDeviation="1.5" result="blur" />
+                <feGaussianBlur stdDeviation="1" result="blur" />
                 <feComposite in="SourceGraphic" in2="blur" operator="arithmetic" k2="1" k3="-1" />
             </filter>
         </defs>
-        {/* Abstract Monogram Shape: A stylized 'S' + 'Y' intersection */}
+        {/* Letter 'S' - Flowing metallic curve */}
         <path 
-            d="M60 20C37.9086 20 20 37.9086 20 60C20 82.0914 37.9086 100 60 100C82.0914 100 100 82.0914 100 60C100 37.9086 82.0914 20 60 20ZM60 90C43.4315 90 30 76.5685 30 60C30 43.4315 43.4315 30 60 30C76.5685 30 90 43.4315 90 60C90 76.5685 76.5685 90 60 90Z" 
-            fill="url(#gold-gradient)" 
+            d="M100 45C100 31.7 86.6 22 70 22C53.4 22 40 31.7 40 45C40 58.3 53.4 62 70 68C86.6 74 100 77.7 100 91C100 104.3 86.6 114 70 114C53.4 114 40 104.3 40 91" 
+            stroke="url(#gold-gradient)" 
+            strokeWidth="12" 
+            strokeLinecap="round" 
+            fill="none"
             className="animate-pulse"
         />
+        {/* Letter 'Y' - Intertwined stem and arms */}
         <path 
-            d="M50 45C50 45 40 50 40 60C40 70 50 75 60 75C70 75 80 70 80 60C80 50 70 45 60 45L60 35C80 35 95 50 95 65C95 80 80 95 60 95C40 95 25 80 25 65C25 50 40 35 50 35L50 45Z" 
-            fill="url(#gold-gradient)"
+            d="M45 35L70 70L95 35M70 70V118" 
+            stroke="url(#gold-gradient)" 
+            strokeWidth="10" 
+            strokeLinecap="round" 
+            fill="none"
             filter="url(#rim-light)"
+            opacity="0.9"
         />
-        <rect x="55" y="40" width="10" height="40" rx="5" fill="url(#gold-gradient)" transform="rotate(-15 60 60)" />
     </svg>
 );
 
@@ -102,7 +109,7 @@ export default function HomePage() {
         }}
       >
         <div className="relative animate-in fade-in zoom-in duration-1000">
-            <div className="absolute inset-0 blur-[60px] bg-[#D4AF37] opacity-20 rounded-full scale-150" />
+            <div className="absolute inset-0 blur-[80px] bg-[#D4AF37] opacity-10 rounded-full scale-150" />
             <MetallicMonogram />
         </div>
       </div>
