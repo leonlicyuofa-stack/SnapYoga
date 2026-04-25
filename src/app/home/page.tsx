@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -21,34 +22,32 @@ const animatedWords = [
 ];
 
 /**
- * High-end Metallic S Monogram SVG component
- * Focuses solely on the 'S' as requested.
+ * Sweeping B&W Divider SVG
+ * Replicates the curved motion from the user provided image.
  */
-const MetallicMonogram = () => (
-    <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]">
-        <defs>
-            <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#D4AF37" />
-                <stop offset="25%" stopColor="#F5E0A3" />
-                <stop offset="50%" stopColor="#B8860B" />
-                <stop offset="75%" stopColor="#FFD700" />
-                <stop offset="100%" stopColor="#8B6914" />
-            </linearGradient>
-            <filter id="rim-light">
-                <feGaussianBlur stdDeviation="1" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="arithmetic" k2="1" k3="-1" />
-            </filter>
-        </defs>
-        {/* Letter 'S' - Flowing metallic curve */}
-        <path 
-            d="M100 45C100 31.7 86.6 22 70 22C53.4 22 40 31.7 40 45C40 58.3 53.4 62 70 68C86.6 74 100 77.7 100 91C100 104.3 86.6 114 70 114C53.4 114 40 104.3 40 91" 
-            stroke="url(#gold-gradient)" 
-            strokeWidth="12" 
-            strokeLinecap="round" 
-            fill="none"
-            filter="url(#rim-light)"
-        />
-    </svg>
+const SweepingDivider = ({ phase }: { phase: LoadingPhase }) => (
+    <div className={cn(
+        "absolute inset-0 w-full h-full transition-all duration-1000 ease-in-out",
+        phase === 'logo' || phase === 'content' ? 'translate-y-[80%] scale-y-0 opacity-0' : 'translate-y-0 scale-y-100 opacity-100'
+    )}>
+        {/* White Side */}
+        <div className="absolute inset-0 bg-white" />
+        
+        {/* Black Side with Sweep Path */}
+        <svg 
+            viewBox="0 0 100 100" 
+            preserveAspectRatio="none" 
+            className={cn(
+                "absolute inset-0 w-full h-full transition-all duration-[2000ms] ease-out origin-center",
+                phase === 'splash' ? "scale-[2.5] -rotate-180" : "scale-100 rotate-0"
+            )}
+        >
+            <path 
+                d="M 100,0 L 0,0 L 0,100 L 100,100 C 60,75 60,25 100,0 Z" 
+                fill="#000000"
+            />
+        </svg>
+    </div>
 );
 
 export default function HomePage() {
@@ -58,19 +57,25 @@ export default function HomePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    // 1. Splash Screen 'S' zoom out for 2.5 seconds
-    const splashTimeout = setTimeout(() => {
+    // 1. Initial Sweep starts immediately
+    const startTimeout = setTimeout(() => {
+        // Trigger the landing state within the splash phase
+    }, 100);
+
+    // 2. Shrink to arrow starts after 2.5 seconds
+    const logoTimeout = setTimeout(() => {
       setPhase('logo');
     }, 2500);
 
-    // 2. Logo Reveal for 1.5 seconds
-    const logoTimeout = setTimeout(() => {
+    // 3. Final Content reveal
+    const contentTimeout = setTimeout(() => {
       setPhase('content');
-    }, 4000);
+    }, 3500);
 
     return () => {
-      clearTimeout(splashTimeout);
-      logoTimeout && clearTimeout(logoTimeout);
+      clearTimeout(startTimeout);
+      clearTimeout(logoTimeout);
+      clearTimeout(contentTimeout);
     };
   }, []);
 
@@ -88,35 +93,14 @@ export default function HomePage() {
   return (
     <div className="relative min-h-screen font-serif text-white overflow-hidden bg-[#1A1A1B]">
       
-      {/* ── PHASE 1: SPLASH SCREEN (S Zoom Out Landing) ── */}
+      {/* ── PHASE 1: SPLASH SCREEN (B&W Anti-Clockwise Sweep) ── */}
       <div 
         className={cn(
-            "fixed inset-0 z-[100] flex items-center justify-center bg-[#1A1A1B] transition-opacity duration-1000",
+            "fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-1000",
             phase === 'splash' || phase === 'logo' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         )}
-        style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='800' height='800' viewBox='0 0 800 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 100 Q 200 50 400 100 T 800 100' stroke='%23ffffff' stroke-width='0.5' fill='none' opacity='0.03'/%3E%3Cpath d='M0 200 Q 200 150 400 200 T 800 200' stroke='%23ffffff' stroke-width='0.5' fill='none' opacity='0.03'/%3E%3Cpath d='M0 300 Q 200 250 400 300 T 800 300' stroke='%23ffffff' stroke-width='0.5' fill='none' opacity='0.03'/%3E%3Cpath d='M0 400 Q 200 350 400 400 T 800 400' stroke='%23ffffff' stroke-width='0.5' fill='none' opacity='0.03'/%3E%3Cpath d='M0 500 Q 200 450 400 500 T 800 500' stroke='%23ffffff' stroke-width='0.5' fill='none' opacity='0.03'/%3E%3Cpath d='M0 600 Q 200 550 400 600 T 800 600' stroke='%23ffffff' stroke-width='0.5' fill='none' opacity='0.03'/%3E%3Cpath d='M0 700 Q 200 650 400 700 T 800 700' stroke='%23ffffff' stroke-width='0.5' fill='none' opacity='0.03'/%3E%3C/svg%3E")`,
-            backgroundSize: 'cover'
-        }}
       >
-        <div className="relative flex flex-col items-center">
-            {/* The 'S' Monogram with Zoom Out Landing effect */}
-            <div className={cn(
-                "transition-all duration-1000 ease-out transform",
-                phase === 'splash' ? 'scale-[3] opacity-0 blur-lg animate-in zoom-in-150' : 'scale-100 opacity-100 blur-0'
-            )}>
-                <div className="absolute inset-0 blur-[80px] bg-[#D4AF37] opacity-10 rounded-full scale-150" />
-                <MetallicMonogram />
-            </div>
-
-            {/* Subtext reveal (Logo) beneath the S after it lands */}
-            <div className={cn(
-                "mt-8 transition-all duration-1000 delay-500 transform",
-                phase === 'logo' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            )}>
-                <SnapYogaLogo />
-            </div>
-        </div>
+        <SweepingDivider phase={phase} />
       </div>
 
       {/* ── PHASE 3: CONTENT (Landing at /home) ── */}
