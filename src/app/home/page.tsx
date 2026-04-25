@@ -21,7 +21,8 @@ const animatedWords = [
 ];
 
 /**
- * High-end Metallic S/Y Monogram SVG component
+ * High-end Metallic S Monogram SVG component
+ * Focuses solely on the 'S' as requested.
  */
 const MetallicMonogram = () => (
     <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]">
@@ -45,17 +46,7 @@ const MetallicMonogram = () => (
             strokeWidth="12" 
             strokeLinecap="round" 
             fill="none"
-            className="animate-pulse"
-        />
-        {/* Letter 'Y' - Intertwined stem and arms */}
-        <path 
-            d="M45 35L70 70L95 35M70 70V118" 
-            stroke="url(#gold-gradient)" 
-            strokeWidth="10" 
-            strokeLinecap="round" 
-            fill="none"
             filter="url(#rim-light)"
-            opacity="0.9"
         />
     </svg>
 );
@@ -67,7 +58,7 @@ export default function HomePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    // 1. Splash Screen for 2.5 seconds
+    // 1. Splash Screen 'S' zoom out for 2.5 seconds
     const splashTimeout = setTimeout(() => {
       setPhase('logo');
     }, 2500);
@@ -97,44 +88,52 @@ export default function HomePage() {
   return (
     <div className="relative min-h-screen font-serif text-white overflow-hidden bg-[#1A1A1B]">
       
-      {/* ── PHASE 1: SPLASH SCREEN ── */}
+      {/* ── PHASE 1: SPLASH SCREEN (S Zoom Out Landing) ── */}
       <div 
         className={cn(
             "fixed inset-0 z-[100] flex items-center justify-center bg-[#1A1A1B] transition-opacity duration-1000",
-            phase === 'splash' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+            phase === 'splash' || phase === 'logo' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         )}
         style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='800' height='800' viewBox='0 0 800 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 100 Q 200 50 400 100 T 800 100' stroke='%23ffffff' stroke-width='0.5' fill='none' opacity='0.03'/%3E%3Cpath d='M0 200 Q 200 150 400 200 T 800 200' stroke='%23ffffff' stroke-width='0.5' fill='none' opacity='0.03'/%3E%3Cpath d='M0 300 Q 200 250 400 300 T 800 300' stroke='%23ffffff' stroke-width='0.5' fill='none' opacity='0.03'/%3E%3Cpath d='M0 400 Q 200 350 400 400 T 800 400' stroke='%23ffffff' stroke-width='0.5' fill='none' opacity='0.03'/%3E%3Cpath d='M0 500 Q 200 450 400 500 T 800 500' stroke='%23ffffff' stroke-width='0.5' fill='none' opacity='0.03'/%3E%3Cpath d='M0 600 Q 200 550 400 600 T 800 600' stroke='%23ffffff' stroke-width='0.5' fill='none' opacity='0.03'/%3E%3Cpath d='M0 700 Q 200 650 400 700 T 800 700' stroke='%23ffffff' stroke-width='0.5' fill='none' opacity='0.03'/%3E%3C/svg%3E")`,
             backgroundSize: 'cover'
         }}
       >
-        <div className="relative animate-in fade-in zoom-in duration-1000">
-            <div className="absolute inset-0 blur-[80px] bg-[#D4AF37] opacity-10 rounded-full scale-150" />
-            <MetallicMonogram />
+        <div className="relative flex flex-col items-center">
+            {/* The 'S' Monogram with Zoom Out Landing effect */}
+            <div className={cn(
+                "transition-all duration-1000 ease-out transform",
+                phase === 'splash' ? 'scale-[3] opacity-0 blur-lg animate-in zoom-in-150' : 'scale-100 opacity-100 blur-0'
+            )}>
+                <div className="absolute inset-0 blur-[80px] bg-[#D4AF37] opacity-10 rounded-full scale-150" />
+                <MetallicMonogram />
+            </div>
+
+            {/* Subtext reveal (Logo) beneath the S after it lands */}
+            <div className={cn(
+                "mt-8 transition-all duration-1000 delay-500 transform",
+                phase === 'logo' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            )}>
+                <SnapYogaLogo />
+            </div>
         </div>
       </div>
 
-      {/* ── PHASE 2 & 3: CONTENT ── */}
+      {/* ── PHASE 3: CONTENT (Landing at /home) ── */}
       <div className={cn(
           "absolute inset-0 w-full flex flex-col bg-black/40 backdrop-blur-3xl z-10 transition-all duration-1000",
-          phase === 'splash' ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
+          phase === 'content' ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
       )}>
         
         {/* Main Content Panel */}
         <main className="flex-grow flex flex-col items-center justify-center text-center px-6 mt-12">
             
             {/* Logo positioned directly above headline */}
-            <div className={cn(
-                "mb-8 transition-all duration-1000 transform",
-                phase === 'logo' ? 'opacity-100 translate-y-0 scale-110' : phase === 'content' ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-10'
-            )}>
+            <div className="mb-8">
                 <SnapYogaLogo />
             </div>
 
-            <div className={cn(
-                "transition-all duration-1000 delay-300",
-                phase === 'content' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-            )}>
+            <div className="transition-all duration-1000 delay-300">
                 <h1 className="text-4xl md:text-6xl font-bold leading-tight flex flex-col items-center">
                     <span className="text-white/90">Master your</span>
                     <div className="relative h-[60px] md:h-[80px] w-full max-w-[300px] mt-2 font-script" style={{ perspective: '400px' }}>
@@ -180,10 +179,7 @@ export default function HomePage() {
         </main>
         
         {/* Footer with Action Button */}
-        <footer className={cn(
-            "relative flex flex-col items-center gap-6 pb-20 transition-all duration-1000 delay-700",
-            phase === 'content' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
-        )}>
+        <footer className="relative flex flex-col items-center gap-6 pb-20 transition-all duration-1000 delay-700">
             <Button
                 asChild
                 variant="ghost"
