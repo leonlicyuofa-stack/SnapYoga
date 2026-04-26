@@ -24,37 +24,35 @@ function NamasteSplash({ isExiting }: { isExiting: boolean }) {
         )}>
             <svg 
                 viewBox="0 0 1000 400" 
-                className="w-full max-w-[700px] h-auto text-[#F4743B]"
+                className="w-full max-w-[800px] h-auto text-[#F4743B]"
                 fill="none" 
                 xmlns="http://www.w3.org/2000/svg"
             >
                 <title>Namaste Pen Drawing</title>
                 <path 
-                    d="M100,260 
-                       C120,100 180,80 200,200 
-                       C210,260 180,300 160,280 
-                       C130,240 180,120 240,140 
-                       C280,150 280,240 310,240 
-                       C340,240 340,140 370,140 
-                       C400,140 400,240 430,240 
-                       C460,240 460,140 490,140 
-                       C530,140 520,240 560,240 
-                       C600,240 590,140 620,140 
-                       C660,140 650,240 690,240 
-                       C740,240 760,180 730,140 
-                       C710,120 680,160 690,200 
-                       C700,240 780,240 820,180 
-                       C840,150 820,100 820,60 
-                       L820,280 
-                       M780,120 H860 
-                       M860,220 
-                       C860,280 940,280 960,200"
+                    d="M100,250 
+                       C120,100 160,100 180,220 
+                       C190,280 230,280 240,220 
+                       C250,160 210,140 210,200 
+                       C210,260 250,260 270,220 
+                       C280,180 320,180 330,220 
+                       C340,260 370,260 380,220 
+                       C390,180 420,180 430,220 
+                       C440,260 470,260 480,220 
+                       C490,160 450,140 450,200 
+                       C450,260 490,260 510,220 
+                       C530,160 580,160 560,240 
+                       C540,300 620,240 640,220 
+                       L640,100 
+                       M600,160 H680 
+                       M640,220 
+                       C640,260 680,260 700,200"
                     stroke="currentColor" 
-                    strokeWidth="3" 
+                    strokeWidth="4" 
                     strokeLinecap="round" 
                     strokeLinejoin="round"
                     className="animate-line-draw"
-                    style={{ strokeDasharray: 3000, strokeDashoffset: 3000 }}
+                    style={{ strokeDasharray: 4000, strokeDashoffset: 4000 }}
                 />
             </svg>
         </div>
@@ -103,10 +101,10 @@ export default function HomePage() {
             <SnapYogaLogo />
         </header>
 
-        {/* Footer: All content moved to bottom right above the arrow */}
+        {/* Footer: All content positioned right above the arrow */}
         <footer className="mt-auto pb-20 flex flex-col items-center text-center">
             
-            {/* Animated Headline and Dots moved here */}
+            {/* Animated Headline and Dots */}
             <div className="mb-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200">
                 <h1 className="text-4xl md:text-5xl font-bold leading-tight flex flex-col items-center">
                     <span className="text-foreground/90">Master your</span>
@@ -136,7 +134,7 @@ export default function HomePage() {
                     </div>
                 </h1>
               
-                {/* Pagination Dots positioned just below the text and above the button */}
+                {/* Pagination Dots */}
                 <div className="flex gap-2 mt-8 justify-center">
                   {animatedWords.map((word, index) => (
                     <div
