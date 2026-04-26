@@ -2,15 +2,11 @@
 "use client";
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import { cn } from '@/lib/utils';
 import { ArrowRight } from 'lucide-react';
-
-// Sequence phases: 'splash' -> 'reveal' -> 'content'
-type LoadingPhase = 'splash' | 'reveal' | 'content';
 
 const animatedWords = [
     { text: 'Pose.', color: '#fb7185' },
@@ -20,94 +16,33 @@ const animatedWords = [
     { text: 'Mobility.', color: '#34d399' },
 ];
 
-/**
- * Sweeping B&W Circular Divider
- * Frame 1: Black left panel (60%) with hard diagonal curve.
- * Frame 2: Anti-clockwise circular sweep revealing white content.
- * Frame 3: Shrinks to land on the welcome button.
- */
-const SweepingDivider = ({ phase }: { phase: LoadingPhase }) => {
-    return (
-        <div className={cn(
-            "fixed inset-0 w-full h-full z-[100] bg-white transition-opacity duration-1000",
-            phase === 'content' ? 'opacity-0 pointer-events-none' : 'opacity-100'
-        )}>
-            {/* The Black Shape */}
-            <div 
-                className={cn(
-                    "absolute inset-0 bg-black transition-all duration-[2000ms] ease-in-out origin-center",
-                    phase === 'splash' && "[clip-path:circle(120%_at_0%_50%)]",
-                    phase === 'reveal' && "[clip-path:circle(0%_at_50%_50%)] scale-0 rotate-[180deg]",
-                    phase === 'content' && "opacity-0"
-                )}
-            />
-            
-            {/* Hard Diagonal Curve Overlay for Frame 1 aesthetic */}
-            {phase === 'splash' && (
-                <div 
-                    className="absolute inset-0 bg-black"
-                    style={{
-                        clipPath: 'polygon(0% 0%, 60% 0%, 40% 100%, 0% 100%)'
-                    }}
-                />
-            )}
-        </div>
-    );
-};
-
 export default function HomePage() {
-  const [phase, setPhase] = useState<LoadingPhase>('splash');
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    // Phase 1 -> 2: Start the anti-clockwise sweep reveal
-    const revealTimeout = setTimeout(() => {
-      setPhase('reveal');
-    }, 1500);
-
-    // Phase 2 -> 3: Final content reveal
-    const contentTimeout = setTimeout(() => {
-      setPhase('content');
-    }, 3200);
-
-    return () => {
-      clearTimeout(revealTimeout);
-      clearTimeout(contentTimeout);
-    };
+    const intervalId = setInterval(() => {
+      setCurrentIndex(prevIndex => (prevIndex + 1) % animatedWords.length);
+    }, 3000);
+    return () => clearInterval(intervalId);
   }, []);
-
-  useEffect(() => {
-    if (phase === 'content') {
-        const intervalId = setInterval(() => {
-            setCurrentIndex(prevIndex => (prevIndex + 1) % animatedWords.length);
-        }, 3000);
-        return () => clearInterval(intervalId);
-    }
-  }, [phase]);
 
   const prevIndex = (currentIndex - 1 + animatedWords.length) % animatedWords.length;
 
   return (
     <div className="relative min-h-screen font-serif text-white overflow-hidden bg-background">
       
-      {/* ── SPLASH SCREEN SEQUENCE ── */}
-      <SweepingDivider phase={phase} />
-
       {/* ── MAIN CONTENT ── */}
-      <div className={cn(
-          "absolute inset-0 w-full flex flex-col z-10 transition-all duration-1000",
-          phase === 'content' ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
-      )}>
+      <div className="absolute inset-0 w-full flex flex-col z-10 px-6">
         
         {/* Main Content Panel */}
-        <main className="flex-grow flex flex-col items-center justify-center text-center px-6">
+        <main className="flex-grow flex flex-col items-center justify-center text-center">
             
             {/* Logo centered above headline */}
-            <div className="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
+            <div className="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
                 <SnapYogaLogo />
             </div>
 
-            <div className="transition-all duration-1000 delay-700">
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200">
                 <h1 className="text-4xl md:text-6xl font-bold leading-tight flex flex-col items-center">
                     <span className="text-foreground/90">Master your</span>
                     <div className="relative h-[60px] md:h-[80px] w-full max-w-[300px] mt-2 font-script" style={{ perspective: '400px' }}>
@@ -153,7 +88,7 @@ export default function HomePage() {
         </main>
         
         {/* Footer with Action Button */}
-        <footer className="relative flex flex-col items-center pb-20 transition-all duration-1000 delay-1000">
+        <footer className="relative flex flex-col items-center pb-20 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
             <Button
                 asChild
                 variant="ghost"
