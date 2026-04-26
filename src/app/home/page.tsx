@@ -20,7 +20,7 @@ function NamasteSplash({ isExiting }: { isExiting: boolean }) {
     return (
         <div className={cn(
             "fixed inset-0 z-50 flex items-center justify-center bg-background px-6 transition-all duration-1000 ease-in-out",
-            isExiting ? "scale-90 opacity-0 pointer-events-none" : "scale-100 opacity-100"
+            isExiting ? "scale-95 opacity-0 pointer-events-none" : "scale-100 opacity-100"
         )}>
             <svg 
                 viewBox="0 0 800 400" 
@@ -28,15 +28,15 @@ function NamasteSplash({ isExiting }: { isExiting: boolean }) {
                 fill="none" 
                 xmlns="http://www.w3.org/2000/svg"
             >
-                {/* Namaste Text Path - Single Line Drawing */}
+                {/* Elegant Cursive Namaste - Single Stroke Drawing */}
                 <path 
-                    d="M150,250 C180,180 210,180 230,220 C250,260 220,300 200,280 C180,260 210,200 240,180 C270,160 300,280 320,280 C340,280 360,200 380,200 C400,200 420,280 440,280 C460,280 480,200 500,200 C520,200 540,280 560,280 C580,280 600,200 620,200 C640,200 650,250 640,280"
+                    d="M100,240 C100,100 160,80 180,180 C190,240 160,280 140,260 C120,240 160,140 220,120 C260,100 280,240 310,240 C340,240 350,140 380,140 C410,140 420,240 450,240 C480,240 490,140 520,140 C550,140 560,240 590,240 C620,240 630,100 630,60 L630,280 M590,120 H670 M670,220 C670,280 750,280 770,200"
                     stroke="currentColor" 
-                    strokeWidth="3" 
+                    strokeWidth="2.5" 
                     strokeLinecap="round" 
                     strokeLinejoin="round"
                     className="animate-line-draw"
-                    style={{ strokeDasharray: 1000, strokeDashoffset: 1000 }}
+                    style={{ strokeDasharray: 2000, strokeDashoffset: 2000 }}
                 />
             </svg>
         </div>
@@ -49,17 +49,17 @@ export default function HomePage() {
   const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
-    // 1. Initial drawing phase (0 - 2.5s)
-    // 2. Zoom-out fade phase (2.5s - 3.5s)
-    // 3. Reveal home (3.5s+)
+    // 1. Drawing phase (0 - 2.8s)
+    // 2. Zoom-out fade phase (2.8s - 3.8s)
+    // 3. Reveal home (3.8s+)
     
     const exitTimer = setTimeout(() => {
       setIsExiting(true);
-    }, 2500);
+    }, 2800);
 
     const hideTimer = setTimeout(() => {
       setShowSplash(false);
-    }, 3500);
+    }, 3800);
 
     const intervalId = setInterval(() => {
       setCurrentIndex(prevIndex => (prevIndex + 1) % animatedWords.length);
@@ -128,9 +128,8 @@ export default function HomePage() {
                       key={index}
                       className={cn(
                         "w-2 h-2 rounded-full transition-all duration-500",
-                        index === currentIndex ? 'opacity-100 scale-125' : 'bg-foreground/20 opacity-30'
+                        index === currentIndex ? 'bg-[#F4743B] opacity-100 scale-125' : 'bg-foreground/20 opacity-30'
                       )}
-                      style={{ backgroundColor: index === currentIndex ? word.color : undefined }}
                     ></div>
                   ))}
                 </div>
