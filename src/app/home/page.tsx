@@ -20,23 +20,51 @@ function NamasteSplash({ isExiting }: { isExiting: boolean }) {
     return (
         <div className={cn(
             "fixed inset-0 z-50 flex items-center justify-center bg-background px-6 transition-all duration-1000 ease-in-out",
-            isExiting ? "scale-95 opacity-0 pointer-events-none" : "scale-100 opacity-100"
+            isExiting ? "scale-75 opacity-0 pointer-events-none" : "scale-100 opacity-100"
         )}>
             <svg 
-                viewBox="0 0 800 400" 
-                className="w-full max-w-[500px] h-auto text-[#F4743B]"
+                viewBox="0 0 1000 400" 
+                className="w-full max-w-[700px] h-auto text-[#F4743B]"
                 fill="none" 
                 xmlns="http://www.w3.org/2000/svg"
             >
-                {/* Elegant Cursive Namaste - Single Stroke Drawing */}
+                <title>Namaste Pen Drawing</title>
+                {/* 
+                  Elegant Cursive Namaste - Hand-crafted single stroke path
+                  N: Starts low, goes high, loops back down.
+                  a: connects to m
+                  m: three elegant loops
+                  a: connects to s
+                  s: loops up to t
+                  t: stem
+                  e: final flourish
+                */}
                 <path 
-                    d="M100,240 C100,100 160,80 180,180 C190,240 160,280 140,260 C120,240 160,140 220,120 C260,100 280,240 310,240 C340,240 350,140 380,140 C410,140 420,240 450,240 C480,240 490,140 520,140 C550,140 560,240 590,240 C620,240 630,100 630,60 L630,280 M590,120 H670 M670,220 C670,280 750,280 770,200"
+                    d="M100,260 
+                       C120,100 180,80 200,200 
+                       C210,260 180,300 160,280 
+                       C130,240 180,120 240,140 
+                       C280,150 280,240 310,240 
+                       C340,240 340,140 370,140 
+                       C400,140 400,240 430,240 
+                       C460,240 460,140 490,140 
+                       C530,140 520,240 560,240 
+                       C600,240 590,140 620,140 
+                       C660,140 650,240 690,240 
+                       C740,240 760,180 730,140 
+                       C710,120 680,160 690,200 
+                       C700,240 780,240 820,180 
+                       C840,150 820,100 820,60 
+                       L820,280 
+                       M780,120 H860 
+                       M860,220 
+                       C860,280 940,280 960,200"
                     stroke="currentColor" 
-                    strokeWidth="2.5" 
+                    strokeWidth="3" 
                     strokeLinecap="round" 
                     strokeLinejoin="round"
                     className="animate-line-draw"
-                    style={{ strokeDasharray: 2000, strokeDashoffset: 2000 }}
+                    style={{ strokeDasharray: 3000, strokeDashoffset: 3000 }}
                 />
             </svg>
         </div>
@@ -49,17 +77,17 @@ export default function HomePage() {
   const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
-    // 1. Drawing phase (0 - 2.8s)
-    // 2. Zoom-out fade phase (2.8s - 3.8s)
-    // 3. Reveal home (3.8s+)
+    // 1. Drawing phase (0 - 2.5s)
+    // 2. Zoom-out fade phase (2.5s - 3.5s)
+    // 3. Reveal home (3.5s+)
     
     const exitTimer = setTimeout(() => {
       setIsExiting(true);
-    }, 2800);
+    }, 2500);
 
     const hideTimer = setTimeout(() => {
       setShowSplash(false);
-    }, 3800);
+    }, 3500);
 
     const intervalId = setInterval(() => {
       setCurrentIndex(prevIndex => (prevIndex + 1) % animatedWords.length);
