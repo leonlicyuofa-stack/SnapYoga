@@ -29,16 +29,6 @@ function NamasteSplash({ isExiting }: { isExiting: boolean }) {
                 xmlns="http://www.w3.org/2000/svg"
             >
                 <title>Namaste Pen Drawing</title>
-                {/* 
-                  Elegant Cursive Namaste - Hand-crafted single stroke path
-                  N: Starts low, goes high, loops back down.
-                  a: connects to m
-                  m: three elegant loops
-                  a: connects to s
-                  s: loops up to t
-                  t: stem
-                  e: final flourish
-                */}
                 <path 
                     d="M100,260 
                        C120,100 180,80 200,200 
@@ -77,10 +67,6 @@ export default function HomePage() {
   const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
-    // 1. Drawing phase (0 - 2.5s)
-    // 2. Zoom-out fade phase (2.5s - 3.5s)
-    // 3. Reveal home (3.5s+)
-    
     const exitTimer = setTimeout(() => {
       setIsExiting(true);
     }, 2500);
@@ -112,18 +98,19 @@ export default function HomePage() {
       {/* ── MAIN CONTENT ── */}
       <div className="absolute inset-0 w-full flex flex-col z-10 px-6">
         
-        {/* Main Content Panel */}
-        <main className="flex-grow flex flex-col items-center justify-center text-center">
-            
-            {/* Logo centered above headline */}
-            <div className="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                <SnapYogaLogo />
-            </div>
+        {/* Top Header: Logo */}
+        <header className="pt-20 flex justify-center animate-in fade-in slide-in-from-top-4 duration-1000">
+            <SnapYogaLogo />
+        </header>
 
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200">
-                <h1 className="text-4xl md:text-6xl font-bold leading-tight flex flex-col items-center">
+        {/* Footer: All content moved to bottom right above the arrow */}
+        <footer className="mt-auto pb-20 flex flex-col items-center text-center">
+            
+            {/* Animated Headline and Dots moved here */}
+            <div className="mb-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200">
+                <h1 className="text-4xl md:text-5xl font-bold leading-tight flex flex-col items-center">
                     <span className="text-foreground/90">Master your</span>
-                    <div className="relative h-[60px] md:h-[80px] w-full max-w-[300px] mt-2 font-script" style={{ perspective: '400px' }}>
+                    <div className="relative h-[60px] md:h-[70px] w-full max-w-[280px] mt-2 font-script" style={{ perspective: '400px' }}>
                         {/* Previous Word */}
                         <span
                             key={`prev-${prevIndex}`}
@@ -149,8 +136,8 @@ export default function HomePage() {
                     </div>
                 </h1>
               
-                {/* Pagination Dots */}
-                <div className="flex gap-2 mt-12 justify-center">
+                {/* Pagination Dots positioned just below the text and above the button */}
+                <div className="flex gap-2 mt-8 justify-center">
                   {animatedWords.map((word, index) => (
                     <div
                       key={index}
@@ -162,19 +149,19 @@ export default function HomePage() {
                   ))}
                 </div>
             </div>
-        </main>
-        
-        {/* Footer with Action Button */}
-        <footer className="relative flex flex-col items-center pb-20 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
-            <Button
-                asChild
-                variant="ghost"
-                className="rounded-full h-16 w-16 p-0 bg-black hover:bg-black/90 text-white shadow-2xl transition-all hover:scale-110 border border-white/20"
-            >
-                <Link href="/auth/signup" aria-label="Get Started">
-                    <ArrowRight className="h-8 w-8" />
-                </Link>
-            </Button>
+
+            {/* Action Button at the very bottom */}
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
+                <Button
+                    asChild
+                    variant="ghost"
+                    className="rounded-full h-16 w-16 p-0 bg-black hover:bg-black/90 text-white shadow-2xl transition-all hover:scale-110 border border-white/20"
+                >
+                    <Link href="/auth/signup" aria-label="Get Started">
+                        <ArrowRight className="h-8 w-8" />
+                    </Link>
+                </Button>
+            </div>
         </footer>
 
       </div>
