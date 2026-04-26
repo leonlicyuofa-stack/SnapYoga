@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -133,6 +134,9 @@ export default {
                 'from': { transform: 'rotateX(0deg)', opacity: '1' },
                 'to': { transform: 'rotateX(-90deg)', opacity: '0' },
             },
+            'line-draw': {
+                'to': { strokeDashoffset: '0' }
+            }
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
@@ -146,6 +150,7 @@ export default {
             'zoom-in': 'zoom-in 0.7s ease-out forwards',
             'flip-up-in': 'flip-up-in 0.5s ease-out forwards',
             'flip-up-out': 'flip-up-out 0.5s ease-out forwards',
+            'line-draw': 'line-draw 2s ease-out forwards'
   		}
   	}
   },
