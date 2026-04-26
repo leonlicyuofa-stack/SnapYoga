@@ -9,11 +9,11 @@ import { cn } from '@/lib/utils';
 import { ArrowRight } from 'lucide-react';
 
 const animatedWords = [
-    { text: 'Pose.', color: '#fb7185' },
-    { text: 'Flow.', color: '#38bdf8' },
-    { text: 'Balance.', color: '#facc15' },
-    { text: 'Strength.', color: '#a78bfa' },
-    { text: 'Mobility.', color: '#34d399' },
+    { text: 'Pose.', color: '#F4743B' },
+    { text: 'Flow.', color: '#F4743B' },
+    { text: 'Balance.', color: '#F4743B' },
+    { text: 'Strength.', color: '#F4743B' },
+    { text: 'Mobility.', color: '#F4743B' },
 ];
 
 export default function HomePage() {
