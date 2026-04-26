@@ -4,13 +4,13 @@
 
 @layer base {
   :root {
-    --background: 38 45% 98%; /* Warm Ivory/Alabaster */
+    --background: 75 5% 94%; /* White Smoke #F1F2EE */
     --foreground: 25 25% 10%; /* Deep Bark */
 
     --card: 0 0% 100%;
     --card-foreground: 25 25% 10%;
 
-    --popover: 38 45% 98%;
+    --popover: 75 5% 94%;
     --popover-foreground: 25 25% 10%;
 
     --primary: 35 55% 45%; /* Deep Metallic Gold */
@@ -36,13 +36,13 @@
   }
 
   .dark {
-    --background: 0 0% 4%; /* Near Pure Black */
+    --background: 207 43% 9%; /* Ink Black #0D1821 */
     --foreground: 38 45% 90%; /* Parchment Text */
 
-    --card: 0 0% 7%;
+    --card: 207 40% 12%;
     --card-foreground: 38 45% 90%;
 
-    --popover: 0 0% 6%;
+    --popover: 207 43% 8%;
     --popover-foreground: 38 45% 90%;
 
     --primary: 35 55% 55%; /* Bright Shimmer Gold */
@@ -51,14 +51,14 @@
     --secondary: 24 40% 40%;
     --secondary-foreground: 38 45% 90%;
 
-    --muted: 0 0% 12%;
+    --muted: 207 30% 15%;
     --muted-foreground: 0 0% 65%; 
 
     --accent: 85 10% 40%;
     --accent-foreground: 38 45% 90%;
 
-    --border: 35 30% 20%;
-    --input: 0 0% 12%;
+    --border: 207 30% 20%;
+    --input: 207 30% 15%;
     --ring: 35 55% 55%;
   }
 }

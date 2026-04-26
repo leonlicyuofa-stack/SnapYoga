@@ -13,18 +13,18 @@ export function ThemeBackground() {
           inset: 0,
           zIndex: -10,
           overflow: 'hidden',
-          backgroundColor: isDark ? '#050505' : '#FDF8F0',
+          backgroundColor: isDark ? '#0D1821' : '#F1F2EE',
           transition: 'background-color 0.8s ease',
         }}
       >
-        {/* Dynamic CSS Gradient "Streaks" */}
+        {/* Dynamic CSS Gradient "Streaks" - Tinted with Black Cherry #5A0002 */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
             backgroundImage: isDark 
-              ? 'radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.08) 0%, transparent 40%), radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 50%)'
-              : 'radial-gradient(circle at 80% 20%, rgba(193, 154, 107, 0.05) 0%, transparent 40%)',
+              ? 'radial-gradient(circle at 80% 20%, rgba(90, 0, 2, 0.12) 0%, transparent 45%), radial-gradient(circle at 20% 80%, rgba(90, 0, 2, 0.08) 0%, transparent 50%)'
+              : 'radial-gradient(circle at 80% 20%, rgba(90, 0, 2, 0.04) 0%, transparent 40%)',
             opacity: 1,
             transition: 'background-image 0.8s ease',
           }}
@@ -48,7 +48,7 @@ export function ThemeBackground() {
           position: 'fixed',
           inset: 0,
           zIndex: -9,
-          background: isDark ? 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.2) 100%)' : 'rgba(255,255,255,0.05)',
+          background: isDark ? 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.1) 100%)' : 'rgba(255,255,255,0.02)',
           transition: 'background 0.8s ease',
           pointerEvents: 'none',
         }}
