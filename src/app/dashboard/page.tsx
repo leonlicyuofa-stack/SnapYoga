@@ -3,11 +3,7 @@
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
-<<<<<<< HEAD
-import { Smile, Wind, Frown, Meh, Trophy, Sun, Moon, MessageSquare, ArrowRight, Sparkles, Zap } from 'lucide-react';
-=======
-import { Smile, Wind, Frown, Meh, Activity, Trophy, Clock, Sparkles } from 'lucide-react';
->>>>>>> bb90bfdc5eed7794e3b64f9dfecc9aa44ca7c44b
+import { Smile, Wind, Frown, Meh, Trophy, Sun, Moon, MessageSquare, ArrowRight, Sparkles, Zap, Activity, Clock } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useState, useEffect } from 'react';
@@ -18,11 +14,8 @@ import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { MoodChart } from '@/components/features/dashboard/MoodChart';
-<<<<<<< HEAD
-=======
 import { PracticeCalendarSnapshot } from '@/components/features/dashboard/PracticeCalendarSnapshot';
 import { UpgradeBanner } from '@/components/features/dashboard/UpgradeBanner';
->>>>>>> bb90bfdc5eed7794e3b64f9dfecc9aa44ca7c44b
 
 const GOLD       = 'rgba(193,154,107';
 const PARCHMENT  = 'rgba(255,240,215';
@@ -179,7 +172,9 @@ export default function DashboardPage() {
         {/* SCROLLABLE CONTENT */}
         <main style={{ flex: 1, padding: '4px 14px 120px', display: 'flex', flexDirection: 'column', gap: 22 }}>
 
-<<<<<<< HEAD
+          {/* Upgrade banner — only renders for free users */}
+          <UpgradeBanner />
+
           {/* §1 MOOD & REFLECTIONS */}
           <section>
             <SectionHead t={t}>Mood & Reflections</SectionHead>
@@ -195,25 +190,6 @@ export default function DashboardPage() {
                       {moodData ? 'Update' : 'Start'}
                     </Link>
                   </Button>
-=======
-          {/* Upgrade banner — only renders for free users */}
-          <UpgradeBanner />
-
-          {/* ROW 1 — Mood (2/3) + Practice (1/3) */}
-          <div className="grid grid-cols-3 gap-2">
-
-            <GlassCard className="col-span-2 px-4 py-3" style={{ borderRadius: '32px 32px 16px 32px' }}>
-              <div className="flex items-center justify-between mb-2">
-                <CardLabel>How are you feeling?</CardLabel>
-                <div
-                  className="p-1 rounded-full"
-                  style={{ background: `${GOLD},0.12)` }}
-                >
-                  <Sparkles
-                    className="h-3 w-3"
-                    style={{ color: `${GOLD},0.70)` }}
-                  />
->>>>>>> bb90bfdc5eed7794e3b64f9dfecc9aa44ca7c44b
                 </div>
 
                 {moodData ? (
@@ -259,7 +235,6 @@ export default function DashboardPage() {
                     );
                   })}
                 </div>
-<<<<<<< HEAD
                 <div style={{ display: 'flex', gap: 4, marginTop: 14 }}>
                   {habitsList.map((h, i) => (
                     <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: completedHabits.includes(h.id) ? `${GOLD},0.72)` : `${PARCHMENT},0.10)` }} />
@@ -343,19 +318,6 @@ export default function DashboardPage() {
                 <div style={{ display: 'flex', gap: 4, marginLeft: 16, alignItems: 'flex-end' }}>
                   {[1,1,0,1,0,1,1].map((done,i)=>(
                     <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: done ? `${GOLD},0.80)` : `${PARCHMENT},0.12)` }} />
-=======
-                <div className="grid grid-cols-7 gap-1.5">
-                  {Array.from({ length: 21 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className={cn(
-                        "h-2 w-2 rounded-full",
-                        [0, 2, 4, 7, 10, 12, 14, 15, 18, 20].includes(i)
-                          ? "bg-primary/80"
-                          : "bg-white/10"
-                      )}
-                    />
->>>>>>> bb90bfdc5eed7794e3b64f9dfecc9aa44ca7c44b
                   ))}
                 </div>
               </div>
