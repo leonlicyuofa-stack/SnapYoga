@@ -1,51 +1,47 @@
-
 'use server';
 
 /**
  * @fileOverview Server action to analyze a yoga pose video.
- * This action uploads a video to Firebase Storage and calls an external
- * Python service on Cloud Run for analysis, returning the result directly.
+ * This action handles the secure communication between the client, 
+ * Firebase Storage, and the external Python analysis service on Cloud Run.
  */
 
 import { z } from 'zod';
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
-import { app, firestore } from '@/lib/firebase/clientApp'; // Import firestore
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore'; // Import firestore functions
+import { app, firestore } from '@/lib/firebase/clientApp';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { GoogleAuth } from 'google-auth-library';
 
-// Define the schema for the action's input
+// 1. INPUT SCHEMA
+// This validates the data coming from the frontend (Video Data URI)
 const AnalyzePoseInputSchema = z.object({
   videoDataUri: z
     .string()
-    .describe(
-      "A video of the user performing a yoga pose, as a data URI."
-    ),
+    .describe("A video of the user performing a yoga pose, as a data URI."),
   userId: z.string().describe("The UID of the user uploading the video."),
 });
 
 export type AnalyzePoseInput = z.infer<typeof AnalyzePoseInputSchema>;
 
-// Define the NEW expected output from the analysis service
+/**
+ * 2. NEW RAW OUTPUT SCHEMA
+ * CHANGE THIS: Update this schema to match the EXACT JSON response 
+ * structure from your new Cloud Run service.
+ */
 const AnalysisServiceRawOutputSchema = z.object({
-  message: z.string(),
+  message: z.string().optional(),
   result_id: z.string(),
   summary: z.object({
-    total_frames_analyzed: z.number(),
-    primary_pose_detected: z.string(),
-    average_performance_score: z.number(),
-    performance_grade: z.string(),
-  }),
-  overall_performance: z.object({
-    average_score: z.number(),
-    overall_grade: z.string(),
     primary_pose: z.string(),
-    pose_distribution: z.record(z.number()),
-    total_frames: z.number(),
+    score: z.number(),
+    status: z.string().optional(),
   }),
+  details: z.any().optional(), // For any additional complex metadata
 });
 
-// This is the clean output format that the frontend components will use
+// 3. CLEAN UI SCHEMA
+// This is what the frontend components (cards, charts) actually use.
 const AnalysisServiceOutputSchema = z.object({
   feedback: z.string(),
   score: z.number(),
@@ -55,8 +51,9 @@ const AnalysisServiceOutputSchema = z.object({
 
 export type AnalysisServiceOutput = z.infer<typeof AnalysisServiceOutputSchema>;
 
-
-// Helper to upload video to Firebase Storage
+/**
+ * Helper to upload video to Firebase Storage
+ */
 async function uploadVideoToStorage(videoDataUri: string, userId: string, videoId: string, mimeType: string): Promise<string> {
     const storage = getStorage(app);
     const storageRef = ref(storage, `user-videos/${userId}/${videoId}.${mimeType.split('/')[1]}`);
@@ -66,37 +63,32 @@ async function uploadVideoToStorage(videoDataUri: string, userId: string, videoI
 }
 
 /**
- * The main server action to analyze a yoga pose.
- * @param input The user's video data and user ID.
- * @returns The analysis result from the Python service.
+ * The main server action to perform pose analysis.
  */
 export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<AnalysisServiceOutput> {
-  // Validate input
+  // Validate input from client
   const validatedInput = AnalyzePoseInputSchema.parse(input);
   const { userId, videoDataUri } = validatedInput;
 
-  // 1. Generate videoId and mimeType once
   const videoId = uuidv4();
   const mimeType = videoDataUri.match(/data:(.*);base64,/)?.[1] || 'video/mp4';
   
-  // 2. Upload video to Firebase Storage
+  // 1. Upload to Storage
   const videoUrl = await uploadVideoToStorage(videoDataUri, userId, videoId, mimeType);
   
-  // 3. Get the gs:// path for the API call (using same videoId)
+  // 2. Prepare for Cloud Run call
   const storage = getStorage(app);
   const storageRef = ref(storage, `user-videos/${userId}/${videoId}.${mimeType.split('/')[1]}`);
   const gsPath = `gs://${storageRef.bucket}/${storageRef.fullPath}`;
   
-  // 3. Call the external Python service on Cloud Run
   const baseUrl = process.env.ANALYSIS_SERVICE_URL;
   if (!baseUrl) {
       throw new Error("ANALYSIS_SERVICE_URL environment variable is not set.");
   }
   
+  // Update this path if your new endpoint changed (e.g., /analyze)
   const analysisServiceUrl = new URL('/analyze-video-comprehensive/', baseUrl).toString();
   
-  console.log(`Calling analysis service at: ${analysisServiceUrl} for video: ${gsPath}`);
-
   let response: Response;
   let rawAnalysisResult: any = {};
   let responseStatus = 500;
@@ -104,23 +96,29 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
   let errorBody = '';
 
   try {
-      // Get authentication token for Cloud Run
+      // Authenticate with Cloud Run
       const auth = new GoogleAuth();
       const client = await auth.getIdTokenClient(analysisServiceUrl);
       const headers = await client.getRequestHeaders();
 
-      // Create form data instead of JSON
-      const formData = new FormData();
-      formData.append('storage_url', gsPath);
-      formData.append('filename', `video_${videoId}.mp4`);
+      /**
+       * 3. CALL EXTERNAL SERVICE
+       * CHANGE THIS: If your service expects a JSON body instead of FormData, 
+       * swap the body to JSON.stringify and add the Content-Type header.
+       */
+      const payload = {
+          storage_url: gsPath,
+          filename: `video_${videoId}.mp4`,
+          userId: userId
+      };
 
       response = await fetch(analysisServiceUrl, {
           method: 'POST',
           headers: {
-              'Authorization': headers.Authorization,
-              // Don't set Content-Type - let browser set it with boundary for FormData
+              ...headers,
+              'Content-Type': 'application/json',
           },
-          body: formData,
+          body: JSON.stringify(payload),
       });
 
       responseStatus = response.status;
@@ -128,7 +126,7 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
 
       if (!response.ok) {
           errorBody = await response.text();
-          throw new Error(`Analysis service failed with status ${response.status}: ${errorBody}`);
+          throw new Error(`Analysis service failed (${response.status}): ${errorBody}`);
       }
       
       rawAnalysisResult = await response.json();
@@ -137,44 +135,42 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
       console.error("Error calling analysis service:", e);
       rawAnalysisResult = { error: e.message };
   } finally {
-      // Save the raw JSON or error to Firestore for review
+      // 4. LOG TO FIRESTORE
+      // This saves a record of every API attempt for debugging and audit purposes.
       try {
         const logCollectionRef = collection(firestore, 'users', userId, 'poseAnalysisRawLogs');
         await addDoc(logCollectionRef, {
           rawResponse: rawAnalysisResult,
           videoUrl: videoUrl,
-          gsPath: gsPath, // Add gsPath for debugging
+          gsPath: gsPath,
           createdAt: serverTimestamp(),
           isError: !responseOk,
-          responseStatus: responseStatus,
+          responseStatus,
           errorBody: errorBody || null,
         });
-        console.log("Successfully logged API response/error to Firestore.");
       } catch (logError) {
-        console.error("Failed to log API response to Firestore:", logError);
-        // We don't throw here, as logging is a secondary concern.
+        console.error("Failed to log raw API response:", logError);
       }
   }
 
-  // If the initial request failed, throw an error to notify the frontend
   if (!responseOk) {
-      throw new Error(`Analysis service failed with status ${responseStatus}: ${errorBody}`);
+      throw new Error(`Analysis failed. Details logged to your profile.`);
   }
   
-  // 3. Parse the new, complex structure
+  // 5. PARSE AND TRANSFORM
+  // Parse the raw JSON using the schema defined above.
   const parsedResult = AnalysisServiceRawOutputSchema.parse(rawAnalysisResult);
 
-  // 4. Transform the complex result into the simple format our app uses
-  const { summary } = parsedResult;
-  const feedback = `Analysis complete for ${summary.primary_pose_detected}. Your average performance score was ${summary.average_performance_score.toFixed(1)} with a grade of ${summary.performance_grade}. A total of ${summary.total_frames_analyzed} frames were analyzed.`;
-  
+  /**
+   * 6. UI TRANSFORMATION
+   * CHANGE THIS: Logic to turn your raw data into a string feedback and 0-100 score.
+   */
   const finalResult = {
-      feedback: feedback,
-      score: summary.average_performance_score,
-      identifiedPose: summary.primary_pose_detected,
+      feedback: `Great job on your ${parsedResult.summary.primary_pose}! You earned a score of ${parsedResult.summary.score.toFixed(1)}.`,
+      score: parsedResult.summary.score,
+      identifiedPose: parsedResult.summary.primary_pose,
       videoUrl: videoUrl,
   };
 
-  // 5. Validate and return the simplified result
   return AnalysisServiceOutputSchema.parse(finalResult);
 }
