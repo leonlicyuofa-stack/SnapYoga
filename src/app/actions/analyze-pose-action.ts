@@ -87,7 +87,7 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
   }
   
   // Update this path if your new endpoint changed (e.g., /analyze)
-  const analysisServiceUrl = new URL('/analyze-video-comprehensive/', baseUrl).toString();
+  const analysisServiceUrl = new URL('v2/analyze-video-vision', baseUrl).toString();
   
   let response: Response;
   let rawAnalysisResult: any = {};
