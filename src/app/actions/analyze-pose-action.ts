@@ -68,6 +68,27 @@ const AnalysisServiceRawOutputSchema = z
   })
   .passthrough();
 
+/** Older `/analyze-video-comprehensive/` style JSON (still supported for migration). */
+const AnalysisServiceLegacyRawSchema = z
+  .object({
+    message: z.string(),
+    result_id: z.string(),
+    summary: z.object({
+      total_frames_analyzed: z.number(),
+      primary_pose_detected: z.string(),
+      average_performance_score: z.number(),
+      performance_grade: z.string(),
+    }),
+    overall_performance: z.object({
+      average_score: z.number(),
+      overall_grade: z.string(),
+      primary_pose: z.string(),
+      pose_distribution: z.record(z.number()),
+      total_frames: z.number(),
+    }),
+  })
+  .passthrough();
+
 export type JointAssessmentEntry = z.infer<typeof JointAssessmentEntrySchema>;
 export type PriorityCorrectionEntry = z.infer<typeof PriorityCorrectionEntrySchema>;
 export type RecommendedPreparatoryPose = z.infer<typeof RecommendedPreparatoryPoseSchema>;
@@ -110,6 +131,39 @@ function mapVisionResponseToOutput(
     progressionPath: raw.progression_path,
     motivationalNote: raw.motivational_note,
   };
+}
+
+function mapLegacyResponseToOutput(
+  raw: z.infer<typeof AnalysisServiceLegacyRawSchema>,
+  videoUrl: string
+): AnalysisServiceOutput {
+  const { summary } = raw;
+  const feedback = `Analysis complete for ${summary.primary_pose_detected}. Your average performance score was ${summary.average_performance_score.toFixed(1)} with a grade of ${summary.performance_grade}. A total of ${summary.total_frames_analyzed} frames were analyzed.`;
+  return {
+    feedback,
+    score: summary.average_performance_score,
+    identifiedPose: summary.primary_pose_detected,
+    videoUrl,
+    performanceGrade: summary.performance_grade,
+  };
+}
+
+function parseAnalysisServiceResponse(
+  raw: unknown,
+  videoUrl: string
+): AnalysisServiceOutput {
+  const vision = AnalysisServiceRawOutputSchema.safeParse(raw);
+  if (vision.success) {
+    return mapVisionResponseToOutput(vision.data, videoUrl);
+  }
+
+  const legacy = AnalysisServiceLegacyRawSchema.safeParse(raw);
+  if (legacy.success) {
+    return mapLegacyResponseToOutput(legacy.data, videoUrl);
+  }
+
+  const detail = [`vision: ${vision.error.message}`, `legacy: ${legacy.error.message}`].join('\n');
+  throw new Error(`Analysis response did not match vision API or legacy format.\n${detail}`);
 }
 
 
@@ -209,8 +263,7 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
       throw new Error(`Analysis service failed with status ${responseStatus}: ${errorBody}`);
   }
   
-  const parsedResult = AnalysisServiceRawOutputSchema.parse(rawAnalysisResult);
-  const finalResult = mapVisionResponseToOutput(parsedResult, videoUrl);
+  const finalResult = parseAnalysisServiceResponse(rawAnalysisResult, videoUrl);
 
   return AnalysisServiceOutputSchema.parse(finalResult);
 }
