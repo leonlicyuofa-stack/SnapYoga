@@ -10,9 +10,27 @@ service cloud.firestore {
     }
 
     // Users collection
+<<<<<<< HEAD
     match /users/{userId} {
       allow read: if request.auth != null;
       allow create, update: if request.auth != null && request.auth.uid == userId;
+=======
+    // - Authenticated users can read profiles (e.g., for friend search functionality).
+    // - Users can create and update their own profile, but cannot write subscription/payment fields.
+    // - Subscription fields (subscriptionStatus, subscriptionPlan, stripeCustomerId, etc.) are
+    //   written exclusively by Cloud Functions (admin SDK bypasses these rules).
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == userId
+                    && !('subscriptionStatus' in request.resource.data)
+                    && !('subscriptionPlan' in request.resource.data)
+                    && !('stripeCustomerId' in request.resource.data)
+                    && !('stripeSessionId' in request.resource.data);
+      allow update: if request.auth != null && request.auth.uid == userId
+                    && !request.resource.data.diff(resource.data).affectedKeys()
+                        .hasAny(['subscriptionStatus', 'subscriptionPlan', 'stripeCustomerId',
+                                 'stripeSessionId', 'subscriptionStartDate']);
+>>>>>>> bb90bfdc5eed7794e3b64f9dfecc9aa44ca7c44b
     }
 
     // Pose Analyses subcollection

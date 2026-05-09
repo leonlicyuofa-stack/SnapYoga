@@ -69,10 +69,7 @@ export function SnapYogaPageClient() {
       try {
         const analysisDataToSave = {
           videoFileName: fileName,
-          feedback: result.feedback,
-          score: result.score,
-          identifiedPose: result.identifiedPose,
-          videoUrl: result.videoUrl,
+          ...result,
           createdAt: serverTimestamp(),
         };
         const userAnalysesCollectionRef = collection(firestore, 'users', currentUser.uid, 'poseAnalyses');
