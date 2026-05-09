@@ -23,14 +23,10 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 
-interface StoredAnalysisData {
+interface StoredAnalysisData extends AnalysisServiceOutput {
   id: string;
-  videoFileName?: string;
-  feedback: string;
-  score: number;
-  identifiedPose: string;
   createdAt: Timestamp;
-  videoUrl?: string; // Add the videoUrl field
+  videoFileName?: string;
 }
 
 export default function PastAnalysisPage() {
@@ -69,14 +65,23 @@ export default function PastAnalysisPage() {
           if (docSnap.exists()) {
             const data = { id: docSnap.id, ...docSnap.data() } as StoredAnalysisData;
             setAnalysisDetail(data);
-            
-            // Correctly form the analysis output for the card
-            setAnalysisForCard({
+
+            const analysisForCardPayload: AnalysisServiceOutput = {
               feedback: data.feedback,
               score: data.score,
               identifiedPose: data.identifiedPose,
-              videoUrl: data.videoUrl || "", // Pass the videoUrl from the stored data
-            });
+              videoUrl: data.videoUrl ?? '',
+              poseConfidence: data.poseConfidence,
+              identificationReasoning: data.identificationReasoning,
+              jointAssessment: data.jointAssessment,
+              performanceGrade: data.performanceGrade,
+              priorityCorrections: data.priorityCorrections,
+              strengths: data.strengths,
+              recommendedPreparatoryPoses: data.recommendedPreparatoryPoses,
+              progressionPath: data.progressionPath,
+              motivationalNote: data.motivationalNote,
+            };
+            setAnalysisForCard(analysisForCardPayload);
             
             // Fetch videos from Firebase Storage
             setLoadingRecommendations(true);

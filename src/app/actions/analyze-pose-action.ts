@@ -14,6 +14,10 @@ import { app, firestore } from '@/lib/firebase/clientApp'; // Import firestore
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'; // Import firestore functions
 import { GoogleAuth } from 'google-auth-library';
 
+/** Full URL to the v2 vision analysis endpoint (override with ANALYSIS_SERVICE_URL). */
+const DEFAULT_ANALYSIS_SERVICE_URL =
+  'https://gcloud-yoga-pose-test-526785842170.asia-east2.run.app/v2/analyze-video-vision';
+
 // Define the schema for the action's input
 const AnalyzePoseInputSchema = z.object({
   videoDataUri: z
@@ -26,34 +30,87 @@ const AnalyzePoseInputSchema = z.object({
 
 export type AnalyzePoseInput = z.infer<typeof AnalyzePoseInputSchema>;
 
-// Define the NEW expected output from the analysis service
-const AnalysisServiceRawOutputSchema = z.object({
-  message: z.string(),
-  result_id: z.string(),
-  summary: z.object({
-    total_frames_analyzed: z.number(),
-    primary_pose_detected: z.string(),
-    average_performance_score: z.number(),
-    performance_grade: z.string(),
-  }),
-  overall_performance: z.object({
-    average_score: z.number(),
-    overall_grade: z.string(),
-    primary_pose: z.string(),
-    pose_distribution: z.record(z.number()),
-    total_frames: z.number(),
-  }),
+// --- Raw JSON from POST /v2/analyze-video-vision (snake_case) ---
+
+const JointAssessmentEntrySchema = z.object({
+  joint: z.string(),
+  observation: z.string(),
+  status: z.string(),
+  correction: z.string().nullable(),
 });
 
-// This is the clean output format that the frontend components will use
+const PriorityCorrectionEntrySchema = z.object({
+  joint: z.string(),
+  issue: z.string(),
+  correction: z.string(),
+  cue: z.string(),
+});
+
+const RecommendedPreparatoryPoseSchema = z.object({
+  pose: z.string(),
+  reason: z.string(),
+});
+
+const AnalysisServiceRawOutputSchema = z
+  .object({
+    identified_pose: z.string(),
+    pose_confidence: z.string(),
+    identification_reasoning: z.string(),
+    joint_assessment: z.array(JointAssessmentEntrySchema),
+    overall_score: z.number(),
+    performance_grade: z.string(),
+    overall_feedback: z.string(),
+    priority_corrections: z.array(PriorityCorrectionEntrySchema),
+    strengths: z.array(z.string()),
+    recommended_preparatory_poses: z.array(RecommendedPreparatoryPoseSchema),
+    progression_path: z.string(),
+    motivational_note: z.string(),
+  })
+  .passthrough();
+
+export type JointAssessmentEntry = z.infer<typeof JointAssessmentEntrySchema>;
+export type PriorityCorrectionEntry = z.infer<typeof PriorityCorrectionEntrySchema>;
+export type RecommendedPreparatoryPose = z.infer<typeof RecommendedPreparatoryPoseSchema>;
+
+// App-facing shape (camelCase); core fields keep existing UI contract.
 const AnalysisServiceOutputSchema = z.object({
   feedback: z.string(),
   score: z.number(),
   identifiedPose: z.string(),
   videoUrl: z.string(),
+  poseConfidence: z.string().optional(),
+  identificationReasoning: z.string().optional(),
+  jointAssessment: z.array(JointAssessmentEntrySchema).optional(),
+  performanceGrade: z.string().optional(),
+  priorityCorrections: z.array(PriorityCorrectionEntrySchema).optional(),
+  strengths: z.array(z.string()).optional(),
+  recommendedPreparatoryPoses: z.array(RecommendedPreparatoryPoseSchema).optional(),
+  progressionPath: z.string().optional(),
+  motivationalNote: z.string().optional(),
 });
 
 export type AnalysisServiceOutput = z.infer<typeof AnalysisServiceOutputSchema>;
+
+function mapVisionResponseToOutput(
+  raw: z.infer<typeof AnalysisServiceRawOutputSchema>,
+  videoUrl: string
+): AnalysisServiceOutput {
+  return {
+    feedback: raw.overall_feedback,
+    score: raw.overall_score,
+    identifiedPose: raw.identified_pose,
+    videoUrl,
+    poseConfidence: raw.pose_confidence,
+    identificationReasoning: raw.identification_reasoning,
+    jointAssessment: raw.joint_assessment,
+    performanceGrade: raw.performance_grade,
+    priorityCorrections: raw.priority_corrections,
+    strengths: raw.strengths,
+    recommendedPreparatoryPoses: raw.recommended_preparatory_poses,
+    progressionPath: raw.progression_path,
+    motivationalNote: raw.motivational_note,
+  };
+}
 
 
 // Helper to upload video to Firebase Storage
@@ -87,18 +144,13 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
   const storageRef = ref(storage, `user-videos/${userId}/${videoId}.${mimeType.split('/')[1]}`);
   const gsPath = `gs://${storageRef.bucket}/${storageRef.fullPath}`;
   
-  // 3. Call the external Python service on Cloud Run
-  const baseUrl = process.env.ANALYSIS_SERVICE_URL;
-  if (!baseUrl) {
-      throw new Error("ANALYSIS_SERVICE_URL environment variable is not set.");
-  }
-  
-  const analysisServiceUrl = new URL('/analyze-video-comprehensive/', baseUrl).toString();
+  const analysisServiceUrl =
+    process.env.ANALYSIS_SERVICE_URL?.trim() || DEFAULT_ANALYSIS_SERVICE_URL;
   
   console.log(`Calling analysis service at: ${analysisServiceUrl} for video: ${gsPath}`);
 
-  let response: Response;
-  let rawAnalysisResult: any = {};
+  let response: Response = new Response(null, { status: 500 });
+  let rawAnalysisResult: Record<string, unknown> | { error: string } = {};
   let responseStatus = 500;
   let responseOk = false;
   let errorBody = '';
@@ -109,7 +161,6 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
       const client = await auth.getIdTokenClient(analysisServiceUrl);
       const headers = await client.getRequestHeaders();
 
-      // Create form data instead of JSON
       const formData = new FormData();
       formData.append('storage_url', gsPath);
       formData.append('filename', `video_${videoId}.mp4`);
@@ -118,7 +169,6 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
           method: 'POST',
           headers: {
               'Authorization': headers.Authorization,
-              // Don't set Content-Type - let browser set it with boundary for FormData
           },
           body: formData,
       });
@@ -133,17 +183,17 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
       
       rawAnalysisResult = await response.json();
 
-  } catch(e: any) {
+  } catch(e: unknown) {
+      const message = e instanceof Error ? e.message : String(e);
       console.error("Error calling analysis service:", e);
-      rawAnalysisResult = { error: e.message };
+      rawAnalysisResult = { error: message };
   } finally {
-      // Save the raw JSON or error to Firestore for review
       try {
         const logCollectionRef = collection(firestore, 'users', userId, 'poseAnalysisRawLogs');
         await addDoc(logCollectionRef, {
           rawResponse: rawAnalysisResult,
           videoUrl: videoUrl,
-          gsPath: gsPath, // Add gsPath for debugging
+          gsPath: gsPath,
           createdAt: serverTimestamp(),
           isError: !responseOk,
           responseStatus: responseStatus,
@@ -152,29 +202,15 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
         console.log("Successfully logged API response/error to Firestore.");
       } catch (logError) {
         console.error("Failed to log API response to Firestore:", logError);
-        // We don't throw here, as logging is a secondary concern.
       }
   }
 
-  // If the initial request failed, throw an error to notify the frontend
   if (!responseOk) {
       throw new Error(`Analysis service failed with status ${responseStatus}: ${errorBody}`);
   }
   
-  // 3. Parse the new, complex structure
   const parsedResult = AnalysisServiceRawOutputSchema.parse(rawAnalysisResult);
+  const finalResult = mapVisionResponseToOutput(parsedResult, videoUrl);
 
-  // 4. Transform the complex result into the simple format our app uses
-  const { summary } = parsedResult;
-  const feedback = `Analysis complete for ${summary.primary_pose_detected}. Your average performance score was ${summary.average_performance_score.toFixed(1)} with a grade of ${summary.performance_grade}. A total of ${summary.total_frames_analyzed} frames were analyzed.`;
-  
-  const finalResult = {
-      feedback: feedback,
-      score: summary.average_performance_score,
-      identifiedPose: summary.primary_pose_detected,
-      videoUrl: videoUrl,
-  };
-
-  // 5. Validate and return the simplified result
   return AnalysisServiceOutputSchema.parse(finalResult);
 }

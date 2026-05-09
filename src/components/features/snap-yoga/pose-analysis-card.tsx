@@ -1,13 +1,20 @@
 
 "use client";
 
-import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import type { AnalysisServiceOutput } from '@/app/actions/analyze-pose-action';
 import { Button } from "@/components/ui/button";
-import { Activity, MessageSquareText, VideoOff, Award } from 'lucide-react';
+import { Activity, MessageSquareText, VideoOff, Award, Sparkles, ListChecks, Route, Lightbulb } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from "@/components/ui/progress";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 
 interface PoseAnalysisCardProps {
@@ -15,6 +22,13 @@ interface PoseAnalysisCardProps {
   videoFileName: string | null;
   analysis: AnalysisServiceOutput | null;
   isLoading: boolean;
+}
+
+function jointStatusClass(status: string): string {
+  const s = status.toLowerCase();
+  if (s.includes('good')) return 'border-green-500/40 bg-green-500/10';
+  if (s.includes('adjust') || s.includes('improve')) return 'border-amber-500/40 bg-amber-500/10';
+  return 'border-white/20 bg-black/20';
 }
 
 export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoading }: PoseAnalysisCardProps) {
@@ -27,10 +41,17 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
     ? Math.min(Math.round(scoreValue), 100) 
     : null;
 
-  // Determine if the video source is a data URI or a URL
-  // A simple check for "data:video" vs "https:"
-  const isDataUri = videoDataUri?.startsWith('data:video');
   const videoSrc = videoDataUri;
+
+  const hasV2Detail =
+    !!analysis?.jointAssessment?.length ||
+    !!analysis?.priorityCorrections?.length ||
+    !!analysis?.strengths?.length ||
+    !!analysis?.recommendedPreparatoryPoses?.length ||
+    !!analysis?.progressionPath ||
+    !!analysis?.motivationalNote ||
+    !!analysis?.performanceGrade ||
+    !!analysis?.poseConfidence;
 
   return (
     <div className="w-full shadow-xl p-6 bg-black/20 backdrop-blur-lg border-white/20 text-white rounded-2xl">
@@ -101,14 +122,30 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
                   <Award className="h-6 w-6" />
                   Pose Score
                 </h3>
+                <div className="flex flex-wrap items-center gap-2">
+                  {analysis.performanceGrade && (
+                    <Badge variant="secondary" className="text-sm">
+                      {analysis.performanceGrade}
+                    </Badge>
+                  )}
+                  {analysis.poseConfidence && (
+                    <Badge variant="outline" className="border-white/30 text-white/90 text-xs capitalize">
+                      Confidence: {analysis.poseConfidence}
+                    </Badge>
+                  )}
+                </div>
                 <div className="flex items-center gap-3">
                   <Progress value={score} className="w-full h-3 bg-white/20" />
-                  <span className="text-2xl font-bold text-white">{score}/100</span>
+                  <span className="text-2xl font-bold text-white shrink-0">{score}/100</span>
                 </div>
-                {score < 50 && <p className="text-sm text-red-400">Needs significant improvement. Keep practicing!</p>}
-                {score >= 50 && score < 75 && <p className="text-sm text-orange-400">Good effort, but there's room to grow.</p>}
-                {score >= 75 && score < 90 && <p className="text-sm text-yellow-400">Great job! Just a few minor adjustments.</p>}
-                {score >= 90 && <p className="text-sm text-green-400">Excellent form! You're doing wonderfully.</p>}
+                {!hasV2Detail && (
+                  <>
+                    {score < 50 && <p className="text-sm text-red-400">Needs significant improvement. Keep practicing!</p>}
+                    {score >= 50 && score < 75 && <p className="text-sm text-orange-400">Good effort, but there's room to grow.</p>}
+                    {score >= 75 && score < 90 && <p className="text-sm text-yellow-400">Great job! Just a few minor adjustments.</p>}
+                    {score >= 90 && <p className="text-sm text-green-400">Excellent form! You're doing wonderfully.</p>}
+                  </>
+                )}
               </div>
             )}
             {identifiedPose && (
@@ -117,6 +154,9 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
                   <Activity className="h-6 w-6" /> Identified Pose
                 </h3>
                 <p className="text-2xl font-bold text-white">{identifiedPose}</p>
+                {analysis.identificationReasoning && (
+                  <p className="text-sm text-white/75 leading-relaxed">{analysis.identificationReasoning}</p>
+                )}
                 <p className="text-sm text-white/70">Does this correctly identify your pose?</p>
                 <div className="flex gap-2 mt-2">
                   <Button variant="outline" size="sm" onClick={() => console.log('Correct Pose clicked')} className="bg-transparent border-white/20 hover:bg-white/10">
@@ -125,6 +165,17 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
                   <Button variant="outline" size="sm" onClick={() => console.log('Incorrect Pose clicked')} className="bg-transparent border-white/20 hover:bg-white/10">No</Button>
                 </div>
               </div>)}
+
+            {analysis.motivationalNote && (
+              <div className="p-4 rounded-xl border border-primary/30 bg-primary/10 space-y-2">
+                <h3 className="text-lg font-semibold flex items-center gap-2 text-white">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  Encouragement
+                </h3>
+                <p className="text-white/90 text-sm leading-relaxed whitespace-pre-wrap">{analysis.motivationalNote}</p>
+              </div>
+            )}
+
             <div className="space-y-3 p-4 bg-black/20 rounded-xl border border-white/20">
               <h3 className="text-xl font-semibold flex items-center gap-2 text-white">
                 <MessageSquareText className="h-6 w-6" />
@@ -134,6 +185,115 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
                 {analysis.feedback}
               </p>
             </div>
+
+            {hasV2Detail && (
+              <Accordion type="multiple" className="w-full space-y-2 rounded-xl border border-white/15 bg-black/10 p-2">
+                {analysis.jointAssessment && analysis.jointAssessment.length > 0 && (
+                  <AccordionItem value="joints" className="border-white/10 px-2">
+                    <AccordionTrigger className="text-white hover:no-underline py-3">
+                      <span className="flex items-center gap-2 font-semibold">
+                        <ListChecks className="h-5 w-5" />
+                        Joint assessment
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent className="space-y-3 pb-4">
+                      {analysis.jointAssessment.map((j) => (
+                        <div
+                          key={j.joint}
+                          className={cn('rounded-lg border p-3 text-sm', jointStatusClass(j.status))}
+                        >
+                          <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
+                            <span className="font-semibold text-white">{j.joint}</span>
+                            <Badge variant="outline" className="border-white/25 text-xs capitalize text-white/90">
+                              {j.status.replace(/_/g, ' ')}
+                            </Badge>
+                          </div>
+                          <p className="text-white/85 leading-relaxed">{j.observation}</p>
+                          {j.correction && (
+                            <p className="mt-2 text-white/90 border-t border-white/10 pt-2">
+                              <span className="font-medium text-amber-200/90">Correction: </span>
+                              {j.correction}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </AccordionContent>
+                  </AccordionItem>
+                )}
+
+                {analysis.priorityCorrections && analysis.priorityCorrections.length > 0 && (
+                  <AccordionItem value="priority" className="border-white/10 px-2">
+                    <AccordionTrigger className="text-white hover:no-underline py-3">
+                      <span className="flex items-center gap-2 font-semibold">
+                        <Lightbulb className="h-5 w-5" />
+                        Priority corrections
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent className="space-y-3 pb-4">
+                      {analysis.priorityCorrections.map((p, i) => (
+                        <div key={`${p.joint}-${i}`} className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-sm space-y-1">
+                          <p className="font-semibold text-white">{p.joint}</p>
+                          <p className="text-white/80"><span className="text-white/60">Issue: </span>{p.issue}</p>
+                          <p className="text-white/90"><span className="text-white/60">Fix: </span>{p.correction}</p>
+                          <p className="text-white/85 italic border-t border-white/10 pt-2 mt-2">&ldquo;{p.cue}&rdquo;</p>
+                        </div>
+                      ))}
+                    </AccordionContent>
+                  </AccordionItem>
+                )}
+
+                {analysis.strengths && analysis.strengths.length > 0 && (
+                  <AccordionItem value="strengths" className="border-white/10 px-2">
+                    <AccordionTrigger className="text-white hover:no-underline py-3">
+                      <span className="flex items-center gap-2 font-semibold">
+                        <Award className="h-5 w-5" />
+                        Strengths
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent className="pb-4">
+                      <ul className="list-disc list-inside space-y-1 text-sm text-white/90">
+                        {analysis.strengths.map((s) => (
+                          <li key={s}>{s}</li>
+                        ))}
+                      </ul>
+                    </AccordionContent>
+                  </AccordionItem>
+                )}
+
+                {analysis.recommendedPreparatoryPoses && analysis.recommendedPreparatoryPoses.length > 0 && (
+                  <AccordionItem value="prep" className="border-white/10 px-2">
+                    <AccordionTrigger className="text-white hover:no-underline py-3">
+                      <span className="flex items-center gap-2 font-semibold">
+                        <Route className="h-5 w-5" />
+                        Recommended preparatory poses
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent className="space-y-3 pb-4">
+                      {analysis.recommendedPreparatoryPoses.map((r) => (
+                        <div key={r.pose} className="rounded-lg border border-white/15 bg-black/20 p-3 text-sm">
+                          <p className="font-semibold text-white">{r.pose}</p>
+                          <p className="text-white/80 mt-1 leading-relaxed">{r.reason}</p>
+                        </div>
+                      ))}
+                    </AccordionContent>
+                  </AccordionItem>
+                )}
+
+                {analysis.progressionPath && (
+                  <AccordionItem value="progression" className="border-white/10 px-2">
+                    <AccordionTrigger className="text-white hover:no-underline py-3">
+                      <span className="flex items-center gap-2 font-semibold">
+                        <Route className="h-5 w-5" />
+                        Progression path
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent className="pb-4">
+                      <p className="text-sm text-white/90 leading-relaxed whitespace-pre-wrap">{analysis.progressionPath}</p>
+                    </AccordionContent>
+                  </AccordionItem>
+                )}
+              </Accordion>
+            )}
           </>
         )}
 
