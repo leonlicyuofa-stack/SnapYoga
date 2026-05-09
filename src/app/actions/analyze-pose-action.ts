@@ -41,6 +41,27 @@ function resolveAnalysisServiceUrl(): string {
   }
 }
 
+/**
+ * Last line of defense: if anything above produced a root URL, always attach the vision route.
+ * (Also makes server logs honest about the pathname we POST to.)
+ */
+function ensurePostTargetsVisionRoute(url: string): string {
+  try {
+    const u = new URL(url);
+    const pathOnly = (u.pathname.replace(/\/+$/, '') || '') || '/';
+    if (pathOnly === '/' || pathOnly === '') {
+      const fixed = new URL(DEFAULT_VISION_PATH, `${u.origin}/`).toString();
+      console.warn(
+        `[pose-analysis] ANALYSIS_SERVICE_URL resolved to root; forcing path ${DEFAULT_VISION_PATH}. Now: ${fixed}`
+      );
+      return fixed;
+    }
+    return url;
+  } catch {
+    return DEFAULT_ANALYSIS_SERVICE_URL;
+  }
+}
+
 // Define the schema for the action's input
 const AnalyzePoseInputSchema = z.object({
   videoDataUri: z
@@ -72,22 +93,37 @@ const RecommendedPreparatoryPoseSchema = z.object({
   reason: z.string(),
 });
 
+/** Vision payload: strict v2 example OR nested `{ response: { ... } }` with abbreviated keys (feedback, score, …). */
 const AnalysisServiceRawOutputSchema = z
   .object({
-    identified_pose: z.string(),
-    pose_confidence: z.string(),
-    identification_reasoning: z.string(),
-    joint_assessment: z.array(JointAssessmentEntrySchema),
-    overall_score: z.number(),
-    performance_grade: z.string(),
-    overall_feedback: z.string(),
-    priority_corrections: z.array(PriorityCorrectionEntrySchema),
-    strengths: z.array(z.string()),
-    recommended_preparatory_poses: z.array(RecommendedPreparatoryPoseSchema),
-    progression_path: z.string(),
-    motivational_note: z.string(),
+    identified_pose: z.string().optional(),
+    pose_confidence: z.string().optional(),
+    identification_reasoning: z.string().optional(),
+    joint_assessment: z.array(JointAssessmentEntrySchema).optional(),
+    overall_score: z.number().optional(),
+    performance_grade: z.string().optional(),
+    overall_feedback: z.string().optional(),
+    /** API shorthand (merged from nested `response`) */
+    feedback: z.string().optional(),
+    score: z.number().optional(),
+    priority_corrections: z.array(PriorityCorrectionEntrySchema).optional(),
+    strengths: z.array(z.string()).optional(),
+    recommended_preparatory_poses: z.array(RecommendedPreparatoryPoseSchema).optional(),
+    progression_path: z.string().optional(),
+    motivational_note: z.string().optional(),
   })
-  .passthrough();
+  .passthrough()
+  .superRefine((val, ctx) => {
+    const fb = String(val.overall_feedback ?? val.feedback ?? '').trim();
+    const pose = String(val.identified_pose ?? '').trim();
+    const sc = val.overall_score ?? val.score;
+    if (!fb.length && !pose.length && typeof sc !== 'number') {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Vision payload has no usable feedback, pose, or score after unwrapping `response`.',
+      });
+    }
+  });
 
 /** Older `/analyze-video-comprehensive/` style JSON (still supported for migration). */
 const AnalysisServiceLegacyRawSchema = z
@@ -137,10 +173,13 @@ function mapVisionResponseToOutput(
   raw: z.infer<typeof AnalysisServiceRawOutputSchema>,
   videoUrl: string
 ): AnalysisServiceOutput {
+  const feedback = (raw.overall_feedback ?? raw.feedback ?? 'Analysis completed.').trim();
+  const score = raw.overall_score ?? raw.score ?? 0;
+  const identifiedPose = (raw.identified_pose ?? 'Yoga pose').trim();
   return {
-    feedback: raw.overall_feedback,
-    score: raw.overall_score,
-    identifiedPose: raw.identified_pose,
+    feedback,
+    score,
+    identifiedPose,
     videoUrl,
     poseConfidence: raw.pose_confidence,
     identificationReasoning: raw.identification_reasoning,
@@ -179,12 +218,26 @@ function normalizeAnalysisJsonBody(raw: unknown): unknown {
 
   const o = raw as Record<string, unknown>;
 
+  const responseObj =
+    o.response && typeof o.response === 'object' && !Array.isArray(o.response)
+      ? (o.response as Record<string, unknown>)
+      : null;
+
   // Error-ish payloads (no usable analysis fields)
   const hasVisionHint =
     'identified_pose' in o ||
     'overall_feedback' in o ||
     'identifiedPose' in o ||
-    'overallFeedback' in o;
+    'overallFeedback' in o ||
+    'feedback' in o ||
+    typeof o.score === 'number' ||
+    !!(responseObj &&
+      ('identified_pose' in responseObj ||
+        'overall_feedback' in responseObj ||
+        'feedback' in responseObj ||
+        'pose_name' in responseObj ||
+        typeof responseObj.score === 'number' ||
+        typeof responseObj.overall_score === 'number'));
   const hasLegacyHint = 'summary' in o && o.summary && typeof o.summary === 'object';
   if (!hasVisionHint && !hasLegacyHint && 'detail' in o) {
     const d = o.detail;
@@ -199,13 +252,30 @@ function normalizeAnalysisJsonBody(raw: unknown): unknown {
     );
   }
 
-  // Unwrap common envelopes
-  const innerCandidates = [o.analysis, o.data, o.result, o.payload, o.body, o.output];
+  // Unwrap common envelopes (API returns { message, result_id, view_url, response: { ... } })
+  const innerCandidates = [o.response, o.analysis, o.data, o.result, o.payload, o.body, o.output];
   let merged: Record<string, unknown> = { ...o };
   for (const inner of innerCandidates) {
     if (inner && typeof inner === 'object' && !Array.isArray(inner)) {
       merged = { ...merged, ...(inner as Record<string, unknown>) };
     }
+  }
+
+  // Short keys from Cloud Run → vision schema field names
+  if (merged.overall_feedback == null && typeof merged.feedback === 'string') {
+    merged.overall_feedback = merged.feedback;
+  }
+  if (merged.overall_score == null && typeof merged.score === 'number') {
+    merged.overall_score = merged.score;
+  }
+  if (merged.identified_pose == null && typeof merged.pose === 'string') {
+    merged.identified_pose = merged.pose;
+  }
+  if (merged.identified_pose == null && typeof merged.primary_pose === 'string') {
+    merged.identified_pose = merged.primary_pose;
+  }
+  if (merged.identified_pose == null && typeof merged.pose_name === 'string') {
+    merged.identified_pose = merged.pose_name;
   }
 
   // camelCase → snake_case for vision fields missing on API
@@ -297,9 +367,15 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
   const storageRef = ref(storage, `user-videos/${userId}/${videoId}.${mimeType.split('/')[1]}`);
   const gsPath = `gs://${storageRef.bucket}/${storageRef.fullPath}`;
   
-  const analysisServiceUrl = resolveAnalysisServiceUrl();
-
-  console.log(`Calling analysis service at: ${analysisServiceUrl} for video: ${gsPath}`);
+  const analysisServiceUrl = ensurePostTargetsVisionRoute(resolveAnalysisServiceUrl());
+  try {
+    const { pathname, origin } = new URL(analysisServiceUrl);
+    console.log(
+      `[pose-analysis] POST ${origin}${pathname} | gs: ${gsPath} | ANALYSIS_SERVICE_URL env ${process.env.ANALYSIS_SERVICE_URL ? 'set' : 'unset (using default with /v2/... )'}`
+    );
+  } catch {
+    console.log(`[pose-analysis] POST url=${analysisServiceUrl} video=${gsPath}`);
+  }
 
   let response: Response = new Response(null, { status: 500 });
   let rawAnalysisResult: Record<string, unknown> | { error: string } = {};
