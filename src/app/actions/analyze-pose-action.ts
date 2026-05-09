@@ -27,9 +27,11 @@ function resolveAnalysisServiceUrl(): string {
   if (!raw) return DEFAULT_ANALYSIS_SERVICE_URL;
 
   try {
-    const u = new URL(raw);
-    const path = u.pathname.replace(/\/$/, '') || '/';
-    if (path === '/' || path === '') {
+    const withScheme = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    const u = new URL(withScheme);
+    const normalizedPath = (u.pathname.replace(/\/+$/, '') || '') || '/';
+    // Origin-only → use full vision path (POST / alone causes 405 on many FastAPI apps).
+    if (normalizedPath === '' || normalizedPath === '/') {
       return new URL(DEFAULT_VISION_PATH, `${u.origin}/`).toString();
     }
     return u.toString();
@@ -167,22 +169,103 @@ function mapLegacyResponseToOutput(
   };
 }
 
+/**
+ * FastAPI/Starlette errors, nested payloads, or camelCase keys from some gateways.
+ */
+function normalizeAnalysisJsonBody(raw: unknown): unknown {
+  if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) {
+    return raw;
+  }
+
+  const o = raw as Record<string, unknown>;
+
+  // Error-ish payloads (no usable analysis fields)
+  const hasVisionHint =
+    'identified_pose' in o ||
+    'overall_feedback' in o ||
+    'identifiedPose' in o ||
+    'overallFeedback' in o;
+  const hasLegacyHint = 'summary' in o && o.summary && typeof o.summary === 'object';
+  if (!hasVisionHint && !hasLegacyHint && 'detail' in o) {
+    const d = o.detail;
+    const msg =
+      typeof d === 'string'
+        ? d
+        : Array.isArray(d)
+          ? JSON.stringify(d)
+          : JSON.stringify(d);
+    throw new Error(
+      `Analysis API returned an error (detail): ${msg}. Check Cloud Run route and request body (POST must hit /v2/analyze-video-vision, not POST /).`
+    );
+  }
+
+  // Unwrap common envelopes
+  const innerCandidates = [o.analysis, o.data, o.result, o.payload, o.body, o.output];
+  let merged: Record<string, unknown> = { ...o };
+  for (const inner of innerCandidates) {
+    if (inner && typeof inner === 'object' && !Array.isArray(inner)) {
+      merged = { ...merged, ...(inner as Record<string, unknown>) };
+    }
+  }
+
+  // camelCase → snake_case for vision fields missing on API
+  const alias: [string, string][] = [
+    ['identifiedPose', 'identified_pose'],
+    ['poseConfidence', 'pose_confidence'],
+    ['identificationReasoning', 'identification_reasoning'],
+    ['jointAssessment', 'joint_assessment'],
+    ['overallScore', 'overall_score'],
+    ['performanceGrade', 'performance_grade'],
+    ['overallFeedback', 'overall_feedback'],
+    ['priorityCorrections', 'priority_corrections'],
+    ['recommendedPreparatoryPoses', 'recommended_preparatory_poses'],
+    ['progressionPath', 'progression_path'],
+    ['motivationalNote', 'motivational_note'],
+  ];
+  for (const [camel, snake] of alias) {
+    if (merged[snake] == null && merged[camel] != null) {
+      merged[snake] = merged[camel];
+    }
+  }
+
+  return merged;
+}
+
 function parseAnalysisServiceResponse(
   raw: unknown,
   videoUrl: string
 ): AnalysisServiceOutput {
-  const vision = AnalysisServiceRawOutputSchema.safeParse(raw);
+  let payload = raw;
+  try {
+    payload = normalizeAnalysisJsonBody(raw);
+  } catch (e) {
+    if (e instanceof Error) throw e;
+    throw new Error(String(e));
+  }
+
+  const vision = AnalysisServiceRawOutputSchema.safeParse(payload);
   if (vision.success) {
     return mapVisionResponseToOutput(vision.data, videoUrl);
   }
 
-  const legacy = AnalysisServiceLegacyRawSchema.safeParse(raw);
+  const legacy = AnalysisServiceLegacyRawSchema.safeParse(payload);
   if (legacy.success) {
     return mapLegacyResponseToOutput(legacy.data, videoUrl);
   }
 
+  const keys =
+    payload && typeof payload === 'object' && !Array.isArray(payload)
+      ? Object.keys(payload as object).slice(0, 25)
+      : [];
+  const preview =
+    payload && typeof payload === 'object'
+      ? JSON.stringify(payload).slice(0, 500)
+      : String(payload);
+
   const detail = [`vision: ${vision.error.message}`, `legacy: ${legacy.error.message}`].join('\n');
-  throw new Error(`Analysis response did not match vision API or legacy format.\n${detail}`);
+  throw new Error(
+    `Analysis response did not match vision API or legacy format. Top-level keys: [${keys.join(', ')}]. Preview: ${preview}\n${detail}`
+  );
 }
 
 
