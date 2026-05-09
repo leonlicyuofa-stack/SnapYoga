@@ -13,9 +13,31 @@ import { app, firestore } from '@/lib/firebase/clientApp';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { GoogleAuth } from 'google-auth-library';
 
-/** Full URL to the v2 vision analysis endpoint (override with ANALYSIS_SERVICE_URL). */
-const DEFAULT_ANALYSIS_SERVICE_URL =
-  'https://gcloud-yoga-pose-test-526785842170.asia-east2.run.app/v2/analyze-video-vision';
+/** Default v2 route; must match your Cloud Run app. */
+const DEFAULT_VISION_PATH = '/v2/analyze-video-vision';
+
+const DEFAULT_ANALYSIS_SERVICE_URL = `https://gcloud-yoga-pose-test-526785842170.asia-east2.run.app${DEFAULT_VISION_PATH}`;
+
+/**
+ * ANALYSIS_SERVICE_URL is often set to the Cloud Run origin only in Firebase/GCP.
+ * POST to `/` returns 405 if the handler lives under `/v2/...` only.
+ */
+function resolveAnalysisServiceUrl(): string {
+  const raw = process.env.ANALYSIS_SERVICE_URL?.trim();
+  if (!raw) return DEFAULT_ANALYSIS_SERVICE_URL;
+
+  try {
+    const u = new URL(raw);
+    const path = u.pathname.replace(/\/$/, '') || '/';
+    if (path === '/' || path === '') {
+      return new URL(DEFAULT_VISION_PATH, `${u.origin}/`).toString();
+    }
+    return u.toString();
+  } catch {
+    console.warn('Invalid ANALYSIS_SERVICE_URL, using default vision URL.');
+    return DEFAULT_ANALYSIS_SERVICE_URL;
+  }
+}
 
 // Define the schema for the action's input
 const AnalyzePoseInputSchema = z.object({
@@ -192,9 +214,8 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
   const storageRef = ref(storage, `user-videos/${userId}/${videoId}.${mimeType.split('/')[1]}`);
   const gsPath = `gs://${storageRef.bucket}/${storageRef.fullPath}`;
   
-  const analysisServiceUrl =
-    process.env.ANALYSIS_SERVICE_URL?.trim() || DEFAULT_ANALYSIS_SERVICE_URL;
-  
+  const analysisServiceUrl = resolveAnalysisServiceUrl();
+
   console.log(`Calling analysis service at: ${analysisServiceUrl} for video: ${gsPath}`);
 
   let response: Response = new Response(null, { status: 500 });
@@ -209,19 +230,16 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
       const client = await auth.getIdTokenClient(analysisServiceUrl);
       const headers = await client.getRequestHeaders();
 
-      const payload = {
-          storage_url: gsPath,
-          filename: `video_${videoId}.mp4`,
-          userId: userId
-      };
+      const formData = new FormData();
+      formData.append('storage_url', gsPath);
+      formData.append('filename', `video_${videoId}.mp4`);
 
       response = await fetch(analysisServiceUrl, {
           method: 'POST',
           headers: {
-              ...headers,
-              'Content-Type': 'application/json',
+              Authorization: headers.Authorization!,
           },
-          body: JSON.stringify(payload),
+          body: formData,
       });
 
       responseStatus = response.status;
@@ -229,7 +247,7 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
 
       if (!response.ok) {
           errorBody = await response.text();
-          throw new Error(`Analysis service failed (${response.status}): ${errorBody}`);
+          throw new Error(`Analysis service failed with status ${response.status}: ${errorBody}`);
       }
       
       rawAnalysisResult = await response.json();
@@ -256,7 +274,7 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
   }
 
   if (!responseOk) {
-      throw new Error(`Analysis failed. Details logged to your profile.`);
+      throw new Error(`Analysis service failed with status ${responseStatus}: ${errorBody}`);
   }
   
   const finalResult = parseAnalysisServiceResponse(rawAnalysisResult, videoUrl);
