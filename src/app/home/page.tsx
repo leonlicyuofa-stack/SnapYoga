@@ -19,7 +19,7 @@ const animatedWords = [
 function NamasteSplash({ isExiting }: { isExiting: boolean }) {
     return (
         <div className={cn(
-            "fixed inset-0 z-50 flex items-center justify-center bg-background px-6 transition-all duration-1000 ease-in-out",
+            "fixed inset-0 z-50 flex items-center justify-center bg-[#0D1821] px-6 transition-all duration-1000 ease-in-out",
             isExiting ? "scale-75 opacity-0 pointer-events-none" : "scale-100 opacity-100"
         )}>
             <svg 
@@ -28,7 +28,8 @@ function NamasteSplash({ isExiting }: { isExiting: boolean }) {
                 fill="none" 
                 xmlns="http://www.w3.org/2000/svg"
             >
-                <title>Namaste Pen Drawing</title>
+                <title>Namaste Cursive Pen Drawing</title>
+                {/* Refined single-line cursive path for "namaste" */}
                 <path 
                     d="M100,250 
                        C120,100 160,100 180,220 
@@ -65,14 +66,17 @@ export default function HomePage() {
   const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
+    // Stage 1: Trigger the "Zoom Out" transition
     const exitTimer = setTimeout(() => {
       setIsExiting(true);
-    }, 2500);
+    }, 2800);
 
+    // Stage 2: Completely unmount the splash screen
     const hideTimer = setTimeout(() => {
       setShowSplash(false);
-    }, 3500);
+    }, 3800);
 
+    // Word carousel interval
     const intervalId = setInterval(() => {
       setCurrentIndex(prevIndex => (prevIndex + 1) % animatedWords.length);
     }, 3000);
@@ -91,7 +95,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="relative min-h-screen font-serif text-white overflow-hidden bg-background animate-in fade-in zoom-in-95 duration-1000">
+    <div className="relative min-h-screen font-serif text-white overflow-hidden bg-[#0D1821] animate-in fade-in zoom-in-95 duration-1000">
       
       {/* ── MAIN CONTENT ── */}
       <div className="absolute inset-0 w-full flex flex-col z-10 px-6">
@@ -101,13 +105,13 @@ export default function HomePage() {
             <SnapYogaLogo />
         </header>
 
-        {/* Footer: All content positioned right above the arrow */}
+        {/* Bottom Section: Headline, Dots, and CTA */}
         <footer className="mt-auto pb-20 flex flex-col items-center text-center">
             
             {/* Animated Headline and Dots */}
             <div className="mb-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200">
                 <h1 className="text-4xl md:text-5xl font-bold leading-tight flex flex-col items-center">
-                    <span className="text-foreground/90">Master your</span>
+                    <span className="text-white/90">Master your</span>
                     <div className="relative h-[60px] md:h-[70px] w-full max-w-[280px] mt-2 font-script" style={{ perspective: '400px' }}>
                         {/* Previous Word */}
                         <span
@@ -141,19 +145,19 @@ export default function HomePage() {
                       key={index}
                       className={cn(
                         "w-2 h-2 rounded-full transition-all duration-500",
-                        index === currentIndex ? 'bg-[#F4743B] opacity-100 scale-125' : 'bg-foreground/20 opacity-30'
+                        index === currentIndex ? 'bg-[#F4743B] opacity-100 scale-125' : 'bg-white/20 opacity-30'
                       )}
                     ></div>
                   ))}
                 </div>
             </div>
 
-            {/* Action Button at the very bottom */}
+            {/* Action Button */}
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
                 <Button
                     asChild
                     variant="ghost"
-                    className="rounded-full h-16 w-16 p-0 bg-black hover:bg-black/90 text-white shadow-2xl transition-all hover:scale-110 border border-white/20"
+                    className="rounded-full h-16 w-16 p-0 bg-white/10 hover:bg-white/20 text-white shadow-2xl transition-all hover:scale-110 border border-white/20"
                 >
                     <Link href="/auth/signup" aria-label="Get Started">
                         <ArrowRight className="h-8 w-8" />
