@@ -102,21 +102,6 @@ export default function HomePage() {
             </Link>
         </div>
 
-        {/* ── BOTTOM SECTION: ARROW CTA ── */}
-        <footer className="pb-20 w-full flex justify-end px-4 md:px-20">
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-700">
-                <Button
-                    asChild
-                    variant="ghost"
-                    className="rounded-full h-16 w-16 p-0 bg-white/5 hover:bg-white/10 text-white shadow-2xl transition-all hover:scale-110 border border-white/10"
-                >
-                    <Link href="/auth/signup" aria-label="Get Started">
-                        <ArrowRight className="h-8 w-8" />
-                    </Link>
-                </Button>
-            </div>
-        </footer>
-
       </div>
     </div>
   );
