@@ -16,50 +16,25 @@ const animatedWords = [
     { text: 'Mobility.', color: '#F4743B' },
 ];
 
-function NamasteSplash({ isExiting }: { isExiting: boolean }) {
+function WavyLine() {
     return (
-        <div className={cn(
-            "fixed inset-0 z-50 flex items-center justify-center bg-[#0D1821] px-6 transition-all duration-1000 ease-in-out",
-            isExiting ? "scale-75 opacity-0 pointer-events-none" : "scale-100 opacity-100"
-        )}>
+        <div className="fixed inset-0 z-0 pointer-events-none opacity-30">
             <svg 
-                viewBox="0 0 1000 400" 
-                className="w-full max-w-[800px] h-auto text-[#F4743B]"
+                viewBox="0 0 1000 1000" 
+                preserveAspectRatio="none"
+                className="w-full h-full text-[#F4743B]"
                 fill="none" 
                 xmlns="http://www.w3.org/2000/svg"
             >
-                <title>Namaste Cursive Pen Drawing</title>
-                {/* Refined single-line cursive path for "namaste" */}
-                {/* This path traces: n -> a -> m -> a -> s -> t -> e in one continuous stroke */}
                 <path 
-                    d="M100,250 
-                       C110,180 140,180 150,250 
-                       C160,180 190,180 200,250 
-                       C210,250 220,250 230,220 
-                       C220,180 180,180 180,220 
-                       C180,260 220,260 240,250 
-                       C250,180 280,180 290,250 
-                       C300,180 330,180 340,250 
-                       C350,180 380,180 390,250 
-                       C400,250 410,250 420,220 
-                       C410,180 370,180 370,220 
-                       C370,260 410,260 430,250 
-                       C440,250 450,230 460,200 
-                       C470,180 440,180 430,220 
-                       C420,260 460,260 480,250 
-                       C490,200 500,100 510,100 
-                       C520,100 500,200 490,250 
-                       C480,250 450,160 550,160 
-                       C520,160 500,250 510,250 
-                       C520,250 540,230 550,210 
-                       C540,180 500,180 500,220 
-                       C500,260 540,260 580,250"
+                    d="M 0,0 
+                       C 200,100 100,400 500,500 
+                       C 900,600 800,900 1000,1000"
                     stroke="currentColor" 
                     strokeWidth="6" 
                     strokeLinecap="round" 
-                    strokeLinejoin="round"
                     className="animate-line-draw"
-                    style={{ strokeDasharray: 5000, strokeDashoffset: 5000 }}
+                    style={{ strokeDasharray: 3000, strokeDashoffset: 3000 }}
                 />
             </svg>
         </div>
@@ -68,43 +43,28 @@ function NamasteSplash({ isExiting }: { isExiting: boolean }) {
 
 export default function HomePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [showSplash, setShowSplash] = useState(true);
-  const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
-    // Stage 1: Trigger the "Zoom Out" transition
-    const exitTimer = setTimeout(() => {
-      setIsExiting(true);
-    }, 3200);
-
-    // Stage 2: Completely unmount the splash screen
-    const hideTimer = setTimeout(() => {
-      setShowSplash(false);
-    }, 4200);
-
     // Word carousel interval
     const intervalId = setInterval(() => {
       setCurrentIndex(prevIndex => (prevIndex + 1) % animatedWords.length);
     }, 3000);
 
     return () => {
-      clearTimeout(exitTimer);
-      clearTimeout(hideTimer);
       clearInterval(intervalId);
     };
   }, []);
 
   const prevIndex = (currentIndex - 1 + animatedWords.length) % animatedWords.length;
 
-  if (showSplash) {
-    return <NamasteSplash isExiting={isExiting} />;
-  }
-
   return (
-    <div className="relative min-h-screen font-serif text-white overflow-hidden bg-[#0D1821] animate-in fade-in zoom-in-95 duration-1000">
+    <div className="relative min-h-screen font-serif text-white overflow-hidden bg-[#0D1821] animate-in fade-in duration-1000">
       
+      {/* Dynamic Background Wavy Line */}
+      <WavyLine />
+
       {/* ── MAIN CONTENT ── */}
-      <div className="absolute inset-0 w-full flex flex-col z-10 px-6">
+      <div className="relative w-full min-h-screen flex flex-col z-10 px-6">
         
         {/* Top Header: Logo */}
         <header className="pt-20 flex justify-center animate-in fade-in slide-in-from-top-4 duration-1000">
