@@ -10,7 +10,7 @@ import { ArrowRight } from 'lucide-react';
 
 const dotCount = 5;
 
-function Ribbon({ id, d, text, delay = "0s" }: { id: string; d: string; text: string; delay?: string }) {
+function Ribbon({ id, d, delay = "0s" }: { id: string; d: string; delay?: string }) {
     return (
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
             <svg 
@@ -29,14 +29,6 @@ function Ribbon({ id, d, text, delay = "0s" }: { id: string; d: string; text: st
                     className="opacity-5 animate-line-draw"
                     style={{ strokeDasharray: 3000, strokeDashoffset: 3000, animationDelay: delay }}
                 />
-                <text 
-                    className="fill-white/20 font-serif text-[28px] uppercase tracking-[12px] animate-in fade-in duration-1000"
-                    style={{ animationDelay: `calc(${delay} + 1s)` }}
-                >
-                    <textPath href={`#${id}`} startOffset="0%">
-                        {text}
-                    </textPath>
-                </text>
             </svg>
         </div>
     );
@@ -48,7 +40,7 @@ export default function HomePage() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentIndex(prevIndex => (prevIndex + 1) % dotCount);
-    }, 3000);
+    }, 2000);
     return () => clearInterval(intervalId);
   }, []);
 
@@ -59,13 +51,11 @@ export default function HomePage() {
       <Ribbon 
         id="top-ribbon"
         d="M 200,-100 Q 500,400 800,-100"
-        text="LISTEN • GUIDE • ACTIVATE • LISTEN • GUIDE • ACTIVATE"
         delay="0s"
       />
       <Ribbon 
         id="bottom-ribbon"
         d="M -100,900 Q 200,600 500,850 T 1100,1050"
-        text="LISTEN • GUIDE • ACTIVATE • LISTEN • GUIDE • ACTIVATE"
         delay="0.5s"
       />
 
@@ -96,7 +86,10 @@ export default function HomePage() {
                         ></div>
                     ))}
                 </div>
-                <p className="mt-4 text-[8px] tracking-[0.2em] uppercase opacity-0 group-hover:opacity-60 transition-opacity text-center font-light">
+                <p className={cn(
+                    "mt-4 text-[10px] tracking-[0.25em] uppercase transition-all duration-700 text-center font-bold font-serif",
+                    currentIndex === dotCount - 1 ? 'opacity-80 translate-y-0' : 'opacity-0 translate-y-2'
+                )}>
                     Start Your Flow
                 </p>
             </Link>
