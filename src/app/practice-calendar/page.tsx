@@ -3,6 +3,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, getDocs, query, where, doc, setDoc, serverTimestamp, type Timestamp } from 'firebase/firestore';
 import { AppShell } from '@/components/layout/app-shell';
@@ -11,7 +12,7 @@ import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight, Smile, Wind, Frown, Meh, Activity, Flame, Droplets, Moon, Sun } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-// ─── Brand tokens (matching dashboard) ───────────────────────────────────────
+// ─── Brand tokens ────────────────────────────────────────────────────────────
 const GOLD      = 'rgba(193,154,107';
 const PARCHMENT = 'rgba(255,240,215';
 const TERRACOTTA= 'rgba(180,110,65';
@@ -20,6 +21,17 @@ const DEEP_BARK = 'rgba(25,16,8';
 
 const FONT_PANCAKE = "Didot, 'Bodoni MT', 'Century Schoolbook', 'Palatino Linotype', Georgia, serif";
 const FONT_CASUAL  = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
+
+function getThemeTokens(isDark: boolean) {
+  return {
+    text: isDark ? `${PARCHMENT},0.92)` : `${DEEP_BARK},0.95)`,
+    muted: isDark ? `${GOLD},0.50)` : `${DEEP_BARK},0.60)`,
+    cardBg: isDark ? `${GOLD},0.07)` : 'rgba(255,255,255,0.65)',
+    cardBorder: isDark ? `${GOLD},0.20)` : 'rgba(140,100,55,0.25)',
+    accent: isDark ? `${GOLD},0.90)` : `${TERRACOTTA},1)`,
+    dayText: isDark ? `${PARCHMENT},0.85)` : `${DEEP_BARK},0.90)`,
+  };
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface StoredMood {
@@ -34,7 +46,7 @@ interface StoredAnalysis {
   score?: number;
 }
 
-// ─── Mood config (matches dashboard) ─────────────────────────────────────────
+// ─── Mood config ─────────────────────────────────────────────────────────────
 const MOODS = [
   { name: 'Joyful',    icon: Smile,  emoji: '😊', ring: `${SAGE},0.50)`,       fill: `${SAGE},0.22)`,       text: 'rgba(160,195,130,1)' },
   { name: 'Calm',      icon: Wind,   emoji: '😌', ring: 'rgba(130,165,195,0.5)', fill: 'rgba(100,130,160,0.22)', text: 'rgba(140,185,215,1)' },
@@ -51,18 +63,19 @@ const HABITS = [
   { id: 'active',   label: 'Active',   icon: Flame,    color: `${SAGE},0.85)` },
 ];
 
-// ─── Glass card (same pattern as dashboard) ───────────────────────────────────
-function GlassCard({ children, className, style }: {
+// ─── Glass card ──────────────────────────────────────────────────────────────
+function GlassCard({ children, className, style, tokens }: {
   children: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
+  tokens: ReturnType<typeof getThemeTokens>;
 }) {
   return (
     <div
       className={cn('transition-all duration-200', className)}
       style={{
-        background: `${GOLD},0.07)`,
-        border: `0.5px solid ${GOLD},0.20)`,
+        background: tokens.cardBg,
+        border: `0.5px solid ${tokens.cardBorder}`,
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         borderRadius: '20px',
@@ -74,10 +87,10 @@ function GlassCard({ children, className, style }: {
   );
 }
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
+function SectionLabel({ children, tokens }: { children: React.ReactNode; tokens: ReturnType<typeof getThemeTokens> }) {
   return (
     <p className="text-[10px] uppercase tracking-[0.25em] font-bold mb-4"
-       style={{ color: `${GOLD},0.60)`, fontFamily: FONT_CASUAL }}>
+       style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>
       {children}
     </p>
   );
@@ -86,7 +99,9 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function PracticeCalendarPage() {
   const { user, loading: authLoading } = useAuth();
+  const { isDark } = useTheme();
   const { toast } = useToast();
+  const tokens = getThemeTokens(isDark);
 
   const [weekStart, setWeekStart] = useState(() =>
     startOfWeek(new Date(), { weekStartsOn: 1 })
@@ -157,7 +172,6 @@ export default function PracticeCalendarPage() {
         ...prev,
         [dateStr]: { name: moodName, emoji: moodEmoji, loggedAt: {} as Timestamp },
       }));
-      // Removed the 'Mood saved' toast here as requested.
     } catch { toast({ title: 'Error', description: 'Could not save mood.', variant: 'destructive' }); }
     finally { setIsLogging(false); }
   };
@@ -172,7 +186,7 @@ export default function PracticeCalendarPage() {
       await setDoc(doc(firestore, 'users', user.uid, 'habits', dateStr), {
         date: dateStr, completed: updated, updatedAt: serverTimestamp(),
       }, { merge: true });
-    } catch { /* silent fail — optimistic update already applied */ }
+    } catch { /* silent fail */ }
   };
 
   const selectedDateStr  = selectedDay ? format(selectedDay, 'yyyy-MM-dd') : null;
@@ -195,73 +209,70 @@ export default function PracticeCalendarPage() {
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* ── HEADER ──────────────────────────────────────────────────────── */}
         <header>
-          <h1 className="text-3xl font-bold" style={{ color: `${PARCHMENT},0.92)`, fontFamily: FONT_PANCAKE }}>
+          <h1 className="text-3xl font-bold" style={{ color: tokens.text, fontFamily: FONT_PANCAKE }}>
             Practice Journal
           </h1>
-          <p className="text-[11px] uppercase tracking-widest mt-1" style={{ color: `${GOLD},0.50)`, fontFamily: FONT_CASUAL }}>
+          <p className="text-[11px] uppercase tracking-widest mt-1" style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>
             Your mindful journey log
           </p>
         </header>
 
-        {/* ── WEEK NAVIGATOR ──────────────────────────────────────────── */}
-        <GlassCard className="p-4" style={{ borderRadius: '24px' }}>
+        <GlassCard className="p-4" style={{ borderRadius: '24px' }} tokens={tokens}>
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={() => setWeekStart(w => subWeeks(w, 1))}
               className="w-8 h-8 rounded-full flex items-center justify-center transition-all"
-              style={{ background: `${GOLD},0.12)`, border: `0.5px solid ${GOLD},0.25)` }}
+              style={{ background: isDark ? `${GOLD},0.12)` : 'rgba(0,0,0,0.05)', border: `0.5px solid ${tokens.cardBorder}` }}
             >
-              <ChevronLeft className="h-4 w-4" style={{ color: `${GOLD},0.80)` }} />
+              <ChevronLeft className="h-4 w-4" style={{ color: tokens.accent }} />
             </button>
 
-            <p className="text-[13px] font-medium" style={{ color: `${GOLD},0.90)`, fontFamily: FONT_PANCAKE }}>
+            <p className="text-[13px] font-medium" style={{ color: tokens.text, fontFamily: FONT_PANCAKE }}>
               {weekLabel}
             </p>
 
             <button
               onClick={() => setWeekStart(w => addWeeks(w, 1))}
               className="w-8 h-8 rounded-full flex items-center justify-center transition-all"
-              style={{ background: `${GOLD},0.12)`, border: `0.5px solid ${GOLD},0.25)` }}
+              style={{ background: isDark ? `${GOLD},0.12)` : 'rgba(0,0,0,0.05)', border: `0.5px solid ${tokens.cardBorder}` }}
             >
-              <ChevronRight className="h-4 w-4" style={{ color: `${GOLD},0.80)` }} />
+              <ChevronRight className="h-4 w-4" style={{ color: tokens.accent }} />
             </button>
           </div>
 
           <div className="grid grid-cols-7 gap-2">
             {weekDays.map(day => {
-              const dateStr  = format(day, 'yyyy-MM-dd');
               const isActive = selectedDay && isSameDay(day, selectedDay);
               const today    = isToday(day);
 
               return (
                 <button
-                  key={dateStr}
+                  key={day.toISOString()}
                   onClick={() => setSelectedDay(day)}
                   className="flex flex-col items-center gap-1.5 py-3 transition-all"
                   style={{
                     borderRadius: '16px',
-                    background: isActive ? `${GOLD},0.18)` : 'transparent',
-                    border: isActive ? `1px solid ${GOLD},0.40)` : '1px solid transparent',
+                    background: isActive ? (isDark ? `${GOLD},0.18)` : 'rgba(140,100,55,0.15)') : 'transparent',
+                    border: isActive ? `1px solid ${tokens.accent}` : '1px solid transparent',
                   }}
                 >
                   <span
                     className="text-[9px] uppercase font-bold"
-                    style={{ color: today ? `${GOLD},0.90)` : `${PARCHMENT},0.35)`, fontFamily: FONT_CASUAL }}
+                    style={{ color: today ? tokens.accent : tokens.muted, fontFamily: FONT_CASUAL }}
                   >
                     {format(day, 'EEE')[0]}
                   </span>
                   <div
                     className="w-8 h-8 rounded-full flex items-center justify-center relative"
                     style={{
-                      background: `${PARCHMENT},0.05)`,
-                      border: `1px solid ${isActive ? GOLD : PARCHMENT},0.10)`,
+                      background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
+                      border: `1px solid ${isActive ? tokens.accent : 'transparent'}`,
                     }}
                   >
                     <span
                       className="text-[12px] font-bold"
-                      style={{ color: `${PARCHMENT},0.85)` }}
+                      style={{ color: tokens.dayText }}
                     >
                       {format(day, 'd')}
                     </span>
@@ -272,40 +283,38 @@ export default function PracticeCalendarPage() {
           </div>
         </GlassCard>
 
-        {/* ── WEEK SUMMARY STATS ──────────────────────────────────────── */}
         <div className="grid grid-cols-3 gap-3">
-          <GlassCard className="p-3 text-center" style={{ borderRadius: '16px' }}>
+          <GlassCard className="p-3 text-center" style={{ borderRadius: '16px' }} tokens={tokens}>
             <p className="text-2xl font-bold" style={{ color: `${TERRACOTTA},0.90)`, fontFamily: FONT_PANCAKE }}>{weekStats.practiceDays}</p>
-            <p className="text-[8px] uppercase tracking-widest font-bold" style={{ color: `${GOLD},0.50)`, fontFamily: FONT_CASUAL }}>sessions</p>
+            <p className="text-[8px] uppercase tracking-widest font-bold" style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>sessions</p>
           </GlassCard>
-          <GlassCard className="p-3 text-center" style={{ borderRadius: '16px' }}>
-            <p className="text-2xl font-bold" style={{ color: `${GOLD},0.90)`, fontFamily: FONT_PANCAKE }}>{weekStats.moodDays}</p>
-            <p className="text-[8px] uppercase tracking-widest font-bold" style={{ color: `${GOLD},0.50)`, fontFamily: FONT_CASUAL }}>moods</p>
+          <GlassCard className="p-3 text-center" style={{ borderRadius: '16px' }} tokens={tokens}>
+            <p className="text-2xl font-bold" style={{ color: tokens.accent, fontFamily: FONT_PANCAKE }}>{weekStats.moodDays}</p>
+            <p className="text-[8px] uppercase tracking-widest font-bold" style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>moods</p>
           </GlassCard>
-          <GlassCard className="p-3 text-center" style={{ borderRadius: '16px' }}>
+          <GlassCard className="p-3 text-center" style={{ borderRadius: '16px' }} tokens={tokens}>
             <p className="text-2xl font-bold" style={{ color: `${SAGE},0.90)`, fontFamily: FONT_PANCAKE }}>{weekStats.habitDots}</p>
-            <p className="text-[8px] uppercase tracking-widest font-bold" style={{ color: `${GOLD},0.50)`, fontFamily: FONT_CASUAL }}>habits</p>
+            <p className="text-[8px] uppercase tracking-widest font-bold" style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>habits</p>
           </GlassCard>
         </div>
 
-        {/* ── SELECTED DAY DETAIL (EXPANSION) ─────────────────────────── */}
         {selectedDay && (
           <GlassCard
             className="p-6 animate-in slide-in-from-top-4 duration-300"
             style={{
-              background: `${DEEP_BARK},0.45)`,
-              border: `0.5px solid ${GOLD},0.18)`,
+              background: isDark ? `${DEEP_BARK},0.45)` : 'rgba(255,255,255,0.85)',
+              border: `0.5px solid ${tokens.accent}`,
               borderRadius: '24px',
             }}
+            tokens={tokens}
           >
-            <h2 className="text-2xl font-bold mb-6" style={{ color: `${GOLD},0.85)`, fontFamily: FONT_PANCAKE }}>
+            <h2 className="text-2xl font-bold mb-6" style={{ color: tokens.accent, fontFamily: FONT_PANCAKE }}>
               {isToday(selectedDay) ? 'Today — ' : ''}{format(selectedDay, 'dd/MM/yyyy')}
             </h2>
 
             <div className="space-y-8">
-              {/* Mood */}
               <div>
-                <SectionLabel>HOW DID YOU FEEL?</SectionLabel>
+                <SectionLabel tokens={tokens}>HOW DID YOU FEEL?</SectionLabel>
                 <div className="flex justify-between">
                   {MOODS.map(m => {
                     const active = selectedMood?.name === m.name;
@@ -318,14 +327,14 @@ export default function PracticeCalendarPage() {
                         <div
                           className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300"
                           style={{
-                            background: active ? m.fill : 'rgba(255,255,255,0.03)',
-                            border: `1px solid ${active ? m.ring : 'rgba(255,255,255,0.08)'}`,
+                            background: active ? m.fill : (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'),
+                            border: `1px solid ${active ? m.ring : (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)')}`,
                             boxShadow: active ? `0 0 15px ${m.fill}` : 'none',
                           }}
                         >
                           <span className={cn("text-xl grayscale transition-all", active && "grayscale-0 scale-110")}>{m.emoji}</span>
                         </div>
-                        <span className="text-[8px] uppercase tracking-widest font-bold" style={{ color: active ? m.text : `${PARCHMENT},0.30)`, fontFamily: FONT_CASUAL }}>
+                        <span className="text-[8px] uppercase tracking-widest font-bold" style={{ color: active ? m.text : tokens.muted, fontFamily: FONT_CASUAL }}>
                           {m.name}
                         </span>
                       </button>
@@ -334,9 +343,8 @@ export default function PracticeCalendarPage() {
                 </div>
               </div>
 
-              {/* Habits */}
               <div>
-                <SectionLabel>HABITS</SectionLabel>
+                <SectionLabel tokens={tokens}>HABITS</SectionLabel>
                 <div className="flex justify-between">
                   {HABITS.map(h => {
                     const done = selectedHabits.includes(h.id);
@@ -349,13 +357,13 @@ export default function PracticeCalendarPage() {
                         <div
                           className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300"
                           style={{
-                            background: done ? h.color : 'rgba(255,255,255,0.03)',
-                            border: `1px solid ${done ? h.color : 'rgba(255,255,255,0.08)'}`,
+                            background: done ? h.color : (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)'),
+                            border: `1px solid ${done ? h.color : (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)')}`,
                           }}
                         >
-                          <h.icon className={cn("h-5 w-5", done ? "text-white" : "text-white/20")} />
+                          <h.icon className={cn("h-5 w-5", done ? "text-white" : (isDark ? "text-white/20" : "text-black/10"))} />
                         </div>
-                        <span className="text-[8px] uppercase tracking-widest font-bold" style={{ color: done ? 'white' : `${PARCHMENT},0.30)`, fontFamily: FONT_CASUAL }}>
+                        <span className="text-[8px] uppercase tracking-widest font-bold" style={{ color: done ? (isDark ? 'white' : 'black') : tokens.muted, fontFamily: FONT_CASUAL }}>
                           {h.label}
                         </span>
                       </button>
@@ -364,25 +372,24 @@ export default function PracticeCalendarPage() {
                 </div>
               </div>
 
-              {/* Sessions */}
               <div>
-                <SectionLabel>PRACTICE SESSIONS</SectionLabel>
+                <SectionLabel tokens={tokens}>PRACTICE SESSIONS</SectionLabel>
                 {selectedAnalyses.length === 0 ? (
-                  <p className="text-sm italic opacity-30" style={{ fontFamily: FONT_PANCAKE }}>No sessions recorded</p>
+                  <p className="text-sm italic opacity-30" style={{ color: tokens.text, fontFamily: FONT_PANCAKE }}>No sessions recorded</p>
                 ) : (
                   <div className="space-y-3">
                     {selectedAnalyses.map(a => (
                       <div
                         key={a.id}
                         className="flex items-center justify-between p-4 rounded-xl"
-                        style={{ background: 'rgba(255,255,255,0.03)', border: '0.5px solid rgba(255,255,255,0.05)' }}
+                        style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)', border: `0.5px solid ${tokens.cardBorder}` }}
                       >
                         <div>
-                          <p className="text-sm font-bold" style={{ color: `${PARCHMENT},0.90)`, fontFamily: FONT_PANCAKE }}>{a.identifiedPose || 'Yoga Practice'}</p>
-                          <p className="text-[10px] opacity-40 uppercase" style={{ fontFamily: FONT_CASUAL }}>{format(a.createdAt.toDate(), 'h:mm a')}</p>
+                          <p className="text-sm font-bold" style={{ color: tokens.text, fontFamily: FONT_PANCAKE }}>{a.identifiedPose || 'Yoga Practice'}</p>
+                          <p className="text-[10px] opacity-40 uppercase" style={{ color: tokens.text, fontFamily: FONT_CASUAL }}>{format(a.createdAt.toDate(), 'h:mm a')}</p>
                         </div>
                         {a.score && (
-                          <div className="w-10 h-10 rounded-full border border-gold/30 flex items-center justify-center text-xs font-bold text-gold" style={{ borderColor: `${GOLD},0.30)`, color: `${GOLD},0.90)` }}>
+                          <div className="w-10 h-10 rounded-full border flex items-center justify-center text-xs font-bold" style={{ borderColor: tokens.cardBorder, color: tokens.accent }}>
                             {a.score}
                           </div>
                         )}
@@ -395,15 +402,14 @@ export default function PracticeCalendarPage() {
           </GlassCard>
         )}
 
-        {/* ── WEEK AT A GLANCE ────────────────────────────────────────── */}
-        <GlassCard className="p-5" style={{ borderRadius: '24px' }}>
-          <SectionLabel>WEEK AT A GLANCE</SectionLabel>
+        <GlassCard className="p-5" style={{ borderRadius: '24px' }} tokens={tokens}>
+          <SectionLabel tokens={tokens}>WEEK AT A GLANCE</SectionLabel>
           <div className="space-y-3">
-            {[...HABITS, { id: 'mood', label: 'Mood', icon: Smile, color: `${GOLD},0.85)` }].map(item => (
+            {[...HABITS, { id: 'mood', label: 'Mood', icon: Smile, color: tokens.accent }].map(item => (
               <div key={item.id} className="flex items-center gap-3">
                 <div className="w-24 flex items-center gap-2">
-                   <item.icon className="h-3 w-3" style={{ color: (item as any).color || `${GOLD},0.60)` }} />
-                   <span className="text-[8px] uppercase tracking-widest font-bold" style={{ color: `${PARCHMENT},0.30)`, fontFamily: FONT_CASUAL }}>{item.label}</span>
+                   <item.icon className="h-3 w-3" style={{ color: (item as any).color || tokens.muted }} />
+                   <span className="text-[8px] uppercase tracking-widest font-bold" style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>{item.label}</span>
                 </div>
                 <div className="flex-1 grid grid-cols-7 gap-1">
                   {weekDays.map(day => {
@@ -411,7 +417,7 @@ export default function PracticeCalendarPage() {
                     if (item.id === 'mood') {
                       const m = moodsByDate[dateStr];
                       return (
-                        <div key={dateStr} className="aspect-[2/1] rounded-sm flex items-center justify-center text-[10px]" style={{ background: m ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.03)' }}>
+                        <div key={dateStr} className="aspect-[2/1] rounded-sm flex items-center justify-center text-[10px]" style={{ background: m ? (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)') : (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.01)') }}>
                           {m ? m.emoji : ''}
                         </div>
                       );
@@ -421,7 +427,7 @@ export default function PracticeCalendarPage() {
                       const active = done || hasYoga;
                       return (
                         <div key={dateStr} className="aspect-[2/1] rounded-sm transition-colors duration-500" 
-                          style={{ background: active ? (item as any).color : 'rgba(255,255,255,0.03)' }} />
+                          style={{ background: active ? (item as any).color : (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.01)') }} />
                       );
                     }
                   })}
@@ -430,7 +436,6 @@ export default function PracticeCalendarPage() {
             ))}
           </div>
         </GlassCard>
-
       </div>
     </AppShell>
   );

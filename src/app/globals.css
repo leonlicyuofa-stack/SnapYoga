@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -20,7 +21,7 @@
     --secondary-foreground: 38 45% 98%;
 
     --muted: 33 20% 90%;
-    --muted-foreground: 25 15% 25%; /* Darkened for better light mode visibility */
+    --muted-foreground: 25 25% 20%; /* Darkened for critical light mode visibility */
 
     --accent: 85 15% 45%; /* Muted Sage */
     --accent-foreground: 38 45% 98%;

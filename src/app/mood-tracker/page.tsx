@@ -21,6 +21,7 @@ const GOLD       = 'rgba(193,154,107';
 const PARCHMENT  = 'rgba(255,240,215';
 const TERRACOTTA = 'rgba(180,110,65';
 const SAGE       = 'rgba(120,140,100';
+const DEEP_BARK  = 'rgba(25,16,8';
 const FONT_PANCAKE = "Didot, 'Bodoni MT', 'Century Schoolbook', 'Palatino Linotype', Georgia, serif";
 const FONT_CASUAL  = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
 
@@ -77,7 +78,6 @@ export default function MoodTrackerPage() {
 
   const currentMood = MOOD_SPECTRUM.find(m => value <= m.threshold) || MOOD_SPECTRUM[3];
 
-  // Autosave logic for everything
   const triggerSave = (newReflection?: string, newVal?: number, newHabits?: string[]) => {
     if (!user) return;
     setIsSaving(true);
@@ -87,8 +87,6 @@ export default function MoodTrackerPage() {
     saveTimeoutRef.current = setTimeout(async () => {
       try {
         const todayStr = format(new Date(), 'yyyy-MM-dd');
-        
-        // Save Mood & Reflection
         await setDoc(doc(firestore, 'users', user.uid, 'moods', todayStr), {
           name: currentMood.name,
           emoji: currentMood.emoji,
@@ -97,7 +95,6 @@ export default function MoodTrackerPage() {
           loggedAt: serverTimestamp(),
         }, { merge: true });
 
-        // Save Habits
         await setDoc(doc(firestore, 'users', user.uid, 'habits', todayStr), {
           date: todayStr,
           completed: newHabits ?? completedHabits,
@@ -122,26 +119,27 @@ export default function MoodTrackerPage() {
 
   if (!isLoaded) return <AppShell><div className="flex items-center justify-center min-h-screen"><SmileyRockLoader /></div></AppShell>;
 
+  const headerColor = isDark ? `${PARCHMENT},1)` : `${DEEP_BARK},1)`;
+  const labelColor = isDark ? 'white' : 'black';
+
   return (
     <AppShell>
       <div className="max-w-xl mx-auto px-6 pt-10 pb-32 flex flex-col min-h-screen">
         
-        {/* HEADER */}
         <header className="flex items-center gap-4 mb-12">
           <button onClick={() => router.push('/dashboard')} className="p-2 rounded-full hover:bg-white/5 transition-colors">
-            <ArrowLeft className="w-5 h-5" style={{ color: `${GOLD},0.9)` }} />
+            <ArrowLeft className="w-5 h-5" style={{ color: isDark ? `${GOLD},0.9)` : `${TERRACOTTA},1)` }} />
           </button>
           <div>
-            <h1 style={{ fontSize: 28, fontFamily: FONT_PANCAKE, color: isDark ? `${PARCHMENT},1)` : 'black' }}>Daily Check-in</h1>
-            <p style={{ fontSize: 12, fontFamily: FONT_CASUAL, letterSpacing: 2, textTransform: 'uppercase', opacity: 0.5, color: isDark ? 'white' : 'black' }}>Mindful Presence</p>
+            <h1 style={{ fontSize: 28, fontFamily: FONT_PANCAKE, color: headerColor }}>Daily Check-in</h1>
+            <p style={{ fontSize: 12, fontFamily: FONT_CASUAL, letterSpacing: 2, textTransform: 'uppercase', opacity: 0.5, color: labelColor }}>Mindful Presence</p>
           </div>
         </header>
 
         <main className="flex-1 space-y-12">
           
-          {/* SPECTRUM SECTION */}
           <section className="text-center">
-            <p style={{ fontSize: 14, fontFamily: FONT_PANCAKE, fontStyle: 'italic', marginBottom: 32, opacity: 0.8, color: isDark ? 'white' : 'black' }}>
+            <p style={{ fontSize: 14, fontFamily: FONT_PANCAKE, fontStyle: 'italic', marginBottom: 32, opacity: 0.8, color: labelColor }}>
               Where is your spirit resting today?
             </p>
 
@@ -154,7 +152,7 @@ export default function MoodTrackerPage() {
               <div className="relative z-10 flex flex-col items-center gap-8">
                 <div className="transition-all duration-500 transform hover:scale-110">
                   <span className="text-7xl block drop-shadow-2xl">{currentMood.emoji}</span>
-                  <h2 className="mt-4 text-xl font-bold uppercase tracking-widest transition-all duration-500" style={{ color: currentMood.color, fontFamily: FONT_CASUAL }}>
+                  <h2 className="mt-4 text-xl font-bold uppercase tracking-widest transition-all duration-500" style={{ color: isDark ? currentMood.color : `${DEEP_BARK},0.9)`, fontFamily: FONT_CASUAL }}>
                     {currentMood.name}
                   </h2>
                 </div>
@@ -171,21 +169,20 @@ export default function MoodTrackerPage() {
                     className="cursor-pointer"
                   />
                   <div className="flex justify-between mt-4 px-1 opacity-40">
-                    <span className="text-[10px] uppercase font-bold tracking-tighter" style={{ color: isDark ? 'white' : 'black' }}>Muted</span>
-                    <span className="text-[10px] uppercase font-bold tracking-tighter" style={{ color: isDark ? 'white' : 'black' }}>Radiant</span>
+                    <span className="text-[10px] uppercase font-bold tracking-tighter" style={{ color: labelColor }}>Muted</span>
+                    <span className="text-[10px] uppercase font-bold tracking-tighter" style={{ color: labelColor }}>Radiant</span>
                   </div>
                 </div>
               </div>
             </div>
           </section>
 
-          {/* HABITS SECTION */}
           <section className="space-y-4">
              <div className="flex items-center gap-2 opacity-60">
-              <Zap className="w-4 h-4" style={{ color: `${GOLD},1)` }} />
-              <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: isDark ? 'white' : 'black', fontFamily: FONT_CASUAL }}>Today's Habits</h3>
+              <Zap className="w-4 h-4" style={{ color: isDark ? `${GOLD},1)` : `${TERRACOTTA},1)` }} />
+              <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: labelColor, fontFamily: FONT_CASUAL }}>Today's Habits</h3>
             </div>
-            <div className="flex justify-around bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10">
+            <div className="flex justify-around bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10" style={{ background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }}>
                {HABITS.map(h => {
                 const done = completedHabits.includes(h.id);
                 return (
@@ -200,25 +197,24 @@ export default function MoodTrackerPage() {
                         done ? "scale-110 shadow-lg" : "grayscale opacity-40 scale-100"
                       )}
                       style={{ 
-                        background: done ? h.color : 'rgba(255,255,255,0.05)',
-                        border: `1px solid ${done ? h.color : 'rgba(255,255,255,0.1)'}`,
+                        background: done ? h.color : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'),
+                        border: `1px solid ${done ? h.color : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)')}`,
                         boxShadow: done ? `0 4px 12px ${h.color}` : 'none'
                       }}
                     >
                       {h.emoji}
                     </div>
-                    <span style={{ fontSize: 8, letterSpacing: 1, textTransform: 'uppercase', fontFamily: FONT_CASUAL, color: done ? (isDark ? 'white' : 'black') : 'rgba(255,255,255,0.3)', fontWeight: done ? 700 : 400 }}>{h.label}</span>
+                    <span style={{ fontSize: 8, letterSpacing: 1, textTransform: 'uppercase', fontFamily: FONT_CASUAL, color: done ? labelColor : (isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'), fontWeight: done ? 700 : 400 }}>{h.label}</span>
                   </button>
                 );
                })}
             </div>
           </section>
 
-          {/* REFLECTION SECTION */}
           <section className="space-y-4">
             <div className="flex items-center gap-2 opacity-60">
-              <Sparkles className="w-4 h-4" style={{ color: `${GOLD},1)` }} />
-              <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: isDark ? 'white' : 'black', fontFamily: FONT_CASUAL }}>Daily Reflection</h3>
+              <Sparkles className="w-4 h-4" style={{ color: isDark ? `${GOLD},1)` : `${TERRACOTTA},1)` }} />
+              <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: labelColor, fontFamily: FONT_CASUAL }}>Daily Reflection</h3>
             </div>
             
             <div className="relative group">
@@ -229,19 +225,18 @@ export default function MoodTrackerPage() {
                   triggerSave(e.target.value);
                 }}
                 placeholder="What's flowing through your mind..."
-                className="min-h-[180px] bg-white/5 border-none rounded-2xl p-6 text-base italic leading-relaxed focus-visible:ring-1 focus-visible:ring-white/10 transition-all no-scrollbar"
+                className="min-h-[180px] border-none rounded-2xl p-6 text-base italic leading-relaxed focus-visible:ring-1 transition-all no-scrollbar"
                 style={{ 
                   fontFamily: FONT_PANCAKE,
-                  color: isDark ? `${PARCHMENT},0.9)` : 'black',
+                  color: isDark ? `${PARCHMENT},0.9)` : `${DEEP_BARK},0.9)`,
                   background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)',
                   border: isDark ? '0.5px solid rgba(255,255,255,0.05)' : '0.5px solid rgba(0,0,0,0.05)'
                 }}
               />
               
-              {/* Saving Indicator */}
-              <div className="absolute bottom-4 right-4 flex items-center gap-2 transition-opacity duration-300">
+              <div className="absolute bottom-4 right-4 flex items-center gap-2">
                 {isSaving ? (
-                  <Loader2 className="w-4 h-4 animate-spin" style={{ color: `${GOLD},0.6)` }} />
+                  <Loader2 className="w-4 h-4 animate-spin" style={{ color: isDark ? `${GOLD},0.6)` : `${TERRACOTTA},0.6)` }} />
                 ) : reflection.length > 0 && (
                   <CheckCircle2 className="w-4 h-4 text-green-500/50" />
                 )}
@@ -254,12 +249,11 @@ export default function MoodTrackerPage() {
               onClick={() => router.push('/dashboard')}
               variant="outline"
               className="px-10 h-12 rounded-full text-xs font-bold tracking-widest bg-transparent border-white/10 hover:bg-white/5"
-              style={{ fontFamily: FONT_CASUAL, color: isDark ? 'white' : 'black' }}
+              style={{ fontFamily: FONT_CASUAL, color: labelColor }}
             >
               FINISH CHECK-IN
             </Button>
           </footer>
-
         </main>
       </div>
     </AppShell>
