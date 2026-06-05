@@ -8,13 +8,7 @@ import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 import { cn } from '@/lib/utils';
 import { ArrowRight } from 'lucide-react';
 
-const animatedWords = [
-    { text: 'Pose.', color: '#F4743B' },
-    { text: 'Flow.', color: '#F4743B' },
-    { text: 'Balance.', color: '#F4743B' },
-    { text: 'Strength.', color: '#F4743B' },
-    { text: 'Mobility.', color: '#F4743B' },
-];
+const dotCount = 5;
 
 function Ribbon({ id, d, text, delay = "0s" }: { id: string; d: string; text: string; delay?: string }) {
     return (
@@ -53,7 +47,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setCurrentIndex(prevIndex => (prevIndex + 1) % animatedWords.length);
+      setCurrentIndex(prevIndex => (prevIndex + 1) % dotCount);
     }, 3000);
     return () => clearInterval(intervalId);
   }, []);
@@ -80,29 +74,32 @@ export default function HomePage() {
 
       <div className="relative w-full min-h-screen flex flex-col items-center z-10 px-6">
         
-        {/* ── CENTER SECTION: LOGO & ESTD ── */}
+        {/* ── CENTER SECTION ── */}
         <div className="flex-1 flex flex-col items-center justify-center">
-            <div className="flex items-center gap-6 md:gap-12 animate-in fade-in zoom-in-95 duration-1000">
-                <span className="text-[10px] md:text-xs tracking-[0.3em] opacity-40 uppercase font-light">ESTD</span>
+            <div className="flex items-center justify-center animate-in fade-in zoom-in-95 duration-1000">
                 <SnapYogaLogo />
-                <span className="text-[10px] md:text-xs tracking-[0.3em] opacity-40 uppercase font-light">2026</span>
             </div>
-            <p className="mt-4 text-[10px] md:text-xs tracking-[0.5em] uppercase opacity-60 font-light animate-in fade-in slide-in-from-top-2 duration-1000 delay-300">
-                Breathe Balance Become
+            <p className="mt-4 text-[10px] md:text-xs tracking-[0.5em] uppercase opacity-60 font-light animate-in fade-in slide-in-from-top-2 duration-1000 delay-300 text-center">
+                Listen Guide Activate
             </p>
 
-            {/* Pagination Dots moved under mantra */}
-            <div className="flex gap-2 mt-12 justify-center animate-in fade-in duration-1000 delay-500">
-                {animatedWords.map((_, index) => (
-                    <div
-                        key={index}
-                        className={cn(
-                            "w-1.5 h-1.5 rounded-full transition-all duration-500",
-                            index === currentIndex ? 'bg-[#F4743B] scale-125' : 'bg-white/20'
-                        )}
-                    ></div>
-                ))}
-            </div>
+            {/* Pagination Dots as CTA Button */}
+            <Link href="/auth/signup" className="group mt-12 focus:outline-none flex flex-col items-center">
+                <div className="flex gap-2 justify-center animate-in fade-in duration-1000 delay-500 group-hover:scale-125 transition-all cursor-pointer">
+                    {Array.from({ length: dotCount }).map((_, index) => (
+                        <div
+                            key={index}
+                            className={cn(
+                                "w-1.5 h-1.5 rounded-full transition-all duration-500",
+                                index === currentIndex ? 'bg-[#F4743B] scale-125' : 'bg-white/20'
+                            )}
+                        ></div>
+                    ))}
+                </div>
+                <p className="mt-4 text-[8px] tracking-[0.2em] uppercase opacity-0 group-hover:opacity-60 transition-opacity text-center font-light">
+                    Start Your Flow
+                </p>
+            </Link>
         </div>
 
         {/* ── BOTTOM SECTION: ARROW CTA ── */}
