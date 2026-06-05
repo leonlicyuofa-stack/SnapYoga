@@ -70,7 +70,7 @@ export default function HomePage() {
                 <SnapYogaLogo />
             </div>
             <p className="mt-4 text-[10px] md:text-xs tracking-[0.5em] uppercase opacity-60 font-light animate-in fade-in slide-in-from-top-2 duration-1000 delay-300 text-center">
-                Listen Guide Activate
+                LISTEN • GUIDE • ACTIVATE
             </p>
 
             {/* Pagination Dots as CTA Button */}
