@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc } from 'firebase/firestore';
 
@@ -12,6 +13,7 @@ const DEEP_BARK = 'rgba(25,16,8';
 
 export function UpgradeBanner() {
   const { user } = useAuth();
+  const { isDark } = useTheme();
   const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
   const [dismissed, setDismissed] = useState(false);
 
@@ -26,16 +28,16 @@ export function UpgradeBanner() {
 
   return (
     <div
-      className="flex items-center justify-between px-4 py-2.5 rounded-2xl gap-3"
+      className="flex items-center justify-between px-4 py-2.5 rounded-2xl gap-3 shadow-sm"
       style={{
-        background: `${GOLD},0.12)`,
+        background: isDark ? `${GOLD},0.12)` : 'rgba(255,255,255,0.85)',
         border: `0.5px solid ${GOLD},0.35)`,
         backdropFilter: 'blur(12px)',
       }}
     >
       <div className="flex items-center gap-2 min-w-0">
         <span className="text-base flex-shrink-0">⭐</span>
-        <p className="text-sm font-serif truncate" style={{ color: `${PARCHMENT},0.85)` }}>
+        <p className="text-sm font-serif truncate" style={{ color: isDark ? `${PARCHMENT},0.85)` : `${DEEP_BARK},0.90)` }}>
           Unlock unlimited poses &amp; advanced feedback
         </p>
       </div>
@@ -49,8 +51,8 @@ export function UpgradeBanner() {
         </Link>
         <button
           onClick={() => setDismissed(true)}
-          className="text-xs opacity-40 hover:opacity-70 transition-opacity"
-          style={{ color: `${PARCHMENT},0.70)` }}
+          className="text-xs opacity-40 hover:opacity-70 transition-opacity p-1"
+          style={{ color: isDark ? `${PARCHMENT},0.70)` : `${DEEP_BARK},0.50)` }}
           aria-label="Dismiss"
         >
           ✕

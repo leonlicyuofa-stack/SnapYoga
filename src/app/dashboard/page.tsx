@@ -30,15 +30,15 @@ const FONT_CASUAL  = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
 
 function tok(isDark: boolean) {
   return {
-    text:        isDark ? `${PARCHMENT},0.90)`  : `${BARK_L},0.90)`,
-    muted:       isDark ? `${PARCHMENT},0.38)`  : `${BARK_L},0.45)`,
-    gold:        isDark ? `${GOLD},0.90)`        : `rgba(140,100,55,0.90)`,
-    goldBorder:  isDark ? `${GOLD},0.22)`        : `rgba(140,100,55,0.30)`,
-    cardBg:      isDark ? `${GOLD},0.07)`        : `rgba(255,248,235,0.72)`,
-    cardTerra:   isDark ? `${TERRACOTTA},0.18)`  : `rgba(200,135,85,0.14)`,
-    cardSage:    isDark ? `${SAGE},0.18)`        : `rgba(120,155,95,0.16)`,
-    cardBark:    isDark ? `${DEEP_BARK},0.65)`   : `rgba(255,248,232,0.88)`,
-    cardDark:    isDark ? `${DEEP_BARK},0.50)`   : `rgba(248,240,225,0.80)`,
+    text:        isDark ? `${PARCHMENT},0.90)`  : `${DEEP_BARK},0.95)`,
+    muted:       isDark ? `${PARCHMENT},0.38)`  : `${DEEP_BARK},0.55)`,
+    gold:        isDark ? `${GOLD},0.90)`        : `rgba(140,100,55,1)`,
+    goldBorder:  isDark ? `${GOLD},0.22)`        : `rgba(140,100,55,0.25)`,
+    cardBg:      isDark ? `${GOLD},0.07)`        : `rgba(255,255,255,0.65)`,
+    cardTerra:   isDark ? `${TERRACOTTA},0.18)`  : `rgba(200,135,85,0.12)`,
+    cardSage:    isDark ? `${SAGE},0.18)`        : `rgba(120,155,95,0.14)`,
+    cardBark:    isDark ? `${DEEP_BARK},0.65)`   : `rgba(255,255,255,0.85)`,
+    cardDark:    isDark ? `${DEEP_BARK},0.50)`   : `rgba(255,255,255,0.75)`,
   };
 }
 
@@ -87,7 +87,7 @@ function CardLabel({ children, color }: { children: React.ReactNode; color: stri
 
 function Bar({ pct, color }: { pct: number; color: string }) {
   return (
-    <div style={{ height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.09)', marginTop: 6 }}>
+    <div style={{ height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.05)', marginTop: 6 }}>
       <div style={{ height: 4, borderRadius: 2, width: `${Math.min(pct, 100)}%`, background: color, transition: 'width 0.9s ease' }} />
     </div>
   );
@@ -193,7 +193,7 @@ export default function DashboardPage() {
                 </div>
 
                 {moodData ? (
-                  <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: 12, border: `0.5px solid ${t.goldBorder}` }}>
+                  <div style={{ padding: '12px', background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)', borderRadius: 12, border: `0.5px solid ${t.goldBorder}` }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                       <span style={{ fontSize: 20 }}>{moodData.emoji}</span>
                       <span style={{ fontSize: 12, fontWeight: 700, color: t.gold, textTransform: 'uppercase', letterSpacing: 1, fontFamily: FONT_CASUAL }}>{moodData.name}</span>
@@ -205,7 +205,7 @@ export default function DashboardPage() {
                     )}
                   </div>
                 ) : (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px', background: 'rgba(255,255,255,0.02)', borderRadius: 12, border: '0.5px dashed rgba(255,255,255,0.1)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px', background: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)', borderRadius: 12, border: '0.5px dashed rgba(0,0,0,0.1)' }}>
                     <MessageSquare style={{ width: 18, height: 18, color: t.muted }} />
                     <p style={{ fontSize: 11, color: t.muted, margin: 0 }}>No reflection logged yet. Checking in helps track your mindful progress.</p>
                   </div>
@@ -225,8 +225,8 @@ export default function DashboardPage() {
                     return (
                       <div key={h.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
                         <div style={{ width: 40, height: 40, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                          background: done ? h.color : `${PARCHMENT},0.05)`,
-                          border: `0.5px solid ${done ? h.color : `${PARCHMENT},0.10)`}`,
+                          background: done ? h.color : (isDark ? `${PARCHMENT},0.05)` : 'rgba(0,0,0,0.04)'),
+                          border: `0.5px solid ${done ? h.color : (isDark ? `${PARCHMENT},0.10)` : 'rgba(0,0,0,0.06)')}`,
                           transform: done ? 'scale(1.1)' : 'scale(1)',
                           boxShadow: done ? `0 4px 12px ${h.color}` : 'none'
                         }}>{h.emoji}</div>
@@ -237,7 +237,7 @@ export default function DashboardPage() {
                 </div>
                 <div style={{ display: 'flex', gap: 4, marginTop: 14 }}>
                   {habitsList.map((h, i) => (
-                    <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: completedHabits.includes(h.id) ? `${GOLD},0.72)` : `${PARCHMENT},0.10)` }} />
+                    <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: completedHabits.includes(h.id) ? `${GOLD},0.72)` : (isDark ? `${PARCHMENT},0.10)` : 'rgba(0,0,0,0.06)') }} />
                   ))}
                 </div>
                 <p style={{ fontSize: 9, color: t.muted, margin: '6px 0 0', fontFamily: FONT_CASUAL, textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'center' as const }}>
@@ -317,7 +317,7 @@ export default function DashboardPage() {
                 </div>
                 <div style={{ display: 'flex', gap: 4, marginLeft: 16, alignItems: 'flex-end' }}>
                   {[1,1,0,1,0,1,1].map((done,i)=>(
-                    <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: done ? `${GOLD},0.80)` : `${PARCHMENT},0.12)` }} />
+                    <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: done ? `${GOLD},0.80)` : (isDark ? `${PARCHMENT},0.12)` : 'rgba(0,0,0,0.06)') }} />
                   ))}
                 </div>
               </div>
@@ -337,7 +337,7 @@ export default function DashboardPage() {
           {/* §5 CHALLENGES */}
           <section>
             <SectionHead t={t}>Challenges</SectionHead>
-            <GlassCard style={{ background: t.cardBark, border: `0.8px solid ${t.goldBorder}`, borderRadius: '28px 12px 28px 28px', padding: '16px', position: 'relative' as const }}>
+            <GlassCard style={{ background: isDark ? t.cardBark : 'rgba(255,255,255,0.95)', border: `0.8px solid ${t.goldBorder}`, borderRadius: '28px 12px 28px 28px', padding: '16px', position: 'relative' as const }}>
               <div style={{ position: 'absolute' as const, inset: 0, top: 0, height: 42, borderRadius: '28px 12px 0 0', background: `${GOLD},0.06)`, pointerEvents: 'none' as const }} />
               <div style={{ position: 'relative' as const, zIndex: 1, display: 'flex', alignItems: 'flex-start', gap: 12 }}>
                 <div style={{ width: 40, height: 40, borderRadius: 14, background: `${GOLD},0.14)`, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

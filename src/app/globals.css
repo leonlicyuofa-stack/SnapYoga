@@ -19,8 +19,8 @@
     --secondary: 24 47% 48%; /* Terracotta */
     --secondary-foreground: 38 45% 98%;
 
-    --muted: 33 20% 94%;
-    --muted-foreground: 33 10% 40%; 
+    --muted: 33 20% 90%;
+    --muted-foreground: 25 15% 25%; /* Darkened for better light mode visibility */
 
     --accent: 85 15% 45%; /* Muted Sage */
     --accent-foreground: 38 45% 98%;
@@ -28,8 +28,8 @@
     --destructive: 0 84% 60%; 
     --destructive-foreground: 0 0% 98%;
 
-    --border: 35 30% 88%;
-    --input: 35 30% 92%;
+    --border: 35 30% 85%;
+    --input: 35 30% 90%;
     --ring: 35 55% 45%;
     
     --radius: 1rem;
