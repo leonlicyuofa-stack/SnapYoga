@@ -30,30 +30,36 @@ function NamasteSplash({ isExiting }: { isExiting: boolean }) {
             >
                 <title>Namaste Cursive Pen Drawing</title>
                 {/* Refined single-line cursive path for "namaste" */}
+                {/* This path traces: n -> a -> m -> a -> s -> t -> e in one continuous stroke */}
                 <path 
                     d="M100,250 
-                       C120,100 160,100 180,220 
-                       C190,280 230,280 240,220 
-                       C250,160 210,140 210,200 
-                       C210,260 250,260 270,220 
-                       C280,180 320,180 330,220 
-                       C340,260 370,260 380,220 
-                       C390,180 420,180 430,220 
-                       C440,260 470,260 480,220 
-                       C490,160 450,140 450,200 
-                       C450,260 490,260 510,220 
-                       C530,160 580,160 560,240 
-                       C540,300 620,240 640,220 
-                       L640,100 
-                       M600,160 H680 
-                       M640,220 
-                       C640,260 680,260 700,200"
+                       C110,180 140,180 150,250 
+                       C160,180 190,180 200,250 
+                       C210,250 220,250 230,220 
+                       C220,180 180,180 180,220 
+                       C180,260 220,260 240,250 
+                       C250,180 280,180 290,250 
+                       C300,180 330,180 340,250 
+                       C350,180 380,180 390,250 
+                       C400,250 410,250 420,220 
+                       C410,180 370,180 370,220 
+                       C370,260 410,260 430,250 
+                       C440,250 450,230 460,200 
+                       C470,180 440,180 430,220 
+                       C420,260 460,260 480,250 
+                       C490,200 500,100 510,100 
+                       C520,100 500,200 490,250 
+                       C480,250 450,160 550,160 
+                       C520,160 500,250 510,250 
+                       C520,250 540,230 550,210 
+                       C540,180 500,180 500,220 
+                       C500,260 540,260 580,250"
                     stroke="currentColor" 
-                    strokeWidth="4" 
+                    strokeWidth="6" 
                     strokeLinecap="round" 
                     strokeLinejoin="round"
                     className="animate-line-draw"
-                    style={{ strokeDasharray: 4000, strokeDashoffset: 4000 }}
+                    style={{ strokeDasharray: 5000, strokeDashoffset: 5000 }}
                 />
             </svg>
         </div>
@@ -69,12 +75,12 @@ export default function HomePage() {
     // Stage 1: Trigger the "Zoom Out" transition
     const exitTimer = setTimeout(() => {
       setIsExiting(true);
-    }, 2800);
+    }, 3200);
 
     // Stage 2: Completely unmount the splash screen
     const hideTimer = setTimeout(() => {
       setShowSplash(false);
-    }, 3800);
+    }, 4200);
 
     // Word carousel interval
     const intervalId = setInterval(() => {
