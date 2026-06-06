@@ -23,7 +23,7 @@ function Ribbon({ id, d, delay = "0s" }: { id: string; d: string; delay?: string
                 <path 
                     id={id}
                     d={d}
-                    stroke="white" 
+                    stroke="#C19A6B" 
                     strokeWidth="80" 
                     strokeLinecap="round" 
                     className="opacity-5 animate-line-draw"
