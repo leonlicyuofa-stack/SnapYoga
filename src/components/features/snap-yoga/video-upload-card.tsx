@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { ChangeEvent } from 'react';
@@ -23,12 +22,12 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (file.type.startsWith('video/')) {
+      if (file.type.startsWith('video/') || file.type.startsWith('image/')) {
         setSelectedFile(file);
       } else {
         toast({
           title: "Invalid File Type",
-          description: "Please select a video file.",
+          description: "Please select a video or image file.",
           variant: "destructive",
         });
         setSelectedFile(null);
@@ -47,7 +46,7 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
       reader.onerror = () => {
         toast({
           title: "Error Reading File",
-          description: "Could not read the selected video file. Please try again.",
+          description: "Could not read the selected file. Please try again.",
           variant: "destructive",
         });
       };
@@ -55,7 +54,7 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
     } else {
       toast({
         title: "No File Selected",
-        description: "Please select a video file to upload.",
+        description: "Please select a video or image file to upload.",
         variant: "destructive",
       });
     }
@@ -66,26 +65,26 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
       <CardHeader className="p-0">
         <CardTitle className="flex items-center gap-2 text-2xl">
           <UploadCloud className="h-7 w-7 text-white" />
-          Upload Your Yoga Pose Video
+          Upload Your Yoga Pose
         </CardTitle>
         <CardDescription className="text-white/80">
-          Select a video of your yoga pose. We'll analyze it and provide feedback using your custom service.
+          Select a video or image of your yoga pose. We'll analyze it and provide feedback.
         </CardDescription>
       </CardHeader>
       <CardContent className="p-0 space-y-6 mt-6">
         <div className="space-y-2">
-          <Label htmlFor="video-upload" className="text-base font-medium">Video File</Label>
+          <Label htmlFor="video-upload" className="text-base font-medium">Pose File (Video or Image)</Label>
           <Input
             id="video-upload"
             type="file"
-            accept="video/*"
+            accept="video/*,image/*"
             onChange={handleFileChange}
             className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 cursor-pointer h-12 border-white/20 placeholder:text-white/50"
             aria-describedby="video-upload-help"
             disabled={isLoading}
           />
           <p id="video-upload-help" className="text-sm text-white/70 mt-1">
-            Supported formats: MP4, MOV, AVI, etc. Max file size: 50MB.
+            Supported formats: MP4, MOV, JPG, PNG, etc. Max file size: 50MB.
           </p>
         </div>
 

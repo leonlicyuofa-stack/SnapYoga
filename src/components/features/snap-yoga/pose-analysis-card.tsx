@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -42,6 +41,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
     : null;
 
   const videoSrc = videoDataUri;
+  const isImage = videoDataUri?.startsWith('data:image/') || videoDataUri?.match(/\.(jpg|jpeg|png|webp)$/) !== null;
 
   const hasV2Detail =
     !!analysis?.jointAssessment?.length ||
@@ -61,7 +61,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
           Pose Analysis
         </CardTitle>
         <CardDescription className="text-white/80">
-          {videoSrc ? `Showing analysis for ${videoFileName || 'your video'}.` : "Upload a video to see your pose analysis here."}
+          {videoSrc ? `Showing analysis for ${videoFileName || 'your file'}.` : "Upload a video or image to see your pose analysis here."}
         </CardDescription>
       </CardHeader>
       <CardContent className="p-0 space-y-6 mt-6">
@@ -74,12 +74,16 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
             </div>
           )}
           {!isLoading && videoSrc ? (
-            <video key={videoSrc} src={videoSrc} controls className="w-full h-full object-contain" aria-label={videoFileName || "Uploaded yoga pose video"} />
+            isImage ? (
+              <img src={videoSrc} alt={videoFileName || "Uploaded yoga pose"} className="w-full h-full object-contain" />
+            ) : (
+              <video key={videoSrc} src={videoSrc} controls className="w-full h-full object-contain" aria-label={videoFileName || "Uploaded yoga pose video"} />
+            )
           ) : !isLoading && (
             <div className="flex flex-col items-center text-white/70 p-8 text-center">
               <VideoOff className="h-16 w-16 mb-4" />
-              <p className="font-semibold text-lg">No Video Uploaded</p>
-              <p className="text-sm">Your video and analysis will appear here.</p>
+              <p className="font-semibold text-lg">No Media Uploaded</p>
+              <p className="text-sm">Your video/image and analysis will appear here.</p>
             </div>
           )}
         </div>

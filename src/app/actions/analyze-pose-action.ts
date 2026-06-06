@@ -1,7 +1,7 @@
 'use server';
 
 /**
- * @fileOverview Server action to analyze a yoga pose video.
+ * @fileOverview Server action to analyze a yoga pose (video or image).
  * This action handles the secure communication between the client, 
  * Firebase Storage, and the external Python analysis service on Cloud Run.
  */
@@ -66,7 +66,7 @@ function ensurePostTargetsVisionRoute(url: string): string {
 const AnalyzePoseInputSchema = z.object({
   videoDataUri: z
     .string()
-    .describe("A video of the user performing a yoga pose, as a data URI."),
+    .describe("A video or image of the user performing a yoga pose, as a data URI."),
   userId: z.string().describe("The UID of the user uploading the video."),
 });
 
@@ -339,12 +339,13 @@ function parseAnalysisServiceResponse(
 }
 
 
-// Helper to upload video to Firebase Storage
-async function uploadVideoToStorage(videoDataUri: string, userId: string, videoId: string, mimeType: string): Promise<string> {
+// Helper to upload video/image to Firebase Storage
+async function uploadMediaToStorage(dataUri: string, userId: string, mediaId: string, mimeType: string): Promise<string> {
     const storage = getStorage(app);
-    const storageRef = ref(storage, `user-videos/${userId}/${videoId}.${mimeType.split('/')[1]}`);
+    const extension = mimeType.split('/')[1] === 'jpeg' ? 'jpg' : mimeType.split('/')[1];
+    const storageRef = ref(storage, `user-media/${userId}/${mediaId}.${extension}`);
     
-    await uploadString(storageRef, videoDataUri, 'data_url', { contentType: mimeType });
+    await uploadString(storageRef, dataUri, 'data_url', { contentType: mimeType });
     return getDownloadURL(storageRef);
 }
 
@@ -356,15 +357,16 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
   const validatedInput = AnalyzePoseInputSchema.parse(input);
   const { userId, videoDataUri } = validatedInput;
 
-  const videoId = uuidv4();
+  const mediaId = uuidv4();
   const mimeType = videoDataUri.match(/data:(.*);base64,/)?.[1] || 'video/mp4';
+  const extension = mimeType.split('/')[1] === 'jpeg' ? 'jpg' : mimeType.split('/')[1];
   
   // 1. Upload to Storage
-  const videoUrl = await uploadVideoToStorage(videoDataUri, userId, videoId, mimeType);
+  const mediaUrl = await uploadMediaToStorage(videoDataUri, userId, mediaId, mimeType);
   
   // 2. Prepare for Cloud Run call
   const storage = getStorage(app);
-  const storageRef = ref(storage, `user-videos/${userId}/${videoId}.${mimeType.split('/')[1]}`);
+  const storageRef = ref(storage, `user-media/${userId}/${mediaId}.${extension}`);
   const gsPath = `gs://${storageRef.bucket}/${storageRef.fullPath}`;
   
   const analysisServiceUrl = ensurePostTargetsVisionRoute(resolveAnalysisServiceUrl());
@@ -374,7 +376,7 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
       `[pose-analysis] POST ${origin}${pathname} | gs: ${gsPath} | ANALYSIS_SERVICE_URL env ${process.env.ANALYSIS_SERVICE_URL ? 'set' : 'unset (using default with /v2/... )'}`
     );
   } catch {
-    console.log(`[pose-analysis] POST url=${analysisServiceUrl} video=${gsPath}`);
+    console.log(`[pose-analysis] POST url=${analysisServiceUrl} media=${gsPath}`);
   }
 
   let response: Response = new Response(null, { status: 500 });
@@ -391,7 +393,7 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
 
       const formData = new FormData();
       formData.append('storage_url', gsPath);
-      formData.append('filename', `video_${videoId}.mp4`);
+      formData.append('filename', `media_${mediaId}.${extension}`);
 
       response = await fetch(analysisServiceUrl, {
           method: 'POST',
@@ -420,7 +422,7 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
         const logCollectionRef = collection(firestore, 'users', userId, 'poseAnalysisRawLogs');
         await addDoc(logCollectionRef, {
           rawResponse: rawAnalysisResult,
-          videoUrl: videoUrl,
+          mediaUrl: mediaUrl,
           gsPath: gsPath,
           createdAt: serverTimestamp(),
           isError: !responseOk,
@@ -436,7 +438,7 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
       throw new Error(`Analysis service failed with status ${responseStatus}: ${errorBody}`);
   }
   
-  const finalResult = parseAnalysisServiceResponse(rawAnalysisResult, videoUrl);
+  const finalResult = parseAnalysisServiceResponse(rawAnalysisResult, mediaUrl);
 
   return AnalysisServiceOutputSchema.parse(finalResult);
 }
