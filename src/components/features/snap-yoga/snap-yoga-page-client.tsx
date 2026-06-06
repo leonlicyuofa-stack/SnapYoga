@@ -62,13 +62,13 @@ export function SnapYogaPageClient() {
           userNotes: notes,
       });
       
-      setAnalysisResult(result);
-      
-      // CRITICAL: Switch from the massive Base64 string to the efficient cloud URL
-      // This ensures the video continues to display correctly after the analysis state update.
+      // CRITICAL: Update the source URI to the final cloud URL FIRST
+      // This ensures that when the card stops "loading", it already has the stable URL
       if (result.videoUrl) {
           setVideoDataUri(result.videoUrl);
       }
+      
+      setAnalysisResult(result);
 
       toast({
         title: "Analysis Complete",
@@ -86,20 +86,10 @@ export function SnapYogaPageClient() {
         const userAnalysesCollectionRef = collection(firestore, 'users', currentUser.uid, 'poseAnalyses');
         await addDoc(userAnalysesCollectionRef, analysisDataToSave);
         console.log("Analysis metadata saved successfully to Firestore.");
-        toast({
-          title: "Analysis Saved",
-          description: "Your pose analysis results have been saved to your profile.",
-        });
       } catch (saveError: any) {
         console.error("Error saving analysis to Firestore:", saveError);
-        toast({
-          title: "Firestore Save Error",
-          description: "Could not save your analysis results.",
-          variant: "destructive",
-        });
       }
 
-      // We no longer use youtube videos
       setIsLoadingRecommendations(false);
 
     } catch (e: any) {
@@ -111,7 +101,6 @@ export function SnapYogaPageClient() {
         description: `${errorMessage}`,
         variant: "destructive",
       });
-      // Set a failed state for the card to display
       setAnalysisResult({ feedback: "Analysis failed. Please try again.", score: 0, identifiedPose: "Unknown", videoUrl: "" });
       setIsLoadingRecommendations(false);
     } finally {

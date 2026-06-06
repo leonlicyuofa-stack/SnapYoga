@@ -44,15 +44,14 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
   const videoSrc = videoDataUri;
   
   // Robust media type detection handling both Data URIs and Cloud URLs with query params
-  // Added support for case-insensitive matching and explicit data uri parsing
   const isImage = !!videoDataUri && (
       videoDataUri.startsWith('data:image/') || 
-      videoDataUri.match(/\.(jpg|jpeg|png|webp|gif|bmp)(\?|$)/i) !== null
+      /\.(jpg|jpeg|png|webp|gif|bmp)(\?|$)/i.test(videoDataUri)
   );
 
   const isMov = !!videoDataUri && (
       videoDataUri.startsWith('data:video/quicktime') || 
-      videoDataUri.match(/\.mov(\?|$)/i) !== null
+      /\.mov(\?|$)/i.test(videoDataUri)
   );
 
   const videoMimeType = isMov ? 'video/quicktime' : 'video/mp4';
@@ -82,10 +81,14 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
         <div className="aspect-video w-full bg-black/20 rounded-xl overflow-hidden flex items-center justify-center border border-dashed border-white/20">
           {videoSrc ? (
             isImage ? (
-              <img src={videoSrc} alt={videoFileName || "Uploaded yoga pose"} className="w-full h-full object-contain" />
+              <img 
+                src={videoSrc} 
+                alt={videoFileName || "Uploaded yoga pose"} 
+                className="w-full h-full object-contain" 
+              />
             ) : (
               <video 
-                key={videoSrc} // Changing key ensures the video element is remounted when source transitions from local to cloud
+                key={videoSrc} // Critical: forces re-render when switching from local data to cloud URL
                 controls 
                 playsInline 
                 preload="metadata"
@@ -93,6 +96,8 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
                 aria-label={videoFileName || "Uploaded yoga pose video"}
               >
                 <source src={videoSrc} type={videoMimeType} />
+                {/* Fallback source for .mov files that might be standard mp4s */}
+                {isMov && <source src={videoSrc} type="video/mp4" />}
                 Your browser does not support the video tag.
               </video>
             )
