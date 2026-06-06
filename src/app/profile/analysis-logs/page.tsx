@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useMemo } from 'react';
@@ -10,7 +9,7 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ArrowLeft, AlertCircle, FileText, Calendar as CalendarIcon, Activity, ChevronRight, Award, Clock } from 'lucide-react';
+import { ArrowLeft, AlertCircle, FileText, Calendar as CalendarIcon, Activity, ChevronRight, Award, Clock, MessageCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { format, isSameDay } from 'date-fns';
@@ -31,6 +30,7 @@ interface AnalysisSummary {
   createdAt: Timestamp;
   identifiedPose: string;
   score: number;
+  userNotes?: string;
 }
 
 export default function AnalysisLogsPage() {
@@ -187,16 +187,27 @@ export default function AnalysisLogsPage() {
                                                 <div className="p-3 bg-primary/10 rounded-md">
                                                     <Activity className="h-8 w-8 text-primary" />
                                                 </div>
-                                                <div>
+                                                <div className="flex-grow">
                                                     <p className="font-semibold text-lg">{analysis.identifiedPose}</p>
                                                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                                         <span>{format(analysis.createdAt.toDate(), 'p')}</span>
+                                                        {analysis.userNotes && (
+                                                          <Badge variant="outline" className="text-[10px] py-0 h-4 border-primary/30 text-primary/80">
+                                                            <MessageCircle className="h-2.5 w-2.5 mr-1" /> Has Note
+                                                          </Badge>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
                                         </AccordionTrigger>
                                         <AccordionContent className="px-4 pb-4">
                                             <div className="border-t pt-4 mt-2 space-y-3">
+                                                {analysis.userNotes && (
+                                                  <div className="p-3 bg-primary/5 rounded-lg border border-primary/10 mb-2">
+                                                    <p className="text-[10px] uppercase font-bold text-primary/60 mb-1">Your context:</p>
+                                                    <p className="text-sm italic">&ldquo;{analysis.userNotes.length > 100 ? analysis.userNotes.substring(0, 100) + '...' : analysis.userNotes}&rdquo;</p>
+                                                  </div>
+                                                )}
                                                 <div className="flex items-center justify-between text-sm">
                                                     <span className="text-muted-foreground flex items-center"><Award className="mr-2 h-4 w-4"/>Score</span>
                                                     <Badge variant="secondary">{score} / 100</Badge>
