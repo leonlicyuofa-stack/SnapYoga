@@ -340,18 +340,38 @@ function parseAnalysisServiceResponse(
 }
 
 
-// Helper to upload video/image to Firebase Storage
-async function uploadMediaToStorage(dataUri: string, userId: string, mediaId: string, mimeType: string): Promise<string> {
+/**
+ * Helper to upload video/image to Firebase Storage with embedded metadata.
+ * This physically bundles the user's notes with the media file in the cloud.
+ */
+async function uploadMediaToStorage(
+  dataUri: string, 
+  userId: string, 
+  mediaId: string, 
+  mimeType: string,
+  userNotes?: string
+): Promise<string> {
     const storage = getStorage(app);
     const extension = mimeType.split('/')[1] === 'jpeg' ? 'jpg' : mimeType.split('/')[1];
     const storageRef = ref(storage, `user-media/${userId}/${mediaId}.${extension}`);
     
-    await uploadString(storageRef, dataUri, 'data_url', { contentType: mimeType });
+    // Create custom metadata to bundle with the file
+    const metadata = {
+      contentType: mimeType,
+      customMetadata: {
+        'userId': userId,
+        'userNotes': userNotes || '',
+        'uploadedAt': new Date().toISOString(),
+      }
+    };
+    
+    await uploadString(storageRef, dataUri, 'data_url', metadata);
     return getDownloadURL(storageRef);
 }
 
 /**
  * The main server action to perform pose analysis.
+ * Bundles media and text notes together for the API call.
  */
 export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<AnalysisServiceOutput> {
   // Validate input from client
@@ -362,8 +382,8 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
   const mimeType = videoDataUri.match(/data:(.*);base64,/)?.[1] || 'video/mp4';
   const extension = mimeType.split('/')[1] === 'jpeg' ? 'jpg' : mimeType.split('/')[1];
   
-  // 1. Upload to Storage
-  const mediaUrl = await uploadMediaToStorage(videoDataUri, userId, mediaId, mimeType);
+  // 1. Upload to Storage (Bundling notes into file metadata)
+  const mediaUrl = await uploadMediaToStorage(videoDataUri, userId, mediaId, mimeType, userNotes);
   
   // 2. Prepare for Cloud Run call
   const storage = getStorage(app);
@@ -371,15 +391,7 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
   const gsPath = `gs://${storageRef.bucket}/${storageRef.fullPath}`;
   
   const analysisServiceUrl = ensurePostTargetsVisionRoute(resolveAnalysisServiceUrl());
-  try {
-    const { pathname, origin } = new URL(analysisServiceUrl);
-    console.log(
-      `[pose-analysis] POST ${origin}${pathname} | gs: ${gsPath} | ANALYSIS_SERVICE_URL env ${process.env.ANALYSIS_SERVICE_URL ? 'set' : 'unset (using default with /v2/... )'}`
-    );
-  } catch {
-    console.log(`[pose-analysis] POST url=${analysisServiceUrl} media=${gsPath}`);
-  }
-
+  
   let response: Response = new Response(null, { status: 500 });
   let rawAnalysisResult: Record<string, unknown> | { error: string } = {};
   let responseStatus = 500;
@@ -392,6 +404,7 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
       const client = await auth.getIdTokenClient(analysisServiceUrl);
       const headers = await client.getRequestHeaders();
 
+      // 3. Bundle everything for the API request
       const formData = new FormData();
       formData.append('storage_url', gsPath);
       formData.append('filename', `media_${mediaId}.${extension}`);
@@ -422,6 +435,7 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
       console.error("Error calling analysis service:", e);
       rawAnalysisResult = { error: message };
   } finally {
+      // 4. Log the interaction to Firestore
       try {
         const logCollectionRef = collection(firestore, 'users', userId, 'poseAnalysisRawLogs');
         await addDoc(logCollectionRef, {
