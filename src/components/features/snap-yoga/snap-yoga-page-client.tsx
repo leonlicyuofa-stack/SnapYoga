@@ -43,6 +43,7 @@ export function SnapYogaPageClient() {
         return;
     }
 
+    // Set initial local state for immediate feedback
     setVideoDataUri(dataUri);
     setVideoFileName(fileName);
     setUserNotes(notes);
@@ -54,7 +55,7 @@ export function SnapYogaPageClient() {
     setIsLoadingRecommendations(true);
 
     try {
-      // Call the new server action directly
+      // Call the server action to upload and analyze
       const result = await performPoseAnalysis({ 
           videoDataUri: dataUri,
           userId: currentUser.uid,
@@ -62,6 +63,13 @@ export function SnapYogaPageClient() {
       });
       
       setAnalysisResult(result);
+      
+      // CRITICAL: Switch from the massive Base64 string to the efficient cloud URL
+      // This ensures the video continues to display correctly after the analysis state update.
+      if (result.videoUrl) {
+          setVideoDataUri(result.videoUrl);
+      }
+
       toast({
         title: "Analysis Complete",
         description: `Your yoga pose has been analyzed. Score: ${result.score !== undefined ? Math.round(result.score) + '/100' : 'N/A'}`,
@@ -93,7 +101,6 @@ export function SnapYogaPageClient() {
 
       // We no longer use youtube videos
       setIsLoadingRecommendations(false);
-
 
     } catch (e: any) {
       console.error("Error analyzing pose:", e);

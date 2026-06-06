@@ -43,9 +43,18 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
 
   const videoSrc = videoDataUri;
   
-  // Robust media type detection including MOV support
-  const isImage = videoDataUri?.startsWith('data:image/') || videoDataUri?.match(/\.(jpg|jpeg|png|webp)$/i) !== null;
-  const isMov = videoDataUri?.startsWith('data:video/quicktime') || videoDataUri?.match(/\.mov$/i) !== null;
+  // Robust media type detection handling both Data URIs and Cloud URLs with query params
+  // Added support for case-insensitive matching and explicit data uri parsing
+  const isImage = !!videoDataUri && (
+      videoDataUri.startsWith('data:image/') || 
+      videoDataUri.match(/\.(jpg|jpeg|png|webp|gif|bmp)(\?|$)/i) !== null
+  );
+
+  const isMov = !!videoDataUri && (
+      videoDataUri.startsWith('data:video/quicktime') || 
+      videoDataUri.match(/\.mov(\?|$)/i) !== null
+  );
+
   const videoMimeType = isMov ? 'video/quicktime' : 'video/mp4';
 
   const hasV2Detail =
@@ -71,21 +80,15 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
       </CardHeader>
       <CardContent className="p-0 space-y-6 mt-6">
         <div className="aspect-video w-full bg-black/20 rounded-xl overflow-hidden flex items-center justify-center border border-dashed border-white/20">
-          {isLoading && !videoSrc && (
-            <div className="flex flex-col items-center text-white/70 p-4">
-              <Skeleton className="h-12 w-12 rounded-full bg-white/20 mb-2" />
-              <Skeleton className="h-4 w-3/4 bg-white/20 mb-1" />
-              <Skeleton className="h-4 w-1/2 bg-white/20" />
-            </div>
-          )}
-          {!isLoading && videoSrc ? (
+          {videoSrc ? (
             isImage ? (
               <img src={videoSrc} alt={videoFileName || "Uploaded yoga pose"} className="w-full h-full object-contain" />
             ) : (
               <video 
-                key={videoSrc} 
+                key={videoSrc} // Changing key ensures the video element is remounted when source transitions from local to cloud
                 controls 
                 playsInline 
+                preload="metadata"
                 className="w-full h-full object-contain" 
                 aria-label={videoFileName || "Uploaded yoga pose video"}
               >
@@ -93,12 +96,20 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
                 Your browser does not support the video tag.
               </video>
             )
-          ) : !isLoading && (
-            <div className="flex flex-col items-center text-white/70 p-8 text-center">
-              <VideoOff className="h-16 w-16 mb-4" />
-              <p className="font-semibold text-lg">No Media Uploaded</p>
-              <p className="text-sm">Your video/image and analysis will appear here.</p>
-            </div>
+          ) : (
+            isLoading ? (
+              <div className="flex flex-col items-center text-white/70 p-4 w-full">
+                <Skeleton className="h-12 w-12 rounded-full bg-white/20 mb-2" />
+                <Skeleton className="h-4 w-3/4 bg-white/20 mb-1" />
+                <Skeleton className="h-4 w-1/2 bg-white/20" />
+              </div>
+            ) : (
+              <div className="flex flex-col items-center text-white/70 p-8 text-center">
+                <VideoOff className="h-16 w-16 mb-4" />
+                <p className="font-semibold text-lg">No Media Uploaded</p>
+                <p className="text-sm">Your video/image and analysis will appear here.</p>
+              </div>
+            )
           )}
         </div>
         
