@@ -1,4 +1,3 @@
-
 "use client"; 
 
 import * as React from 'react';
@@ -45,9 +44,10 @@ export function AppShell({ children }: AppShellProps) {
 
   const homeLinkPath = user ? "/dashboard" : "/";
   
+  // Routes that should not show the header/navigation shell
   const noShellRoutes = ['/auth/signin', '/auth/signup', '/auth/verify-email', '/'];
   
-  if (noShellRoutes.includes(pathname) || pathname.startsWith('/home') || pathname === '/welcome' || pathname.startsWith('/onboarding') || pathname === '/testing-page-1') {
+  if (noShellRoutes.includes(pathname) || pathname === '/welcome' || pathname.startsWith('/onboarding') || pathname === '/testing-page-1') {
       return (
         <div className="relative flex flex-col min-h-screen">
             {children}
