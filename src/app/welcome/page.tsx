@@ -7,9 +7,9 @@ import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
 
 export default function WelcomePage() {
   return (
-    <div className="relative min-h-screen font-serif text-white">
+    <div className="relative min-h-screen font-serif text-white" style={{ background: 'linear-gradient(175deg, #B0B5C0 0%, #9DA4B0 35%, #A8A0BC 70%, #9B96B5 100%)' }}>
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-        <div className="w-full max-w-md bg-black/20 backdrop-blur-lg rounded-2xl p-8 text-center">
+        <div className="w-full max-w-md backdrop-blur-lg rounded-2xl p-8 text-center" style={{ background: 'rgba(255,255,255,0.72)', border: '0.5px solid rgba(255,255,255,0.6)' }}>
             <header className="flex flex-col items-center justify-center">
               <SnapYogaLogo />
               <p className="mt-4 text-lg text-white/80">your AI companion for mindfulness</p>

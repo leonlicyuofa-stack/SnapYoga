@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from 'react';
@@ -66,9 +65,9 @@ export default function SignInPage() {
   const isLoading = authLoading || isSubmitting;
 
   return (
-    <div className="relative min-h-screen font-serif text-white">
+    <div className="relative min-h-screen font-serif text-white" style={{ background: 'linear-gradient(175deg, #B0B5C0 0%, #9DA4B0 35%, #A8A0BC 70%, #9B96B5 100%)' }}>
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-        <div className="w-full max-w-md bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-6 shadow-xl border border-white/10">
+        <div className="w-full max-w-md backdrop-blur-lg rounded-2xl p-8 space-y-6 shadow-xl" style={{ background: 'rgba(255,255,255,0.72)', border: '0.5px solid rgba(255,255,255,0.6)' }}>
            <header className="text-center">
             <div className="mx-auto mb-4 inline-block">
               <SnapYogaLogo />
