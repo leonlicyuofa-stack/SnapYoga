@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -27,6 +26,7 @@ interface StoredAnalysisData extends AnalysisServiceOutput {
   id: string;
   createdAt: Timestamp;
   videoFileName?: string;
+  userNotes?: string;
 }
 
 export default function PastAnalysisPage() {
@@ -247,6 +247,7 @@ export default function PastAnalysisPage() {
           <PoseAnalysisCard
             videoDataUri={analysisDetail.videoUrl || null}
             videoFileName={analysisDetail.videoFileName || "Stored Analysis"}
+            userNotes={analysisDetail.userNotes}
             analysis={analysisForCard}
             isLoading={false}
           />

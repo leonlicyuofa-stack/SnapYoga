@@ -68,6 +68,7 @@ const AnalyzePoseInputSchema = z.object({
     .string()
     .describe("A video or image of the user performing a yoga pose, as a data URI."),
   userId: z.string().describe("The UID of the user uploading the video."),
+  userNotes: z.string().optional().describe("Optional context or questions from the user."),
 });
 
 export type AnalyzePoseInput = z.infer<typeof AnalyzePoseInputSchema>;
@@ -355,7 +356,7 @@ async function uploadMediaToStorage(dataUri: string, userId: string, mediaId: st
 export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<AnalysisServiceOutput> {
   // Validate input from client
   const validatedInput = AnalyzePoseInputSchema.parse(input);
-  const { userId, videoDataUri } = validatedInput;
+  const { userId, videoDataUri, userNotes } = validatedInput;
 
   const mediaId = uuidv4();
   const mimeType = videoDataUri.match(/data:(.*);base64,/)?.[1] || 'video/mp4';
@@ -394,6 +395,9 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
       const formData = new FormData();
       formData.append('storage_url', gsPath);
       formData.append('filename', `media_${mediaId}.${extension}`);
+      if (userNotes) {
+        formData.append('user_notes', userNotes);
+      }
 
       response = await fetch(analysisServiceUrl, {
           method: 'POST',
@@ -424,6 +428,7 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
           rawResponse: rawAnalysisResult,
           mediaUrl: mediaUrl,
           gsPath: gsPath,
+          userNotes: userNotes || null,
           createdAt: serverTimestamp(),
           isError: !responseOk,
           responseStatus,

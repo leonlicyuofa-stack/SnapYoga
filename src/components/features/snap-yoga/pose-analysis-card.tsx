@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import type { AnalysisServiceOutput } from '@/app/actions/analyze-pose-action';
 import { Button } from "@/components/ui/button";
-import { Activity, MessageSquareText, VideoOff, Award, Sparkles, ListChecks, Route, Lightbulb } from 'lucide-react';
+import { Activity, MessageSquareText, VideoOff, Award, Sparkles, ListChecks, Route, Lightbulb, MessageCircle } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from "@/components/ui/progress";
 import {
@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 interface PoseAnalysisCardProps {
   videoDataUri: string | null; // Can be a data URI or a public URL from storage
   videoFileName: string | null;
+  userNotes?: string | null;
   analysis: AnalysisServiceOutput | null;
   isLoading: boolean;
 }
@@ -30,7 +31,7 @@ function jointStatusClass(status: string): string {
   return 'border-white/20 bg-black/20';
 }
 
-export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoading }: PoseAnalysisCardProps) {
+export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analysis, isLoading }: PoseAnalysisCardProps) {
   const rawScore = analysis?.score ?? null;
   const identifiedPose = analysis?.identifiedPose ?? null;
 
@@ -88,6 +89,16 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, analysis, isLoad
           )}
         </div>
         
+        {userNotes && (
+          <div className="p-4 rounded-xl border border-white/10 bg-white/5 space-y-1">
+             <h3 className="text-sm font-semibold flex items-center gap-2 text-white/60 uppercase tracking-widest">
+               <MessageCircle className="h-4 w-4" />
+               Your Context
+             </h3>
+             <p className="text-white/90 text-sm italic">"{userNotes}"</p>
+          </div>
+        )}
+
         {isLoading && (
           <div className="space-y-4">
             <div>

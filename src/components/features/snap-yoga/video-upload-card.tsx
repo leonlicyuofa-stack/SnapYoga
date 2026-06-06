@@ -6,17 +6,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { UploadCloud } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 interface VideoUploadCardProps {
-  onVideoUpload: (videoDataUri: string, fileName: string) => void;
+  onVideoUpload: (videoDataUri: string, fileName: string, userNotes: string) => void;
   isLoading: boolean;
 }
 
 export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [userNotes, setUserNotes] = useState("");
   const { toast } = useToast();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +43,7 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
       const reader = new FileReader();
       reader.onloadend = () => {
         const dataUri = reader.result as string;
-        onVideoUpload(dataUri, selectedFile.name);
+        onVideoUpload(dataUri, selectedFile.name, userNotes);
       };
       reader.onerror = () => {
         toast({
@@ -72,20 +74,34 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
         </CardDescription>
       </CardHeader>
       <CardContent className="p-0 space-y-6 mt-6">
-        <div className="space-y-2">
-          <Label htmlFor="video-upload" className="text-base font-medium">Pose File (Video or Image)</Label>
-          <Input
-            id="video-upload"
-            type="file"
-            accept="video/*,image/*"
-            onChange={handleFileChange}
-            className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 cursor-pointer h-12 border-white/20 placeholder:text-white/50"
-            aria-describedby="video-upload-help"
-            disabled={isLoading}
-          />
-          <p id="video-upload-help" className="text-sm text-white/70 mt-1">
-            Supported formats: MP4, MOV, JPG, PNG, etc. Max file size: 50MB.
-          </p>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="video-upload" className="text-base font-medium">Pose File (Video or Image)</Label>
+            <Input
+              id="video-upload"
+              type="file"
+              accept="video/*,image/*"
+              onChange={handleFileChange}
+              className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 cursor-pointer h-12 border-white/20 placeholder:text-white/50"
+              aria-describedby="video-upload-help"
+              disabled={isLoading}
+            />
+            <p id="video-upload-help" className="text-sm text-white/70 mt-1">
+              Supported formats: MP4, MOV, JPG, PNG, etc. Max file size: 50MB.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="user-notes" className="text-base font-medium">Additional Context (Optional)</Label>
+            <Textarea
+              id="user-notes"
+              placeholder="E.g., I'm feeling stiffness in my hamstrings, is my back straight enough?"
+              value={userNotes}
+              onChange={(e) => setUserNotes(e.target.value)}
+              className="bg-black/20 border-white/20 text-white placeholder:text-white/40 min-h-[100px]"
+              disabled={isLoading}
+            />
+          </div>
         </div>
 
         <Button

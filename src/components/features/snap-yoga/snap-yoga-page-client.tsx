@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -22,6 +21,7 @@ export function SnapYogaPageClient() {
   const { user: currentUser } = useAuth();
   const [videoDataUri, setVideoDataUri] = useState<string | null>(null);
   const [videoFileName, setVideoFileName] = useState<string | null>(null);
+  const [userNotes, setUserNotes] = useState<string | null>(null);
   const [analysisResult, setAnalysisResult] = useState<AnalysisServiceOutput | null>(null);
   const [summaryResult, setSummaryResult] = useState<SummarizeFeedbackOutput | null>(null);
   const [recommendedVideos, setRecommendedVideos] = useState<StorageVideo[]>([]);
@@ -33,7 +33,7 @@ export function SnapYogaPageClient() {
 
   const { toast } = useToast();
 
-  const handleVideoUpload = async (dataUri: string, fileName: string) => {
+  const handleVideoUpload = async (dataUri: string, fileName: string, notes: string) => {
     if (!currentUser) {
         toast({
             title: "Authentication Required",
@@ -45,6 +45,7 @@ export function SnapYogaPageClient() {
 
     setVideoDataUri(dataUri);
     setVideoFileName(fileName);
+    setUserNotes(notes);
     setAnalysisResult(null); 
     setSummaryResult(null); 
     setRecommendedVideos([]);
@@ -57,6 +58,7 @@ export function SnapYogaPageClient() {
       const result = await performPoseAnalysis({ 
           videoDataUri: dataUri,
           userId: currentUser.uid,
+          userNotes: notes,
       });
       
       setAnalysisResult(result);
@@ -69,6 +71,7 @@ export function SnapYogaPageClient() {
       try {
         const analysisDataToSave = {
           videoFileName: fileName,
+          userNotes: notes || null,
           ...result,
           createdAt: serverTimestamp(),
         };
@@ -157,6 +160,7 @@ export function SnapYogaPageClient() {
         <PoseAnalysisCard
           videoDataUri={videoDataUri}
           videoFileName={videoFileName}
+          userNotes={userNotes}
           analysis={analysisResult}
           isLoading={isLoadingAnalysis}
         />
