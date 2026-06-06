@@ -352,7 +352,10 @@ async function uploadMediaToStorage(
   userNotes?: string
 ): Promise<string> {
     const storage = getStorage(app);
-    const extension = mimeType.split('/')[1] === 'jpeg' ? 'jpg' : mimeType.split('/')[1];
+    let extension = mimeType.split('/')[1];
+    if (extension === 'jpeg') extension = 'jpg';
+    if (extension === 'quicktime') extension = 'mov';
+
     const storageRef = ref(storage, `user-media/${userId}/${mediaId}.${extension}`);
     
     // Create custom metadata to bundle with the file
@@ -380,7 +383,10 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
 
   const mediaId = uuidv4();
   const mimeType = videoDataUri.match(/data:(.*);base64,/)?.[1] || 'video/mp4';
-  const extension = mimeType.split('/')[1] === 'jpeg' ? 'jpg' : mimeType.split('/')[1];
+  
+  let extension = mimeType.split('/')[1];
+  if (extension === 'jpeg') extension = 'jpg';
+  if (extension === 'quicktime') extension = 'mov';
   
   // 1. Upload to Storage (Bundling notes into file metadata)
   const mediaUrl = await uploadMediaToStorage(videoDataUri, userId, mediaId, mimeType, userNotes);

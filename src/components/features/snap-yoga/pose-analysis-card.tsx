@@ -42,7 +42,11 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
     : null;
 
   const videoSrc = videoDataUri;
-  const isImage = videoDataUri?.startsWith('data:image/') || videoDataUri?.match(/\.(jpg|jpeg|png|webp)$/) !== null;
+  
+  // Robust media type detection including MOV support
+  const isImage = videoDataUri?.startsWith('data:image/') || videoDataUri?.match(/\.(jpg|jpeg|png|webp)$/i) !== null;
+  const isMov = videoDataUri?.startsWith('data:video/quicktime') || videoDataUri?.match(/\.mov$/i) !== null;
+  const videoMimeType = isMov ? 'video/quicktime' : 'video/mp4';
 
   const hasV2Detail =
     !!analysis?.jointAssessment?.length ||
@@ -78,7 +82,16 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
             isImage ? (
               <img src={videoSrc} alt={videoFileName || "Uploaded yoga pose"} className="w-full h-full object-contain" />
             ) : (
-              <video key={videoSrc} src={videoSrc} controls className="w-full h-full object-contain" aria-label={videoFileName || "Uploaded yoga pose video"} />
+              <video 
+                key={videoSrc} 
+                controls 
+                playsInline 
+                className="w-full h-full object-contain" 
+                aria-label={videoFileName || "Uploaded yoga pose video"}
+              >
+                <source src={videoSrc} type={videoMimeType} />
+                Your browser does not support the video tag.
+              </video>
             )
           ) : !isLoading && (
             <div className="flex flex-col items-center text-white/70 p-8 text-center">
