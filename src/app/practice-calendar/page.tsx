@@ -19,17 +19,17 @@ const TERRACOTTA= 'rgba(180,110,65';
 const SAGE      = 'rgba(120,140,100';
 const DEEP_BARK = 'rgba(25,16,8';
 
-const FONT_PANCAKE = "Didot, 'Bodoni MT', 'Century Schoolbook', 'Palatino Linotype', Georgia, serif";
+const FONT_PANCAKE = "'Cormorant Garamond', Georgia, serif";
 const FONT_CASUAL  = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
 
 function getThemeTokens(isDark: boolean) {
   return {
-    text: isDark ? `${PARCHMENT},0.92)` : `${DEEP_BARK},0.95)`,
-    muted: isDark ? `${GOLD},0.50)` : `${DEEP_BARK},0.60)`,
-    cardBg: isDark ? `${GOLD},0.07)` : 'rgba(255,255,255,0.65)',
-    cardBorder: isDark ? `${GOLD},0.20)` : 'rgba(140,100,55,0.25)',
-    accent: isDark ? `${GOLD},0.90)` : `${TERRACOTTA},1)`,
-    dayText: isDark ? `${PARCHMENT},0.85)` : `${DEEP_BARK},0.90)`,
+    text: 'rgba(255,240,215,0.92)',
+    muted: 'rgba(255,240,215,0.40)',
+    cardBg: `rgba(193,154,107,0.045)`,
+    cardBorder: `rgba(193,154,107,0.18)`,
+    accent: `rgba(193,154,107,0.85)`,
+    dayText: 'rgba(255,240,215,0.85)',
   };
 }
 
@@ -89,8 +89,13 @@ function GlassCard({ children, className, style, tokens }: {
 
 function SectionLabel({ children, tokens }: { children: React.ReactNode; tokens: ReturnType<typeof getThemeTokens> }) {
   return (
-    <p className="text-[10px] uppercase tracking-[0.25em] font-bold mb-4"
-       style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>
+    <p className="text-[10px] uppercase font-bold mb-4"
+       style={{ 
+         color: 'rgba(193,154,107,0.55)', 
+         fontFamily: FONT_CASUAL,
+         letterSpacing: '0.28em',
+         fontWeight: 500
+       }}>
       {children}
     </p>
   );
@@ -204,26 +209,36 @@ export default function PracticeCalendarPage() {
 
   return (
     <AppShell>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
       <div
         className="flex flex-col min-h-screen p-4 gap-6"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
         <header>
-          <h1 className="text-3xl font-bold" style={{ color: tokens.text, fontFamily: FONT_PANCAKE }}>
+          <h1 className="text-3xl font-bold" style={{ color: tokens.text, fontFamily: FONT_PANCAKE, fontWeight: 600 }}>
             Practice Journal
           </h1>
           <p className="text-[11px] uppercase tracking-widest mt-1" style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>
             Your mindful journey log
           </p>
+          <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 5 }} />
         </header>
 
-        <GlassCard className="p-4" style={{ borderRadius: '24px' }} tokens={tokens}>
+        <GlassCard 
+          className="p-4" 
+          style={{ 
+            borderRadius: '24px',
+            background: 'rgba(193,154,107,0.045)',
+            border: '0.5px solid rgba(193,154,107,0.18)'
+          }} 
+          tokens={tokens}
+        >
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={() => setWeekStart(w => subWeeks(w, 1))}
               className="w-8 h-8 rounded-full flex items-center justify-center transition-all"
-              style={{ background: isDark ? `${GOLD},0.12)` : 'rgba(0,0,0,0.05)', border: `0.5px solid ${tokens.cardBorder}` }}
+              style={{ background: isDark ? `${GOLD},0.12)` : 'rgba(0,0,0,0.05)', border: `0.5px solid rgba(193,154,107,0.18)` }}
             >
               <ChevronLeft className="h-4 w-4" style={{ color: tokens.accent }} />
             </button>
@@ -235,7 +250,7 @@ export default function PracticeCalendarPage() {
             <button
               onClick={() => setWeekStart(w => addWeeks(w, 1))}
               className="w-8 h-8 rounded-full flex items-center justify-center transition-all"
-              style={{ background: isDark ? `${GOLD},0.12)` : 'rgba(0,0,0,0.05)', border: `0.5px solid ${tokens.cardBorder}` }}
+              style={{ background: isDark ? `${GOLD},0.12)` : 'rgba(0,0,0,0.05)', border: `0.5px solid rgba(193,154,107,0.18)` }}
             >
               <ChevronRight className="h-4 w-4" style={{ color: tokens.accent }} />
             </button>
@@ -259,20 +274,20 @@ export default function PracticeCalendarPage() {
                 >
                   <span
                     className="text-[9px] uppercase font-bold"
-                    style={{ color: today ? tokens.accent : tokens.muted, fontFamily: FONT_CASUAL }}
+                    style={{ color: today ? tokens.accent : 'rgba(255,240,215,0.35)', fontFamily: FONT_CASUAL }}
                   >
                     {format(day, 'EEE')[0]}
                   </span>
                   <div
                     className="w-8 h-8 rounded-full flex items-center justify-center relative"
                     style={{
-                      background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
-                      border: `1px solid ${isActive ? tokens.accent : 'transparent'}`,
+                      background: today ? 'rgba(193,154,107,0.85)' : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)'),
+                      border: today ? 'none' : `0.5px solid rgba(193,154,107,0.16)`,
                     }}
                   >
                     <span
                       className="text-[12px] font-bold"
-                      style={{ color: tokens.dayText }}
+                      style={{ color: today ? 'rgba(25,16,8,0.95)' : tokens.dayText }}
                     >
                       {format(day, 'd')}
                     </span>
@@ -284,17 +299,17 @@ export default function PracticeCalendarPage() {
         </GlassCard>
 
         <div className="grid grid-cols-3 gap-3">
-          <GlassCard className="p-3 text-center" style={{ borderRadius: '16px' }} tokens={tokens}>
-            <p className="text-2xl font-bold" style={{ color: `${TERRACOTTA},0.90)`, fontFamily: FONT_PANCAKE }}>{weekStats.practiceDays}</p>
-            <p className="text-[8px] uppercase tracking-widest font-bold" style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>sessions</p>
+          <GlassCard className="p-3 text-center" style={{ borderRadius: '16px', border: '0.5px solid rgba(193,154,107,0.16)', background: 'rgba(193,154,107,0.04)' }} tokens={tokens}>
+            <p className="text-2xl font-bold" style={{ color: 'rgba(193,154,107,0.85)', fontFamily: FONT_PANCAKE }}>{weekStats.practiceDays}</p>
+            <p className="text-[8px] uppercase tracking-widest font-bold" style={{ color: 'rgba(255,240,215,0.35)', fontFamily: FONT_CASUAL }}>sessions</p>
           </GlassCard>
-          <GlassCard className="p-3 text-center" style={{ borderRadius: '16px' }} tokens={tokens}>
-            <p className="text-2xl font-bold" style={{ color: tokens.accent, fontFamily: FONT_PANCAKE }}>{weekStats.moodDays}</p>
-            <p className="text-[8px] uppercase tracking-widest font-bold" style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>moods</p>
+          <GlassCard className="p-3 text-center" style={{ borderRadius: '16px', border: '0.5px solid rgba(193,154,107,0.16)', background: 'rgba(193,154,107,0.04)' }} tokens={tokens}>
+            <p className="text-2xl font-bold" style={{ color: 'rgba(193,154,107,0.85)', fontFamily: FONT_PANCAKE }}>{weekStats.moodDays}</p>
+            <p className="text-[8px] uppercase tracking-widest font-bold" style={{ color: 'rgba(255,240,215,0.35)', fontFamily: FONT_CASUAL }}>moods</p>
           </GlassCard>
-          <GlassCard className="p-3 text-center" style={{ borderRadius: '16px' }} tokens={tokens}>
-            <p className="text-2xl font-bold" style={{ color: `${SAGE},0.90)`, fontFamily: FONT_PANCAKE }}>{weekStats.habitDots}</p>
-            <p className="text-[8px] uppercase tracking-widest font-bold" style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>habits</p>
+          <GlassCard className="p-3 text-center" style={{ borderRadius: '16px', border: '0.5px solid rgba(193,154,107,0.16)', background: 'rgba(193,154,107,0.04)' }} tokens={tokens}>
+            <p className="text-2xl font-bold" style={{ color: 'rgba(160,195,130,0.85)', fontFamily: FONT_PANCAKE }}>{weekStats.habitDots}</p>
+            <p className="text-[8px] uppercase tracking-widest font-bold" style={{ color: 'rgba(255,240,215,0.35)', fontFamily: FONT_CASUAL }}>habits</p>
           </GlassCard>
         </div>
 
@@ -382,14 +397,14 @@ export default function PracticeCalendarPage() {
                       <div
                         key={a.id}
                         className="flex items-center justify-between p-4 rounded-xl"
-                        style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)', border: `0.5px solid ${tokens.cardBorder}` }}
+                        style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)', border: `0.5px solid rgba(193,154,107,0.18)` }}
                       >
                         <div>
                           <p className="text-sm font-bold" style={{ color: tokens.text, fontFamily: FONT_PANCAKE }}>{a.identifiedPose || 'Yoga Practice'}</p>
                           <p className="text-[10px] opacity-40 uppercase" style={{ color: tokens.text, fontFamily: FONT_CASUAL }}>{format(a.createdAt.toDate(), 'h:mm a')}</p>
                         </div>
                         {a.score && (
-                          <div className="w-10 h-10 rounded-full border flex items-center justify-center text-xs font-bold" style={{ borderColor: tokens.cardBorder, color: tokens.accent }}>
+                          <div className="w-10 h-10 rounded-full border flex items-center justify-center text-xs font-bold" style={{ borderColor: 'rgba(193,154,107,0.18)', color: tokens.accent }}>
                             {a.score}
                           </div>
                         )}
@@ -402,7 +417,15 @@ export default function PracticeCalendarPage() {
           </GlassCard>
         )}
 
-        <GlassCard className="p-5" style={{ borderRadius: '24px' }} tokens={tokens}>
+        <GlassCard 
+          className="p-5" 
+          style={{ 
+            borderRadius: '24px',
+            background: 'rgba(25,16,8,0.50)',
+            border: '0.5px solid rgba(193,154,107,0.18)'
+          }} 
+          tokens={tokens}
+        >
           <SectionLabel tokens={tokens}>WEEK AT A GLANCE</SectionLabel>
           <div className="space-y-3">
             {[...HABITS, { id: 'mood', label: 'Mood', icon: Smile, color: tokens.accent }].map(item => (
@@ -427,7 +450,10 @@ export default function PracticeCalendarPage() {
                       const active = done || hasYoga;
                       return (
                         <div key={dateStr} className="aspect-[2/1] rounded-sm transition-colors duration-500" 
-                          style={{ background: active ? (item as any).color : (isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.01)') }} />
+                          style={{ 
+                            background: active ? (item as any).color : 'rgba(255,240,215,0.05)',
+                            border: active ? 'none' : '0.5px solid rgba(193,154,107,0.10)'
+                          }} />
                       );
                     }
                   })}
