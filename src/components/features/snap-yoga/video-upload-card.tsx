@@ -70,7 +70,7 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
         style={{ 
           borderRadius: '24px 12px 24px 24px',
           border: '0.5px solid rgba(193,154,107,0.18)',
-          background: 'rgba(25,16,8,0.50)',
+          background: 'rgba(13,20,30,0.55)',
           backdropFilter: 'blur(14px)',
         }}
       >
