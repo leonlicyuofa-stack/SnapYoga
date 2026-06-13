@@ -97,18 +97,18 @@ export default function HomePage() {
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, marginTop: 8 }}>
         <span style={{
           fontFamily: "Cormorant Garamond, Georgia, serif",
-          fontSize: 24, fontWeight: 400,
+          fontSize: 28, fontWeight: 400,
           letterSpacing: '0.08em',
           color: brandColor,
           transition: 'color 0.4s ease',
         }}>SnapYoga</span>
         <span style={{
           fontFamily: 'system-ui, sans-serif',
-          fontSize: 8, letterSpacing: '0.28em',
+          fontSize: 9, letterSpacing: '0.28em',
           textTransform: 'uppercase',
           color: tagColor,
           transition: 'color 0.4s ease',
-        }}>Listen · Guide · Activate</span>
+        }}>Listen • Guide • Activate</span>
         <div style={{ width: 26, height: 1, background: divColor, marginTop: 5, transition: 'background 0.4s ease' }} />
       </div>
 
