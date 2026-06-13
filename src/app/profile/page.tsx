@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -14,7 +15,7 @@ import { KeyRound, Save, Share2, Copy, MessageSquare, UserCircle, FileText, Star
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { firestore } from '@/lib/firebase/clientApp';
-import { doc, getDoc, DocumentData } from 'firebase/firestore';
+import { doc, getDoc, DocumentData, collection, query, where, getDocs, orderBy, Timestamp } from 'firebase/firestore';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
@@ -23,6 +24,7 @@ import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { format, subDays, startOfDay } from 'date-fns';
 
 
 const usernameChangeSchema = z.object({
@@ -68,6 +70,11 @@ export default function ProfilePage() {
   const [inviteLink, setInviteLink] = useState('');
   const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
 
+  // Progress States
+  const [practicePercent, setPracticePercent] = useState(0);
+  const [moodPercent, setMoodPercent] = useState(0);
+  const [habitsPercent, setHabitsPercent] = useState(0);
+
   const { 
     register: registerUsername, 
     handleSubmit: handleSubmitUsername, 
@@ -97,6 +104,37 @@ export default function ProfilePage() {
       getDoc(doc(firestore, 'users', user.uid)).then((snap) => {
         if (snap.exists()) setSubscriptionStatus(snap.data()?.subscriptionStatus ?? null);
       });
+
+      // Fetch Progress Data
+      const fetchProgress = async () => {
+        const now = new Date();
+        const sevenDaysAgo = subDays(now, 7);
+        const startOfSevenDaysAgo = startOfDay(sevenDaysAgo);
+
+        // 1. Practice (Total all-time for exercise goal)
+        const analysesRef = collection(firestore, 'users', user.uid, 'poseAnalyses');
+        const analysesSnap = await getDocs(analysesRef);
+        const exerciseHrs = (analysesSnap.size * 15) / 60;
+        setPracticePercent(Math.min(Math.round((exerciseHrs / 30) * 100), 100));
+
+        // 2. Mood (Last 7 days)
+        const moodsRef = collection(firestore, 'users', user.uid, 'moods');
+        const moodsQuery = query(moodsRef, where('loggedAt', '>=', startOfSevenDaysAgo));
+        const moodsSnap = await getDocs(moodsQuery);
+        setMoodPercent(Math.min(Math.round((moodsSnap.size / 7) * 100), 100));
+
+        // 3. Habits (Last 7 days)
+        const habitsRef = collection(firestore, 'users', user.uid, 'habits');
+        const habitsQuery = query(habitsRef, where('date', '>=', format(sevenDaysAgo, 'yyyy-MM-dd')));
+        const habitsSnap = await getDocs(habitsQuery);
+        let totalCompleted = 0;
+        habitsSnap.forEach(doc => {
+          totalCompleted += (doc.data().completed || []).length;
+        });
+        setHabitsPercent(Math.min(Math.round((totalCompleted / (5 * 7)) * 100), 100));
+      };
+
+      fetchProgress();
     }
   }, [user, setUsernameValue]);
 
@@ -161,6 +199,8 @@ export default function ProfilePage() {
         });
     }
   };
+
+  const getOffset = (pct: number) => 150.8 - (150.8 * pct / 100);
   
   if (authLoading && !user) {
     return <AppShell><div className="flex justify-center items-center min-h-screen"><SmileyRockLoader /></div></AppShell>;
@@ -176,7 +216,6 @@ export default function ProfilePage() {
       <div className="relative min-h-[calc(100vh-4rem)]">
         <div className="relative z-10 flex flex-col h-full">
             <header className="container mx-auto px-4 pt-12 pb-8 relative flex flex-col items-center">
-                {/* Theme Toggle - Absolute Positioned */}
                 <div className="absolute top-4 right-4">
                   <button
                     onClick={toggleTheme}
@@ -201,7 +240,6 @@ export default function ProfilePage() {
                   </button>
                 </div>
 
-                {/* Avatar Section */}
                 <div className="relative mb-4">
                   <div
                     style={{
@@ -230,7 +268,6 @@ export default function ProfilePage() {
                     )}
                   </div>
                   
-                  {/* Edit Badge */}
                   <Link
                     href="/onboarding/gender-profile"
                     style={{
@@ -252,7 +289,6 @@ export default function ProfilePage() {
                   </Link>
                 </div>
 
-                {/* Name Section */}
                 <h2
                   style={{
                     fontSize: 24,
@@ -265,7 +301,6 @@ export default function ProfilePage() {
                   {user?.displayName || user?.email?.split('@')[0] || 'Yogi'}
                 </h2>
 
-                {/* Badges Section */}
                 <div className="flex gap-2">
                   <div
                     style={{
@@ -302,6 +337,56 @@ export default function ProfilePage() {
 
             <main className="flex-grow container mx-auto px-4 mt-4">
               <div className="max-w-2xl mx-auto space-y-8 w-full pb-12">
+                  {/* My Progress */}
+                  <div className="space-y-1">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                        <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(193,154,107,0.55)' }}>My Progress</p>
+                        <span style={{ fontSize: 11, color: 'rgba(193,154,107,0.40)' }}>This Week</span>
+                      </div>
+                      <div style={{ 
+                        borderRadius: '24px 12px 24px 24px', 
+                        border: '0.5px solid rgba(193,154,107,0.18)', 
+                        background: 'rgba(25,16,8,0.50)', 
+                        padding: '14px 16px' 
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'flex-end' }}>
+                          {/* Practice */}
+                          <div className="flex flex-col items-center gap-2">
+                            <svg width="58" height="58" viewBox="0 0 58 58">
+                              <circle cx="29" cy="29" r="24" fill="none" stroke="rgba(255,240,215,0.07)" strokeWidth="5"/>
+                              <circle cx="29" cy="29" r="24" fill="none" stroke="rgba(193,154,107,0.85)" strokeWidth="5"
+                                strokeDasharray="150.8" strokeDashoffset={getOffset(practicePercent)} strokeLinecap="round"
+                                transform="rotate(-90 29 29)"/>
+                              <text x="29" y="34" textAnchor="middle" fontSize="13" fontWeight="700" fill="rgba(255,240,215,0.92)" fontFamily="Cormorant Garamond, serif">{practicePercent}%</text>
+                            </svg>
+                            <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: 'rgba(193,154,107,0.80)' }}>Practice</span>
+                          </div>
+                          {/* Mood */}
+                          <div className="flex flex-col items-center gap-2">
+                            <svg width="58" height="58" viewBox="0 0 58 58">
+                              <circle cx="29" cy="29" r="24" fill="none" stroke="rgba(255,240,215,0.07)" strokeWidth="5"/>
+                              <circle cx="29" cy="29" r="24" fill="none" stroke="rgba(160,195,130,0.85)" strokeWidth="5"
+                                strokeDasharray="150.8" strokeDashoffset={getOffset(moodPercent)} strokeLinecap="round"
+                                transform="rotate(-90 29 29)"/>
+                              <text x="29" y="34" textAnchor="middle" fontSize="13" fontWeight="700" fill="rgba(255,240,215,0.92)" fontFamily="Cormorant Garamond, serif">{moodPercent}%</text>
+                            </svg>
+                            <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: 'rgba(160,195,130,0.85)' }}>Mood</span>
+                          </div>
+                          {/* Habits */}
+                          <div className="flex flex-col items-center gap-2">
+                            <svg width="58" height="58" viewBox="0 0 58 58">
+                              <circle cx="29" cy="29" r="24" fill="none" stroke="rgba(255,240,215,0.07)" strokeWidth="5"/>
+                              <circle cx="29" cy="29" r="24" fill="none" stroke="rgba(200,140,90,0.85)" strokeWidth="5"
+                                strokeDasharray="150.8" strokeDashoffset={getOffset(habitsPercent)} strokeLinecap="round"
+                                transform="rotate(-90 29 29)"/>
+                              <text x="29" y="34" textAnchor="middle" fontSize="13" fontWeight="700" fill="rgba(255,240,215,0.92)" fontFamily="Cormorant Garamond, serif">{habitsPercent}%</text>
+                            </svg>
+                            <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: 'rgba(200,140,90,0.85)' }}>Habits</span>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+
                   {/* Username */}
                   <div className="space-y-1">
                       <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(193,154,107,0.55)', marginBottom: 6 }}>
