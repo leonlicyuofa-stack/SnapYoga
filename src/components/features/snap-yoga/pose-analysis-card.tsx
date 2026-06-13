@@ -31,7 +31,7 @@ function jointStatusClass(status: string): string {
   return 'border-[rgba(193,154,107,0.14)] bg-black/20';
 }
 
-function getScoreLevel(score: number): { label: string; color: string } {
+export function getScoreLevel(score: number): { label: string; color: string } {
   if (score <= 20)  return { label: 'One step at a time', color: 'rgba(200,120,90,0.90)' };
   if (score <= 40)  return { label: 'Almost there!',      color: 'rgba(200,140,90,0.90)' };
   if (score <= 60)  return { label: 'Good effort',        color: 'rgba(193,154,107,0.90)' };

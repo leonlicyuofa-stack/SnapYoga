@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { performPoseAnalysis, type AnalysisServiceOutput } from '@/app/actions/analyze-pose-action';
 import { summarizeFeedback, type SummarizeFeedbackInput, type SummarizeFeedbackOutput } from '@/ai/flows/summarize-feedback';
-import { PoseAnalysisCard } from './pose-analysis-card';
+import { PoseAnalysisCard, getScoreLevel } from './pose-analysis-card';
 import { FeedbackSubmissionCard } from './feedback-submission-card';
 import { RecommendedVideosCard, type StorageVideo } from './recommended-videos-card';
 import { AnalysisLoader } from './analysis-loader';
@@ -23,6 +23,7 @@ export function SnapYogaPageClient() {
   
   // Wizard State
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
+  const [showFullResults, setShowFullResults] = useState(false);
 
   const [videoDataUri, setVideoDataUri] = useState<string | null>(null);
   const [videoFileName, setVideoFileName] = useState<string | null>(null);
@@ -149,6 +150,16 @@ export function SnapYogaPageClient() {
     }
   };
 
+  const handleReset = () => {
+    setVideoDataUri(null);
+    setVideoFileName(null);
+    setUserNotes("");
+    setAnalysisResult(null);
+    setSummaryResult(null);
+    setShowFullResults(false);
+    setCurrentStep(1);
+  };
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
@@ -237,7 +248,7 @@ export function SnapYogaPageClient() {
             )}
 
             <div className="space-y-2">
-              <label style={{ fontSize: 10, uppercase: 'true', letterSpacing: '0.08em', color: 'rgba(193,154,107,0.55)', fontWeight: 600 }}>ADDITIONAL CONTEXT (OPTIONAL)</label>
+              <label style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(193,154,107,0.55)', fontWeight: 600 }}>ADDITIONAL CONTEXT (OPTIONAL)</label>
               <Textarea 
                 value={userNotes}
                 onChange={(e) => setUserNotes(e.target.value)}
@@ -254,8 +265,8 @@ export function SnapYogaPageClient() {
             <button 
               onClick={handleStartAnalysis}
               disabled={isLoadingAnalysis}
-              style={{ color: 'rgba(193,154,107,0.92)', background: 'rgba(193,154,107,0.12)', border: '0.5px solid rgba(193,154,107,0.40)', borderRadius: 999, padding: '12px 32px', fontSize: 14, fontWeight: 600 }}
-              className="w-full flex items-center justify-center gap-2 hover:bg-[rgba(193,154,107,0.18)] transition-all active:scale-95"
+              style={{ color: 'rgba(25,16,8,0.95)', background: 'rgba(193,154,107,0.85)', borderRadius: 999, padding: '12px 32px', fontSize: 14, fontWeight: 600 }}
+              className="w-full flex items-center justify-center gap-2 transition-all active:scale-95"
             >
               Analyze Pose <ArrowRight className="w-4 h-4" />
             </button>
@@ -264,38 +275,85 @@ export function SnapYogaPageClient() {
 
         {currentStep === 3 && (
           <div className="space-y-8 animate-in fade-in zoom-in-95 duration-500">
-            <div className="flex items-center justify-between">
-              <div>
-                <p style={{ fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.55)', fontWeight: 500 }}>Step 3 of 3</p>
-                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 20, fontWeight: 600, color: 'rgba(255,240,215,0.92)', marginTop: 4 }}>Analysis Results</h2>
-              </div>
-              <button 
-                onClick={() => setCurrentStep(1)}
-                style={{ fontSize: 11, color: 'rgba(193,154,107,0.85)', background: 'rgba(193,154,107,0.05)', padding: '6px 12px', borderRadius: 99, border: '0.5px solid rgba(193,154,107,0.20)' }}
-              >
-                Analyze Another
-              </button>
+            <div>
+              <p style={{ fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.55)', fontWeight: 500 }}>Step 3 of 3 · Results</p>
+              <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 20, fontWeight: 600, color: 'rgba(255,240,215,0.92)', marginTop: 4 }}>Your Analysis</h2>
             </div>
-
-            <PoseAnalysisCard
-              videoDataUri={videoDataUri}
-              videoFileName={videoFileName}
-              userNotes={userNotes}
-              analysis={analysisResult}
-              isLoading={isLoadingAnalysis}
-            />
 
             {analysisResult && (
               <>
-                <Separator className="bg-white/10" />
+                {/* Score Summary */}
+                <div className="flex flex-col items-center justify-center py-6">
+                  {(() => {
+                    const score = Math.round(analysisResult.score);
+                    const level = getScoreLevel(score);
+                    const offset = 251 - (251 * score / 100);
+                    return (
+                      <>
+                        <svg width="96" height="96" viewBox="0 0 100 100">
+                          <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,240,215,0.07)" strokeWidth="8"/>
+                          <circle cx="50" cy="50" r="40" fill="none" stroke={level.color} strokeWidth="8"
+                            strokeDasharray="251" strokeDashoffset={offset} strokeLinecap="round"
+                            transform="rotate(-90 50 50)"/>
+                          <text x="50" y="55" textAnchor="middle" fontSize="22" fontWeight="700" fill="rgba(255,240,215,0.92)" fontFamily="Cormorant Garamond, serif">{score}</text>
+                        </svg>
+                        <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 18, fontWeight: 600, fontStyle: 'italic', color: level.color, marginTop: 8 }}>{level.label}</p>
+                      </>
+                    );
+                  })()}
+                </div>
+
+                {/* Identified Pose Summary Card */}
+                <div style={{ borderRadius: 16, border: '0.5px solid rgba(193,154,107,0.18)', background: 'rgba(255,240,215,0.02)', padding: 20 }} className="text-center">
+                  <p style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.55)', fontWeight: 600 }}>Identified Pose</p>
+                  <h3 style={{ fontSize: 24, fontWeight: 700, color: 'white', marginTop: 4 }}>{analysisResult.identifiedPose}</h3>
+                  <p style={{ fontSize: 12, color: 'rgba(255,240,215,0.40)', marginTop: 12 }}>Does this correctly identify your pose?</p>
+                  <div className="flex justify-center gap-3 mt-4">
+                    <button style={{ borderRadius: 99, border: '0.5px solid rgba(193,154,107,0.40)', padding: '6px 20px', fontSize: 12, color: 'white', background: 'rgba(255,255,255,0.05)' }} className="hover:bg-white/10 transition-colors">Yes</button>
+                    <button style={{ borderRadius: 99, border: '0.5px solid rgba(193,154,107,0.40)', padding: '6px 20px', fontSize: 12, color: 'white', background: 'rgba(255,255,255,0.05)' }} className="hover:bg-white/10 transition-colors">No</button>
+                  </div>
+                </div>
+
+                {/* View Full Feedback Trigger */}
+                <button 
+                  onClick={() => setShowFullResults(!showFullResults)}
+                  style={{ color: 'rgba(193,154,107,0.92)', background: 'rgba(193,154,107,0.12)', border: '0.5px solid rgba(193,154,107,0.40)', borderRadius: 999, padding: '8px 20px', fontSize: 13, fontWeight: 500 }}
+                  className="flex items-center gap-2 hover:bg-[rgba(193,154,107,0.18)] transition-all mx-auto"
+                >
+                  {showFullResults ? "Hide Full Report" : "View Full Feedback →"}
+                </button>
+
+                {showFullResults && (
+                  <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+                    <PoseAnalysisCard
+                      videoDataUri={videoDataUri}
+                      videoFileName={videoFileName}
+                      userNotes={userNotes}
+                      analysis={analysisResult}
+                      isLoading={isLoadingAnalysis}
+                    />
+                  </div>
+                )}
+
+                <Separator className="bg-white/10 my-8" />
+                
                 <FeedbackSubmissionCard
                   onFeedbackSubmit={handleFeedbackSubmit}
                   isLoading={isLoadingSummary}
                   summary={summaryResult}
                   isAnalysisDone={!!analysisResult && analysisResult.feedback !== "Analysis failed. Please try again."}
                 />
-                <Separator className="bg-white/10" />
+                
+                <Separator className="bg-white/10 my-8" />
+                
                 <RecommendedVideosCard videos={[]} isLoading={isLoadingRecommendations} />
+
+                <button 
+                  onClick={handleReset}
+                  className="text-white/40 hover:text-white/60 text-xs italic w-full text-center mt-8 pb-12 transition-colors"
+                >
+                  Analyze another pose
+                </button>
               </>
             )}
           </div>
@@ -312,4 +370,3 @@ export function SnapYogaPageClient() {
     </div>
   );
 }
-
