@@ -171,158 +171,176 @@ export default function ProfilePage() {
 
   return (
     <AppShell>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
       <div className="relative min-h-[calc(100vh-4rem)]">
-        <div className="absolute top-0 left-0 right-0 h-[25vh] bg-secondary rounded-b-3xl" />
         <div className="relative z-10 flex flex-col h-full">
-            <header className="container mx-auto px-4 pt-8 pb-4 text-primary-foreground">
-                <h1 className="text-3xl font-bold text-primary flex items-center gap-3">
-                    <UserCircle className="h-8 w-8" />
+            <header className="container mx-auto px-4 pt-8 pb-4">
+                <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, color: 'rgba(255,240,215,0.92)', fontSize: 32, display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <UserCircle className="h-8 w-8" style={{ color: 'rgba(193,154,107,0.85)' }} />
                     Your Profile
                 </h1>
-                <p className="text-md text-primary/80">Manage your account settings and preferences.</p>
+                <p style={{ color: 'rgba(255,240,215,0.40)', fontStyle: 'italic', fontSize: 16, margin: '4px 0 0' }}>
+                    Manage your account settings and preferences.
+                </p>
+                <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 8 }} />
             </header>
 
             <main className="flex-grow container mx-auto px-4 mt-8">
               <div className="max-w-2xl mx-auto space-y-8 w-full">
                   {/* Username */}
-                  <Card className="bg-card/90 backdrop-blur-sm rounded-2xl shadow-xl border">
-                      <CardHeader>
-                          <CardTitle className="flex items-center gap-2 text-xl">
-                              <UserCircle className="h-6 w-6 text-primary" />
-                              Username
-                          </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                          <form onSubmit={handleSubmitUsername(onUsernameSubmit)} className="space-y-4">
-                              <div className="space-y-2">
-                                  <Label htmlFor="username" className="sr-only">Your username</Label>
-                                  <div className="flex items-center gap-2">
-                                      <Input 
-                                          id="username" 
-                                          type="text"
-                                          {...registerUsername("username")}
-                                          className={cn(usernameErrors.username ? "border-destructive" : "", "flex-grow h-12 text-base rounded-lg")}
-                                      />
-                                      <Button type="submit" disabled={isUsernameSubmitting || authLoading} className="h-12 rounded-lg">
-                                          {isUsernameSubmitting ? <SmileyRockLoader /> : <Save className="h-4 w-4" />}
-                                      </Button>
+                  <div className="space-y-1">
+                      <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(193,154,107,0.55)', marginBottom: 6 }}>
+                        Username
+                      </p>
+                      <Card className="rounded-2xl shadow-xl border overflow-hidden" style={{ border: '0.5px solid rgba(193,154,107,0.18)', background: 'rgba(193,154,107,0.045)' }}>
+                          <CardHeader className="pb-2">
+                              <CardTitle className="flex items-center gap-2 text-lg text-white/90">
+                                  <UserCircle className="h-5 w-5" style={{ color: 'rgba(193,154,107,0.85)' }} />
+                                  Display Name
+                              </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                              <form onSubmit={handleSubmitUsername(onUsernameSubmit)} className="space-y-4">
+                                  <div className="space-y-2">
+                                      <Label htmlFor="username" className="sr-only">Your username</Label>
+                                      <div className="flex items-center gap-2">
+                                          <Input 
+                                              id="username" 
+                                              type="text"
+                                              {...registerUsername("username")}
+                                              className={cn(usernameErrors.username ? "border-destructive" : "", "flex-grow h-12 text-base rounded-lg bg-black/10 border-white/10 text-white")}
+                                          />
+                                          <Button type="submit" disabled={isUsernameSubmitting || authLoading} className="h-12 w-12 rounded-lg" style={{ background: 'rgba(193,154,107,0.20)', color: 'rgba(193,154,107,0.85)' }}>
+                                              {isUsernameSubmitting ? <SmileyRockLoader /> : <Save className="h-5 w-5" />}
+                                          </Button>
+                                      </div>
+                                      {usernameErrors.username && <p className="text-sm text-destructive">{usernameErrors.username.message}</p>}
                                   </div>
-                                  {usernameErrors.username && <p className="text-sm text-destructive">{usernameErrors.username.message}</p>}
-                              </div>
-                          </form>
-                      </CardContent>
-                  </Card>
+                              </form>
+                          </CardContent>
+                      </Card>
+                  </div>
 
                   {/* Subscription */}
-                  <Card className="bg-card/90 backdrop-blur-sm rounded-2xl shadow-xl border">
-                      <CardHeader>
-                          <CardTitle className="flex items-center gap-2 text-xl">
-                              <Crown className="h-6 w-6 text-primary" />
-                              Subscription
-                          </CardTitle>
-                          <CardDescription>Manage your SnapYoga plan.</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                          {subscriptionStatus === 'active' ? (
-                              <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-2">
-                                      <Badge className="bg-green-500 hover:bg-green-500 text-white gap-1">
-                                          <Star className="h-3 w-3" /> Premium Active
-                                      </Badge>
-                                      <span className="text-sm text-muted-foreground">Monthly plan</span>
+                  <div className="space-y-1">
+                      <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(193,154,107,0.55)', marginBottom: 6 }}>
+                        Subscription
+                      </p>
+                      <Card className="shadow-xl border overflow-hidden" style={{ background: 'rgba(180,110,65,0.10)', border: '0.5px solid rgba(193,154,107,0.18)', borderRadius: '24px 12px 24px 24px' }}>
+                          <CardHeader className="pb-2">
+                              <CardTitle className="flex items-center gap-2 text-lg text-white/90">
+                                  <Crown className="h-5 w-5" style={{ color: 'rgba(193,154,107,0.85)' }} />
+                                  Membership
+                              </CardTitle>
+                              <CardDescription className="text-white/40 italic">Manage your SnapYoga plan.</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                              {subscriptionStatus === 'active' ? (
+                                  <div className="flex items-center justify-between">
+                                      <div className="flex items-center gap-2">
+                                          <Badge className="bg-green-500/20 hover:bg-green-500/20 text-green-400 gap-1 border-green-500/30">
+                                              <Star className="h-3 w-3" /> Premium Active
+                                          </Badge>
+                                          <span className="text-sm text-white/60">Monthly plan</span>
+                                      </div>
+                                      <Button variant="outline" asChild className="h-9 rounded-lg text-sm bg-white/5 border-white/10 text-white">
+                                          <Link href="/upgrade">Manage</Link>
+                                      </Button>
                                   </div>
-                                  <Button variant="outline" asChild className="h-9 rounded-lg text-sm">
-                                      <Link href="/upgrade">Manage</Link>
-                                  </Button>
-                              </div>
-                          ) : (
-                              <div className="flex items-center justify-between">
-                                  <div>
-                                      <p className="font-medium">Free Plan</p>
-                                      <p className="text-sm text-muted-foreground">Upgrade to unlock all features.</p>
+                              ) : (
+                                  <div className="flex items-center justify-between">
+                                      <div>
+                                          <p className="font-medium text-white/90">Free Plan</p>
+                                          <p className="text-sm text-white/50">Upgrade to unlock all features.</p>
+                                      </div>
+                                      <Button asChild className="h-10 px-6 rounded-full font-bold transition-transform hover:scale-105" style={{ background: 'rgba(193,154,107,0.85)', color: 'rgba(25,16,8,0.95)' }}>
+                                          <Link href="/upgrade" className="flex items-center gap-2"><Star className="h-4 w-4" /> Upgrade</Link>
+                                      </Button>
                                   </div>
-                                  <Button asChild className="h-10 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-semibold gap-1">
-                                      <Link href="/upgrade"><Star className="h-4 w-4" /> Upgrade</Link>
-                                  </Button>
-                              </div>
-                          )}
-                      </CardContent>
-                  </Card>
+                              )}
+                          </CardContent>
+                      </Card>
+                  </div>
 
                   {/* Change Password */}
-                  <Card className="bg-card/90 backdrop-blur-sm rounded-2xl shadow-xl border">
-                      <CardHeader>
-                          <CardTitle className="flex items-center gap-2 text-xl">
-                              <KeyRound className="h-6 w-6 text-primary" />
-                              Change Password
-                          </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                          <form onSubmit={handleSubmitPassword(onPasswordSubmit)} className="space-y-4">
-                              <div className="space-y-2">
-                                  <Label htmlFor="currentPassword">Current Password</Label>
-                                  <Input id="currentPassword" type="password" {...registerPassword("currentPassword")} placeholder="••••••••" className={cn(passwordErrors.currentPassword ? "border-destructive" : "", "h-12 text-base rounded-lg")}/>
-                                  {passwordErrors.currentPassword && <p className="text-sm text-destructive">{passwordErrors.currentPassword.message}</p>}
-                              </div>
-                              <div className="space-y-2">
-                                  <Label htmlFor="newPassword">New Password</Label>
-                                  <Input id="newPassword" type="password" {...registerPassword("newPassword")} placeholder="Minimum 6 characters" className={cn(passwordErrors.newPassword ? "border-destructive" : "", "h-12 text-base rounded-lg")}/>
-                                  {passwordErrors.newPassword && <p className="text-sm text-destructive">{passwordErrors.newPassword.message}</p>}
-                              </div>
-                              <div className="space-y-2">
-                                  <Label htmlFor="confirmNewPassword">Confirm New Password</Label>
-                                  <Input id="confirmNewPassword" type="password" {...registerPassword("confirmNewPassword")} placeholder="Re-type new password" className={cn(passwordErrors.confirmNewPassword ? "border-destructive" : "", "h-12 text-base rounded-lg")}/>
-                                  {passwordErrors.confirmNewPassword && <p className="text-sm text-destructive">{passwordErrors.confirmNewPassword.message}</p>}
-                              </div>
-                              <Button type="submit" className="w-full h-12 rounded-lg" disabled={isPasswordSubmitting || authLoading}>
-                                  {isPasswordSubmitting ? <SmileyRockLoader /> : <Save className="mr-2 h-4 w-4" />}
-                                  {isPasswordSubmitting ? "Updating..." : "Update Password"}
-                              </Button>
-                          </form>
-                      </CardContent>
-                  </Card>
+                  <div className="space-y-1">
+                      <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(193,154,107,0.55)', marginBottom: 6 }}>
+                        Security
+                      </p>
+                      <Card className="rounded-2xl shadow-xl border overflow-hidden" style={{ border: '0.5px solid rgba(193,154,107,0.18)', background: 'rgba(25,16,8,0.50)' }}>
+                          <CardHeader className="pb-2">
+                              <CardTitle className="flex items-center gap-2 text-lg text-white/90">
+                                  <KeyRound className="h-5 w-5" style={{ color: 'rgba(193,154,107,0.80)' }} />
+                                  Change Password
+                              </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                              <form onSubmit={handleSubmitPassword(onPasswordSubmit)} className="space-y-4">
+                                  <div className="space-y-2">
+                                      <Label htmlFor="currentPassword text-white/60">Current Password</Label>
+                                      <Input id="currentPassword" type="password" {...registerPassword("currentPassword")} placeholder="••••••••" className={cn(passwordErrors.currentPassword ? "border-destructive" : "", "h-12 text-base rounded-lg bg-black/20 border-white/10 text-white")}/>
+                                      {passwordErrors.currentPassword && <p className="text-sm text-destructive">{passwordErrors.currentPassword.message}</p>}
+                                  </div>
+                                  <div className="space-y-2">
+                                      <Label htmlFor="newPassword text-white/60">New Password</Label>
+                                      <Input id="newPassword" type="password" {...registerPassword("newPassword")} placeholder="Minimum 6 characters" className={cn(passwordErrors.newPassword ? "border-destructive" : "", "h-12 text-base rounded-lg bg-black/20 border-white/10 text-white")}/>
+                                      {passwordErrors.newPassword && <p className="text-sm text-destructive">{passwordErrors.newPassword.message}</p>}
+                                  </div>
+                                  <div className="space-y-2">
+                                      <Label htmlFor="confirmNewPassword text-white/60">Confirm New Password</Label>
+                                      <Input id="confirmNewPassword" type="password" {...registerPassword("confirmNewPassword")} placeholder="Re-type new password" className={cn(passwordErrors.confirmNewPassword ? "border-destructive" : "", "h-12 text-base rounded-lg bg-black/20 border-white/10 text-white")}/>
+                                      {passwordErrors.confirmNewPassword && <p className="text-sm text-destructive">{passwordErrors.confirmNewPassword.message}</p>}
+                                  </div>
+                                  <Button type="submit" className="w-full h-12 rounded-lg bg-white/10 hover:bg-white/20 text-white" disabled={isPasswordSubmitting || authLoading}>
+                                      {isPasswordSubmitting ? <SmileyRockLoader /> : <Save className="mr-2 h-4 w-4" />}
+                                      {isPasswordSubmitting ? "Updating..." : "Update Password"}
+                                  </Button>
+                              </form>
+                          </CardContent>
+                      </Card>
+                  </div>
 
                   {/* Analysis Logs */}
-                  <Card className="bg-card/90 backdrop-blur-sm rounded-2xl shadow-xl border">
+                  <Card className="rounded-2xl shadow-xl border bg-black/20 border-white/10">
                       <CardHeader>
-                          <CardTitle className="flex items-center gap-2 text-xl">
+                          <CardTitle className="flex items-center gap-2 text-xl text-white/90">
                               <FileText className="h-6 w-6 text-primary" />
                               Your Past Analysis
                           </CardTitle>
-                          <CardDescription>Review your past pose analysis sessions.</CardDescription>
+                          <CardDescription className="text-white/40 italic">Review your past pose analysis sessions.</CardDescription>
                       </CardHeader>
                       <CardContent>
-                          <Button variant="outline" asChild className="w-full h-12 text-base rounded-lg">
+                          <Button variant="outline" asChild className="w-full h-12 text-base rounded-lg border-white/10 bg-transparent text-white hover:bg-white/5">
                               <Link href="/profile/analysis-logs">View your analysis</Link>
                           </Button>
                       </CardContent>
                   </Card>
 
                   {/* Invite Friends */}
-                  <Card className="bg-card/90 backdrop-blur-sm rounded-2xl shadow-xl border">
+                  <Card className="rounded-2xl shadow-xl border bg-black/20 border-white/10">
                       <CardHeader>
-                          <CardTitle className="flex items-center gap-2 text-xl">
+                          <CardTitle className="flex items-center gap-2 text-xl text-white/90">
                               <Share2 className="h-6 w-6 text-primary" />
                               {t('inviteFriendsTitle')}
                           </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                          <div className="text-center p-3 bg-green-100/50 text-green-800 border border-green-200 rounded-lg text-sm font-medium">
+                          <div className="text-center p-3 bg-green-500/10 text-green-400 border border-green-500/20 rounded-lg text-sm font-medium">
                               {t('referralBonusText')}
                           </div>
                           <div>
-                              <p className="text-sm font-medium mb-1">{t('yourInviteLink')}</p>
+                              <p className="text-sm font-medium mb-1 text-white/60">{t('yourInviteLink')}</p>
                               <div className="flex items-center space-x-2">
-                                  <Input type="text" value={inviteLink} readOnly className="text-sm text-muted-foreground h-12 text-base rounded-lg" aria-label="Invite Link" />
-                                  <Button variant="outline" size="icon" onClick={handleCopyInviteLink} title="Copy Link" className="h-12 w-12 rounded-lg"><Copy className="h-5 w-5" /></Button>
+                                  <Input type="text" value={inviteLink} readOnly className="text-sm text-white/80 h-12 text-base rounded-lg bg-black/20 border-white/10" aria-label="Invite Link" />
+                                  <Button variant="outline" size="icon" onClick={handleCopyInviteLink} title="Copy Link" className="h-12 w-12 rounded-lg border-white/10 bg-transparent text-white hover:bg-white/5"><Copy className="h-5 w-5" /></Button>
                               </div>
                           </div>
                           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                              <Button variant="outline" className="w-full rounded-lg h-12" asChild disabled={!inviteLink}><a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer"><MessageSquare className="mr-2 h-5 w-5" /> WhatsApp</a></Button>
-                              <Button variant="outline" className="w-full rounded-lg h-12" onClick={handleInstagramShare} disabled={!inviteLink}><Share2 className="mr-2 h-5 w-5" /> Instagram</Button>
-                              <Button variant="outline" className="w-full rounded-lg h-12" asChild disabled={!inviteLink}><a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer"><PinterestIcon className="mr-2 h-5 w-5" /> Pinterest</a></Button>
+                              <Button variant="outline" className="w-full rounded-lg h-12 border-white/10 bg-transparent text-white hover:bg-white/5" asChild disabled={!inviteLink}><a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer"><MessageSquare className="mr-2 h-5 w-5" /> WhatsApp</a></Button>
+                              <Button variant="outline" className="w-full rounded-lg h-12 border-white/10 bg-transparent text-white hover:bg-white/5" onClick={handleInstagramShare} disabled={!inviteLink}><Share2 className="mr-2 h-5 w-5" /> Instagram</Button>
+                              <Button variant="outline" className="w-full rounded-lg h-12 border-white/10 bg-transparent text-white hover:bg-white/5" asChild disabled={!inviteLink}><a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer"><PinterestIcon className="mr-2 h-5 w-5" /> Pinterest</a></Button>
                           </div>
-                          <p className="text-xs text-muted-foreground text-center w-full !mt-6">
+                          <p className="text-xs text-white/40 text-center w-full !mt-6">
                               {t('inviteLinkHelp')}
                           </p>
                       </CardContent>
