@@ -1,22 +1,21 @@
 "use client";
 
-import { useState } from 'react';
-// Import the new server action
+import { useState, useRef } from 'react';
 import { performPoseAnalysis, type AnalysisServiceOutput } from '@/app/actions/analyze-pose-action';
 import { summarizeFeedback, type SummarizeFeedbackInput, type SummarizeFeedbackOutput } from '@/ai/flows/summarize-feedback';
-import { VideoUploadCard } from './video-upload-card';
 import { PoseAnalysisCard } from './pose-analysis-card';
 import { FeedbackSubmissionCard } from './feedback-submission-card';
 import { RecommendedVideosCard, type StorageVideo } from './recommended-videos-card';
 import { AnalysisLoader } from './analysis-loader';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal, Sun, Moon } from "lucide-react";
+import { Terminal, Sun, Moon, Video, Play, ArrowRight, MessageCircle } from "lucide-react";
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useTheme } from '@/contexts/ThemeContext';
+import { Textarea } from '@/components/ui/textarea';
 
 export function SnapYogaPageClient() {
   const { user: currentUser } = useAuth();
@@ -27,7 +26,7 @@ export function SnapYogaPageClient() {
 
   const [videoDataUri, setVideoDataUri] = useState<string | null>(null);
   const [videoFileName, setVideoFileName] = useState<string | null>(null);
-  const [userNotes, setUserNotes] = useState<string | null>(null);
+  const [userNotes, setUserNotes] = useState<string>("");
   const [analysisResult, setAnalysisResult] = useState<AnalysisServiceOutput | null>(null);
   const [summaryResult, setSummaryResult] = useState<SummarizeFeedbackOutput | null>(null);
   const [recommendedVideos, setRecommendedVideos] = useState<StorageVideo[]>([]);
@@ -38,21 +37,40 @@ export function SnapYogaPageClient() {
   const [error, setError] = useState<string | null>(null);
 
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleVideoUpload = async (dataUri: string, fileName: string, notes: string) => {
-    if (!currentUser) {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.type.startsWith('video/')) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setVideoDataUri(reader.result as string);
+          setVideoFileName(file.name);
+          setCurrentStep(2);
+        };
+        reader.readAsDataURL(file);
+      } else {
         toast({
-            title: "Authentication Required",
-            description: "You must be logged in to analyze a pose.",
+          title: "Invalid File Type",
+          description: "Please select a video file.",
+          variant: "destructive",
+        });
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleStartAnalysis = async () => {
+    if (!currentUser || !videoDataUri) {
+        toast({
+            title: "Error",
+            description: "Missing video data or authentication.",
             variant: "destructive",
         });
         return;
     }
 
-    // Set initial local state for immediate feedback
-    setVideoDataUri(dataUri);
-    setVideoFileName(fileName);
-    setUserNotes(notes);
     setAnalysisResult(null); 
     setSummaryResult(null); 
     setRecommendedVideos([]);
@@ -61,36 +79,33 @@ export function SnapYogaPageClient() {
     setIsLoadingRecommendations(true);
 
     try {
-      // Call the server action to upload and analyze
       const result = await performPoseAnalysis({ 
-          videoDataUri: dataUri,
+          videoDataUri: videoDataUri,
           userId: currentUser.uid,
-          userNotes: notes,
+          userNotes: userNotes,
       });
       
-      // CRITICAL: Update the source URI to the final cloud URL FIRST
       if (result.videoUrl) {
           setVideoDataUri(result.videoUrl);
       }
       
       setAnalysisResult(result);
 
-      // Save the analysis result to Firestore
       try {
         const analysisDataToSave = {
-          videoFileName: fileName,
-          userNotes: notes || null,
+          videoFileName: videoFileName,
+          userNotes: userNotes || null,
           ...result,
           createdAt: serverTimestamp(),
         };
         const userAnalysesCollectionRef = collection(firestore, 'users', currentUser.uid, 'poseAnalyses');
         await addDoc(userAnalysesCollectionRef, analysisDataToSave);
-        console.log("Analysis metadata saved successfully to Firestore.");
       } catch (saveError: any) {
         console.error("Error saving analysis to Firestore:", saveError);
       }
 
       setIsLoadingRecommendations(false);
+      setCurrentStep(3);
 
     } catch (e: any) {
       console.error("Error analyzing pose:", e);
@@ -101,7 +116,6 @@ export function SnapYogaPageClient() {
         description: `${errorMessage}`,
         variant: "destructive",
       });
-      setAnalysisResult({ feedback: "Analysis failed. Please try again.", score: 0, identifiedPose: "Unknown", videoUrl: "" });
       setIsLoadingRecommendations(false);
     } finally {
       setIsLoadingAnalysis(false);
@@ -136,14 +150,14 @@ export function SnapYogaPageClient() {
   };
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-6 max-w-4xl mx-auto">
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
+      
       {isLoadingAnalysis && <AnalysisLoader />}
       
-      {/* WIZARD STRUCTURE */}
       <div style={{ padding: '16px 14px', display: 'flex', flexDirection: 'column' }}>
-        {/* Top bar: back arrow (steps 2-3 only) + theme toggle */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          {currentStep > 1 ? (
+          {currentStep > 1 && !isLoadingAnalysis ? (
             <button
               onClick={() => setCurrentStep((s) => (s - 1) as 1 | 2 | 3)}
               style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: 'rgba(255,240,215,0.70)' }}
@@ -161,85 +175,141 @@ export function SnapYogaPageClient() {
           </button>
         </div>
 
-        {/* Progress bar — 3 segments */}
-        <div style={{ display: 'flex', gap: 5, marginBottom: 16 }}>
+        <div style={{ display: 'flex', gap: 5, marginBottom: 24 }}>
           {[1, 2, 3].map((seg) => (
             <div key={seg} style={{ flex: 1, height: 3, borderRadius: 2, background: currentStep >= seg ? 'rgba(193,154,107,0.85)' : 'rgba(255,240,215,0.10)' }} />
           ))}
         </div>
 
-        {/* Step content placeholders */}
         {currentStep === 1 && (
-          <div className="p-8 border border-dashed border-white/10 rounded-xl text-center">
-            <h2 className="text-white mb-4">Step 1: Upload Pose</h2>
-            <button 
-              onClick={() => setCurrentStep(2)}
-              className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg"
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div>
+              <p style={{ fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.55)', fontWeight: 500 }}>Step 1 of 3</p>
+              <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 20, fontWeight: 600, color: 'rgba(255,240,215,0.92)', marginTop: 4 }}>Upload Your Video</h2>
+              <p style={{ fontSize: 10, fontStyle: 'italic', color: 'rgba(255,240,215,0.42)', marginTop: 2 }}>Record or select a video of your yoga pose for AI analysis.</p>
+            </div>
+
+            <div 
+              onClick={() => fileInputRef.current?.click()}
+              style={{ 
+                border: '1px dashed rgba(193,154,107,0.35)', 
+                borderRadius: 18, 
+                background: 'rgba(193,154,107,0.04)', 
+                minHeight: '240px' 
+              }}
+              className="flex flex-col items-center justify-center p-8 cursor-pointer hover:bg-[rgba(193,154,107,0.07)] transition-colors text-center group"
             >
-              Go to Step 2 (Demo)
-            </button>
+              <div className="w-16 h-16 rounded-full bg-[rgba(193,154,107,0.12)] flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
+                <Video style={{ color: 'rgba(193,154,107,0.85)' }} className="w-8 h-8" />
+              </div>
+              <p className="text-white/80 font-medium mb-1">Tap to upload a video of your practice</p>
+              <p className="text-white/40 text-xs">MP4, MOV · Max 50MB</p>
+              
+              <div className="mt-6">
+                <span style={{ color: 'rgba(193,154,107,0.92)', background: 'rgba(193,154,107,0.12)', border: '0.5px solid rgba(193,154,107,0.40)', borderRadius: 999, padding: '8px 24px', fontSize: 13, fontWeight: 500 }}>
+                  Choose Video
+                </span>
+              </div>
+              
+              <input 
+                type="file" 
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept="video/*"
+                className="hidden"
+              />
+            </div>
           </div>
         )}
+
         {currentStep === 2 && (
-          <div className="p-8 border border-dashed border-white/10 rounded-xl text-center">
-            <h2 className="text-white mb-4">Step 2: Processing</h2>
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+            <div>
+              <p style={{ fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.55)', fontWeight: 500 }}>Step 2 of 3</p>
+              <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 20, fontWeight: 600, color: 'rgba(255,240,215,0.92)', marginTop: 4 }}>Review & Add Context</h2>
+              <p style={{ fontSize: 10, fontStyle: 'italic', color: 'rgba(255,240,215,0.42)', marginTop: 2 }}>Confirm your video and add any notes before analysis.</p>
+            </div>
+
+            {videoDataUri && (
+              <div style={{ height: '150px', borderRadius: 16, border: '0.5px solid rgba(193,154,107,0.18)', overflow: 'hidden', background: 'black' }}>
+                <video src={videoDataUri} controls className="w-full h-full object-contain" />
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <label style={{ fontSize: 10, uppercase: 'true', letterSpacing: '0.08em', color: 'rgba(193,154,107,0.55)', fontWeight: 600 }}>ADDITIONAL CONTEXT (OPTIONAL)</label>
+              <Textarea 
+                value={userNotes}
+                onChange={(e) => setUserNotes(e.target.value)}
+                placeholder="E.g., I'm feeling stiffness in my hamstrings..."
+                style={{ 
+                  border: '0.5px solid rgba(193,154,107,0.14)', 
+                  background: 'rgba(255,240,215,0.02)',
+                  minHeight: '120px'
+                }}
+                className="text-white placeholder:text-[rgba(255,240,215,0.30)] rounded-xl"
+              />
+            </div>
+
             <button 
-              onClick={() => setCurrentStep(3)}
-              className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg"
+              onClick={handleStartAnalysis}
+              disabled={isLoadingAnalysis}
+              style={{ color: 'rgba(193,154,107,0.92)', background: 'rgba(193,154,107,0.12)', border: '0.5px solid rgba(193,154,107,0.40)', borderRadius: 999, padding: '12px 32px', fontSize: 14, fontWeight: 600 }}
+              className="w-full flex items-center justify-center gap-2 hover:bg-[rgba(193,154,107,0.18)] transition-all active:scale-95"
             >
-              Go to Step 3 (Demo)
+              Analyze Pose <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         )}
+
         {currentStep === 3 && (
-          <div className="p-8 border border-dashed border-white/10 rounded-xl text-center">
-            <h2 className="text-white mb-4">Step 3: Results</h2>
-            <p className="text-white/60 italic">Your analysis results will appear here.</p>
+          <div className="space-y-8 animate-in fade-in zoom-in-95 duration-500">
+            <div className="flex items-center justify-between">
+              <div>
+                <p style={{ fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.55)', fontWeight: 500 }}>Step 3 of 3</p>
+                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 20, fontWeight: 600, color: 'rgba(255,240,215,0.92)', marginTop: 4 }}>Analysis Results</h2>
+              </div>
+              <button 
+                onClick={() => setCurrentStep(1)}
+                style={{ fontSize: 11, color: 'rgba(193,154,107,0.85)', background: 'rgba(193,154,107,0.05)', padding: '6px 12px', borderRadius: 99, border: '0.5px solid rgba(193,154,107,0.20)' }}
+              >
+                Analyze Another
+              </button>
+            </div>
+
+            <PoseAnalysisCard
+              videoDataUri={videoDataUri}
+              videoFileName={videoFileName}
+              userNotes={userNotes}
+              analysis={analysisResult}
+              isLoading={isLoadingAnalysis}
+            />
+
+            {analysisResult && (
+              <>
+                <Separator className="bg-white/10" />
+                <FeedbackSubmissionCard
+                  onFeedbackSubmit={handleFeedbackSubmit}
+                  isLoading={isLoadingSummary}
+                  summary={summaryResult}
+                  isAnalysisDone={!!analysisResult && analysisResult.feedback !== "Analysis failed. Please try again."}
+                />
+                <Separator className="bg-white/10" />
+                <RecommendedVideosCard videos={[]} isLoading={isLoadingRecommendations} />
+              </>
+            )}
           </div>
         )}
       </div>
 
       {error && (
-        <Alert variant="destructive" className="shadow-md">
+        <Alert variant="destructive" className="shadow-md mx-4">
           <Terminal className="h-4 w-4" />
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-
-      {/* Legacy layout for now — will be integrated into steps in next prompts */}
-      <div className="flex flex-col gap-8 items-start opacity-50">
-        <VideoUploadCard 
-            onVideoUpload={handleVideoUpload} 
-            isLoading={isLoadingAnalysis}
-        />
-        
-        <PoseAnalysisCard
-          videoDataUri={videoDataUri}
-          videoFileName={videoFileName}
-          userNotes={userNotes}
-          analysis={analysisResult}
-          isLoading={isLoadingAnalysis}
-        />
-      </div>
-      
-      {analysisResult && <Separator className="my-8" />}
-
-      {analysisResult && (
-        <FeedbackSubmissionCard
-          onFeedbackSubmit={handleFeedbackSubmit}
-          isLoading={isLoadingSummary}
-          summary={summaryResult}
-          isAnalysisDone={!!analysisResult && analysisResult.feedback !== "Analysis failed. Please try again."}
-        />
-      )}
-
-      {analysisResult && (
-        <>
-          <Separator className="my-8" />
-          <RecommendedVideosCard videos={[]} isLoading={isLoadingRecommendations} />
-        </>
-      )}
     </div>
   );
 }
+
