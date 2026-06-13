@@ -8,6 +8,7 @@ import { VideoUploadCard } from './video-upload-card';
 import { PoseAnalysisCard } from './pose-analysis-card';
 import { FeedbackSubmissionCard } from './feedback-submission-card';
 import { RecommendedVideosCard, type StorageVideo } from './recommended-videos-card';
+import { AnalysisLoader } from './analysis-loader';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
@@ -136,6 +137,8 @@ export function SnapYogaPageClient() {
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
+      {isLoadingAnalysis && <AnalysisLoader />}
+      
       {error && (
         <Alert variant="destructive" className="shadow-md">
           <Terminal className="h-4 w-4" />
