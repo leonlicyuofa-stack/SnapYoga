@@ -31,6 +31,14 @@ function jointStatusClass(status: string): string {
   return 'border-[rgba(193,154,107,0.14)] bg-black/20';
 }
 
+function getScoreLevel(score: number): { label: string; color: string } {
+  if (score <= 20)  return { label: 'One step at a time', color: 'rgba(200,120,90,0.90)' };
+  if (score <= 40)  return { label: 'Almost there!',      color: 'rgba(200,140,90,0.90)' };
+  if (score <= 60)  return { label: 'Good effort',        color: 'rgba(193,154,107,0.90)' };
+  if (score <= 80)  return { label: 'Excellent job',      color: 'rgba(180,190,120,0.90)' };
+  return { label: 'You are a pro!', color: 'rgba(160,195,130,0.90)' };
+}
+
 export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analysis, isLoading }: PoseAnalysisCardProps) {
   const rawScore = analysis?.score ?? null;
   const identifiedPose = analysis?.identifiedPose ?? null;
@@ -65,6 +73,8 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
     !!analysis?.motivationalNote ||
     !!analysis?.performanceGrade ||
     !!analysis?.poseConfidence;
+
+  const level = score !== null ? getScoreLevel(score) : null;
 
   return (
     <div 
@@ -175,8 +185,8 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
 
         {!isLoading && analysis && (
           <>
-            {typeof score === 'number' && (
-              <div className="space-y-2 p-4 rounded-xl bg-[rgba(255,240,215,0.02)] border border-[rgba(193,154,107,0.14)]">
+            {typeof score === 'number' && level && (
+              <div className="space-y-4 p-4 rounded-xl bg-[rgba(255,240,215,0.02)] border border-[rgba(193,154,107,0.14)]">
                 <h3 className="text-xl font-semibold flex items-center gap-2 text-white">
                   <Award className="h-6 w-6" />
                   Pose Score
@@ -193,25 +203,33 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
                     </Badge>
                   )}
                 </div>
-                <div className="flex items-center gap-3">
-                  <Progress 
-                    value={score} 
-                    className="w-full h-3 bg-white/20" 
-                    style={{ 
-                      // Note: Standard shadcn Progress doesn't support easy dynamic inner fill color via style, 
-                      // but we keep the intent here for themed consistency.
-                    }} 
-                  />
-                  <span className="text-2xl font-bold text-white shrink-0">{score}/100</span>
+                <div className="flex items-center gap-4">
+                  <div className="flex-grow h-3 bg-white/10 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full transition-all duration-1000 ease-out" 
+                      style={{ 
+                        width: `${score}%`, 
+                        backgroundColor: level.color,
+                        boxShadow: `0 0 12px ${level.color}44`
+                      }} 
+                    />
+                  </div>
+                  <div className="flex flex-col items-end shrink-0">
+                    <span className="text-3xl font-bold text-white leading-none">{score}/100</span>
+                    <p 
+                      style={{ 
+                        fontFamily: "'Cormorant Garamond', Georgia, serif", 
+                        fontSize: 17, 
+                        fontWeight: 600, 
+                        fontStyle: 'italic', 
+                        color: level.color,
+                        marginTop: 4
+                      }}
+                    >
+                      {level.label}
+                    </p>
+                  </div>
                 </div>
-                {!hasV2Detail && (
-                  <>
-                    {score < 50 && <p className="text-sm text-red-400">Needs significant improvement. Keep practicing!</p>}
-                    {score >= 50 && score < 75 && <p className="text-sm text-orange-400">Good effort, but there's room to grow.</p>}
-                    {score >= 75 && score < 90 && <p className="text-sm text-yellow-400">Great job! Just a few minor adjustments.</p>}
-                    {score >= 90 && <p className="text-sm text-green-400">Excellent form! You're doing wonderfully.</p>}
-                  </>
-                )}
               </div>
             )}
             {identifiedPose && (

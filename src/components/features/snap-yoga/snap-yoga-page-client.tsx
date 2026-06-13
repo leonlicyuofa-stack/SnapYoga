@@ -70,10 +70,7 @@ export function SnapYogaPageClient() {
       
       setAnalysisResult(result);
 
-      toast({
-        title: "Analysis Complete",
-        description: `Your yoga pose has been analyzed. Score: ${result.score !== undefined ? Math.round(result.score) + '/100' : 'N/A'}`,
-      });
+      // Success toast removed as requested — score is now displayed inline with motivational label.
 
       // Save the analysis result to Firestore
       try {
