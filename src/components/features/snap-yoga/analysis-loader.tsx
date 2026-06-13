@@ -7,13 +7,30 @@ export function AnalysisLoader() {
   useEffect(() => {
     const path = pathRef.current;
     if (!path) return;
+
     const len = path.getTotalLength();
     path.style.strokeDasharray = String(len);
     path.style.strokeDashoffset = String(len);
-    // force reflow then animate
-    void path.getBoundingClientRect();
-    path.style.transition = 'stroke-dashoffset 3s cubic-bezier(0.45,0,0.25,1)';
-    path.style.strokeDashoffset = '0';
+
+    let drawing = true;
+    const DURATION = 2200; // ms for each draw or erase pass
+
+    function cycle() {
+      const p = pathRef.current;
+      if (!p) return;
+      p.style.transition = `stroke-dashoffset ${DURATION}ms cubic-bezier(0.45,0,0.25,1)`;
+      p.style.strokeDashoffset = drawing ? '0' : String(len);
+      drawing = !drawing;
+    }
+
+    // start first pass after a tick so the initial state is applied
+    const startTimer = setTimeout(cycle, 50);
+    const interval = setInterval(cycle, DURATION + 200);
+
+    return () => {
+      clearTimeout(startTimer);
+      clearInterval(interval);
+    };
   }, []);
 
   return (
