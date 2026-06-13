@@ -6,24 +6,11 @@ import { useTheme } from '@/contexts/ThemeContext';
 import Link from 'next/link';
 
 export default function HomePage() {
-  const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
   const { isDark, toggleTheme } = useTheme();
-  const [showSplash, setShowSplash] = useState(true);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => { setMounted(true); }, []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), 2400);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (!showSplash && !authLoading) {
-      router.replace(user ? '/dashboard' : '/welcome');
-    }
-  }, [showSplash, user, authLoading, router]);
 
   const dark = mounted ? isDark : true;
 
@@ -152,7 +139,7 @@ export default function HomePage() {
       {/* CTA */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
         <Link
-          href="/welcome"
+          href={user ? "/dashboard" : "/welcome"}
           style={{
             fontFamily: "Cormorant Garamond, Georgia, serif",
             fontSize: 15, letterSpacing: '0.12em',
@@ -180,10 +167,18 @@ export default function HomePage() {
           color: linkColor,
           transition: 'color 0.4s ease',
         }}>
-          Already have an account?{' '}
-          <Link href="/auth/signin" style={{ color: linkEmColor, textDecoration: 'none' }}>
-            Sign in
-          </Link>
+          {user ? (
+             <Link href="/dashboard" style={{ color: linkEmColor, textDecoration: 'none' }}>
+                Go to Dashboard
+             </Link>
+          ) : (
+            <>
+                Already have an account?{' '}
+                <Link href="/auth/signin" style={{ color: linkEmColor, textDecoration: 'none' }}>
+                    Sign in
+                </Link>
+            </>
+          )}
         </span>
       </div>
 
