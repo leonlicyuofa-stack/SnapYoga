@@ -3,7 +3,7 @@
 import type { ChangeEvent } from 'react';
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -63,79 +63,113 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
   };
 
   return (
-    <div 
-      className="w-full p-6 backdrop-blur-lg shadow-xl border-[rgba(193,154,107,0.18)]"
-      style={{ 
-        borderWidth: '0.5px',
-        borderRadius: '24px 12px 24px 24px',
-        background: 'rgba(25,16,8,0.50)'
-      }}
-    >
-      <CardHeader className="p-0">
-        <CardTitle 
-          style={{ 
-            fontFamily: "'Cormorant Garamond', Georgia, serif", 
-            fontWeight: 600, 
-            color: 'rgba(255,240,215,0.92)' 
-          }}
-          className="flex items-center gap-2 text-2xl"
-        >
-          <UploadCloud className="h-7 w-7" style={{ color: 'rgba(193,154,107,0.80)' }} />
-          Upload Your Yoga Pose
-        </CardTitle>
-        <CardDescription className="text-white/80">
-          Select a video or image of your yoga pose. We'll analyze it and provide feedback.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="p-0 space-y-6 mt-6">
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="video-upload" className="text-base font-medium">Pose File (Video or Image)</Label>
-            <Input
-              id="video-upload"
-              type="file"
-              accept="video/*,image/*"
-              onChange={handleFileChange}
-              className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 cursor-pointer h-12 border-white/20 placeholder:text-white/50"
-              aria-describedby="video-upload-help"
-              disabled={isLoading}
-            />
-            <p id="video-upload-help" className="text-sm text-white/70 mt-1">
-              Supported formats: MP4, MOV, JPG, PNG, etc. Max file size: 50MB.
-            </p>
+    <>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
+      <div 
+        className="w-full p-6 shadow-xl"
+        style={{ 
+          borderRadius: '24px 12px 24px 24px',
+          border: '0.5px solid rgba(193,154,107,0.18)',
+          background: 'rgba(25,16,8,0.50)',
+          backdropFilter: 'blur(14px)',
+        }}
+      >
+        <CardHeader className="p-0">
+          <CardTitle 
+            style={{ 
+              fontFamily: "'Cormorant Garamond', Georgia, serif", 
+              fontWeight: 600, 
+              color: 'rgba(255,240,215,0.90)' 
+            }}
+            className="flex items-center gap-2 text-2xl"
+          >
+            <UploadCloud className="h-7 w-7" style={{ color: 'rgba(193,154,107,0.80)' }} />
+            Upload Your Yoga Pose
+          </CardTitle>
+          <CardDescription 
+            style={{ color: 'rgba(255,240,215,0.38)', fontStyle: 'italic' }}
+            className="text-sm mt-1"
+          >
+            Select a video or image of your yoga pose. We'll analyze it and provide feedback.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-0 space-y-6 mt-6">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label 
+                htmlFor="video-upload" 
+                style={{ 
+                  fontSize: 10, 
+                  letterSpacing: '0.08em', 
+                  textTransform: 'uppercase', 
+                  fontWeight: 600, 
+                  color: 'rgba(193,154,107,0.55)' 
+                }}
+              >
+                Pose File (Video or Image)
+              </Label>
+              <Input
+                id="video-upload"
+                type="file"
+                accept="video/*,image/*"
+                onChange={handleFileChange}
+                className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[rgba(193,154,107,0.85)] file:text-[rgba(25,16,8,0.95)] hover:file:opacity-80 cursor-pointer h-12 border-white/20 placeholder:text-white/50"
+                aria-describedby="video-upload-help"
+                disabled={isLoading}
+              />
+              <p id="video-upload-help" style={{ color: 'rgba(255,240,215,0.38)' }} className="text-[10px] mt-1 italic">
+                Supported formats: MP4, MOV, JPG, PNG, etc. Max file size: 50MB.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label 
+                htmlFor="user-notes" 
+                style={{ 
+                  fontSize: 10, 
+                  letterSpacing: '0.08em', 
+                  textTransform: 'uppercase', 
+                  fontWeight: 600, 
+                  color: 'rgba(193,154,107,0.55)' 
+                }}
+              >
+                Additional Context (Optional)
+              </Label>
+              <Textarea
+                id="user-notes"
+                placeholder="E.g., I'm feeling stiffness in my hamstrings, is my back straight enough?"
+                value={userNotes}
+                onChange={(e) => setUserNotes(e.target.value)}
+                style={{ 
+                  border: '0.5px solid rgba(193,154,107,0.14)', 
+                  background: 'rgba(255,240,215,0.02)',
+                  fontFamily: "'Cormorant Garamond', Georgia, serif"
+                }}
+                className="text-white placeholder:text-[rgba(255,240,215,0.28)] min-h-[100px] rounded-xl"
+                disabled={isLoading}
+              />
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="user-notes" className="text-base font-medium">Additional Context (Optional)</Label>
-            <Textarea
-              id="user-notes"
-              placeholder="E.g., I'm feeling stiffness in my hamstrings, is my back straight enough?"
-              value={userNotes}
-              onChange={(e) => setUserNotes(e.target.value)}
-              className="bg-black/20 border-white/20 text-white placeholder:text-white/40 min-h-[100px]"
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-
-        <Button
-          onClick={handleSubmit}
-          disabled={isLoading || !selectedFile}
-          style={{ 
-            background: 'rgba(193,154,107,0.85)', 
-            color: 'rgba(25,16,8,0.95)' 
-          }}
-          className="w-full text-lg py-6 rounded-full shadow-md transition-all duration-150 ease-in-out transform hover:scale-105 active:scale-95 border-none"
-          aria-label="Analyze Pose"
-        >
-          {isLoading ? (
-            <SmileyRockLoader />
-          ) : (
-            <UploadCloud className="mr-2 h-5 w-5" />
-          )}
-          {isLoading ? 'Analyzing...' : 'Analyze Pose'}
-        </Button>
-      </CardContent>
-    </div>
+          <Button
+            onClick={handleSubmit}
+            disabled={isLoading || !selectedFile}
+            style={{ 
+              background: 'rgba(193,154,107,0.85)', 
+              color: 'rgba(25,16,8,0.95)' 
+            }}
+            className="w-full text-lg py-6 rounded-full shadow-md transition-all duration-150 ease-in-out transform hover:scale-105 active:scale-95 border-none font-semibold"
+            aria-label="Analyze Pose"
+          >
+            {isLoading ? (
+              <SmileyRockLoader />
+            ) : (
+              <UploadCloud className="mr-2 h-5 w-5" />
+            )}
+            {isLoading ? 'Analyzing...' : 'Analyze Pose'}
+          </Button>
+        </CardContent>
+      </div>
+    </>
   );
 }
