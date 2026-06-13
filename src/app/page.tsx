@@ -42,9 +42,8 @@ export default function HomePage() {
   const inactiveDot   = dark ? 'rgba(193,154,107,0.18)' : 'rgba(255,248,235,0.22)';
   const linkColor     = dark ? 'rgba(255,240,215,0.35)' : 'rgba(255,248,235,0.45)';
   const linkEmColor   = dark ? 'rgba(193,154,107,0.88)' : 'rgba(255,248,235,0.88)';
-  const toggleBorder  = dark ? 'rgba(193,154,107,0.30)' : 'rgba(255,255,255,0.40)';
-  const toggleBg      = dark ? 'rgba(193,154,107,0.08)' : 'rgba(255,255,255,0.15)';
-  const toggleStroke  = dark ? 'rgba(193,154,107,0.75)' : 'rgba(255,255,255,0.72)';
+  const toggleBorder  = 'rgba(193,154,107,0.30)';
+  const toggleBg      = 'rgba(193,154,107,0.08)';
 
   return (
     <div style={{
@@ -70,7 +69,7 @@ export default function HomePage() {
         }}
       >
         {dark ? (
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={toggleStroke} strokeWidth="1.5">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(193,154,107,0.75)" strokeWidth="1.5">
             <circle cx="12" cy="12" r="5"/>
             <line x1="12" y1="1" x2="12" y2="3"/>
             <line x1="12" y1="21" x2="12" y2="23"/>
@@ -82,7 +81,7 @@ export default function HomePage() {
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
           </svg>
         ) : (
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={toggleStroke} strokeWidth="1.5">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(193,154,107,0.75)" strokeWidth="1.5">
             <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/>
           </svg>
         )}
