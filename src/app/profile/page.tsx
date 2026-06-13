@@ -18,7 +18,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { cn } from '@/lib/utils';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
-import Link from 'next/link';
+import Link from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { format, subDays, startOfDay, isToday, isYesterday, differenceInDays } from 'date-fns';
 
@@ -50,7 +50,7 @@ export default function ProfilePage() {
   const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
 
   // Expanded section state
-  const [expandedSection, setExpandedSection] = useState<'username' | 'subscription' | 'security' | null>(null);
+  const [expandedSection, setExpandedSection] = useState<'username' | 'subscription' | 'security' | 'invite' | null>(null);
 
   // Progress States
   const [practicePercent, setPracticePercent] = useState(0);
@@ -241,7 +241,7 @@ export default function ProfilePage() {
                     )}
                   </div>
                   
-                  <Link
+                  <a
                     href="/onboarding/gender-profile"
                     style={{
                       position: 'absolute',
@@ -259,7 +259,7 @@ export default function ProfilePage() {
                     }}
                   >
                     <Pencil style={{ width: 14, height: 14, color: 'rgba(25,16,8,0.95)' }} />
-                  </Link>
+                  </a>
                 </div>
 
                 <h2
@@ -502,31 +502,42 @@ export default function ProfilePage() {
                              </form>
                           </div>
                         )}
-                      </div>
-                  </div>
 
-                  {/* INVITE FRIENDS */}
-                  <div style={{ borderRadius: '24px 12px 24px 24px', border: '0.5px solid rgba(193,154,107,0.18)', background: 'rgba(25,16,8,0.50)', padding: '20px' }}>
-                      <div className="flex items-center gap-2 mb-4">
-                          <Share2 className="h-5 w-5" style={{ color: 'rgba(193,154,107,0.85)' }} />
-                          <h3 className="font-semibold text-lg text-white/90">{t('inviteFriendsTitle')}</h3>
-                      </div>
-                      <div className="space-y-4">
-                          <div className="text-center p-3 bg-green-500/10 text-green-400 border border-green-500/20 rounded-lg text-sm font-medium">
-                              {t('referralBonusText')}
+                        {/* Row 4: Invite Friends */}
+                        <div 
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 14px', gap: 10, cursor: 'pointer', borderTop: '0.5px solid rgba(193,154,107,0.10)' }} 
+                          onClick={() => setExpandedSection(expandedSection === 'invite' ? null : 'invite')}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <span style={{ fontSize: 15, color: 'rgba(193,154,107,0.75)' }}>👥</span>
+                            <div>
+                              <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,240,215,0.88)' }}>Invite friends to SnapYoga</div>
+                              <div style={{ fontSize: 9.5, color: 'rgba(255,240,215,0.32)', fontStyle: 'italic', marginTop: 1 }}>Share your practice</div>
+                            </div>
                           </div>
-                          <div>
-                              <p className="text-xs font-medium mb-1 text-white/60 uppercase tracking-widest">{t('yourInviteLink')}</p>
-                              <div className="flex items-center space-x-2">
-                                  <Input type="text" value={inviteLink} readOnly className="h-11 text-sm rounded-lg bg-black/20 border-white/10 text-white" />
-                                  <Button variant="outline" size="icon" onClick={handleCopyInviteLink} className="h-11 w-11 rounded-lg border-white/10 bg-transparent text-white hover:bg-white/5"><Copy className="h-4 w-4" /></Button>
+                          <span style={{ fontSize: 11, color: 'rgba(193,154,107,0.50)' }}>›</span>
+                        </div>
+                        {expandedSection === 'invite' && (
+                          <div style={{ padding: '14px', borderTop: '0.5px solid rgba(193,154,107,0.05)', background: 'rgba(25,16,8,0.20)' }}>
+                             <div className="space-y-4">
+                                  <div className="text-center p-3 bg-green-500/10 text-green-400 border border-green-500/20 rounded-lg text-sm font-medium">
+                                      {t('referralBonusText')}
+                                  </div>
+                                  <div>
+                                      <p className="text-[10px] font-medium mb-1 text-white/60 uppercase tracking-widest">{t('yourInviteLink')}</p>
+                                      <div className="flex items-center space-x-2">
+                                          <Input type="text" value={inviteLink} readOnly className="h-11 text-sm rounded-lg bg-black/20 border-white/10 text-white" />
+                                          <Button variant="outline" size="icon" onClick={handleCopyInviteLink} className="h-11 w-11 rounded-lg border-white/10 bg-transparent text-white hover:bg-white/5"><Copy className="h-4 w-4" /></Button>
+                                      </div>
+                                  </div>
+                                  <div className="grid grid-cols-3 gap-3">
+                                      <Button variant="outline" className="h-11 rounded-lg border-white/10 bg-transparent text-white hover:bg-white/5" asChild disabled={!inviteLink}><a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer"><MessageSquare className="h-4 w-4" /></a></Button>
+                                      <Button variant="outline" className="h-11 rounded-lg border-white/10 bg-transparent text-white hover:bg-white/5" onClick={handleInstagramShare} disabled={!inviteLink}><Share2 className="h-4 w-4" /></Button>
+                                      <Button variant="outline" className="h-11 rounded-lg border-white/10 bg-transparent text-white hover:bg-white/5" asChild disabled={!inviteLink}><a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer"><PinterestIcon className="h-4 w-4" /></a></Button>
+                                  </div>
                               </div>
                           </div>
-                          <div className="grid grid-cols-3 gap-3">
-                              <Button variant="outline" className="h-11 rounded-lg border-white/10 bg-transparent text-white hover:bg-white/5" asChild disabled={!inviteLink}><a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer"><MessageSquare className="h-4 w-4" /></a></Button>
-                              <Button variant="outline" className="h-11 rounded-lg border-white/10 bg-transparent text-white hover:bg-white/5" onClick={handleInstagramShare} disabled={!inviteLink}><Share2 className="h-4 w-4" /></Button>
-                              <Button variant="outline" className="h-11 rounded-lg border-white/10 bg-transparent text-white hover:bg-white/5" asChild disabled={!inviteLink}><a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer"><PinterestIcon className="h-4 w-4" /></a></Button>
-                          </div>
+                        )}
                       </div>
                   </div>
               </div>
