@@ -56,13 +56,13 @@ function GlassCard({ children, className, style }: { children: React.ReactNode; 
 function SectionHead({ children, t }: { children: React.ReactNode; t: ReturnType<typeof tok> }) {
   return (
     <p style={{ 
-      fontSize: 10, 
-      letterSpacing: 3.5, 
+      fontSize: 11, 
+      letterSpacing: '0.28em', 
       textTransform: 'uppercase' as const, 
-      color: t.muted, 
+      color: 'rgba(193,154,107,0.55)', 
       marginBottom: 10, 
       fontFamily: FONT_CASUAL,
-      fontWeight: 600
+      fontWeight: 500
     }}>
       {children}
     </p>
