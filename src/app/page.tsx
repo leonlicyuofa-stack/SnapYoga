@@ -6,11 +6,19 @@ import { useTheme } from '@/contexts/ThemeContext';
 import Link from 'next/link';
 
 export default function HomePage() {
-  const { user } = useAuth();
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => { setMounted(true); }, []);
+
+  // Redirect only if the user is already authenticated
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.replace('/dashboard');
+    }
+  }, [user, authLoading, router]);
 
   const dark = mounted ? isDark : true;
 
@@ -139,7 +147,7 @@ export default function HomePage() {
       {/* CTA */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
         <Link
-          href={user ? "/dashboard" : "/welcome"}
+          href="/auth/signup"
           style={{
             fontFamily: "Cormorant Garamond, Georgia, serif",
             fontSize: 15, letterSpacing: '0.12em',
@@ -169,7 +177,7 @@ export default function HomePage() {
         }}>
           Already have an account?{' '}
           <Link 
-            href={user ? "/dashboard" : "/auth/signin"} 
+            href="/auth/signin" 
             style={{ color: linkEmColor, textDecoration: 'none' }}
           >
             Sign in
