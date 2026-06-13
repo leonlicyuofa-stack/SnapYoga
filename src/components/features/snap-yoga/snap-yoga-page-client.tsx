@@ -11,14 +11,20 @@ import { RecommendedVideosCard, type StorageVideo } from './recommended-videos-c
 import { AnalysisLoader } from './analysis-loader';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal } from "lucide-react";
+import { Terminal, Sun, Moon } from "lucide-react";
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export function SnapYogaPageClient() {
   const { user: currentUser } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
+  
+  // Wizard State
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
+
   const [videoDataUri, setVideoDataUri] = useState<string | null>(null);
   const [videoFileName, setVideoFileName] = useState<string | null>(null);
   const [userNotes, setUserNotes] = useState<string | null>(null);
@@ -63,14 +69,11 @@ export function SnapYogaPageClient() {
       });
       
       // CRITICAL: Update the source URI to the final cloud URL FIRST
-      // This ensures that when the card stops "loading", it already has the stable URL
       if (result.videoUrl) {
           setVideoDataUri(result.videoUrl);
       }
       
       setAnalysisResult(result);
-
-      // Success toast removed as requested — score is now displayed inline with motivational label.
 
       // Save the analysis result to Firestore
       try {
@@ -136,6 +139,66 @@ export function SnapYogaPageClient() {
     <div className="space-y-8 max-w-4xl mx-auto">
       {isLoadingAnalysis && <AnalysisLoader />}
       
+      {/* WIZARD STRUCTURE */}
+      <div style={{ padding: '16px 14px', display: 'flex', flexDirection: 'column' }}>
+        {/* Top bar: back arrow (steps 2-3 only) + theme toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+          {currentStep > 1 ? (
+            <button
+              onClick={() => setCurrentStep((s) => (s - 1) as 1 | 2 | 3)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: 'rgba(255,240,215,0.70)' }}
+              aria-label="Go back"
+            >←</button>
+          ) : <span />}
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            style={{ width: 26, height: 26, borderRadius: '50%', border: '1.5px solid rgba(193,154,107,0.30)', background: 'rgba(193,154,107,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+          >
+            {isDark
+              ? <Sun style={{ width: 13, height: 13, color: 'rgba(193,154,107,0.75)' }} />
+              : <Moon style={{ width: 13, height: 13, color: 'rgba(193,154,107,0.75)' }} />}
+          </button>
+        </div>
+
+        {/* Progress bar — 3 segments */}
+        <div style={{ display: 'flex', gap: 5, marginBottom: 16 }}>
+          {[1, 2, 3].map((seg) => (
+            <div key={seg} style={{ flex: 1, height: 3, borderRadius: 2, background: currentStep >= seg ? 'rgba(193,154,107,0.85)' : 'rgba(255,240,215,0.10)' }} />
+          ))}
+        </div>
+
+        {/* Step content placeholders */}
+        {currentStep === 1 && (
+          <div className="p-8 border border-dashed border-white/10 rounded-xl text-center">
+            <h2 className="text-white mb-4">Step 1: Upload Pose</h2>
+            <button 
+              onClick={() => setCurrentStep(2)}
+              className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg"
+            >
+              Go to Step 2 (Demo)
+            </button>
+          </div>
+        )}
+        {currentStep === 2 && (
+          <div className="p-8 border border-dashed border-white/10 rounded-xl text-center">
+            <h2 className="text-white mb-4">Step 2: Processing</h2>
+            <button 
+              onClick={() => setCurrentStep(3)}
+              className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg"
+            >
+              Go to Step 3 (Demo)
+            </button>
+          </div>
+        )}
+        {currentStep === 3 && (
+          <div className="p-8 border border-dashed border-white/10 rounded-xl text-center">
+            <h2 className="text-white mb-4">Step 3: Results</h2>
+            <p className="text-white/60 italic">Your analysis results will appear here.</p>
+          </div>
+        )}
+      </div>
+
       {error && (
         <Alert variant="destructive" className="shadow-md">
           <Terminal className="h-4 w-4" />
@@ -144,7 +207,8 @@ export function SnapYogaPageClient() {
         </Alert>
       )}
 
-      <div className="flex flex-col gap-8 items-start">
+      {/* Legacy layout for now — will be integrated into steps in next prompts */}
+      <div className="flex flex-col gap-8 items-start opacity-50">
         <VideoUploadCard 
             onVideoUpload={handleVideoUpload} 
             isLoading={isLoadingAnalysis}
