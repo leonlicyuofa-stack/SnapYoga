@@ -33,7 +33,7 @@ function tok(isDark: boolean) {
     text:        isDark ? `${PARCHMENT},0.90)`  : `${DEEP_BARK},0.95)`,
     muted:       isDark ? `${PARCHMENT},0.38)`  : `${DEEP_BARK},0.55)`,
     gold:        isDark ? `${GOLD},0.90)`        : `rgba(140,100,55,1)`,
-    goldBorder:  isDark ? `${GOLD},0.22)`        : `rgba(140,100,55,0.25)`,
+    goldBorder:  isDark ? `${GOLD},0.18)`        : `rgba(140,100,55,0.25)`,
     cardBg:      isDark ? `${GOLD},0.07)`        : `rgba(255,255,255,0.65)`,
     cardTerra:   isDark ? `${TERRACOTTA},0.18)`  : `rgba(200,135,85,0.12)`,
     cardSage:    isDark ? `${SAGE},0.18)`        : `rgba(120,155,95,0.14)`,
@@ -338,7 +338,7 @@ export default function DashboardPage() {
           {/* §5 CHALLENGES */}
           <section>
             <SectionHead t={t}>Challenges</SectionHead>
-            <GlassCard style={{ background: isDark ? t.cardBark : 'rgba(255,255,255,0.95)', border: `0.8px solid ${t.goldBorder}`, borderRadius: '28px 12px 28px 28px', padding: '16px', position: 'relative' as const }}>
+            <GlassCard style={{ background: isDark ? t.cardBark : 'rgba(255,255,255,0.95)', border: `0.5px solid ${t.goldBorder}`, borderRadius: '28px 12px 28px 28px', padding: '16px', position: 'relative' as const }}>
               <div style={{ position: 'absolute' as const, inset: 0, top: 0, height: 42, borderRadius: '28px 12px 0 0', background: `${GOLD},0.06)`, pointerEvents: 'none' as const }} />
               <div style={{ position: 'relative' as const, zIndex: 1, display: 'flex', alignItems: 'flex-start', gap: 12 }}>
                 <div style={{ width: 40, height: 40, borderRadius: 14, background: `${GOLD},0.14)`, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
