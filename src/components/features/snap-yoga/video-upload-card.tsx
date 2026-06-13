@@ -64,8 +64,12 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
 
   return (
     <div 
-      className="w-full p-6 backdrop-blur-lg rounded-2xl shadow-xl bg-[rgba(193,154,107,0.045)] border-[rgba(193,154,107,0.18)]"
-      style={{ borderWidth: '0.5px' }}
+      className="w-full p-6 backdrop-blur-lg shadow-xl border-[rgba(193,154,107,0.18)]"
+      style={{ 
+        borderWidth: '0.5px',
+        borderRadius: '24px 12px 24px 24px',
+        background: 'rgba(25,16,8,0.50)'
+      }}
     >
       <CardHeader className="p-0">
         <CardTitle 
