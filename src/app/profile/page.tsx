@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { KeyRound, Save, Share2, Copy, MessageSquare, UserCircle, FileText, Star, Crown, Sun, Moon } from 'lucide-react';
+import { KeyRound, Save, Share2, Copy, MessageSquare, UserCircle, FileText, Star, Crown, Sun, Moon, Pencil } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { firestore } from '@/lib/firebase/clientApp';
@@ -175,18 +175,9 @@ export default function ProfilePage() {
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
       <div className="relative min-h-[calc(100vh-4rem)]">
         <div className="relative z-10 flex flex-col h-full">
-            <header className="container mx-auto px-4 pt-8 pb-4">
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                  <div>
-                    <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, color: 'rgba(255,240,215,0.92)', fontSize: 32, display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <UserCircle className="h-8 w-8" style={{ color: 'rgba(193,154,107,0.85)' }} />
-                        Your Profile
-                    </h1>
-                    <p style={{ color: 'rgba(255,240,215,0.40)', fontStyle: 'italic', fontSize: 16, margin: '4px 0 0' }}>
-                        Manage your account settings and preferences.
-                    </p>
-                    <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 8 }} />
-                  </div>
+            <header className="container mx-auto px-4 pt-12 pb-8 relative flex flex-col items-center">
+                {/* Theme Toggle - Absolute Positioned */}
+                <div className="absolute top-4 right-4">
                   <button
                     onClick={toggleTheme}
                     aria-label="Toggle theme"
@@ -209,10 +200,108 @@ export default function ProfilePage() {
                     }
                   </button>
                 </div>
+
+                {/* Avatar Section */}
+                <div className="relative mb-4">
+                  <div
+                    style={{
+                      width: 84,
+                      height: 84,
+                      borderRadius: '50%',
+                      border: '2px solid rgba(193,154,107,0.45)',
+                      boxShadow: '0 0 0 6px rgba(193,154,107,0.06), 0 0 0 12px rgba(193,154,107,0.03)',
+                      overflow: 'hidden',
+                      background: 'rgba(193,154,107,0.15)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {user?.photoURL ? (
+                      <img
+                        src={user.photoURL}
+                        alt={user.displayName || 'Profile'}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <span style={{ fontSize: 32, color: 'rgba(193,154,107,0.85)', fontFamily: "'Cormorant Garamond', serif" }}>
+                        {(user?.displayName?.[0] || user?.email?.[0] || 'U').toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                  
+                  {/* Edit Badge */}
+                  <Link
+                    href="/onboarding/gender-profile"
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      right: 0,
+                      width: 26,
+                      height: 26,
+                      borderRadius: '50%',
+                      background: 'rgba(193,154,107,0.85)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      border: 'none',
+                    }}
+                  >
+                    <Pencil style={{ width: 14, height: 14, color: 'rgba(25,16,8,0.95)' }} />
+                  </Link>
+                </div>
+
+                {/* Name Section */}
+                <h2
+                  style={{
+                    fontSize: 24,
+                    fontWeight: 600,
+                    color: 'rgba(255,240,215,0.94)',
+                    fontFamily: "'Cormorant Garamond', Georgia, serif",
+                    marginBottom: 8,
+                  }}
+                >
+                  {user?.displayName || user?.email?.split('@')[0] || 'Yogi'}
+                </h2>
+
+                {/* Badges Section */}
+                <div className="flex gap-2">
+                  <div
+                    style={{
+                      background: 'rgba(193,154,107,0.20)',
+                      color: 'rgba(193,154,107,0.92)',
+                      border: '0.5px solid rgba(193,154,107,0.35)',
+                      fontSize: 9,
+                      letterSpacing: '0.15em',
+                      textTransform: 'uppercase',
+                      fontWeight: 600,
+                      padding: '5px 12px',
+                      borderRadius: 999,
+                    }}
+                  >
+                    ★ {subscriptionStatus === 'active' ? 'Premium Plan' : 'Free Plan'}
+                  </div>
+                  <div
+                    style={{
+                      background: 'rgba(120,155,95,0.20)',
+                      color: 'rgba(160,195,130,0.92)',
+                      border: '0.5px solid rgba(140,170,115,0.35)',
+                      fontSize: 9,
+                      letterSpacing: '0.15em',
+                      textTransform: 'uppercase',
+                      fontWeight: 600,
+                      padding: '5px 12px',
+                      borderRadius: 999,
+                    }}
+                  >
+                    🔥 7 day streak
+                  </div>
+                </div>
             </header>
 
-            <main className="flex-grow container mx-auto px-4 mt-8">
-              <div className="max-w-2xl mx-auto space-y-8 w-full">
+            <main className="flex-grow container mx-auto px-4 mt-4">
+              <div className="max-w-2xl mx-auto space-y-8 w-full pb-12">
                   {/* Username */}
                   <div className="space-y-1">
                       <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(193,154,107,0.55)', marginBottom: 6 }}>
