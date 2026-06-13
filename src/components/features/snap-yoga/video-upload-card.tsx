@@ -63,10 +63,20 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
   };
 
   return (
-    <div className="w-full p-6 bg-black/20 backdrop-blur-lg border-white/20 text-white rounded-2xl shadow-xl">
+    <div 
+      className="w-full p-6 backdrop-blur-lg rounded-2xl shadow-xl bg-[rgba(193,154,107,0.045)] border-[rgba(193,154,107,0.18)]"
+      style={{ borderWidth: '0.5px' }}
+    >
       <CardHeader className="p-0">
-        <CardTitle className="flex items-center gap-2 text-2xl">
-          <UploadCloud className="h-7 w-7 text-white" />
+        <CardTitle 
+          style={{ 
+            fontFamily: "'Cormorant Garamond', Georgia, serif", 
+            fontWeight: 600, 
+            color: 'rgba(255,240,215,0.92)' 
+          }}
+          className="flex items-center gap-2 text-2xl"
+        >
+          <UploadCloud className="h-7 w-7" style={{ color: 'rgba(193,154,107,0.80)' }} />
           Upload Your Yoga Pose
         </CardTitle>
         <CardDescription className="text-white/80">
@@ -107,7 +117,11 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
         <Button
           onClick={handleSubmit}
           disabled={isLoading || !selectedFile}
-          className="w-full bg-white/90 hover:bg-white text-black text-lg py-6 rounded-lg shadow-md transition-all duration-150 ease-in-out transform hover:scale-105 active:scale-95"
+          style={{ 
+            background: 'rgba(193,154,107,0.85)', 
+            color: 'rgba(25,16,8,0.95)' 
+          }}
+          className="w-full text-lg py-6 rounded-full shadow-md transition-all duration-150 ease-in-out transform hover:scale-105 active:scale-95 border-none"
           aria-label="Analyze Pose"
         >
           {isLoading ? (

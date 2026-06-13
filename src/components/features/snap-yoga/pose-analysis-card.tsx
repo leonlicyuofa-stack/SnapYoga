@@ -67,10 +67,20 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
     !!analysis?.poseConfidence;
 
   return (
-    <div className="w-full shadow-xl p-6 bg-black/20 backdrop-blur-lg border-white/20 text-white rounded-2xl">
+    <div 
+      className="w-full shadow-xl p-6 backdrop-blur-lg rounded-2xl bg-[rgba(193,154,107,0.045)] border-[rgba(193,154,107,0.18)]"
+      style={{ borderWidth: '0.5px' }}
+    >
       <CardHeader className="p-0">
-        <CardTitle className="flex items-center gap-2 text-2xl">
-          <Activity className="h-7 w-7 text-white" />
+        <CardTitle 
+          style={{ 
+            fontFamily: "'Cormorant Garamond', Georgia, serif", 
+            fontWeight: 600, 
+            color: 'rgba(255,240,215,0.92)' 
+          }}
+          className="flex items-center gap-2 text-2xl"
+        >
+          <Activity className="h-7 w-7" style={{ color: 'rgba(193,154,107,0.85)' }} />
           Pose Analysis
         </CardTitle>
         <CardDescription className="text-white/80">
@@ -161,7 +171,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
         {!isLoading && analysis && (
           <>
             {typeof score === 'number' && (
-              <div className="space-y-2 p-4 bg-black/20 rounded-xl border border-white/20">
+              <div className="space-y-2 p-4 rounded-xl bg-[rgba(255,240,215,0.02)] border border-[rgba(193,154,107,0.14)]">
                 <h3 className="text-xl font-semibold flex items-center gap-2 text-white">
                   <Award className="h-6 w-6" />
                   Pose Score
@@ -193,7 +203,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
               </div>
             )}
             {identifiedPose && (
-              <div className="space-y-2 p-4 bg-black/20 rounded-xl border border-white/20">
+              <div className="space-y-2 p-4 rounded-xl bg-[rgba(255,240,215,0.02)] border border-[rgba(193,154,107,0.14)]">
                 <h3 className="text-xl font-semibold flex items-center gap-2 text-white">
                   <Activity className="h-6 w-6" /> Identified Pose
                 </h3>
@@ -220,7 +230,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
               </div>
             )}
 
-            <div className="space-y-3 p-4 bg-black/20 rounded-xl border border-white/20">
+            <div className="space-y-3 p-4 rounded-xl bg-[rgba(255,240,215,0.02)] border border-[rgba(193,154,107,0.14)]">
               <h3 className="text-xl font-semibold flex items-center gap-2 text-white">
                 <MessageSquareText className="h-6 w-6" />
                 AI Feedback
