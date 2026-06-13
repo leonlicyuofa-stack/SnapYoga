@@ -15,7 +15,6 @@ import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { ActiveChallengesSnapshotCard } from './active-challenges-snapshot-card';
 
 export function SnapYogaPageClient() {
   const { user: currentUser } = useAuth();
@@ -151,7 +150,6 @@ export function SnapYogaPageClient() {
                 onVideoUpload={handleVideoUpload} 
                 isLoading={isLoadingAnalysis}
             />
-            <ActiveChallengesSnapshotCard />
         </div>
         <PoseAnalysisCard
           videoDataUri={videoDataUri}
