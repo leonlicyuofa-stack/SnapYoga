@@ -25,7 +25,7 @@ const DEEP_BARK  = 'rgba(25,16,8';
 const BARK_L     = 'rgba(60,38,18';
 
 // Font Stacks
-const FONT_PANCAKE = "Didot, 'Bodoni MT', 'Century Schoolbook', 'Palatino Linotype', Georgia, serif";
+const FONT_PANCAKE = "'Cormorant Garamond', Georgia, serif";
 const FONT_CASUAL  = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
 
 function tok(isDark: boolean) {
@@ -152,6 +152,7 @@ export default function DashboardPage() {
   return (
     <AppShell>
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
 
         {/* HEADER */}
         <header style={{ padding: '14px 16px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
