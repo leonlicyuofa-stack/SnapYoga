@@ -158,6 +158,12 @@ export default function DashboardPage() {
         <header style={{ padding: '14px 16px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 500, color: t.text, fontFamily: FONT_PANCAKE, margin: 0, letterSpacing: '-0.5px' }}>Hey, {name}!</h1>
+            <div style={{
+              width: 26,
+              height: 1,
+              background: 'rgba(193,154,107,0.22)',
+              marginTop: 5,
+            }} />
             <p  style={{ fontSize: 11, fontStyle: 'italic', color: t.muted, margin: '2px 0 0', fontFamily: FONT_PANCAKE, opacity: 0.8 }}>Your practice is waiting.</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
