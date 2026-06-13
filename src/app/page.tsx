@@ -169,7 +169,7 @@ export default function HomePage() {
         }}>
           {user ? (
              <Link href="/dashboard" style={{ color: linkEmColor, textDecoration: 'none' }}>
-                Go to Dashboard
+                Sign in here
              </Link>
           ) : (
             <>
