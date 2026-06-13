@@ -35,10 +35,15 @@ export function AnalysisLoader() {
 
   return (
     <div style={{
-      position: 'fixed', inset: 0, zIndex: 9999,
-      background: 'linear-gradient(175deg,#1a1210 0%,#0D1821 55%,#1a0f1e 100%)',
-      display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center', gap: 28,
+      width: '100%',
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '300px',
+      gap: 28,
+      background: 'transparent',
     }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
       <svg viewBox="0 0 400 400" width="280" height="280">
