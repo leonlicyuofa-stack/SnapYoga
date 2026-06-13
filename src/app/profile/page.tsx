@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -192,7 +191,14 @@ export default function ProfilePage() {
                       <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(193,154,107,0.55)', marginBottom: 6 }}>
                         Username
                       </p>
-                      <Card className="rounded-2xl shadow-xl border overflow-hidden" style={{ border: '0.5px solid rgba(193,154,107,0.18)', background: 'rgba(193,154,107,0.045)' }}>
+                      <Card 
+                        className="shadow-xl border" 
+                        style={{ 
+                          border: '0.5px solid rgba(193,154,107,0.18)', 
+                          background: 'rgba(193,154,107,0.045)',
+                          borderRadius: '24px 12px 24px 24px'
+                        }}
+                      >
                           <CardHeader className="pb-2">
                               <CardTitle className="flex items-center gap-2 text-lg text-white/90">
                                   <UserCircle className="h-5 w-5" style={{ color: 'rgba(193,154,107,0.85)' }} />
@@ -226,7 +232,14 @@ export default function ProfilePage() {
                       <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(193,154,107,0.55)', marginBottom: 6 }}>
                         Subscription
                       </p>
-                      <Card className="shadow-xl border overflow-hidden" style={{ background: 'rgba(180,110,65,0.10)', border: '0.5px solid rgba(193,154,107,0.18)', borderRadius: '24px 12px 24px 24px' }}>
+                      <Card 
+                        className="shadow-xl border" 
+                        style={{ 
+                          background: 'rgba(180,110,65,0.16)', 
+                          border: '0.5px solid rgba(193,154,107,0.18)', 
+                          borderRadius: '12px 24px 24px 24px' 
+                        }}
+                      >
                           <CardHeader className="pb-2">
                               <CardTitle className="flex items-center gap-2 text-lg text-white/90">
                                   <Crown className="h-5 w-5" style={{ color: 'rgba(193,154,107,0.85)' }} />
@@ -267,7 +280,14 @@ export default function ProfilePage() {
                       <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(193,154,107,0.55)', marginBottom: 6 }}>
                         Security
                       </p>
-                      <Card className="rounded-2xl shadow-xl border overflow-hidden" style={{ border: '0.5px solid rgba(193,154,107,0.18)', background: 'rgba(25,16,8,0.50)' }}>
+                      <Card 
+                        className="shadow-xl border" 
+                        style={{ 
+                          border: '0.5px solid rgba(193,154,107,0.18)', 
+                          background: 'rgba(25,16,8,0.50)',
+                          borderRadius: '24px 12px 24px 24px'
+                        }}
+                      >
                           <CardHeader className="pb-2">
                               <CardTitle className="flex items-center gap-2 text-lg text-white/90">
                                   <KeyRound className="h-5 w-5" style={{ color: 'rgba(193,154,107,0.80)' }} />
