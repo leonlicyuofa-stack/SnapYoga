@@ -111,9 +111,10 @@ export function AppShell({ children }: AppShellProps) {
           {children}
         </main>
 
-        {/* MOBILE BOTTOM NAVIGATION - Always visible in shell routes */}
+        {/* BOTTOM NAVIGATION - Visible on desktop for dashboard, hidden on desktop elsewhere */}
         <nav className={cn(
-          "fixed bottom-0 left-0 right-0 z-40 flex h-20 items-center justify-around border-t px-2 backdrop-blur-xl md:hidden transition-colors duration-300",
+          "fixed bottom-0 left-0 right-0 z-40 flex h-20 items-center justify-around border-t px-2 backdrop-blur-xl transition-colors duration-300",
+          pathname !== '/dashboard' && "md:hidden",
           theme === 'dark' ? "bg-black/40 border-white/10 text-white" : "bg-white/60 border-black/10 text-black"
         )}>
           {navItems.map((item) => {
