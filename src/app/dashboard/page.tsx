@@ -221,115 +221,127 @@ export default function DashboardPage() {
             </GlassCard>
           </section>
 
-          {/* §2 TODAY'S HABITS */}
-          <section>
-            <SectionHead t={t}>Today's habits</SectionHead>
-            <Link href="/mood-tracker" className="block active:scale-95 transition-transform">
-              <GlassCard style={{ background: t.cardDark, border: `0.5px solid ${t.goldBorder}`, borderRadius: '20px 20px 12px 20px', padding: '16px 10px 18px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                  {habitsList.map(h => {
-                    const done = completedHabits.includes(h.id);
-                    return (
-                      <div key={h.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                        <div style={{ width: 40, height: 40, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                          background: done ? h.color : (isDark ? `${PARCHMENT},0.05)` : 'rgba(0,0,0,0.04)'),
-                          border: `0.5px solid ${done ? h.color : (isDark ? `${PARCHMENT},0.10)` : 'rgba(0,0,0,0.06)')}`,
-                          transform: done ? 'scale(1.1)' : 'scale(1)',
-                          boxShadow: done ? `0 4px 12px ${h.color}` : 'none'
-                        }}>{h.emoji}</div>
-                        <span style={{ fontSize: 7, letterSpacing: 1.2, textTransform: 'uppercase' as const, fontFamily: FONT_CASUAL, fontWeight: 600, color: done ? t.text : t.muted }}>{h.label}</span>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 14,
+          }}
+          className="md:flex-row"
+          >
+            {/* §2 TODAY'S HABITS */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <section>
+                <SectionHead t={t}>Today's habits</SectionHead>
+                <Link href="/mood-tracker" className="block active:scale-95 transition-transform">
+                  <GlassCard style={{ background: t.cardDark, border: `0.5px solid ${t.goldBorder}`, borderRadius: '20px 20px 12px 20px', padding: '16px 10px 18px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                      {habitsList.map(h => {
+                        const done = completedHabits.includes(h.id);
+                        return (
+                          <div key={h.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                            <div style={{ width: 40, height: 40, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                              background: done ? h.color : (isDark ? `${PARCHMENT},0.05)` : 'rgba(0,0,0,0.04)'),
+                              border: `0.5px solid ${done ? h.color : (isDark ? `${PARCHMENT},0.10)` : 'rgba(0,0,0,0.06)')}`,
+                              transform: done ? 'scale(1.1)' : 'scale(1)',
+                              boxShadow: done ? `0 4px 12px ${h.color}` : 'none'
+                            }}>{h.emoji}</div>
+                            <span style={{ fontSize: 7, letterSpacing: 1.2, textTransform: 'uppercase' as const, fontFamily: FONT_CASUAL, fontWeight: 600, color: done ? t.text : t.muted }}>{h.label}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div style={{ display: 'flex', gap: 4, marginTop: 14 }}>
+                      {habitsList.map((h, i) => (
+                        <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: completedHabits.includes(h.id) ? `${GOLD},0.72)` : (isDark ? `${PARCHMENT},0.10)` : 'rgba(0,0,0,0.06)') }} />
+                      ))}
+                    </div>
+                    <p style={{ fontSize: 9, color: t.muted, margin: '6px 0 0', fontFamily: FONT_CASUAL, textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'center' as const }}>
+                      {completedHabits.length} of 5 habits done today
+                    </p>
+                  </GlassCard>
+                </Link>
+              </section>
+            </div>
+
+            {/* §3 MY PROGRESS */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <section>
+                <SectionHead t={t}>My Progress</SectionHead>
+
+                {/* Row A: Exercise hours + Poses */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+                  <GlassCard style={{ background: t.cardTerra, border: `0.5px solid ${t.goldBorder}`, borderRadius: '20px 8px 20px 20px', padding: '12px 14px' }}>
+                    <CardLabel color={t.gold}>Exercise hours</CardLabel>
+                    <p style={{ fontSize: 32, fontWeight: 500, color: t.gold, lineHeight: 1, margin: '2px 0 0', fontFamily: FONT_PANCAKE }}>
+                      {exerciseHrs}<span style={{ fontSize: 13, opacity: 0.55, marginLeft: 2 }}> hrs</span>
+                    </p>
+                    <p style={{ fontSize: 9, color: t.muted, margin: '2px 0 0', fontFamily: FONT_CASUAL, letterSpacing: 1, textTransform: 'uppercase' }}>this month</p>
+                    <Bar pct={(exerciseHrs / 30) * 100} color={`${GOLD},0.78)`} />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+                      <span style={{ fontSize: 8, color: t.muted, fontFamily: FONT_CASUAL }}>GOAL 30H</span>
+                      <span style={{ fontSize: 8, color: t.gold, fontFamily: FONT_CASUAL }}>{Math.round((exerciseHrs/30)*100)}%</span>
+                    </div>
+                  </GlassCard>
+
+                  <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '8px 20px 20px 20px', padding: '12px 14px' }}>
+                    <CardLabel color={t.muted}>Poses analysed</CardLabel>
+                    <p style={{ fontSize: 32, fontWeight: 500, color: t.text, lineHeight: 1, margin: '2px 0 0', fontFamily: FONT_PANCAKE }}>{totalSessions}</p>
+                    <p style={{ fontSize: 9, color: t.muted, margin: '2px 0 0', fontFamily: FONT_CASUAL, letterSpacing: 1, textTransform: 'uppercase' }}>all time</p>
+                    <div style={{ marginTop: 8 }}>
+                      <span style={{ fontSize: 8, padding: '2px 7px', borderRadius: 999, background: `${GOLD},0.14)`, color: t.gold, border: `0.5px solid ${t.goldBorder}`, letterSpacing: 1.2, textTransform: 'uppercase' as const, fontFamily: FONT_CASUAL, fontWeight: 600 }}>
+                        +{monthSessions} this month
+                      </span>
+                    </div>
+                  </GlassCard>
+                </div>
+
+                {/* Row B: Streak + Avg score */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+                  <GlassCard style={{ background: t.cardSage, border: `0.5px solid rgba(140,170,115,0.32)`, borderRadius: '20px 20px 8px 20px', padding: '12px 14px' }}>
+                    <CardLabel color="rgba(160,195,130,0.75)">Current streak</CardLabel>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, margin: '2px 0 0' }}>
+                      <p style={{ fontSize: 32, fontWeight: 500, color: 'rgba(160,195,130,0.92)', lineHeight: 1, margin: 0, fontFamily: FONT_PANCAKE }}>7</p>
+                      <div>
+                        <div style={{ fontSize: 11, color: 'rgba(160,195,130,0.70)', fontFamily: FONT_CASUAL, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}>days</div>
+                        <div style={{ fontSize: 16 }}>🔥</div>
                       </div>
-                    );
-                  })}
-                </div>
-                <div style={{ display: 'flex', gap: 4, marginTop: 14 }}>
-                  {habitsList.map((h, i) => (
-                    <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: completedHabits.includes(h.id) ? `${GOLD},0.72)` : (isDark ? `${PARCHMENT},0.10)` : 'rgba(0,0,0,0.06)') }} />
-                  ))}
-                </div>
-                <p style={{ fontSize: 9, color: t.muted, margin: '6px 0 0', fontFamily: FONT_CASUAL, textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'center' as const }}>
-                  {completedHabits.length} of 5 habits done today
-                </p>
-              </GlassCard>
-            </Link>
-          </section>
+                    </div>
+                    <p style={{ fontSize: 9, color: t.muted, margin: '3px 0 0', fontFamily: FONT_CASUAL, textTransform: 'uppercase' }}>BEST: 14 DAYS</p>
+                  </GlassCard>
 
-          {/* §3 MY PROGRESS */}
-          <section>
-            <SectionHead t={t}>My Progress</SectionHead>
-
-            {/* Row A: Exercise hours + Poses */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
-              <GlassCard style={{ background: t.cardTerra, border: `0.5px solid ${t.goldBorder}`, borderRadius: '20px 8px 20px 20px', padding: '12px 14px' }}>
-                <CardLabel color={t.gold}>Exercise hours</CardLabel>
-                <p style={{ fontSize: 32, fontWeight: 500, color: t.gold, lineHeight: 1, margin: '2px 0 0', fontFamily: FONT_PANCAKE }}>
-                  {exerciseHrs}<span style={{ fontSize: 13, opacity: 0.55, marginLeft: 2 }}> hrs</span>
-                </p>
-                <p style={{ fontSize: 9, color: t.muted, margin: '2px 0 0', fontFamily: FONT_CASUAL, letterSpacing: 1, textTransform: 'uppercase' }}>this month</p>
-                <Bar pct={(exerciseHrs / 30) * 100} color={`${GOLD},0.78)`} />
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-                  <span style={{ fontSize: 8, color: t.muted, fontFamily: FONT_CASUAL }}>GOAL 30H</span>
-                  <span style={{ fontSize: 8, color: t.gold, fontFamily: FONT_CASUAL }}>{Math.round((exerciseHrs/30)*100)}%</span>
+                  <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '20px 20px 20px 8px', padding: '12px 14px' }}>
+                    <CardLabel color={t.muted}>Avg pose score</CardLabel>
+                    <p style={{ fontSize: 32, fontWeight: 500, color: t.gold, lineHeight: 1, margin: '2px 0 0', fontFamily: FONT_PANCAKE }}>
+                      {avgScore}<span style={{ fontSize: 13, opacity: 0.50, marginLeft: 1 }}>/100</span>
+                    </p>
+                    <p style={{ fontSize: 9, color: t.muted, margin: '2px 0 0', fontFamily: FONT_CASUAL, letterSpacing: 1, textTransform: 'uppercase' }}>↑ improving</p>
+                    <Bar pct={avgScore} color={`${GOLD},0.72)`} />
+                  </GlassCard>
                 </div>
-              </GlassCard>
 
-              <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '8px 20px 20px 20px', padding: '12px 14px' }}>
-                <CardLabel color={t.muted}>Poses analysed</CardLabel>
-                <p style={{ fontSize: 32, fontWeight: 500, color: t.text, lineHeight: 1, margin: '2px 0 0', fontFamily: FONT_PANCAKE }}>{totalSessions}</p>
-                <p style={{ fontSize: 9, color: t.muted, margin: '2px 0 0', fontFamily: FONT_CASUAL, letterSpacing: 1, textTransform: 'uppercase' }}>all time</p>
-                <div style={{ marginTop: 8 }}>
-                  <span style={{ fontSize: 8, padding: '2px 7px', borderRadius: 999, background: `${GOLD},0.14)`, color: t.gold, border: `0.5px solid ${t.goldBorder}`, letterSpacing: 1.2, textTransform: 'uppercase' as const, fontFamily: FONT_CASUAL, fontWeight: 600 }}>
-                    +{monthSessions} this month
-                  </span>
-                </div>
-              </GlassCard>
-            </div>
-
-            {/* Row B: Streak + Avg score */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
-              <GlassCard style={{ background: t.cardSage, border: `0.5px solid rgba(140,170,115,0.32)`, borderRadius: '20px 20px 8px 20px', padding: '12px 14px' }}>
-                <CardLabel color="rgba(160,195,130,0.75)">Current streak</CardLabel>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, margin: '2px 0 0' }}>
-                  <p style={{ fontSize: 32, fontWeight: 500, color: 'rgba(160,195,130,0.92)', lineHeight: 1, margin: 0, fontFamily: FONT_PANCAKE }}>7</p>
-                  <div>
-                    <div style={{ fontSize: 11, color: 'rgba(160,195,130,0.70)', fontFamily: FONT_CASUAL, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}>days</div>
-                    <div style={{ fontSize: 16 }}>🔥</div>
+                {/* Row C: Monthly sessions full-width */}
+                <GlassCard style={{ background: t.cardDark, border: `0.5px solid ${t.goldBorder}`, borderRadius: '12px 24px 24px 12px', padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ flex: 1 }}>
+                      <CardLabel color={t.muted}>Monthly sessions</CardLabel>
+                      <p style={{ fontSize: 24, fontWeight: 500, color: t.text, fontFamily: FONT_PANCAKE, margin: 0 }}>
+                        {monthSessions} <span style={{ fontSize: 14, color: t.muted, fontWeight: 400 }}>/ 26 goal</span>
+                      </p>
+                      <p style={{ fontSize: 10, color: t.muted, margin: '3px 0 0', fontFamily: FONT_CASUAL, letterSpacing: 0.5 }}>
+                        {Math.round((monthSessions/26)*100)}% of monthly goal
+                      </p>
+                      <Bar pct={(monthSessions/26)*100} color={`${GOLD},0.78)`} />
+                    </div>
+                    <div style={{ display: 'flex', gap: 4, marginLeft: 16, alignItems: 'flex-end' }}>
+                      {[1,1,0,1,0,1,1].map((done,i)=>(
+                        <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: done ? `${GOLD},0.80)` : (isDark ? `${PARCHMENT},0.12)` : 'rgba(0,0,0,0.06)') }} />
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <p style={{ fontSize: 9, color: t.muted, margin: '3px 0 0', fontFamily: FONT_CASUAL, textTransform: 'uppercase' }}>BEST: 14 DAYS</p>
-              </GlassCard>
-
-              <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '20px 20px 20px 8px', padding: '12px 14px' }}>
-                <CardLabel color={t.muted}>Avg pose score</CardLabel>
-                <p style={{ fontSize: 32, fontWeight: 500, color: t.gold, lineHeight: 1, margin: '2px 0 0', fontFamily: FONT_PANCAKE }}>
-                  {avgScore}<span style={{ fontSize: 13, opacity: 0.50, marginLeft: 1 }}>/100</span>
-                </p>
-                <p style={{ fontSize: 9, color: t.muted, margin: '2px 0 0', fontFamily: FONT_CASUAL, letterSpacing: 1, textTransform: 'uppercase' }}>↑ improving</p>
-                <Bar pct={avgScore} color={`${GOLD},0.72)`} />
-              </GlassCard>
+                </GlassCard>
+              </section>
             </div>
-
-            {/* Row C: Monthly sessions full-width */}
-            <GlassCard style={{ background: t.cardDark, border: `0.5px solid ${t.goldBorder}`, borderRadius: '12px 24px 24px 12px', padding: '14px 16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ flex: 1 }}>
-                  <CardLabel color={t.muted}>Monthly sessions</CardLabel>
-                  <p style={{ fontSize: 24, fontWeight: 500, color: t.text, fontFamily: FONT_PANCAKE, margin: 0 }}>
-                    {monthSessions} <span style={{ fontSize: 14, color: t.muted, fontWeight: 400 }}>/ 26 goal</span>
-                  </p>
-                  <p style={{ fontSize: 10, color: t.muted, margin: '3px 0 0', fontFamily: FONT_CASUAL, letterSpacing: 0.5 }}>
-                    {Math.round((monthSessions/26)*100)}% of monthly goal
-                  </p>
-                  <Bar pct={(monthSessions/26)*100} color={`${GOLD},0.78)`} />
-                </div>
-                <div style={{ display: 'flex', gap: 4, marginLeft: 16, alignItems: 'flex-end' }}>
-                  {[1,1,0,1,0,1,1].map((done,i)=>(
-                    <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: done ? `${GOLD},0.80)` : (isDark ? `${PARCHMENT},0.12)` : 'rgba(0,0,0,0.06)') }} />
-                  ))}
-                </div>
-              </div>
-            </GlassCard>
-          </section>
+          </div>
 
           {/* §4 WEEKLY MOOD FLOW */}
           <section>
