@@ -228,8 +228,8 @@ export default function PracticeCalendarPage() {
         <GlassCard 
           className="p-4" 
           style={{ 
-            borderRadius: '24px',
-            background: 'rgba(193,154,107,0.045)',
+            borderRadius: '24px 12px 24px 24px',
+            background: 'rgba(25,16,8,0.50)',
             border: '0.5px solid rgba(193,154,107,0.18)'
           }} 
           tokens={tokens}
@@ -299,15 +299,15 @@ export default function PracticeCalendarPage() {
         </GlassCard>
 
         <div className="grid grid-cols-3 gap-3">
-          <GlassCard className="p-3 text-center" style={{ borderRadius: '16px', border: '0.5px solid rgba(193,154,107,0.16)', background: 'rgba(193,154,107,0.04)' }} tokens={tokens}>
+          <GlassCard className="p-3 text-center" style={{ borderRadius: '20px 8px 20px 20px', border: '0.5px solid rgba(193,154,107,0.16)', background: 'rgba(193,154,107,0.04)' }} tokens={tokens}>
             <p className="text-2xl font-bold" style={{ color: 'rgba(193,154,107,0.85)', fontFamily: FONT_PANCAKE }}>{weekStats.practiceDays}</p>
             <p className="text-[8px] uppercase tracking-widest font-bold" style={{ color: 'rgba(255,240,215,0.35)', fontFamily: FONT_CASUAL }}>sessions</p>
           </GlassCard>
-          <GlassCard className="p-3 text-center" style={{ borderRadius: '16px', border: '0.5px solid rgba(193,154,107,0.16)', background: 'rgba(193,154,107,0.04)' }} tokens={tokens}>
+          <GlassCard className="p-3 text-center" style={{ borderRadius: '12px', border: '0.5px solid rgba(193,154,107,0.16)', background: 'rgba(193,154,107,0.04)' }} tokens={tokens}>
             <p className="text-2xl font-bold" style={{ color: 'rgba(193,154,107,0.85)', fontFamily: FONT_PANCAKE }}>{weekStats.moodDays}</p>
             <p className="text-[8px] uppercase tracking-widest font-bold" style={{ color: 'rgba(255,240,215,0.35)', fontFamily: FONT_CASUAL }}>moods</p>
           </GlassCard>
-          <GlassCard className="p-3 text-center" style={{ borderRadius: '16px', border: '0.5px solid rgba(193,154,107,0.16)', background: 'rgba(193,154,107,0.04)' }} tokens={tokens}>
+          <GlassCard className="p-3 text-center" style={{ borderRadius: '8px 20px 20px 8px', border: '0.5px solid rgba(193,154,107,0.16)', background: 'rgba(193,154,107,0.04)' }} tokens={tokens}>
             <p className="text-2xl font-bold" style={{ color: 'rgba(160,195,130,0.85)', fontFamily: FONT_PANCAKE }}>{weekStats.habitDots}</p>
             <p className="text-[8px] uppercase tracking-widest font-bold" style={{ color: 'rgba(255,240,215,0.35)', fontFamily: FONT_CASUAL }}>habits</p>
           </GlassCard>
@@ -420,7 +420,7 @@ export default function PracticeCalendarPage() {
         <GlassCard 
           className="p-5" 
           style={{ 
-            borderRadius: '24px',
+            borderRadius: '12px 24px 24px 24px',
             background: 'rgba(25,16,8,0.50)',
             border: '0.5px solid rgba(193,154,107,0.18)'
           }} 
