@@ -10,12 +10,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { KeyRound, Save, Share2, Copy, MessageSquare, UserCircle, FileText, Star, Crown } from 'lucide-react';
+import { KeyRound, Save, Share2, Copy, MessageSquare, UserCircle, FileText, Star, Crown, Sun, Moon } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc, DocumentData } from 'firebase/firestore';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { cn } from '@/lib/utils';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
@@ -60,6 +61,7 @@ type MeasurementsFormValues = z.infer<typeof measurementsSchema>;
 export default function ProfilePage() {
   const { user, updateUserPassword, updateUserDisplayName, loading: authLoading } = useAuth();
   const { t } = useLanguage();
+  const { isDark, toggleTheme } = useTheme();
   const { toast } = useToast();
   const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false);
   const [isUsernameSubmitting, setIsUsernameSubmitting] = useState(false);
@@ -174,14 +176,39 @@ export default function ProfilePage() {
       <div className="relative min-h-[calc(100vh-4rem)]">
         <div className="relative z-10 flex flex-col h-full">
             <header className="container mx-auto px-4 pt-8 pb-4">
-                <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, color: 'rgba(255,240,215,0.92)', fontSize: 32, display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <UserCircle className="h-8 w-8" style={{ color: 'rgba(193,154,107,0.85)' }} />
-                    Your Profile
-                </h1>
-                <p style={{ color: 'rgba(255,240,215,0.40)', fontStyle: 'italic', fontSize: 16, margin: '4px 0 0' }}>
-                    Manage your account settings and preferences.
-                </p>
-                <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 8 }} />
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                  <div>
+                    <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, color: 'rgba(255,240,215,0.92)', fontSize: 32, display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <UserCircle className="h-8 w-8" style={{ color: 'rgba(193,154,107,0.85)' }} />
+                        Your Profile
+                    </h1>
+                    <p style={{ color: 'rgba(255,240,215,0.40)', fontStyle: 'italic', fontSize: 16, margin: '4px 0 0' }}>
+                        Manage your account settings and preferences.
+                    </p>
+                    <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 8 }} />
+                  </div>
+                  <button
+                    onClick={toggleTheme}
+                    aria-label="Toggle theme"
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: '50%',
+                      border: '1.5px solid rgba(193,154,107,0.30)',
+                      background: 'rgba(193,154,107,0.08)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {isDark
+                      ? <Sun style={{ width: 14, height: 14, color: 'rgba(193,154,107,0.75)' }} />
+                      : <Moon style={{ width: 14, height: 14, color: 'rgba(193,154,107,0.75)' }} />
+                    }
+                  </button>
+                </div>
             </header>
 
             <main className="flex-grow container mx-auto px-4 mt-8">

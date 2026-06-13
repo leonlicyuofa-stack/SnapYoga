@@ -65,11 +65,14 @@ export function AppShell({ children }: AppShellProps) {
 
   const isActive = (path: string) => pathname === path;
 
+  // List of routes where the top header is hidden because they provide their own header/toggle
+  const hideHeaderRoutes = ['/dashboard', '/snap-yoga', '/practice-calendar', '/challenges', '/profile'];
+
   return (
     <div className="relative min-h-screen font-serif">
       <div className="relative z-20 flex flex-col min-h-screen">
-        {/* HEADER - Hidden on dashboard to prevent "double header" */}
-        {pathname !== '/dashboard' && (
+        {/* HEADER - Hidden on main routes to prevent "double header" */}
+        {!hideHeaderRoutes.includes(pathname) && (
           <header className={cn(
             "sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b px-4 backdrop-blur-lg sm:px-6 transition-colors duration-300",
             theme === 'dark' 

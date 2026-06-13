@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as React from 'react';
@@ -13,11 +12,12 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowRight, Users, PlusCircle, Crown, Star, Scale, Zap, Spline, Anchor, Copy, Mail, Share2, Gift } from 'lucide-react';
+import { ArrowRight, Users, PlusCircle, Crown, Star, Scale, Zap, Spline, Anchor, Copy, Mail, Share2, Gift, Sun, Moon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { RockWheelDialog } from '@/components/features/dashboard/rock-wheel-dialog';
 import { RewardDialog } from '@/components/features/dashboard/reward-dialog';
@@ -275,6 +275,7 @@ function InviteFriendDialog() {
 export default function ChallengesPage() {
   const [friends] = useState<Friend[]>(initialFriends);
   const { t } = useLanguage();
+  const { isDark, toggleTheme } = useTheme();
   const [showRockWheelDialog, setShowRockWheelDialog] = useState(false);
   const [showRewardDialog, setShowRewardDialog] = useState(false);
   const [rewardedRock, setRewardedRock] = useState<Collectible | null>(null);
@@ -326,12 +327,37 @@ export default function ChallengesPage() {
       )}
       <div className="container mx-auto px-4 py-8">
           <header className="mb-8">
-                <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, color: 'rgba(255,240,215,0.92)' }} className="text-3xl font-bold text-white flex items-center gap-3">
-                    <Crown className="h-8 w-8" style={{ color: 'rgba(193,154,107,0.85)' }} />
-                    Yoga Challenges
-                </h1>
-                <p style={{ color: 'rgba(255,240,215,0.40)', fontStyle: 'italic' }} className="text-md text-white/80">Improve your practice, track your progress, and connect with friends.</p>
-                <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 5 }} />
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                <div>
+                  <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, color: 'rgba(255,240,215,0.92)' }} className="text-3xl font-bold text-white flex items-center gap-3">
+                      <Crown className="h-8 w-8" style={{ color: 'rgba(193,154,107,0.85)' }} />
+                      Yoga Challenges
+                  </h1>
+                  <p style={{ color: 'rgba(255,240,215,0.40)', fontStyle: 'italic' }} className="text-md text-white/80">Improve your practice, track your progress, and connect with friends.</p>
+                  <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 5 }} />
+                </div>
+                <button
+                  onClick={toggleTheme}
+                  aria-label="Toggle theme"
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: '50%',
+                    border: '1.5px solid rgba(193,154,107,0.30)',
+                    background: 'rgba(193,154,107,0.08)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    flexShrink: 0,
+                  }}
+                >
+                  {isDark
+                    ? <Sun style={{ width: 14, height: 14, color: 'rgba(193,154,107,0.75)' }} />
+                    : <Moon style={{ width: 14, height: 14, color: 'rgba(193,154,107,0.75)' }} />
+                  }
+                </button>
+              </div>
             </header>
             <main className="flex-grow space-y-12">
               <Card className="w-full shadow-2xl text-white" style={{ border: '0.5px solid rgba(193,154,107,0.18)', background: 'rgba(25,16,8,0.50)', borderRadius: '24px 12px 24px 24px' }}>

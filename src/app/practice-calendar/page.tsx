@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useRef } from 'react';
@@ -104,7 +103,7 @@ function SectionLabel({ children, tokens }: { children: React.ReactNode; tokens:
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function PracticeCalendarPage() {
   const { user, loading: authLoading } = useAuth();
-  const { isDark } = useTheme();
+  const { isDark, toggleTheme } = useTheme();
   const { toast } = useToast();
   const tokens = getThemeTokens(isDark);
 
@@ -215,14 +214,37 @@ export default function PracticeCalendarPage() {
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        <header>
-          <h1 className="text-3xl font-bold" style={{ color: tokens.text, fontFamily: FONT_PANCAKE, fontWeight: 600 }}>
-            Practice Journal
-          </h1>
-          <p className="text-[11px] uppercase tracking-widest mt-1" style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>
-            Your mindful journey log
-          </p>
-          <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 5 }} />
+        <header className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold" style={{ color: tokens.text, fontFamily: FONT_PANCAKE, fontWeight: 600 }}>
+              Practice Journal
+            </h1>
+            <p className="text-[11px] uppercase tracking-widest mt-1" style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>
+              Your mindful journey log
+            </p>
+            <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 5 }} />
+          </div>
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: '50%',
+              border: '1.5px solid rgba(193,154,107,0.30)',
+              background: 'rgba(193,154,107,0.08)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}
+          >
+            {isDark
+              ? <Sun style={{ width: 14, height: 14, color: 'rgba(193,154,107,0.75)' }} />
+              : <Moon style={{ width: 14, height: 14, color: 'rgba(193,154,107,0.75)' }} />
+            }
+          </button>
         </header>
 
         <GlassCard 
