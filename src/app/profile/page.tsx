@@ -15,7 +15,7 @@ import { KeyRound, Save, Share2, Copy, MessageSquare, UserCircle, FileText, Star
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { firestore } from '@/lib/firebase/clientApp';
-import { doc, getDoc, DocumentData, collection, query, where, getDocs, orderBy, Timestamp } from 'firebase/firestore';
+import { doc, getDoc, DocumentData, collection, query, where, getDocs, orderBy, Timestamp, limit } from 'firebase/firestore';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
@@ -24,7 +24,7 @@ import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { format, subDays, startOfDay } from 'date-fns';
+import { format, subDays, startOfDay, isToday, isYesterday, differenceInDays } from 'date-fns';
 
 
 const usernameChangeSchema = z.object({
@@ -74,6 +74,7 @@ export default function ProfilePage() {
   const [practicePercent, setPracticePercent] = useState(0);
   const [moodPercent, setMoodPercent] = useState(0);
   const [habitsPercent, setHabitsPercent] = useState(0);
+  const [recentPractices, setRecentPractices] = useState<any[]>([]);
 
   const { 
     register: registerUsername, 
@@ -105,7 +106,7 @@ export default function ProfilePage() {
         if (snap.exists()) setSubscriptionStatus(snap.data()?.subscriptionStatus ?? null);
       });
 
-      // Fetch Progress Data
+      // Fetch Progress & Practices Data
       const fetchProgress = async () => {
         const now = new Date();
         const sevenDaysAgo = subDays(now, 7);
@@ -117,13 +118,18 @@ export default function ProfilePage() {
         const exerciseHrs = (analysesSnap.size * 15) / 60;
         setPracticePercent(Math.min(Math.round((exerciseHrs / 30) * 100), 100));
 
-        // 2. Mood (Last 7 days)
+        // 2. Recent Practices
+        const practicesQuery = query(analysesRef, orderBy('createdAt', 'desc'), limit(5));
+        const practicesSnap = await getDocs(practicesQuery);
+        setRecentPractices(practicesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+
+        // 3. Mood (Last 7 days)
         const moodsRef = collection(firestore, 'users', user.uid, 'moods');
         const moodsQuery = query(moodsRef, where('loggedAt', '>=', startOfSevenDaysAgo));
         const moodsSnap = await getDocs(moodsQuery);
         setMoodPercent(Math.min(Math.round((moodsSnap.size / 7) * 100), 100));
 
-        // 3. Habits (Last 7 days)
+        // 4. Habits (Last 7 days)
         const habitsRef = collection(firestore, 'users', user.uid, 'habits');
         const habitsQuery = query(habitsRef, where('date', '>=', format(sevenDaysAgo, 'yyyy-MM-dd')));
         const habitsSnap = await getDocs(habitsQuery);
@@ -201,6 +207,15 @@ export default function ProfilePage() {
   };
 
   const getOffset = (pct: number) => 150.8 - (150.8 * pct / 100);
+
+  const formatPracticeDate = (timestamp: any) => {
+    if (!timestamp) return '';
+    const date = timestamp.toDate();
+    if (isToday(date)) return 'Today';
+    if (isYesterday(date)) return 'Yesterday';
+    const diff = differenceInDays(new Date(), date);
+    return `${diff} days ago`;
+  };
   
   if (authLoading && !user) {
     return <AppShell><div className="flex justify-center items-center min-h-screen"><SmileyRockLoader /></div></AppShell>;
@@ -215,7 +230,7 @@ export default function ProfilePage() {
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
       <div className="relative min-h-[calc(100vh-4rem)]">
         <div className="relative z-10 flex flex-col h-full">
-            <header className="container mx-auto px-4 pt-12 pb-8 relative flex flex-col items-center">
+            <header className="container mx-auto px-4 pt-12 pb-8 relative flex flex-col items-center text-center">
                 <div className="absolute top-4 right-4">
                   <button
                     onClick={toggleTheme}
@@ -384,6 +399,44 @@ export default function ProfilePage() {
                             <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: 'rgba(200,140,90,0.85)' }}>Habits</span>
                           </div>
                         </div>
+                      </div>
+                  </div>
+
+                  {/* My Practices */}
+                  <div className="space-y-1">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                        <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(193,154,107,0.55)' }}>My Practices</p>
+                        <Link href="/profile/analysis-logs" style={{ fontSize: 11, color: 'rgba(193,154,107,0.40)' }}>Show all ›</Link>
+                      </div>
+                      <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 6 }} className="no-scrollbar">
+                        {recentPractices.length > 0 ? (
+                          recentPractices.map((practice) => (
+                            <Link key={practice.id} href={`/analysis/${practice.id}`}>
+                              <div style={{ flexShrink: 0, width: 130, borderRadius: '16px 16px 16px 6px', border: '0.5px solid rgba(193,154,107,0.16)', background: 'rgba(193,154,107,0.05)', overflow: 'hidden' }}>
+                                <div style={{ height: 70, background: 'linear-gradient(135deg, rgba(193,154,107,0.25), rgba(180,110,65,0.20))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>
+                                  🧘
+                                </div>
+                                <div style={{ padding: '8px 10px' }}>
+                                  <div style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,240,215,0.88)', truncate: 'true' } as any} className="truncate">{practice.identifiedPose}</div>
+                                  <div style={{ fontSize: 9, color: 'rgba(255,240,215,0.35)', fontStyle: 'italic', marginTop: 2 }}>
+                                    {formatPracticeDate(practice.createdAt)}
+                                  </div>
+                                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 2 }}>
+                                    <span style={{ background: 'rgba(193,154,107,0.20)', color: 'rgba(193,154,107,0.90)', borderRadius: 999, padding: '1px 6px', fontWeight: 600, fontSize: 11 }}>
+                                      {Math.round(practice.score)}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                          ))
+                        ) : (
+                          <div style={{ flexShrink: 0, width: '100%', borderRadius: '16px 16px 16px 6px', border: '0.5px dashed rgba(193,154,107,0.16)', background: 'rgba(193,154,107,0.02)', padding: '24px', textAlign: 'center' }}>
+                            <p style={{ fontSize: 12, color: 'rgba(255,240,215,0.35)', fontStyle: 'italic' }}>
+                              No practices recorded yet — try the Analyze tab to get started.
+                            </p>
+                          </div>
+                        )}
                       </div>
                   </div>
 
