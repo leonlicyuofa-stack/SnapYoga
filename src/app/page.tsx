@@ -167,18 +167,13 @@ export default function HomePage() {
           color: linkColor,
           transition: 'color 0.4s ease',
         }}>
-          {user ? (
-             <Link href="/dashboard" style={{ color: linkEmColor, textDecoration: 'none' }}>
-                Sign in here
-             </Link>
-          ) : (
-            <>
-                Already have an account?{' '}
-                <Link href="/auth/signin" style={{ color: linkEmColor, textDecoration: 'none' }}>
-                    Sign in
-                </Link>
-            </>
-          )}
+          Already have an account?{' '}
+          <Link 
+            href={user ? "/dashboard" : "/auth/signin"} 
+            style={{ color: linkEmColor, textDecoration: 'none' }}
+          >
+            Sign in
+          </Link>
         </span>
       </div>
 
