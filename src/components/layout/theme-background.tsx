@@ -13,8 +13,10 @@ export function ThemeBackground() {
           inset: 0,
           zIndex: -10,
           overflow: 'hidden',
-          backgroundColor: isDark ? '#0D1821' : '#F1F2EE',
-          transition: 'background-color 0.8s ease',
+          background: isDark 
+            ? 'linear-gradient(175deg,#1a1210 0%,#0D1821 55%,#1a0f1e 100%)' 
+            : '#F1F2EE',
+          transition: 'background 0.8s ease',
         }}
       >
         {/* Dynamic CSS Gradient "Streaks" - Tinted with Black Cherry #5A0002 */}
