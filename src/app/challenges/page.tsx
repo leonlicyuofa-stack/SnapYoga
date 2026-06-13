@@ -334,7 +334,7 @@ export default function ChallengesPage() {
                 <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 5 }} />
             </header>
             <main className="flex-grow space-y-12">
-              <Card className="w-full shadow-2xl overflow-hidden rounded-2xl text-white" style={{ border: '0.5px solid rgba(193,154,107,0.18)', background: 'rgba(193,154,107,0.045)' }}>
+              <Card className="w-full shadow-2xl text-white" style={{ border: '0.5px solid rgba(193,154,107,0.18)', background: 'rgba(25,16,8,0.50)', borderRadius: '24px 12px 24px 24px' }}>
                 <CardHeader className="text-center pt-8">
                   <CardTitle style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: 'rgba(255,240,215,0.92)' }} className="text-3xl font-semibold flex items-center justify-center gap-2">
                     <Users className="h-8 w-8" style={{ color: 'rgba(193,154,107,0.80)' }} />
