@@ -135,7 +135,7 @@ export function SnapYogaPageClient() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-4xl mx-auto">
       {error && (
         <Alert variant="destructive" className="shadow-md">
           <Terminal className="h-4 w-4" />
@@ -144,13 +144,12 @@ export function SnapYogaPageClient() {
         </Alert>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-        <div className="space-y-8">
-            <VideoUploadCard 
-                onVideoUpload={handleVideoUpload} 
-                isLoading={isLoadingAnalysis}
-            />
-        </div>
+      <div className="flex flex-col gap-8 items-start">
+        <VideoUploadCard 
+            onVideoUpload={handleVideoUpload} 
+            isLoading={isLoadingAnalysis}
+        />
+        
         <PoseAnalysisCard
           videoDataUri={videoDataUri}
           videoFileName={videoFileName}

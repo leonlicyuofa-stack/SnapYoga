@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import type { AnalysisServiceOutput } from '@/app/actions/analyze-pose-action';
 import { Button } from "@/components/ui/button";
 import { Activity, MessageSquareText, VideoOff, Award, Sparkles, ListChecks, Route, Lightbulb, MessageCircle } from 'lucide-react';
@@ -28,7 +28,7 @@ function jointStatusClass(status: string): string {
   const s = status.toLowerCase();
   if (s.includes('good')) return 'border-green-500/40 bg-green-500/10';
   if (s.includes('adjust') || s.includes('improve')) return 'border-amber-500/40 bg-amber-500/10';
-  return 'border-white/20 bg-black/20';
+  return 'border-[rgba(193,154,107,0.14)] bg-black/20';
 }
 
 export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analysis, isLoading }: PoseAnalysisCardProps) {
@@ -68,19 +68,24 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
 
   return (
     <div 
-      className="w-full shadow-xl p-6 backdrop-blur-lg rounded-2xl bg-[rgba(193,154,107,0.045)] border-[rgba(193,154,107,0.18)]"
-      style={{ borderWidth: '0.5px' }}
+      className="w-full p-6 shadow-xl"
+      style={{ 
+        borderRadius: '12px 24px 24px 24px',
+        border: '0.5px solid rgba(193,154,107,0.18)',
+        background: 'rgba(25,16,8,0.50)',
+        backdropFilter: 'blur(14px)',
+      }}
     >
       <CardHeader className="p-0">
         <CardTitle 
           style={{ 
             fontFamily: "'Cormorant Garamond', Georgia, serif", 
             fontWeight: 600, 
-            color: 'rgba(255,240,215,0.92)' 
+            color: 'rgba(255,240,215,0.90)' 
           }}
           className="flex items-center gap-2 text-2xl"
         >
-          <Activity className="h-7 w-7" style={{ color: 'rgba(193,154,107,0.85)' }} />
+          <Activity className="h-7 w-7" style={{ color: 'rgba(193,154,107,0.80)' }} />
           Pose Analysis
         </CardTitle>
         <CardDescription className="text-white/80">
@@ -88,7 +93,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
         </CardDescription>
       </CardHeader>
       <CardContent className="p-0 space-y-6 mt-6">
-        <div className="aspect-video w-full bg-black/20 rounded-xl overflow-hidden flex items-center justify-center border border-dashed border-white/20">
+        <div className="aspect-video w-full bg-black/20 rounded-xl overflow-hidden flex items-center justify-center border border-dashed border-[rgba(193,154,107,0.20)]">
           {videoSrc ? (
             isImage ? (
               <img 
@@ -119,17 +124,17 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
                 <Skeleton className="h-4 w-1/2 bg-white/20" />
               </div>
             ) : (
-              <div className="flex flex-col items-center text-white/70 p-8 text-center">
-                <VideoOff className="h-16 w-16 mb-4" />
-                <p className="font-semibold text-lg">No Media Uploaded</p>
-                <p className="text-sm">Your video/image and analysis will appear here.</p>
+              <div className="flex flex-col items-center p-8 text-center">
+                <VideoOff className="h-16 w-16 mb-4" style={{ color: 'rgba(193,154,107,0.30)' }} />
+                <p className="font-semibold text-lg" style={{ color: 'rgba(255,240,215,0.55)' }}>No Media Uploaded</p>
+                <p className="text-sm" style={{ color: 'rgba(255,240,215,0.30)' }}>Your video/image and analysis will appear here.</p>
               </div>
             )
           )}
         </div>
         
         {userNotes && (
-          <div className="p-4 rounded-xl border border-white/10 bg-white/5 space-y-1">
+          <div className="p-4 rounded-xl border border-[rgba(193,154,107,0.14)] bg-white/5 space-y-1">
              <h3 className="text-sm font-semibold flex items-center gap-2 text-white/60 uppercase tracking-widest">
                <MessageCircle className="h-4 w-4" />
                Your Context
@@ -189,7 +194,14 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
                   )}
                 </div>
                 <div className="flex items-center gap-3">
-                  <Progress value={score} className="w-full h-3 bg-white/20" />
+                  <Progress 
+                    value={score} 
+                    className="w-full h-3 bg-white/20" 
+                    style={{ 
+                      // Note: Standard shadcn Progress doesn't support easy dynamic inner fill color via style, 
+                      // but we keep the intent here for themed consistency.
+                    }} 
+                  />
                   <span className="text-2xl font-bold text-white shrink-0">{score}/100</span>
                 </div>
                 {!hasV2Detail && (
