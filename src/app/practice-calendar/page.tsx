@@ -1,16 +1,17 @@
 
 "use client";
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { firestore } from '@/lib/firebase/clientApp';
-import { collection, getDocs, query, where, type Timestamp } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp, type Timestamp } from 'firebase/firestore';
 import { AppShell } from '@/components/layout/app-shell';
-import { format, startOfWeek, endOfWeek, eachDayOfInterval, startOfMonth, endOfMonth, getDaysInMonth, isSameDay } from 'date-fns';
+import { format, startOfWeek, endOfWeek, eachDayOfInterval, startOfMonth, endOfMonth, getDaysInMonth, isSameDay, addDays } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Smile, Wind, Frown, Meh, Activity, Flame, Droplets, Moon, Sun, Trophy, Star, CheckCircle2 } from 'lucide-react';
+import { Smile, Wind, Frown, Meh, Activity, Flame, Droplets, Moon, Sun, Trophy, Star, CheckCircle2, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Textarea } from '@/components/ui/textarea';
 
 // ─── Brand tokens ────────────────────────────────────────────────────────────
 const GOLD      = 'rgba(193,154,107';
@@ -44,7 +45,16 @@ interface StoredAnalysis {
   score?: number;
 }
 
-// ─── Habit config ─────────────────────────────────────────────────────────────
+// ─── Constants ────────────────────────────────────────────────────────────────
+const MOOD_SPECTRUM = [
+  { name: 'Fatigue',   emoji: '😫', color: 'rgba(139,100,75,0.92)' },
+  { name: 'Emotional', emoji: '😢', color: 'rgba(193,154,107,0.92)' },
+  { name: 'Calm',      emoji: '😌', color: 'rgba(140,185,215,0.92)' },
+  { name: 'Joyful',    emoji: '😊', color: 'rgba(160,195,130,0.92)' },
+];
+
+const BODY_TAGS_OPTIONS = ['Energized', 'Sore', 'Flexible', 'Tired', 'Tense'];
+
 const HABITS_CONFIG = [
   { id: 'practice', label: 'Practice', color: `rgba(180,110,65,0.85)`, radius: 26 },
   { id: 'hydrate',  label: 'Hydrate',  color: `rgba(100,160,200,0.85)`, radius: 37 },
@@ -99,18 +109,32 @@ function SectionHead({ children }: { children: React.ReactNode }) {
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function PracticeCalendarPage() {
   const { user, loading: authLoading } = useAuth();
-  const { isDark, toggleTheme } = useTheme();
+  const { isDark } = useTheme();
   const tokens = getThemeTokens(isDark);
+  const { toast } = useToast();
 
   const [sheetOpen, setSheetOpen] = useState(false);
   const [moodsByDate, setMoodsByDate]       = useState<Record<string, StoredMood>>({});
   const [analysesByDate, setAnalysesByDate] = useState<Record<string, StoredAnalysis[]>>({});
   const [habitsByDate, setHabitsByDate]     = useState<Record<string, string[]>>({});
 
+  // Journal States
+  const [selectedDay, setSelectedDay] = useState(new Date());
+  const [journalNote, setJournalNote] = useState('');
+  const [bodyTags, setBodyTags] = useState<string[]>([]);
+  const [dayMood, setDayMood] = useState<StoredMood | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+
   const now = new Date();
   const daysInMonth = getDaysInMonth(now);
   const monthName = format(now, 'MMMM');
+  const todayStr = format(now, 'yyyy-MM-dd');
 
+  // Mini week strip days
+  const weekStart = startOfWeek(now, { weekStartsOn: 1 });
+  const weekDays = Array.from({ length: 7 }).map((_, i) => addDays(weekStart, i));
+
+  // Load summary data (Habit Fan, Bingo)
   useEffect(() => {
     if (authLoading || !user) return;
     const start = startOfMonth(now);
@@ -146,6 +170,66 @@ export default function PracticeCalendarPage() {
       setHabitsByDate(habits);
     });
   }, [user, authLoading]);
+
+  // Load specific day journal data
+  useEffect(() => {
+    if (!user) return;
+    const dateStr = format(selectedDay, 'yyyy-MM-dd');
+    
+    // Load Mood
+    getDoc(doc(firestore, 'users', user.uid, 'moods', dateStr)).then(snap => {
+      setDayMood(snap.exists() ? snap.data() as StoredMood : null);
+    });
+
+    // Load Journal (note + bodyTags)
+    getDoc(doc(firestore, 'users', user.uid, 'journal', dateStr)).then(snap => {
+      if (snap.exists()) {
+        const data = snap.data();
+        setJournalNote(data.note || '');
+        setBodyTags(data.bodyTags || []);
+      } else {
+        setJournalNote('');
+        setBodyTags([]);
+      }
+    });
+  }, [selectedDay, user]);
+
+  const saveMood = async (mood: typeof MOOD_SPECTRUM[0]) => {
+    if (!user) return;
+    const dateStr = format(selectedDay, 'yyyy-MM-dd');
+    const moodData = {
+      name: mood.name,
+      emoji: mood.emoji,
+      loggedAt: serverTimestamp(),
+    };
+    await setDoc(doc(firestore, 'users', user.uid, 'moods', dateStr), moodData, { merge: true });
+    setDayMood(moodData as any);
+    // Update summary layer state too
+    setMoodsByDate(prev => ({ ...prev, [dateStr]: moodData as any }));
+  };
+
+  const saveJournal = async (noteOverride?: string, tagsOverride?: string[]) => {
+    if (!user) return;
+    setIsSaving(true);
+    const dateStr = format(selectedDay, 'yyyy-MM-dd');
+    try {
+      await setDoc(doc(firestore, 'users', user.uid, 'journal', dateStr), {
+        note: noteOverride ?? journalNote,
+        bodyTags: tagsOverride ?? bodyTags,
+        updatedAt: serverTimestamp(),
+      }, { merge: true });
+    } catch (e) {
+      console.error("Journal save failed", e);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const toggleBodyTag = (tag: string) => {
+    const newTags = bodyTags.includes(tag) ? bodyTags.filter(t => t !== tag) : [...bodyTags, tag];
+    setBodyTags(newTags);
+    saveJournal(undefined, newTags);
+  };
 
   // Bingo Rules Logic
   const bingoStatus = useMemo(() => {
@@ -190,25 +274,14 @@ export default function PracticeCalendarPage() {
               <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 5 }} />
             </div>
             <button
-              onClick={toggleTheme}
-              aria-label="Toggle theme"
+              onClick={() => {}} // Global theme toggle or settings could go here
+              aria-label="Calendar info"
               style={{
-                width: 28,
-                height: 28,
-                borderRadius: '50%',
-                border: '1.5px solid rgba(193,154,107,0.30)',
-                background: 'rgba(193,154,107,0.08)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                flexShrink: 0,
+                width: 28, height: 28, borderRadius: '50%', border: `1.5px solid ${tokens.cardBorder}`,
+                background: 'rgba(193,154,107,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center'
               }}
             >
-              {isDark
-                ? <Sun style={{ width: 14, height: 14, color: 'rgba(193,154,107,0.75)' }} />
-                : <Moon style={{ width: 14, height: 14, color: 'rgba(193,154,107,0.75)' }} />
-              }
+              <span style={{ fontSize: 12 }}>📅</span>
             </button>
           </header>
 
@@ -330,29 +403,135 @@ export default function PracticeCalendarPage() {
             zIndex: 10,
           }}
         >
-          {/* Grabber handle — tapping it toggles the sheet */}
+          {/* Peek Bar / Grabber */}
           <button
             onClick={() => setSheetOpen((o) => !o)}
             style={{ display: 'block', width: '100%', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
-            aria-label={sheetOpen ? 'Collapse journal' : 'Expand journal'}
           >
             <div style={{ width: 36, height: 4, borderRadius: 2, background: 'rgba(193,154,107,0.35)', margin: '0 auto 8px' }} />
             {!sheetOpen && (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,240,215,0.85)', fontFamily: "'Cormorant Garamond', Georgia, serif" }}>Today's Journal</span>
-                <span style={{ fontSize: 9, color: 'rgba(193,154,107,0.60)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Tap to open ↑</span>
+                <div className="flex flex-col items-start">
+                  <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,240,215,0.85)', fontFamily: FONT_PANCAKE }}>
+                    {format(now, 'EEE d MMM')}
+                  </span>
+                  <span style={{ fontSize: 9, color: 'rgba(193,154,107,0.60)', letterSpacing: '0.05em', textTransform: 'uppercase', marginTop: 2 }}>
+                    {moodsByDate[todayStr] 
+                      ? `· ${moodsByDate[todayStr].emoji} ${moodsByDate[todayStr].name} logged` 
+                      : "Tap to log today's practice ↑"}
+                  </span>
+                </div>
+                <div style={{ width: 30, height: 30, borderRadius: '50%', border: '0.5px solid rgba(193,154,107,0.30)', background: 'rgba(193,154,107,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                   {moodsByDate[todayStr]?.emoji || "✍️"}
+                </div>
               </div>
             )}
           </button>
 
-          {/* Journal content goes here — day entry */}
+          {/* Expanded Journal Content */}
           {sheetOpen && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div style={{ marginTop: 24, textAlign: 'center' }}>
-                <h3 style={{ fontFamily: FONT_PANCAKE, color: 'rgba(255,240,215,0.92)', fontSize: 24 }}>Daily Log</h3>
-                <p style={{ color: 'rgba(193,154,107,0.60)', fontSize: 12, fontStyle: 'italic', marginTop: 4 }}>Capture your practice and presence.</p>
-                <div style={{ padding: '40px 0', color: 'rgba(255,240,215,0.20)' }}>Journal entry system coming soon.</div>
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 mt-6 space-y-8 pb-12">
+              
+              {/* Day Header & Week Strip */}
+              <div className="space-y-4">
+                <h2 style={{ fontFamily: FONT_PANCAKE, color: tokens.accent, fontSize: 24, fontWeight: 600 }}>
+                  {format(selectedDay, 'EEEE, d MMMM')}
+                </h2>
+                <div className="flex justify-between items-center gap-2">
+                  {weekDays.map((d, i) => {
+                    const isSelected = isSameDay(d, selectedDay);
+                    const hasLog = moodsByDate[format(d, 'yyyy-MM-dd')];
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => setSelectedDay(d)}
+                        style={{
+                          flex: 1, height: 42, borderRadius: 21,
+                          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                          background: isSelected ? tokens.accent : 'rgba(255,240,215,0.05)',
+                          border: `0.5px solid ${isSelected ? tokens.accent : 'rgba(193,154,107,0.15)'}`,
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        <span style={{ fontSize: 9, opacity: isSelected ? 0.6 : 0.4, textTransform: 'uppercase' }}>{format(d, 'EE')}</span>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: isSelected ? 'rgba(25,16,8,0.95)' : 'white' }}>{format(d, 'd')}</span>
+                        {hasLog && !isSelected && <div style={{ width: 3, height: 3, borderRadius: '50%', background: tokens.accent, marginTop: 2 }} />}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
+
+              {/* Mood Picker */}
+              <div className="space-y-3">
+                 <p style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.55)', fontWeight: 600 }}>How did you feel?</p>
+                 <div className="grid grid-cols-4 gap-3">
+                    {MOOD_SPECTRUM.map((m) => {
+                      const active = dayMood?.name === m.name;
+                      return (
+                        <button
+                          key={m.name}
+                          onClick={() => saveMood(m)}
+                          style={{
+                            borderRadius: 14, padding: '12px 8px',
+                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+                            background: active ? `${m.color}22` : 'rgba(255,240,215,0.03)',
+                            border: `0.5px solid ${active ? m.color : 'rgba(193,154,107,0.15)'}`,
+                            transition: 'all 0.3s ease'
+                          }}
+                        >
+                          <span style={{ fontSize: 22 }}>{m.emoji}</span>
+                          <span style={{ fontSize: 8, textTransform: 'uppercase', fontWeight: 600, color: active ? 'white' : 'rgba(255,240,215,0.4)' }}>{m.name}</span>
+                        </button>
+                      );
+                    })}
+                 </div>
+              </div>
+
+              {/* Journal Note */}
+              <div className="space-y-3">
+                 <div className="flex justify-between items-center">
+                    <p style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.55)', fontWeight: 600 }}>Journal note</p>
+                    {isSaving && <Loader2 className="h-3 w-3 animate-spin text-accent" />}
+                 </div>
+                 <Textarea 
+                    value={journalNote}
+                    onChange={(e) => setJournalNote(e.target.value)}
+                    onBlur={() => saveJournal()}
+                    placeholder="Reflections on your presence today..."
+                    style={{ 
+                      borderRadius: 14, border: '0.5px solid rgba(193,154,107,0.14)', background: 'rgba(255,240,215,0.02)',
+                      minHeight: 120, fontFamily: FONT_PANCAKE, color: 'rgba(255,240,215,0.92)'
+                    }}
+                    className="placeholder:text-[rgba(255,240,215,0.25)]"
+                 />
+              </div>
+
+              {/* Body Tags */}
+              <div className="space-y-3">
+                 <p style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.55)', fontWeight: 600 }}>How's your body?</p>
+                 <div className="flex flex-wrap gap-2">
+                    {BODY_TAGS_OPTIONS.map(tag => {
+                      const active = bodyTags.includes(tag);
+                      return (
+                        <button
+                          key={tag}
+                          onClick={() => toggleBodyTag(tag)}
+                          style={{
+                            borderRadius: 20, padding: '6px 16px', fontSize: 11, fontWeight: 500,
+                            background: active ? 'rgba(193,154,107,0.12)' : 'transparent',
+                            border: `0.5px solid ${active ? 'rgba(193,154,107,0.40)' : 'rgba(193,154,107,0.18)'}`,
+                            color: active ? tokens.accent : 'rgba(255,240,215,0.55)',
+                            transition: 'all 0.3s ease'
+                          }}
+                        >
+                          {tag}
+                        </button>
+                      );
+                    })}
+                 </div>
+              </div>
+
             </div>
           )}
         </div>
