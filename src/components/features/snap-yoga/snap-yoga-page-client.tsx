@@ -6,6 +6,7 @@ import { summarizeFeedback, type SummarizeFeedbackInput, type SummarizeFeedbackO
 import { PoseAnalysisCard, getScoreLevel } from './pose-analysis-card';
 import { FeedbackSubmissionCard } from './feedback-submission-card';
 import { RecommendedVideosCard, type StorageVideo } from './recommended-videos-card';
+import { FollowUpPracticeCard } from './follow-up-practice-card';
 import { AnalysisLoader } from './analysis-loader';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -148,6 +149,11 @@ export function SnapYogaPageClient() {
     } finally {
       setIsLoadingSummary(false);
     }
+  };
+
+  const handleFollowUpTap = () => {
+    console.log("Follow-up practice card tapped!");
+    // Gating logic for Gold tier will be implemented in the next prompt
   };
 
   const handleReset = () => {
@@ -345,6 +351,10 @@ export function SnapYogaPageClient() {
                       summary={summaryResult}
                       isAnalysisDone={!!analysisResult && analysisResult.feedback !== "Analysis failed. Please try again."}
                     />
+                    
+                    <Separator className="bg-white/10 my-8" />
+
+                    <FollowUpPracticeCard onTap={handleFollowUpTap} />
                     
                     <Separator className="bg-white/10 my-8" />
                     
