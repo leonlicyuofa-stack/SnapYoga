@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -12,7 +13,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Save, Share2, Copy, MessageSquare, Sun, Moon, Pencil, KeyRound, Star, Crown } from 'lucide-react';
 import { firestore } from '@/lib/firebase/clientApp';
-import { doc, getDoc, collection, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
+import { collection, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
@@ -21,6 +22,7 @@ import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { format, subDays, startOfDay, isToday, isYesterday, differenceInDays } from 'date-fns';
+import { TierBadge } from '@/components/ui/tier-badge';
 
 const usernameChangeSchema = z.object({
   username: z.string().min(2, { message: "Username must be at least 2 characters" }).max(30, { message: "Username cannot be longer than 30 characters" }),
@@ -40,14 +42,13 @@ const passwordChangeSchema = z.object({
 type PasswordChangeFormValues = z.infer<typeof passwordChangeSchema>;
 
 export default function ProfilePage() {
-  const { user, updateUserPassword, updateUserDisplayName, loading: authLoading } = useAuth();
+  const { user, updateUserPassword, updateUserDisplayName, loading: authLoading, membershipTier, isGold } = useAuth();
   const { t } = useLanguage();
   const { isDark, toggleTheme } = useTheme();
   const { toast } = useToast();
   const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false);
   const [isUsernameSubmitting, setIsUsernameSubmitting] = useState(false);
   const [inviteLink, setInviteLink] = useState('');
-  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
 
   // Expanded section state
   const [expandedSection, setExpandedSection] = useState<'username' | 'subscription' | 'security' | 'invite' | null>(null);
@@ -84,10 +85,6 @@ export default function ProfilePage() {
       setUsernameValue('username', user.displayName);
     }
     if (user) {
-      getDoc(doc(firestore, 'users', user.uid)).then((snap) => {
-        if (snap.exists()) setSubscriptionStatus(snap.data()?.subscriptionStatus ?? null);
-      });
-
       // Fetch Progress & Practices Data
       const fetchProgress = async () => {
         const now = new Date();
@@ -275,21 +272,7 @@ export default function ProfilePage() {
                 </h2>
 
                 <div className="flex gap-2">
-                  <div
-                    style={{
-                      background: 'rgba(193,154,107,0.20)',
-                      color: 'rgba(193,154,107,0.92)',
-                      border: '0.5px solid rgba(193,154,107,0.35)',
-                      fontSize: 9,
-                      letterSpacing: '0.15em',
-                      textTransform: 'uppercase',
-                      fontWeight: 600,
-                      padding: '5px 12px',
-                      borderRadius: 999,
-                    }}
-                  >
-                    ★ {subscriptionStatus === 'active' ? 'Premium Plan' : 'Free Plan'}
-                  </div>
+                  <TierBadge tier={membershipTier} />
                   <div
                     style={{
                       background: 'rgba(120,155,95,0.20)',
@@ -446,20 +429,20 @@ export default function ProfilePage() {
                               <div style={{ fontSize: 9.5, color: 'rgba(255,240,215,0.32)', fontStyle: 'italic', marginTop: 1 }}>Manage your plan</div>
                             </div>
                           </div>
-                          <span style={{ fontSize: 9, background: 'rgba(193,154,107,0.18)', color: 'rgba(193,154,107,0.85)', padding: '2px 8px', borderRadius: 999, fontWeight: 600, letterSpacing: '0.05em' }}>
-                            {subscriptionStatus === 'active' ? 'Premium' : 'Free'}
-                          </span>
+                          <TierBadge tier={membershipTier} />
                         </div>
                         {expandedSection === 'subscription' && (
                           <div style={{ padding: '14px', borderTop: '0.5px solid rgba(193,154,107,0.05)', background: 'rgba(180,110,65,0.08)' }}>
                              <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="font-medium text-white/90 text-sm">{subscriptionStatus === 'active' ? 'Premium Active' : 'Free Plan'}</p>
-                                    <p className="text-xs text-white/40">Unlock all features with Premium.</p>
+                                    <p className="font-medium text-white/90 text-sm">{isGold ? 'Gold Member' : 'Trial Period'}</p>
+                                    <p className="text-xs text-white/40">{isGold ? 'Enjoy your full premium access.' : 'Unlock all features with Gold.'}</p>
                                 </div>
-                                <Button asChild className="h-9 px-5 rounded-full font-bold text-xs" style={{ background: 'rgba(193,154,107,0.85)', color: 'rgba(25,16,8,0.95)' }}>
-                                    <Link href="/upgrade">Upgrade</Link>
-                                </Button>
+                                {!isGold && (
+                                  <Button asChild className="h-9 px-5 rounded-full font-bold text-xs" style={{ background: 'rgba(193,154,107,0.85)', color: 'rgba(25,16,8,0.95)' }}>
+                                      <Link href="/upgrade">Upgrade</Link>
+                                  </Button>
+                                )}
                              </div>
                           </div>
                         )}
