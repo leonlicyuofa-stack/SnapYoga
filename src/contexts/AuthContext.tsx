@@ -23,7 +23,7 @@ import {
   type UserCredential,
 } from 'firebase/auth';
 import { auth, firestore, storage } from '@/lib/firebase/clientApp';
-import { doc, setDoc, getDoc, serverTimestamp, type DocumentData } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp, type DocumentData, onSnapshot } from 'firebase/firestore';
 import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
@@ -35,6 +35,9 @@ import { FirebaseErrorListener } from '@/components/layout/FirebaseErrorListener
 
 interface AuthContextType {
   user: User | null;
+  profile: DocumentData | null;
+  membershipTier: 'trial' | 'gold';
+  isGold: boolean;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithApple: () => Promise<void>;
@@ -136,6 +139,7 @@ export const createUserProfileDocument = async (user: User, additionalData: Docu
 
     if (!userSnap.exists()) {
       dataToSet.createdAt = serverTimestamp();
+      dataToSet.membershipTier = 'trial'; // Set default tier for new users
       if (additionalData.onboardingCompleted === undefined) {
         dataToSet.onboardingCompleted = false;
       }
@@ -177,6 +181,7 @@ const recordDailyLogin = async (userId: string) => {
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = React.useState<User | null>(null);
+  const [profile, setProfile] = React.useState<DocumentData | null>(null);
   const [loading, setLoading] = React.useState(true);
   const router = useRouter();
   const { toast } = useToast();
@@ -188,19 +193,44 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return;
     }
 
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    let unsubscribeProfile: (() => void) | null = null;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
       try {
         setUser(currentUser);
+        
+        // Clean up previous profile listener
+        if (unsubscribeProfile) {
+          unsubscribeProfile();
+          unsubscribeProfile = null;
+        }
+
         if (currentUser) {
           await createUserProfileDocument(currentUser); 
+          
+          // Listen to user profile document in Firestore
+          const userRef = doc(firestore, `users/${currentUser.uid}`);
+          unsubscribeProfile = onSnapshot(userRef, (docSnap) => {
+            if (docSnap.exists()) {
+              setProfile(docSnap.data());
+            } else {
+              setProfile(null);
+            }
+          });
+        } else {
+          setProfile(null);
         }
       } catch (error) {
-        console.error("Error processing auth state change or creating user profile:", error);
+        console.error("Error processing auth state change:", error);
       } finally {
         setLoading(false);
       }
     });
-    return () => unsubscribe();
+
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeProfile) unsubscribeProfile();
+    };
   }, []);
   
   const checkFirebaseConfig = () => {
@@ -372,6 +402,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       toast({ title: 'Signed Out', description: 'You have been signed out successfully.' });
       router.push('/');
       setUser(null);
+      setProfile(null);
     } catch (error) {
       handleAuthError(error, 'Failed to sign out.');
     } finally {
@@ -420,8 +451,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Helper values for membership
+  const membershipTier = profile?.membershipTier || 'trial';
+  const isGold = membershipTier === 'gold';
+
   const value = {
     user,
+    profile,
+    membershipTier,
+    isGold,
     loading,
     signInWithGoogle,
     signInWithApple,
@@ -430,7 +468,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     signOutUser,
     updateUserPassword,
     updateUserDisplayName,
-    sendVerificationEmail,
+    sendEmailVerification: sendVerificationEmail,
     sendPasswordReset,
   };
 
