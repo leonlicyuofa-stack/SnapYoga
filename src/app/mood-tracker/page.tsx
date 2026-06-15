@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -11,7 +10,7 @@ import { firestore } from '@/lib/firebase/clientApp';
 import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { ArrowLeft, Wind, Sparkles, CheckCircle2, Loader2, Zap, Droplets, Moon, Sun, Flame } from 'lucide-react';
+import { ArrowLeft, Wind, Sparkles, CheckCircle2, Loader2, Zap, Droplets, Moon, Sun, Flame, ArrowRight } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
@@ -42,10 +41,11 @@ const HABITS = [
 
 export default function MoodTrackerPage() {
   const { user } = useAuth();
-  const { isDark } = useTheme();
+  const { isDark, toggleTheme } = useTheme();
   const { toast } = useToast();
   const router = useRouter();
 
+  const [step, setStep] = useState<1 | 2>(1);
   const [value, setValue] = useState(75);
   const [reflection, setReflection] = useState('');
   const [completedHabits, setCompletedHabits] = useState<string[]>([]);
@@ -126,134 +126,183 @@ export default function MoodTrackerPage() {
     <AppShell>
       <div className="max-w-xl mx-auto px-6 pt-10 pb-32 flex flex-col min-h-screen">
         
-        <header className="flex items-center gap-4 mb-12">
-          <button onClick={() => router.push('/dashboard')} className="p-2 rounded-full hover:bg-white/5 transition-colors">
-            <ArrowLeft className="w-5 h-5" style={{ color: isDark ? `${GOLD},0.9)` : `${TERRACOTTA},1)` }} />
-          </button>
-          <div>
-            <h1 style={{ fontSize: 28, fontFamily: FONT_PANCAKE, color: headerColor }}>Daily Check-in</h1>
-            <p style={{ fontSize: 12, fontFamily: FONT_CASUAL, letterSpacing: 2, textTransform: 'uppercase', opacity: 0.5, color: labelColor }}>Mindful Presence</p>
+        <header className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => step === 1 ? router.push('/dashboard') : setStep(1)} 
+              className="p-2 rounded-full hover:bg-white/5 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" style={{ color: isDark ? `${GOLD},0.9)` : `${TERRACOTTA},1)` }} />
+            </button>
+            <div>
+              <h1 style={{ fontSize: 24, fontFamily: FONT_PANCAKE, color: headerColor }}>Daily Check-in</h1>
+              <p style={{ fontSize: 10, fontFamily: FONT_CASUAL, letterSpacing: 2, textTransform: 'uppercase', opacity: 0.5, color: labelColor }}>Step {step} of 2</p>
+            </div>
           </div>
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            style={{ width: 32, height: 32, borderRadius: '50%', border: `1.5px solid ${GOLD},0.30)`, background: `${GOLD},0.08)`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+          >
+            {isDark
+              ? <Sun style={{ width: 14, height: 14, color: `${GOLD},0.75)` }} />
+              : <Moon style={{ width: 14, height: 14, color: `${GOLD},0.75)` }} />
+            }
+          </button>
         </header>
 
-        <main className="flex-1 space-y-12">
+        <div style={{ display: 'flex', gap: 5, marginBottom: 24 }}>
+          {[1, 2].map((seg) => (
+            <div key={seg} style={{ flex: 1, height: 3, borderRadius: 2, background: step >= seg ? 'rgba(193,154,107,0.85)' : 'rgba(255,240,215,0.10)' }} />
+          ))}
+        </div>
+
+        <main className="flex-1 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
           
-          <section className="text-center">
-            <p style={{ fontSize: 14, fontFamily: FONT_PANCAKE, fontStyle: 'italic', marginBottom: 32, opacity: 0.8, color: labelColor }}>
-              Where is your spirit resting today?
-            </p>
+          {step === 1 && (
+            <>
+              <section className="text-center">
+                <p style={{ fontSize: 14, fontFamily: FONT_PANCAKE, fontStyle: 'italic', marginBottom: 32, opacity: 0.8, color: labelColor }}>
+                  Where is your spirit resting today?
+                </p>
 
-            <div className="relative py-6 px-4">
-              <div 
-                className="absolute inset-0 blur-3xl opacity-20 pointer-events-none transition-colors duration-700" 
-                style={{ background: currentMood.color }}
-              />
-              
-              <div className="relative z-10 flex flex-col items-center gap-8">
-                <div className="transition-all duration-500 transform hover:scale-110">
-                  <span className="text-7xl block drop-shadow-2xl">{currentMood.emoji}</span>
-                  <h2 className="mt-4 text-xl font-bold uppercase tracking-widest transition-all duration-500" style={{ color: isDark ? currentMood.color : `${DEEP_BARK},0.9)`, fontFamily: FONT_CASUAL }}>
-                    {currentMood.name}
-                  </h2>
-                </div>
-
-                <div className="w-full max-w-sm mt-4">
-                  <Slider 
-                    value={[value]} 
-                    onValueChange={(v) => {
-                      setValue(v[0]);
-                      triggerSave(undefined, v[0]);
-                    }} 
-                    max={100} 
-                    step={1}
-                    className="cursor-pointer"
+                <div className="relative py-6 px-4">
+                  <div 
+                    className="absolute inset-0 blur-3xl opacity-20 pointer-events-none transition-colors duration-700" 
+                    style={{ background: currentMood.color }}
                   />
-                  <div className="flex justify-between mt-4 px-1 opacity-40">
-                    <span className="text-[10px] uppercase font-bold tracking-tighter" style={{ color: labelColor }}>Muted</span>
-                    <span className="text-[10px] uppercase font-bold tracking-tighter" style={{ color: labelColor }}>Radiant</span>
+                  
+                  <div className="relative z-10 flex flex-col items-center gap-8">
+                    <div className="transition-all duration-500 transform hover:scale-110">
+                      <span className="text-7xl block drop-shadow-2xl">{currentMood.emoji}</span>
+                      <h2 className="mt-4 text-xl font-bold uppercase tracking-widest transition-all duration-500" style={{ color: isDark ? currentMood.color : `${DEEP_BARK},0.9)`, fontFamily: FONT_CASUAL }}>
+                        {currentMood.name}
+                      </h2>
+                    </div>
+
+                    <div className="w-full max-w-sm mt-4">
+                      <Slider 
+                        value={[value]} 
+                        onValueChange={(v) => {
+                          setValue(v[0]);
+                          triggerSave(undefined, v[0]);
+                        }} 
+                        max={100} 
+                        step={1}
+                        className="cursor-pointer"
+                      />
+                      <div className="flex justify-between mt-4 px-1 opacity-40">
+                        <span className="text-[10px] uppercase font-bold tracking-tighter" style={{ color: labelColor }}>Muted</span>
+                        <span className="text-[10px] uppercase font-bold tracking-tighter" style={{ color: labelColor }}>Radiant</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </section>
+              </section>
 
-          <section className="space-y-4">
-             <div className="flex items-center gap-2 opacity-60">
-              <Zap className="w-4 h-4" style={{ color: isDark ? `${GOLD},1)` : `${TERRACOTTA},1)` }} />
-              <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: labelColor, fontFamily: FONT_CASUAL }}>Today's Habits</h3>
-            </div>
-            <div className="flex justify-around bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10" style={{ background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }}>
-               {HABITS.map(h => {
-                const done = completedHabits.includes(h.id);
-                return (
-                  <button 
-                    key={h.id} 
-                    onClick={() => toggleHabit(h.id)}
-                    className="flex flex-col items-center gap-2 transition-transform active:scale-95"
-                  >
-                    <div 
-                      className={cn(
-                        "w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-all duration-300",
-                        done ? "scale-110 shadow-lg" : "grayscale opacity-40 scale-100"
-                      )}
-                      style={{ 
-                        background: done ? h.color : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'),
-                        border: `1px solid ${done ? h.color : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)')}`,
-                        boxShadow: done ? `0 4px 12px ${h.color}` : 'none'
-                      }}
-                    >
-                      {h.emoji}
-                    </div>
-                    <span style={{ fontSize: 8, letterSpacing: 1, textTransform: 'uppercase', fontFamily: FONT_CASUAL, color: done ? labelColor : (isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'), fontWeight: done ? 700 : 400 }}>{h.label}</span>
-                  </button>
-                );
-               })}
-            </div>
-          </section>
+              <section className="space-y-4">
+                <div className="flex items-center gap-2 opacity-60">
+                  <Zap className="w-4 h-4" style={{ color: isDark ? `${GOLD},1)` : `${TERRACOTTA},1)` }} />
+                  <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: labelColor, fontFamily: FONT_CASUAL }}>Today's Habits</h3>
+                </div>
+                <div className="flex justify-around bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10" style={{ background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }}>
+                  {HABITS.map(h => {
+                    const done = completedHabits.includes(h.id);
+                    return (
+                      <button 
+                        key={h.id} 
+                        onClick={() => toggleHabit(h.id)}
+                        className="flex flex-col items-center gap-2 transition-transform active:scale-95"
+                      >
+                        <div 
+                          className={cn(
+                            "w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-all duration-300",
+                            done ? "scale-110 shadow-lg" : "grayscale opacity-40 scale-100"
+                          )}
+                          style={{ 
+                            background: done ? h.color : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'),
+                            border: `1px solid ${done ? h.color : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)')}`,
+                            boxShadow: done ? `0 4px 12px ${h.color}` : 'none'
+                          }}
+                        >
+                          {h.emoji}
+                        </div>
+                        <span style={{ fontSize: 8, letterSpacing: 1, textTransform: 'uppercase', fontFamily: FONT_CASUAL, color: done ? labelColor : (isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'), fontWeight: done ? 700 : 400 }}>{h.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
 
-          <section className="space-y-4">
-            <div className="flex items-center gap-2 opacity-60">
-              <Sparkles className="w-4 h-4" style={{ color: isDark ? `${GOLD},1)` : `${TERRACOTTA},1)` }} />
-              <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: labelColor, fontFamily: FONT_CASUAL }}>Daily Reflection</h3>
-            </div>
-            
-            <div className="relative group">
-              <Textarea 
-                value={reflection}
-                onChange={(e) => {
-                  setReflection(e.target.value);
-                  triggerSave(e.target.value);
-                }}
-                placeholder="What's flowing through your mind..."
-                className="min-h-[180px] border-none rounded-2xl p-6 text-base italic leading-relaxed focus-visible:ring-1 transition-all no-scrollbar"
-                style={{ 
-                  fontFamily: FONT_PANCAKE,
-                  color: isDark ? `${PARCHMENT},0.9)` : `${DEEP_BARK},0.9)`,
-                  background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)',
-                  border: isDark ? '0.5px solid rgba(255,255,255,0.05)' : '0.5px solid rgba(0,0,0,0.05)'
-                }}
-              />
-              
-              <div className="absolute bottom-4 right-4 flex items-center gap-2">
-                {isSaving ? (
-                  <Loader2 className="w-4 h-4 animate-spin" style={{ color: isDark ? `${GOLD},0.6)` : `${TERRACOTTA},0.6)` }} />
-                ) : reflection.length > 0 && (
-                  <CheckCircle2 className="w-4 h-4 text-green-500/50" />
-                )}
-              </div>
-            </div>
-          </section>
+              <footer className="pt-8 text-center">
+                <Button 
+                  onClick={() => setStep(2)}
+                  className="w-full h-14 rounded-full text-sm font-bold tracking-widest bg-[rgba(193,154,107,0.85)] text-[rgba(25,16,8,0.95)] hover:opacity-90 flex items-center justify-center gap-2"
+                  style={{ fontFamily: FONT_CASUAL }}
+                >
+                  NEXT <ArrowRight className="w-4 h-4" />
+                </Button>
+              </footer>
+            </>
+          )}
 
-          <footer className="pt-8 text-center">
-             <Button 
-              onClick={() => router.push('/dashboard')}
-              variant="outline"
-              className="px-10 h-12 rounded-full text-xs font-bold tracking-widest bg-transparent border-white/10 hover:bg-white/5"
-              style={{ fontFamily: FONT_CASUAL, color: labelColor }}
-            >
-              FINISH CHECK-IN
-            </Button>
-          </footer>
+          {step === 2 && (
+            <>
+              <section className="space-y-4">
+                <div className="flex items-center gap-2 opacity-60">
+                  <Sparkles className="w-4 h-4" style={{ color: isDark ? `${GOLD},1)` : `${TERRACOTTA},1)` }} />
+                  <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: labelColor, fontFamily: FONT_CASUAL }}>Daily Reflection</h3>
+                </div>
+                
+                <div className="relative group">
+                  <Textarea 
+                    value={reflection}
+                    onChange={(e) => {
+                      setReflection(e.target.value);
+                      triggerSave(e.target.value);
+                    }}
+                    placeholder="What's flowing through your mind..."
+                    className="min-h-[240px] border-none rounded-2xl p-6 text-base italic leading-relaxed focus-visible:ring-1 transition-all no-scrollbar"
+                    style={{ 
+                      fontFamily: FONT_PANCAKE,
+                      color: isDark ? `${PARCHMENT},0.9)` : `${DEEP_BARK},0.9)`,
+                      background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)',
+                      border: isDark ? '0.5px solid rgba(255,255,255,0.05)' : '0.5px solid rgba(0,0,0,0.05)'
+                    }}
+                  />
+                  
+                  <div className="absolute bottom-4 right-4 flex items-center gap-2">
+                    {isSaving ? (
+                      <Loader2 className="w-4 h-4 animate-spin" style={{ color: isDark ? `${GOLD},0.6)` : `${TERRACOTTA},0.6)` }} />
+                    ) : reflection.length > 0 && (
+                      <CheckCircle2 className="w-4 h-4 text-green-500/50" />
+                    )}
+                  </div>
+                </div>
+              </section>
+
+              <footer className="pt-8 text-center space-y-4">
+                <Button 
+                  onClick={() => {
+                    toast({ title: "Check-in Complete", description: "Your mindful presence has been recorded." });
+                    router.push('/dashboard');
+                  }}
+                  className="w-full h-14 rounded-full text-sm font-bold tracking-widest bg-[rgba(193,154,107,0.85)] text-[rgba(25,16,8,0.95)] hover:opacity-90"
+                  style={{ fontFamily: FONT_CASUAL }}
+                >
+                  FINISH CHECK-IN
+                </Button>
+                <button 
+                  onClick={() => setStep(1)}
+                  className="text-xs opacity-40 hover:opacity-70 transition-opacity uppercase tracking-widest font-bold"
+                  style={{ color: labelColor }}
+                >
+                  Back to mood selection
+                </button>
+              </footer>
+            </>
+          )}
+
         </main>
       </div>
     </AppShell>
