@@ -1,0 +1,34 @@
+{
+  "Joyful": [
+    { "text": "Joy is not in things; it is in us.", "author": "Richard Wagner" },
+    { "text": "The most wasted of days is one without laughter.", "author": "E.E. Cummings" },
+    { "text": "Wherever you go, go with all your heart.", "author": "Confucius" },
+    { "text": "Happiness is a warm puppy.", "author": "Charles M. Schulz" },
+    { "text": "Choose to be optimistic, it feels better.", "author": "Dalai Lama" },
+    { "text": "Peace begins with a smile.", "author": "Mother Teresa" }
+  ],
+  "Calm": [
+    { "text": "Peace comes from within. Do not seek it without.", "author": "Buddha" },
+    { "text": "The soul always knows what to do to heal itself.", "author": "Caroline Myss" },
+    { "text": "Adopt the pace of nature: her secret is patience.", "author": "Ralph Waldo Emerson" },
+    { "text": "Quiet the mind, and the soul will speak.", "author": "Ma Jaya Sati Bhagavati" },
+    { "text": "Silence is the ultimate weapon of power.", "author": "Charles de Gaulle" },
+    { "text": "Breathe. Let go. This moment is the only one you have.", "author": "Oprah Winfrey" }
+  ],
+  "Emotional": [
+    { "text": "The only way out is through.", "author": "Robert Frost" },
+    { "text": "Vulnerability is the birthplace of innovation, creativity and change.", "author": "Brené Brown" },
+    { "text": "Tears are words the heart can't express.", "author": "Unknown" },
+    { "text": "Whatever is whole was once broken.", "author": "Unknown" },
+    { "text": "Be kind to yourself. You are doing your best.", "author": "Unknown" },
+    { "text": "Feelings are just visitors, let them come and go.", "author": "Mooji" }
+  ],
+  "Fatigue": [
+    { "text": "Rest is not idleness.", "author": "John Lubbock" },
+    { "text": "Even a leaf falls to rest.", "author": "Unknown" },
+    { "text": "Tired minds don't plan well. Sleep first, then plan.", "author": "Walter Reisch" },
+    { "text": "Rest and be thankful.", "author": "William Wordsworth" },
+    { "text": "There is virtue in work and there is virtue in rest.", "author": "Alan Cohen" },
+    { "text": "Sometimes the most productive thing you can do is relax.", "author": "Mark Black" }
+  ]
+}
