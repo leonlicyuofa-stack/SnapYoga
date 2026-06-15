@@ -15,6 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { cn } from '@/lib/utils';
+import { getQuotesForMood } from '@/lib/mood-quotes';
 
 const GOLD       = 'rgba(193,154,107';
 const PARCHMENT  = 'rgba(255,240,215';
@@ -51,7 +52,14 @@ export default function MoodTrackerPage() {
   const [completedHabits, setCompletedHabits] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  
+  // States for Step 1
+  const [quotes, setQuotes] = useState<{text:string;author:string}[]>([]);
+  const [selectedQuote, setSelectedQuote] = useState<string | null>(null);
+
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const currentMood = MOOD_SPECTRUM.find(m => value <= m.threshold) || MOOD_SPECTRUM[3];
 
   useEffect(() => {
     if (!user) return;
@@ -76,7 +84,13 @@ export default function MoodTrackerPage() {
     fetchData();
   }, [user]);
 
-  const currentMood = MOOD_SPECTRUM.find(m => value <= m.threshold) || MOOD_SPECTRUM[3];
+  // Fetch quotes when mood changes
+  useEffect(() => {
+    if (currentMood) {
+      setQuotes(getQuotesForMood(currentMood.name, 3));
+      setSelectedQuote(null);
+    }
+  }, [currentMood.name]);
 
   const triggerSave = (newReflection?: string, newVal?: number, newHabits?: string[]) => {
     if (!user) return;
@@ -162,7 +176,13 @@ export default function MoodTrackerPage() {
           {step === 1 && (
             <>
               <section className="text-center">
-                <p style={{ fontSize: 14, fontFamily: FONT_PANCAKE, fontStyle: 'italic', marginBottom: 32, opacity: 0.8, color: labelColor }}>
+                <p style={{ 
+                  fontSize: 14, 
+                  fontFamily: FONT_PANCAKE, 
+                  fontStyle: 'italic', 
+                  marginBottom: 32, 
+                  color: 'rgba(255,240,215,0.62)' 
+                }}>
                   Where is your spirit resting today?
                 </p>
 
@@ -234,13 +254,53 @@ export default function MoodTrackerPage() {
                 </div>
               </section>
 
+              {/* Quotes Section */}
+              <section className="space-y-4 animate-in fade-in duration-700">
+                <div className="flex items-center gap-2 opacity-60">
+                   <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: 'rgba(193,154,107,0.55)', fontFamily: FONT_CASUAL }}>
+                      Quotes for your mood · tap to reflect on one
+                   </h3>
+                </div>
+                <div className="space-y-2">
+                  {quotes.map((q, idx) => {
+                    const isSelected = selectedQuote === q.text;
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => setSelectedQuote(q.text)}
+                        className="w-full text-left transition-all duration-300 active:scale-[0.98]"
+                        style={{
+                          borderRadius: 14,
+                          border: isSelected ? '0.5px solid rgba(193,154,107,0.50)' : '0.5px solid rgba(193,154,107,0.18)',
+                          background: isSelected ? 'rgba(193,154,107,0.10)' : 'rgba(13,20,30,0.50)',
+                          padding: '10px 12px',
+                        }}
+                      >
+                        <p style={{ fontSize: 10.5, fontStyle: 'italic', color: 'rgba(255,240,215,0.70)', marginBottom: 2 }}>
+                          "{q.text}"
+                        </p>
+                        <p style={{ fontSize: 8, textTransform: 'uppercase', color: 'rgba(193,154,107,0.55)', fontWeight: 600 }}>
+                          — {q.author}
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+
               <footer className="pt-8 text-center">
                 <Button 
                   onClick={() => setStep(2)}
-                  className="w-full h-14 rounded-full text-sm font-bold tracking-widest bg-[rgba(193,154,107,0.85)] text-[rgba(25,16,8,0.95)] hover:opacity-90 flex items-center justify-center gap-2"
-                  style={{ fontFamily: FONT_CASUAL }}
+                  disabled={!currentMood}
+                  className="w-full h-14 rounded-full text-sm font-bold tracking-widest flex items-center justify-center gap-2 transition-all"
+                  style={{ 
+                    fontFamily: FONT_CASUAL,
+                    background: 'rgba(193,154,107,0.12)', 
+                    border: '0.5px solid rgba(193,154,107,0.40)', 
+                    color: 'rgba(193,154,107,0.92)'
+                  }}
                 >
-                  NEXT <ArrowRight className="w-4 h-4" />
+                  NEXT: REFLECT <ArrowRight className="w-4 h-4" />
                 </Button>
               </footer>
             </>
