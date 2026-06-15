@@ -1,10 +1,13 @@
 import {genkit} from 'genkit';
-import {googleAI} from '@genkit-ai/googleai';
+import {googleAI} from '@genkit-ai/google-genai';
 
-// By removing the googleAI plugin and default model, we prevent Genkit
-// from requiring an API key on startup, which was causing the error.
-// The analyzeYogaPose flow will continue to work as it calls an
-// external service directly and does not depend on this configuration.
+/**
+ * Genkit configuration for SnapYoga.
+ * We include the googleAI plugin to enable text analysis and summarization features.
+ */
 export const ai = genkit({
-  plugins: [],
+  plugins: [
+    googleAI(),
+  ],
+  model: googleAI.model('gemini-2.5-flash'),
 });

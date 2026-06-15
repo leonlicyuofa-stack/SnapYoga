@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useMemo, useRef } from 'react';
@@ -9,9 +8,11 @@ import { collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp
 import { AppShell } from '@/components/layout/app-shell';
 import { format, startOfWeek, endOfWeek, eachDayOfInterval, startOfMonth, endOfMonth, getDaysInMonth, isSameDay, addDays } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Smile, Wind, Frown, Meh, Activity, Flame, Droplets, Moon, Sun, Trophy, Star, CheckCircle2, Loader2 } from 'lucide-react';
+import { Smile, Wind, Frown, Meh, Activity, Flame, Droplets, Moon, Sun, Trophy, Star, CheckCircle2, Loader2, Sparkles, BrainCircuit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '@/components/ui/textarea';
+import { analyzeReflectionThemes, type ReflectionThemesOutput } from '@/ai/flows/analyze-reflection-themes';
+import { Button } from '@/components/ui/button';
 
 // ─── Brand tokens ────────────────────────────────────────────────────────────
 const GOLD      = 'rgba(193,154,107';
@@ -36,6 +37,7 @@ function getThemeTokens(isDark: boolean) {
 interface StoredMood {
   name: string;
   emoji: string;
+  reflection?: string;
   loggedAt: Timestamp;
 }
 interface StoredAnalysis {
@@ -124,6 +126,10 @@ export default function PracticeCalendarPage() {
   const [bodyTags, setBodyTags] = useState<string[]>([]);
   const [dayMood, setDayMood] = useState<StoredMood | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  // AI Theme States
+  const [themeGroups, setThemeGroups] = useState<ReflectionThemesOutput | null>(null);
+  const [isAnalyzingThemes, setIsAnalyzingThemes] = useState(false);
 
   const now = new Date();
   const daysInMonth = getDaysInMonth(now);
@@ -231,6 +237,35 @@ export default function PracticeCalendarPage() {
     saveJournal(undefined, newTags);
   };
 
+  const handleDiscoverThemes = async () => {
+    const reflections = Object.values(moodsByDate)
+      .map(m => m.reflection)
+      .filter((r): r is string => !!r && r.trim().length > 0);
+
+    if (reflections.length < 3) {
+      toast({
+        title: "More Reflections Needed",
+        description: "Keep reflecting — themes appear once you've logged a few entries this month.",
+      });
+      return;
+    }
+
+    setIsAnalyzingThemes(true);
+    try {
+      const result = await analyzeReflectionThemes({ reflections });
+      setThemeGroups(result);
+    } catch (e) {
+      console.error("AI Analysis failed", e);
+      toast({
+        title: "Analysis Failed",
+        description: "Could not analyze themes at this time. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzingThemes(false);
+    }
+  };
+
   // Bingo Rules Logic
   const bingoStatus = useMemo(() => {
     const allAnalyses = Object.values(analysesByDate).flat();
@@ -256,6 +291,8 @@ export default function PracticeCalendarPage() {
     };
   }, [analysesByDate, habitsByDate, moodsByDate]);
 
+  const reflectionsCount = Object.values(moodsByDate).filter(m => !!m.reflection).length;
+
   return (
     <AppShell>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
@@ -274,7 +311,7 @@ export default function PracticeCalendarPage() {
               <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 5 }} />
             </div>
             <button
-              onClick={() => {}} // Global theme toggle or settings could go here
+              onClick={() => {}} 
               aria-label="Calendar info"
               style={{
                 width: 28, height: 28, borderRadius: '50%', border: `1.5px solid ${tokens.cardBorder}`,
@@ -385,6 +422,89 @@ export default function PracticeCalendarPage() {
               </div>
             </div>
           </section>
+
+          {/* REFLECTION THEMES AI */}
+          <section>
+            <SectionHead>Reflection Themes · AI Insight</SectionHead>
+            <div style={{ 
+              borderRadius: '20px 20px 10px 20px', 
+              border: `0.5px solid ${tokens.cardBorder}`, 
+              background: tokens.cardBg, 
+              padding: '16px',
+              backdropFilter: 'blur(14px)',
+            }}>
+              {!themeGroups && !isAnalyzingThemes && (
+                <div className="text-center py-4 space-y-4">
+                  <div className="flex justify-center">
+                    <div className="p-3 rounded-full bg-[rgba(193,154,107,0.10)] border border-[rgba(193,154,107,0.25)]">
+                      <BrainCircuit className="w-8 h-8" style={{ color: tokens.accent }} />
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-white" style={{ fontFamily: FONT_PANCAKE }}>Monthly Reflection Summary</h4>
+                    <p className="text-[11px] text-white/50 mt-1">Our AI analyzes your journaling to find growth patterns and emotional recurring themes.</p>
+                  </div>
+                  {reflectionsCount >= 3 ? (
+                    <Button 
+                      onClick={handleDiscoverThemes}
+                      className="w-full h-10 rounded-full text-[10px] font-bold tracking-[0.15em] bg-[rgba(193,154,107,0.12)] border border-[rgba(193,154,107,0.40)] text-[rgba(193,154,107,0.92)] uppercase"
+                    >
+                      Discover My Themes
+                    </Button>
+                  ) : (
+                    <p className="text-[10px] italic text-[rgba(193,154,107,0.55)]">
+                      Keep reflecting — themes appear once you've logged a few entries this month ({reflectionsCount}/3).
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {isAnalyzingThemes && (
+                <div className="flex flex-col items-center justify-center py-12 gap-4 animate-pulse">
+                  <Sparkles className="w-8 h-8 text-primary/60" />
+                  <p className="text-[11px] uppercase tracking-widest text-white/40">AI Analyzing your presence...</p>
+                </div>
+              )}
+
+              {themeGroups && (
+                <div className="space-y-6 animate-in fade-in duration-700">
+                  {themeGroups.themes.map((group, idx) => (
+                    <div key={idx} className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full" style={{ background: group.color }} />
+                        <h4 className="text-[10px] font-bold uppercase tracking-widest" style={{ color: group.color }}>{group.theme}</h4>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {group.keywords.map((kw, kIdx) => (
+                          <div 
+                            key={kIdx} 
+                            style={{ 
+                              background: group.color.replace('0.85', '0.14'),
+                              border: `0.5px solid ${group.color.replace('0.85', '0.35')}`,
+                              color: group.color.replace('0.85', '0.95'),
+                              padding: '4px 10px',
+                              borderRadius: 12,
+                              fontSize: 9,
+                              fontWeight: 600,
+                              fontFamily: FONT_CASUAL
+                            }}
+                          >
+                            {kw.word} · {kw.count}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  <button 
+                    onClick={() => setThemeGroups(null)}
+                    className="text-[9px] uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-full text-center pt-2"
+                  >
+                    Reset Analysis
+                  </button>
+                </div>
+              )}
+            </div>
+          </section>
         </div>
 
         {/* JOURNAL BOTTOM SHEET — toggles collapsed/expanded */}
@@ -410,7 +530,7 @@ export default function PracticeCalendarPage() {
           >
             <div style={{ width: 36, height: 4, borderRadius: 2, background: 'rgba(193,154,107,0.35)', margin: '0 auto 8px' }} />
             {!sheetOpen && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between' }}>
                 <div className="flex flex-col items-start">
                   <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,240,215,0.85)', fontFamily: FONT_PANCAKE }}>
                     {format(now, 'EEE d MMM')}
