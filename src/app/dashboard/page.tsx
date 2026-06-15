@@ -3,26 +3,22 @@
 import Link from 'next/link';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
-import { Smile, Wind, Frown, Meh, Trophy, Sun, Moon, MessageSquare, ArrowRight, Sparkles, Zap, Activity, Clock } from 'lucide-react';
+import { Sun, Moon, MessageSquare, Zap } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useState, useEffect } from 'react';
 import { doc, getDoc, collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
-import { useToast } from '@/hooks/use-toast';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { MoodChart } from '@/components/features/dashboard/MoodChart';
-import { PracticeCalendarSnapshot } from '@/components/features/dashboard/PracticeCalendarSnapshot';
-import { UpgradeBanner } from '@/components/features/dashboard/UpgradeBanner';
 
 const GOLD       = 'rgba(193,154,107';
 const PARCHMENT  = 'rgba(255,240,215';
 const TERRACOTTA = 'rgba(180,110,65';
 const SAGE       = 'rgba(120,140,100';
 const DEEP_BARK  = 'rgba(25,16,8';
-const BARK_L     = 'rgba(60,38,18';
 
 // Font Stacks
 const FONT_PANCAKE = "'Cormorant Garamond', Georgia, serif";
@@ -178,9 +174,6 @@ export default function DashboardPage() {
 
         {/* SCROLLABLE CONTENT */}
         <main style={{ flex: 1, padding: '4px 14px 120px', display: 'flex', flexDirection: 'column', gap: 22 }}>
-
-          {/* Upgrade banner — only renders for free users */}
-          <UpgradeBanner />
 
           {/* §1 MOOD & REFLECTIONS */}
           <section>
@@ -349,31 +342,6 @@ export default function DashboardPage() {
             <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '24px 24px 24px 12px', padding: '12px 14px 8px' }}>
               <div style={{ height: 150 }}>
                 <MoodChart />
-              </div>
-            </GlassCard>
-          </section>
-
-          {/* §5 CHALLENGES */}
-          <section>
-            <SectionHead t={t}>Challenges</SectionHead>
-            <GlassCard style={{ background: isDark ? t.cardBark : 'rgba(255,255,255,0.95)', border: `0.5px solid ${t.goldBorder}`, borderRadius: '28px 12px 28px 28px', padding: '16px', position: 'relative' as const }}>
-              <div style={{ position: 'absolute' as const, inset: 0, top: 0, height: 42, borderRadius: '28px 12px 0 0', background: `${GOLD},0.06)`, pointerEvents: 'none' as const }} />
-              <div style={{ position: 'relative' as const, zIndex: 1, display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 14, background: `${GOLD},0.14)`, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Trophy style={{ width: 20, height: 20, color: t.gold }} />
-                </div>
-                <div>
-                  <h3 style={{ fontSize: 18, fontWeight: 500, color: t.text, fontFamily: FONT_PANCAKE, margin: '0 0 2px' }}>Join new challenges</h3>
-                  <p  style={{ fontSize: 11, color: t.muted, fontFamily: FONT_CASUAL, letterSpacing: 0.2, margin: 0 }}>Connect with friends and master new poses.</p>
-                </div>
-              </div>
-              <div style={{ position: 'relative' as const, zIndex: 1, marginTop: 14, display: 'flex', gap: 10 }}>
-                <Button asChild style={{ flex: 1, height: 42, borderRadius: 21, background: `${GOLD},0.80)`, color: `${DEEP_BARK},0.95)`, border: 'none', fontFamily: FONT_CASUAL, fontWeight: 700, fontSize: 13, letterSpacing: 1.5, textTransform: 'uppercase' }}>
-                  <Link href="/challenges">Explore</Link>
-                </Button>
-                <Link href="/challenges" style={{ width: 42, height: 42, borderRadius: 21, flexShrink: 0, background: `${GOLD},0.12)`, border: `0.5px solid ${t.goldBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
-                  👥
-                </Link>
               </div>
             </GlassCard>
           </section>
