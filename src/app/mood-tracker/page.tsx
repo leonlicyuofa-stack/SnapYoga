@@ -10,7 +10,7 @@ import { firestore } from '@/lib/firebase/clientApp';
 import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { ArrowLeft, Wind, Sparkles, CheckCircle2, Loader2, Zap, Droplets, Moon, Sun, Flame, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Wind, Sparkles, CheckCircle2, Loader2, Zap, Droplets, Moon, Sun, Flame, ArrowRight, Check } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
@@ -49,6 +49,7 @@ export default function MoodTrackerPage() {
   const [step, setStep] = useState<1 | 2>(1);
   const [value, setValue] = useState(75);
   const [reflection, setReflection] = useState('');
+  const [messageToSelf, setMessageToSelf] = useState('');
   const [completedHabits, setCompletedHabits] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -72,6 +73,8 @@ export default function MoodTrackerPage() {
         const moodIndex = MOOD_SPECTRUM.findIndex(m => m.name === data.name);
         if (moodIndex !== -1) setValue(MOOD_SPECTRUM[moodIndex].threshold - 5);
         setReflection(data.reflection || '');
+        setMessageToSelf(data.messageToSelf || '');
+        setSelectedQuote(data.quote || null);
       }
 
       const habitDoc = await getDoc(doc(firestore, 'users', user.uid, 'habits', todayStr));
@@ -92,7 +95,19 @@ export default function MoodTrackerPage() {
     }
   }, [currentMood.name]);
 
-  const triggerSave = (newReflection?: string, newVal?: number, newHabits?: string[]) => {
+  // Pre-fill reflection with quote when moving to step 2
+  useEffect(() => {
+    if (step === 2 && selectedQuote && !reflection.includes(selectedQuote)) {
+      setReflection(prev => {
+        if (!prev.trim()) {
+          return `"${selectedQuote}"\n\n`;
+        }
+        return prev;
+      });
+    }
+  }, [step, selectedQuote]);
+
+  const triggerSave = (newReflection?: string, newVal?: number, newHabits?: string[], newMessageToSelf?: string) => {
     if (!user) return;
     setIsSaving(true);
     
@@ -106,6 +121,8 @@ export default function MoodTrackerPage() {
           emoji: currentMood.emoji,
           value: newVal ?? value,
           reflection: newReflection ?? reflection,
+          messageToSelf: newMessageToSelf ?? messageToSelf,
+          quote: selectedQuote,
           loggedAt: serverTimestamp(),
         }, { merge: true });
 
@@ -308,9 +325,19 @@ export default function MoodTrackerPage() {
 
           {step === 2 && (
             <>
+              <div className="flex justify-center">
+                <div 
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl border border-[rgba(140,170,115,0.3)] bg-[rgba(120,155,95,0.12)]"
+                  style={{ color: 'rgba(160,195,130,0.85)' }}
+                >
+                  <span className="text-xl">{currentMood.emoji}</span>
+                  <span className="text-xs font-bold uppercase tracking-widest">Feeling {currentMood.name} today</span>
+                </div>
+              </div>
+
               <section className="space-y-4">
                 <div className="flex items-center gap-2 opacity-60">
-                  <Sparkles className="w-4 h-4" style={{ color: isDark ? `${GOLD},1)` : `${TERRACOTTA},1)` }} />
+                  <Sparkles className="w-4 h-4" style={{ color: 'rgba(193,154,107,0.80)' }} />
                   <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: labelColor, fontFamily: FONT_CASUAL }}>Daily Reflection</h3>
                 </div>
                 
@@ -322,12 +349,13 @@ export default function MoodTrackerPage() {
                       triggerSave(e.target.value);
                     }}
                     placeholder="What's flowing through your mind..."
-                    className="min-h-[240px] border-none rounded-2xl p-6 text-base italic leading-relaxed focus-visible:ring-1 transition-all no-scrollbar"
+                    className="min-h-[120px] border-none p-6 text-base italic leading-relaxed focus-visible:ring-1 transition-all no-scrollbar"
                     style={{ 
+                      borderRadius: 14,
                       fontFamily: FONT_PANCAKE,
-                      color: isDark ? `${PARCHMENT},0.9)` : `${DEEP_BARK},0.9)`,
-                      background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)',
-                      border: isDark ? '0.5px solid rgba(255,255,255,0.05)' : '0.5px solid rgba(0,0,0,0.05)'
+                      color: 'rgba(255,240,215,0.62)',
+                      background: 'rgba(255,240,215,0.02)',
+                      border: '0.5px solid rgba(193,154,107,0.16)'
                     }}
                   />
                   
@@ -341,16 +369,41 @@ export default function MoodTrackerPage() {
                 </div>
               </section>
 
+              <section className="space-y-4">
+                <div className="flex items-center gap-2 opacity-60">
+                  <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: labelColor, fontFamily: FONT_CASUAL }}>Message to myself (Optional)</h3>
+                </div>
+                
+                <Textarea 
+                  value={messageToSelf}
+                  onChange={(e) => {
+                    setMessageToSelf(e.target.value);
+                    triggerSave(undefined, undefined, undefined, e.target.value);
+                  }}
+                  placeholder="A note for future me..."
+                  className="min-h-[60px] border-none rounded-xl p-4 text-sm leading-relaxed focus-visible:ring-1 transition-all no-scrollbar"
+                  style={{ 
+                    fontFamily: FONT_PANCAKE,
+                    color: isDark ? `${PARCHMENT},0.9)` : `${DEEP_BARK},0.9)`,
+                    background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)',
+                    border: isDark ? '0.5px solid rgba(255,255,255,0.05)' : '0.5px solid rgba(0,0,0,0.05)'
+                  }}
+                />
+              </section>
+
               <footer className="pt-8 text-center space-y-4">
                 <Button 
                   onClick={() => {
-                    toast({ title: "Check-in Complete", description: "Your mindful presence has been recorded." });
                     router.push('/dashboard');
                   }}
-                  className="w-full h-14 rounded-full text-sm font-bold tracking-widest bg-[rgba(193,154,107,0.85)] text-[rgba(25,16,8,0.95)] hover:opacity-90"
-                  style={{ fontFamily: FONT_CASUAL }}
+                  className="w-full h-14 rounded-full text-sm font-bold tracking-widest flex items-center justify-center gap-2 transition-all"
+                  style={{ 
+                    fontFamily: FONT_CASUAL,
+                    background: 'rgba(193,154,107,0.85)', 
+                    color: 'rgba(25,16,8,0.95)'
+                  }}
                 >
-                  FINISH CHECK-IN
+                  <Check className="w-4 h-4" /> FINISH CHECK-IN
                 </Button>
                 <button 
                   onClick={() => setStep(1)}
