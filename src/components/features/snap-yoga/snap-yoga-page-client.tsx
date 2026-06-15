@@ -8,23 +8,25 @@ import { FeedbackSubmissionCard } from './feedback-submission-card';
 import { RecommendedVideosCard, type StorageVideo } from './recommended-videos-card';
 import { FollowUpPracticeCard } from './follow-up-practice-card';
 import { AnalysisLoader } from './analysis-loader';
+import { UpgradeSheet } from '@/components/features/upgrade/upgrade-sheet';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal, Sun, Moon, Video, Play, ArrowRight, MessageCircle } from "lucide-react";
 import { Separator } from '@/components/ui/separator';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Textarea } from '@/components/ui/textarea';
 
 export function SnapYogaPageClient() {
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, isGold } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   
   // Wizard State
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
   const [showFullResults, setShowFullResults] = useState(false);
+  const [isUpgradeSheetOpen, setIsUpgradeSheetOpen] = useState(false);
 
   const [videoDataUri, setVideoDataUri] = useState<string | null>(null);
   const [videoFileName, setVideoFileName] = useState<string | null>(null);
@@ -152,8 +154,34 @@ export function SnapYogaPageClient() {
   };
 
   const handleFollowUpTap = () => {
-    console.log("Follow-up practice card tapped!");
-    // Gating logic for Gold tier will be implemented in the next prompt
+    if (isGold) {
+      console.log("Gold member access: playing follow-up video...");
+      toast({
+        title: "Starting Practice",
+        description: "Your guided hip opening flow is starting.",
+      });
+    } else {
+      setIsUpgradeSheetOpen(true);
+    }
+  };
+
+  const handleMockUpgrade = async () => {
+    if (!currentUser) return;
+    try {
+      await createUserProfileDocument(currentUser, { membershipTier: 'gold' });
+      setIsUpgradeSheetOpen(false);
+      toast({
+        title: "Welcome to Gold! ♛",
+        description: "Your unlimited access is now active.",
+      });
+    } catch (e) {
+      console.error("Failed to upgrade:", e);
+      toast({
+        title: "Upgrade Failed",
+        description: "Could not complete the mock upgrade. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleReset = () => {
@@ -373,6 +401,13 @@ export function SnapYogaPageClient() {
           </div>
         )}
       </div>
+
+      {/* Upgrade Gating Sheet */}
+      <UpgradeSheet 
+        isOpen={isUpgradeSheetOpen} 
+        onClose={() => setIsUpgradeSheetOpen(false)}
+        onUpgrade={handleMockUpgrade}
+      />
 
       {error && (
         <Alert variant="destructive" className="shadow-md mx-4">
