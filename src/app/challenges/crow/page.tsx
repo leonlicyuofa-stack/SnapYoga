@@ -1,17 +1,26 @@
+
 "use client";
 
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Video, Users, Star, CalendarClock } from 'lucide-react';
+import { ArrowLeft, Video, Users, Star, CalendarClock, Check } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { firestore } from '@/lib/firebase/clientApp';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { format } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 const challengeDetails = {
+    id: 'crow',
     name: 'Crow Pose (Bakasana) Challenge',
     description: "Ready to take flight? This challenge focuses on building the arm and core strength, balance, and confidence needed for Crow Pose. We'll break it down into manageable steps to help you lift off.",
     difficulty: 3,
@@ -50,6 +59,42 @@ const friendsInChallenge = [
 
 
 export default function CrowPoseChallengePage() {
+    const { user } = useAuth();
+    const { toast } = useToast();
+    const [isCompletedToday, setIsCompletedToday] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        if (!user) return;
+        const checkStatus = async () => {
+            const todayStr = format(new Date(), 'yyyy-MM-dd');
+            const docId = `${todayStr}_${challengeDetails.id}`;
+            const snap = await getDoc(doc(firestore, `users/${user.uid}/challengeTasks/${docId}`));
+            if (snap.exists()) setIsCompletedToday(true);
+        };
+        checkStatus();
+    }, [user]);
+
+    const handleMarkComplete = async () => {
+        if (!user) return;
+        setIsLoading(true);
+        const todayStr = format(new Date(), 'yyyy-MM-dd');
+        const docId = `${todayStr}_${challengeDetails.id}`;
+        try {
+            await setDoc(doc(firestore, `users/${user.uid}/challengeTasks/${docId}`), {
+                challengeId: challengeDetails.id,
+                completedAt: serverTimestamp(),
+            });
+            setIsCompletedToday(true);
+            toast({ title: "Task Complete!", description: "Today's challenge task has been recorded." });
+        } catch (e) {
+            console.error(e);
+            toast({ title: "Error", description: "Failed to mark task as complete.", variant: "destructive" });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <AppShell>
             <div className="container mx-auto px-4 py-12">
@@ -89,13 +134,25 @@ export default function CrowPoseChallengePage() {
                     <p className="text-lg text-white/80 leading-relaxed">{challengeDetails.description}</p>
                     <Separator className="my-8 bg-white/20" />
                     <div className="flex flex-col sm:flex-row gap-4">
-                        <Button size="lg" className="w-full sm:w-auto flex-grow text-lg py-7 bg-white/90 text-black hover:bg-white" asChild>
+                        <Button 
+                            onClick={handleMarkComplete}
+                            disabled={isCompletedToday || isLoading}
+                            className={cn(
+                                "flex-grow h-14 rounded-full text-lg font-bold shadow-lg transition-all active:scale-95",
+                                isCompletedToday 
+                                  ? "bg-green-600/20 border border-green-600/40 text-green-400" 
+                                  : "bg-[rgba(193,154,107,0.85)] text-[rgba(25,16,8,0.95)]"
+                            )}
+                        >
+                            {isLoading ? <SmileyRockLoader /> : isCompletedToday ? <><Check className="mr-2 h-6 w-6" /> Completed Today</> : "Mark Today Complete"}
+                        </Button>
+                        <Button size="lg" className="flex-grow py-7 bg-white/90 text-black hover:bg-white" asChild>
                             <Link href="/snap-yoga">
                               <Video className="mr-2 h-5 w-5" />
                               Analyze My Crow Pose
                             </Link>
                         </Button>
-                        <Button size="lg" variant="outline" asChild className="w-full sm:w-auto flex-grow text-lg py-7 bg-transparent border-white/20 hover:bg-white/10 text-white">
+                        <Button size="lg" variant="outline" asChild className="flex-grow py-7 bg-transparent border-white/20 hover:bg-white/10 text-white">
                             <Link href={challengeDetails.inviteLink}>
                                 <Users className="mr-2 h-5 w-5" />
                                 Invite Friends

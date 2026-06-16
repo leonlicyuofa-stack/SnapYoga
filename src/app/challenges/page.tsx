@@ -1,7 +1,8 @@
+
 "use client";
 
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { AppShell } from '@/components/layout/app-shell';
@@ -12,7 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowRight, Users, PlusCircle, Crown, Star, Scale, Zap, Spline, Anchor, Copy, Mail, Share2, Gift, Sun, Moon } from 'lucide-react';
+import { ArrowRight, Users, PlusCircle, Crown, Star, Scale, Zap, Spline, Anchor, Copy, Mail, Share2, Gift, Sun, Moon, CheckCircle2, Check } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
@@ -23,6 +24,10 @@ import { RockWheelDialog } from '@/components/features/dashboard/rock-wheel-dial
 import { RewardDialog } from '@/components/features/dashboard/reward-dialog';
 import type { Collectible } from '@/components/features/dashboard/rock-data';
 import placeholderImages from '@/lib/placeholder-images.json';
+import { firestore } from '@/lib/firebase/clientApp';
+import { doc, setDoc, getDoc, serverTimestamp, collection, getDocs, query, where } from 'firebase/firestore';
+import { format } from 'date-fns';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 interface Friend {
   id: string;
@@ -273,18 +278,60 @@ function InviteFriendDialog() {
 }
 
 export default function ChallengesPage() {
+  const { user } = useAuth();
   const [friends] = useState<Friend[]>(initialFriends);
   const { t } = useLanguage();
   const { isDark, toggleTheme } = useTheme();
+  const { toast } = useToast();
+  
   const [showRockWheelDialog, setShowRockWheelDialog] = useState(false);
   const [showRewardDialog, setShowRewardDialog] = useState(false);
   const [rewardedRock, setRewardedRock] = useState<Collectible | null>(null);
+
+  const [completedToday, setCompletedToday] = useState<Record<string, boolean>>({});
+  const [isMarkingLoading, setIsMarkingLoading] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchCompletions = async () => {
+      const todayStr = format(new Date(), 'yyyy-MM-dd');
+      const completionsRef = collection(firestore, `users/${user.uid}/challengeTasks`);
+      const q = query(completionsRef, where('__name__', '>=', todayStr), where('__name__', '<=', todayStr + '\uf8ff'));
+      const snap = await getDocs(q);
+      const done: Record<string, boolean> = {};
+      snap.forEach(doc => {
+        const id = doc.id.split('_')[1];
+        if (id) done[id] = true;
+      });
+      setCompletedToday(done);
+    };
+    fetchCompletions();
+  }, [user]);
+
+  const handleMarkComplete = async (challengeId: string) => {
+    if (!user) return;
+    setIsMarkingLoading(challengeId);
+    const todayStr = format(new Date(), 'yyyy-MM-dd');
+    const docId = `${todayStr}_${challengeId}`;
+    try {
+      await setDoc(doc(firestore, `users/${user.uid}/challengeTasks/${docId}`), {
+        challengeId,
+        completedAt: serverTimestamp(),
+      });
+      setCompletedToday(prev => ({ ...prev, [challengeId]: true }));
+      toast({ title: "Task Complete!", description: "Today's challenge task has been recorded." });
+    } catch (e) {
+      console.error("Failed to record task", e);
+      toast({ title: "Error", description: "Failed to mark task as complete.", variant: "destructive" });
+    } finally {
+      setIsMarkingLoading(null);
+    }
+  };
 
   const handleRockReward = (rock: Collectible) => {
     setShowRockWheelDialog(false);
     setRewardedRock(rock);
     setShowRewardDialog(true);
-    // In a real app, you would also save this rock to the user's collection in Firestore
     console.log("User won rock:", rock.name);
   }
   
@@ -455,17 +502,33 @@ export default function ChallengesPage() {
                                 </div>
                               </div>
                               <p className="text-white/80 mb-6 flex-grow">{challenge.description}</p>
-                              <Link href={challenge.detailLink} passHref>
-                                <Button
-                                  size="lg"
-                                  className="w-full text-lg py-6 bg-white/90 hover:bg-white text-black shadow-md hover:shadow-lg transition-all transform hover:scale-105 rounded-lg"
-                                  aria-label={`Action for ${challenge.name}`}
-                                  disabled={challenge.detailLink === '#'}
-                                >
-                                  {getButtonText(challenge.status)}
-                                  <ArrowRight className="ml-2 h-5 w-5" />
-                                </Button>
-                              </Link>
+                              <div className="space-y-3">
+                                {challenge.status === 'active' && (
+                                  <Button 
+                                    onClick={() => handleMarkComplete(challenge.id)}
+                                    disabled={!!completedToday[challenge.id] || isMarkingLoading === challenge.id}
+                                    className={cn(
+                                      "w-full rounded-full font-bold transition-all",
+                                      completedToday[challenge.id] 
+                                        ? "bg-green-600/20 border border-green-600/40 text-green-400"
+                                        : "bg-[rgba(193,154,107,0.85)] text-[rgba(25,16,8,0.95)] hover:opacity-90"
+                                    )}
+                                  >
+                                    {isMarkingLoading === challenge.id ? <SmileyRockLoader /> : completedToday[challenge.id] ? <><Check className="mr-2 h-4 w-4" /> Completed Today</> : "Mark Today Complete"}
+                                  </Button>
+                                )}
+                                <Link href={challenge.detailLink} passHref className="block">
+                                  <Button
+                                    size="lg"
+                                    className="w-full text-lg py-6 bg-white/10 hover:bg-white/20 text-white border border-white/20 shadow-md transition-all rounded-lg"
+                                    aria-label={`Action for ${challenge.name}`}
+                                    disabled={challenge.detailLink === '#'}
+                                  >
+                                    {getButtonText(challenge.status)}
+                                    <ArrowRight className="ml-2 h-5 w-5" />
+                                  </Button>
+                                </Link>
+                              </div>
                             </CardContent>
                           </Card>
                         ))}
