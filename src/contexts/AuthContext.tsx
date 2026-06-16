@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { ReactNode } from 'react';
@@ -169,12 +168,22 @@ export const createUserProfileDocument = async (user: User, additionalData: Docu
 const recordDailyLogin = async (userId: string) => {
   if (!userId || !firestore) return;
   const todayStr = format(new Date(), 'yyyy-MM-dd');
-  const loginDocRef = doc(firestore, `users/${userId}/dailyLogins/${todayStr}`);
+  
+  // Use session storage as an in-memory cache to avoid redundant writes in the same browser session
+  const sessionKey = `snap_yoga_activity_${userId}_${todayStr}`;
+  if (typeof window !== 'undefined' && sessionStorage.getItem(sessionKey)) {
+    return;
+  }
+
+  const loginDocRef = doc(firestore, `users/${userId}/activity/${todayStr}`);
   try {
     await setDoc(loginDocRef, { loggedInAt: serverTimestamp() }, { merge: true });
-    console.log(`Login recorded for user ${userId} on ${todayStr}`);
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem(sessionKey, 'true');
+    }
+    console.log(`Activity recorded for user ${userId} on ${todayStr}`);
   } catch (error) {
-    console.error("Error recording daily login:", error);
+    console.error("Error recording daily activity:", error);
   }
 };
 
@@ -206,9 +215,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
 
         if (currentUser) {
+          // Confirm or create profile document
           await createUserProfileDocument(currentUser); 
+          // Automatically record daily login activity
+          await recordDailyLogin(currentUser.uid);
           
-          // Listen to user profile document in Firestore
+          // Listen to user profile document in Firestore for real-time updates (like tier changes)
           const userRef = doc(firestore, `users/${currentUser.uid}`);
           unsubscribeProfile = onSnapshot(userRef, (docSnap) => {
             if (docSnap.exists()) {
