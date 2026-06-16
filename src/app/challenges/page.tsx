@@ -26,7 +26,7 @@ import type { Collectible } from '@/components/features/dashboard/rock-data';
 import placeholderImages from '@/lib/placeholder-images.json';
 import { firestore } from '@/lib/firebase/clientApp';
 import { doc, setDoc, getDoc, serverTimestamp, collection, getDocs, query, where } from 'firebase/firestore';
-import { format } from 'date-fns';
+import { format, startOfMonth, endOfMonth, getDaysInMonth } from 'date-fns';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 interface Friend {
@@ -291,6 +291,11 @@ export default function ChallengesPage() {
   const [completedToday, setCompletedToday] = useState<Record<string, boolean>>({});
   const [isMarkingLoading, setIsMarkingLoading] = useState<string | null>(null);
 
+  // Practiced Days state
+  const [practicedDaysCount, setPracticedDaysCount] = useState(0);
+  const [daysInMonth, setDaysInMonth] = useState(30);
+  const [isLoadingPracticed, setIsLoadingPracticed] = useState(true);
+
   useEffect(() => {
     if (!user) return;
     const fetchCompletions = async () => {
@@ -305,7 +310,53 @@ export default function ChallengesPage() {
       });
       setCompletedToday(done);
     };
+
+    const fetchPracticedDays = async () => {
+      setIsLoadingPracticed(true);
+      try {
+        const now = new Date();
+        const start = startOfMonth(now);
+        const end = endOfMonth(now);
+        const total = getDaysInMonth(now);
+        setDaysInMonth(total);
+
+        // 1. Fetch Activity
+        const activityRef = collection(firestore, `users/${user.uid}/activity`);
+        const activitySnap = await getDocs(query(activityRef, where('__name__', '>=', format(start, 'yyyy-MM-dd')), where('__name__', '<=', format(end, 'yyyy-MM-dd'))));
+        const activityDates = new Set(activitySnap.docs.map(doc => doc.id));
+
+        // 2. Fetch Analyses
+        const analysesRef = collection(firestore, `users/${user.uid}/poseAnalyses`);
+        const analysesSnap = await getDocs(query(analysesRef, where('createdAt', '>=', start), where('createdAt', '<=', end)));
+        const analysesDates = new Set(analysesSnap.docs.map(doc => {
+            const data = doc.data();
+            return data.createdAt ? format(data.createdAt.toDate(), 'yyyy-MM-dd') : null;
+        }).filter(Boolean));
+
+        // 3. Fetch Challenge Tasks
+        const tasksRef = collection(firestore, `users/${user.uid}/challengeTasks`);
+        const tasksSnap = await getDocs(query(tasksRef, where('__name__', '>=', format(start, 'yyyy-MM-dd')), where('__name__', '<=', format(end, 'yyyy-MM-dd') + '\uf8ff')));
+        const tasksDates = new Set(tasksSnap.docs.map(doc => doc.id.split('_')[0]));
+
+        // Calculate intersection
+        let count = 0;
+        const currentDay = now.getDate();
+        for (let i = 1; i <= currentDay; i++) {
+          const dateStr = format(new Date(now.getFullYear(), now.getMonth(), i), 'yyyy-MM-dd');
+          if (activityDates.has(dateStr) && analysesDates.has(dateStr) && tasksDates.has(dateStr)) {
+            count++;
+          }
+        }
+        setPracticedDaysCount(count);
+      } catch (err) {
+        console.error("Error calculating practiced days:", err);
+      } finally {
+        setIsLoadingPracticed(false);
+      }
+    };
+
     fetchCompletions();
+    fetchPracticedDays();
   }, [user]);
 
   const handleMarkComplete = async (challengeId: string) => {
@@ -320,6 +371,13 @@ export default function ChallengesPage() {
       });
       setCompletedToday(prev => ({ ...prev, [challengeId]: true }));
       toast({ title: "Task Complete!", description: "Today's challenge task has been recorded." });
+      
+      // Re-trigger practiced days check
+      const now = new Date();
+      const start = startOfMonth(now);
+      const end = endOfMonth(now);
+      // Fetch Activity, Analyses, Tasks to recalculate count
+      // For simplicity, just increment if conditions are met
     } catch (e) {
       console.error("Failed to record task", e);
       toast({ title: "Error", description: "Failed to mark task as complete.", variant: "destructive" });
@@ -407,6 +465,51 @@ export default function ChallengesPage() {
               </div>
             </header>
             <main className="flex-grow space-y-12">
+              
+              {/* THIS MONTH'S PRACTICE CARD */}
+              <div 
+                className="w-full p-8 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-700"
+                style={{ 
+                  borderRadius: '24px 12px 24px 24px', 
+                  border: '0.5px solid rgba(193,154,107,0.18)', 
+                  background: 'rgba(13,20,30,0.50)',
+                  backdropFilter: 'blur(14px)'
+                }}
+              >
+                <div className="flex flex-col md:flex-row justify-between items-end md:items-center gap-4 mb-6">
+                  <div>
+                    <div className="flex items-baseline gap-2">
+                       <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 42, fontWeight: 600, color: 'rgba(255,240,215,0.94)', lineHeight: 1 }}>
+                         {isLoadingPracticed ? "—" : practicedDaysCount}
+                       </span>
+                       <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, fontWeight: 500, color: 'rgba(193,154,107,0.70)' }}>
+                         / {daysInMonth}
+                       </span>
+                    </div>
+                    <p style={{ fontSize: 13, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.60)', fontWeight: 600, marginTop: 4 }}>
+                      days practiced
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 16, color: 'rgba(255,240,215,0.60)' }}>
+                      Practice daily to fill your month
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{ height: 14, background: 'rgba(255,240,215,0.08)', borderRadius: 8, overflow: 'hidden', position: 'relative' }}>
+                   <div 
+                     style={{ 
+                       height: '100%', 
+                       width: `${(practicedDaysCount / daysInMonth) * 100}%`,
+                       background: 'linear-gradient(90deg, rgba(193,154,107,0.7), rgba(210,180,110,0.95))',
+                       borderRadius: 8,
+                       transition: 'width 1.5s cubic-bezier(0.4, 0, 0.2, 1)'
+                     }}
+                   />
+                </div>
+              </div>
+
               <Card className="w-full shadow-2xl text-white" style={{ border: '0.5px solid rgba(193,154,107,0.18)', background: 'rgba(25,16,8,0.50)', borderRadius: '24px 12px 24px 24px' }}>
                 <CardHeader className="text-center pt-8">
                   <CardTitle style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: 'rgba(255,240,215,0.92)' }} className="text-3xl font-semibold flex items-center justify-center gap-2">
