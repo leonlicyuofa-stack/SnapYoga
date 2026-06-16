@@ -13,19 +13,17 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowRight, Users, PlusCircle, Crown, Star, Scale, Zap, Spline, Anchor, Copy, Mail, Share2, Gift, Sun, Moon, CheckCircle2, Check } from 'lucide-react';
+import { ArrowRight, Users, PlusCircle, Crown, Star, Scale, Zap, Spline, Anchor, Copy, Mail, Share2, Sun, Moon, Check, Lock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
-import { RockWheelDialog } from '@/components/features/dashboard/rock-wheel-dialog';
-import { RewardDialog } from '@/components/features/dashboard/reward-dialog';
-import type { Collectible } from '@/components/features/dashboard/rock-data';
+import { allCollectibles } from '@/components/features/dashboard/rock-data';
 import placeholderImages from '@/lib/placeholder-images.json';
 import { firestore } from '@/lib/firebase/clientApp';
-import { doc, setDoc, getDoc, serverTimestamp, collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { format, startOfMonth, endOfMonth, getDaysInMonth } from 'date-fns';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
@@ -96,54 +94,6 @@ const challenges: Challenge[] = [
     difficulty: 3,
     category: 'Balancing',
   },
-  {
-    id: 'lotus',
-    name: 'Lotus Pose (Padmasana)',
-    description: 'A foundational meditation pose. Work on hip flexibility to sit comfortably and safely.',
-    imageUrl: placeholderImages.challengeImages.lotus,
-    imageHint: placeholderImages.challengeImages.lotus.hint,
-    detailLink: '#',
-    inviteLink: '#',
-    status: 'upcoming',
-    difficulty: 2,
-    category: 'Foundational',
-  },
-  {
-    id: 'triangle',
-    name: 'Triangle Pose (Trikonasana)',
-    description: 'Improve your stability and stretch your hamstrings and spine with this classic standing pose.',
-    imageUrl: placeholderImages.challengeImages.triangle,
-    imageHint: placeholderImages.challengeImages.triangle.hint,
-    detailLink: '#',
-    inviteLink: '#',
-    status: 'upcoming',
-    difficulty: 2,
-    category: 'Foundational',
-  },
-  {
-    id: 'pigeon',
-    name: 'Pigeon Pose (Kapotasana)',
-    description: 'A deep hip opener that helps relieve tension and increase flexibility in the hip flexors.',
-    imageUrl: placeholderImages.challengeImages.pigeon,
-    imageHint: placeholderImages.challengeImages.pigeon.hint,
-    detailLink: '#',
-    inviteLink: '#',
-    status: 'upcoming',
-    difficulty: 3,
-    category: 'Flexibility',
-  },
-  {
-    id: 'tree',
-    name: 'Tree Pose (Vrikshasana)',
-    description: 'Enhance your balance, focus, and concentration with this fundamental standing balance pose.',
-    imageUrl: placeholderImages.challengeImages.tree,
-    imageHint: placeholderImages.challengeImages.tree.hint,
-    detailLink: '#',
-    inviteLink: '#',
-    status: 'upcoming',
-    difficulty: 2,
-    category: 'Balancing',
-  },
 ];
 
 const challengesByCategory = challenges.reduce((acc, challenge) => {
@@ -171,7 +121,6 @@ function InviteFriendDialog() {
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
-      // A generic invite link to the app's homepage/dashboard
       setInviteLink(window.location.origin);
     }
   }, []);
@@ -284,10 +233,6 @@ export default function ChallengesPage() {
   const { isDark, toggleTheme } = useTheme();
   const { toast } = useToast();
   
-  const [showRockWheelDialog, setShowRockWheelDialog] = useState(false);
-  const [showRewardDialog, setShowRewardDialog] = useState(false);
-  const [rewardedRock, setRewardedRock] = useState<Collectible | null>(null);
-
   const [completedToday, setCompletedToday] = useState<Record<string, boolean>>({});
   const [isMarkingLoading, setIsMarkingLoading] = useState<string | null>(null);
 
@@ -295,6 +240,9 @@ export default function ChallengesPage() {
   const [practicedDaysCount, setPracticedDaysCount] = useState(0);
   const [daysInMonth, setDaysInMonth] = useState(30);
   const [isLoadingPracticed, setIsLoadingPracticed] = useState(true);
+
+  // Collection Mock Data
+  const collectedIds = ['welcome_mat', 'first_analysis_block', 'join_challenge_strap'];
 
   useEffect(() => {
     if (!user) return;
@@ -338,7 +286,6 @@ export default function ChallengesPage() {
         const tasksSnap = await getDocs(query(tasksRef, where('__name__', '>=', format(start, 'yyyy-MM-dd')), where('__name__', '<=', format(end, 'yyyy-MM-dd') + '\uf8ff')));
         const tasksDates = new Set(tasksSnap.docs.map(doc => doc.id.split('_')[0]));
 
-        // Calculate intersection
         let count = 0;
         const currentDay = now.getDate();
         for (let i = 1; i <= currentDay; i++) {
@@ -371,13 +318,6 @@ export default function ChallengesPage() {
       });
       setCompletedToday(prev => ({ ...prev, [challengeId]: true }));
       toast({ title: "Task Complete!", description: "Today's challenge task has been recorded." });
-      
-      // Re-trigger practiced days check
-      const now = new Date();
-      const start = startOfMonth(now);
-      const end = endOfMonth(now);
-      // Fetch Activity, Analyses, Tasks to recalculate count
-      // For simplicity, just increment if conditions are met
     } catch (e) {
       console.error("Failed to record task", e);
       toast({ title: "Error", description: "Failed to mark task as complete.", variant: "destructive" });
@@ -385,13 +325,6 @@ export default function ChallengesPage() {
       setIsMarkingLoading(null);
     }
   };
-
-  const handleRockReward = (rock: Collectible) => {
-    setShowRockWheelDialog(false);
-    setRewardedRock(rock);
-    setShowRewardDialog(true);
-    console.log("User won rock:", rock.name);
-  }
   
   const getStatusBadge = (challenge: Challenge) => {
     switch (challenge.status) {
@@ -415,232 +348,228 @@ export default function ChallengesPage() {
     }
   }
 
+  const sectionCardStyle = {
+    borderRadius: '24px 12px 24px 24px',
+    border: '0.5px solid rgba(193,154,107,0.18)',
+    background: 'rgba(13,20,30,0.50)',
+    backdropFilter: 'blur(14px)'
+  };
+
   return (
     <AppShell>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
-      <RockWheelDialog 
-            isOpen={showRockWheelDialog} 
-            onClose={() => setShowRockWheelDialog(false)}
-            onReward={handleRockReward}
-      />
-      {rewardedRock && (
-          <RewardDialog 
-            isOpen={showRewardDialog} 
-            onClose={() => setShowRewardDialog(false)} 
-            rock={rewardedRock} 
-          />
-      )}
       <div className="container mx-auto px-4 py-8">
-          <header className="mb-8">
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                <div>
-                  <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, color: 'rgba(255,240,215,0.92)' }} className="text-3xl font-bold text-white flex items-center gap-3">
-                      <Crown className="h-8 w-8" style={{ color: 'rgba(193,154,107,0.85)' }} />
-                      Yoga Challenges
-                  </h1>
-                  <p style={{ color: 'rgba(255,240,215,0.40)', fontStyle: 'italic' }} className="text-md text-white/80">Improve your practice, track your progress, and connect with friends.</p>
-                  <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 5 }} />
-                </div>
-                <button
-                  onClick={toggleTheme}
-                  aria-label="Toggle theme"
-                  style={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: '50%',
-                    border: '1.5px solid rgba(193,154,107,0.30)',
-                    background: 'rgba(193,154,107,0.08)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    flexShrink: 0,
-                  }}
-                >
-                  {isDark
-                    ? <Sun style={{ width: 14, height: 14, color: 'rgba(193,154,107,0.75)' }} />
-                    : <Moon style={{ width: 14, height: 14, color: 'rgba(193,154,107,0.75)' }} />
-                  }
-                </button>
+          <header className="mb-8 flex items-start justify-between">
+              <div>
+                <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, color: 'rgba(255,240,215,0.92)' }} className="text-3xl font-bold flex items-center gap-3">
+                    <Crown className="h-8 w-8" style={{ color: 'rgba(193,154,107,0.85)' }} />
+                    Yoga Challenges
+                </h1>
+                <p style={{ color: 'rgba(255,240,215,0.40)', fontStyle: 'italic' }} className="text-md mt-1">Improve your practice and connect with friends.</p>
+                <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 8 }} />
               </div>
-            </header>
-            <main className="flex-grow space-y-12">
-              
-              {/* THIS MONTH'S PRACTICE CARD */}
-              <div 
-                className="w-full p-8 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-700"
-                style={{ 
-                  borderRadius: '24px 12px 24px 24px', 
-                  border: '0.5px solid rgba(193,154,107,0.18)', 
-                  background: 'rgba(13,20,30,0.50)',
-                  backdropFilter: 'blur(14px)'
+              <button
+                onClick={toggleTheme}
+                aria-label="Toggle theme"
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: '50%',
+                  border: '1.5px solid rgba(193,154,107,0.30)',
+                  background: 'rgba(193,154,107,0.08)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  flexShrink: 0,
                 }}
               >
-                <div className="flex flex-col md:flex-row justify-between items-end md:items-center gap-4 mb-6">
-                  <div>
-                    <div className="flex items-baseline gap-2">
-                       <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 42, fontWeight: 600, color: 'rgba(255,240,215,0.94)', lineHeight: 1 }}>
-                         {isLoadingPracticed ? "—" : practicedDaysCount}
-                       </span>
-                       <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, fontWeight: 500, color: 'rgba(193,154,107,0.70)' }}>
-                         / {daysInMonth}
-                       </span>
-                    </div>
-                    <p style={{ fontSize: 13, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.60)', fontWeight: 600, marginTop: 4 }}>
-                      days practiced
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 16, color: 'rgba(255,240,215,0.60)' }}>
-                      Practice daily to fill your month
-                    </p>
-                  </div>
-                </div>
+                {isDark
+                  ? <Sun style={{ width: 14, height: 14, color: 'rgba(193,154,107,0.75)' }} />
+                  : <Moon style={{ width: 14, height: 14, color: 'rgba(193,154,107,0.75)' }} />
+                }
+              </button>
+          </header>
 
-                <div style={{ height: 14, background: 'rgba(255,240,215,0.08)', borderRadius: 8, overflow: 'hidden', position: 'relative' }}>
-                   <div 
-                     style={{ 
-                       height: '100%', 
-                       width: `${(practicedDaysCount / daysInMonth) * 100}%`,
-                       background: 'linear-gradient(90deg, rgba(193,154,107,0.7), rgba(210,180,110,0.95))',
-                       borderRadius: 8,
-                       transition: 'width 1.5s cubic-bezier(0.4, 0, 0.2, 1)'
-                     }}
-                   />
+          <main className="space-y-12 pb-12">
+            
+            {/* A. THIS MONTH'S PRACTICE */}
+            <div className="w-full p-8 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-700" style={sectionCardStyle}>
+              <div className="flex flex-col md:flex-row justify-between items-end md:items-center gap-4 mb-6">
+                <div>
+                  <div className="flex items-baseline gap-2">
+                     <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 42, fontWeight: 600, color: 'rgba(255,240,215,0.94)', lineHeight: 1 }}>
+                       {isLoadingPracticed ? "—" : practicedDaysCount}
+                     </span>
+                     <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, fontWeight: 500, color: 'rgba(193,154,107,0.70)' }}>
+                       / {daysInMonth}
+                     </span>
+                  </div>
+                  <p style={{ fontSize: 11, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.60)', fontWeight: 600, marginTop: 4 }}>
+                    days practiced
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 16, color: 'rgba(255,240,215,0.60)' }}>
+                    Practice daily to fill your month
+                  </p>
                 </div>
               </div>
 
-              <Card className="w-full shadow-2xl text-white" style={{ border: '0.5px solid rgba(193,154,107,0.18)', background: 'rgba(25,16,8,0.50)', borderRadius: '24px 12px 24px 24px' }}>
-                <CardHeader className="text-center pt-8">
-                  <CardTitle style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: 'rgba(255,240,215,0.92)' }} className="text-3xl font-semibold flex items-center justify-center gap-2">
-                    <Users className="h-8 w-8" style={{ color: 'rgba(193,154,107,0.80)' }} />
-                    {t('challengesWithFriendsTitle')}
-                  </CardTitle>
-                  <CardDescription className="text-lg text-white/80 mt-2 max-w-md mx-auto">
-                    {t('challengesWithFriendsDesc')}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col items-center space-y-6 p-8">
-                  <div className="flex -space-x-6">
-                    {friends.map(friend => (
-                      <Avatar key={friend.id} className="h-16 w-16 transition-transform hover:scale-110" style={{ background: 'rgba(193,154,107,0.10)', border: '0.5px solid rgba(193,154,107,0.22)' }}>
-                        <AvatarImage src={friend.avatarUrl} alt={friend.name} data-ai-hint={friend.avatarHint} />
-                        <AvatarFallback>{friend.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                    ))}
-                  </div>
-                  <InviteFriendDialog />
-                </CardContent>
-              </Card>
+              <div style={{ height: 14, background: 'rgba(255,240,215,0.08)', borderRadius: 8, overflow: 'hidden' }}>
+                 <div 
+                   style={{ 
+                     height: '100%', 
+                     width: `${(practicedDaysCount / daysInMonth) * 100}%`,
+                     background: 'linear-gradient(90deg, rgba(193,154,107,0.7), rgba(210,180,110,0.95))',
+                     borderRadius: 8,
+                     transition: 'width 1.5s cubic-bezier(0.4, 0, 0.2, 1)'
+                   }}
+                 />
+              </div>
+            </div>
 
-              <Card className="w-full shadow-lg rounded-2xl border border-white/20 bg-black/20 backdrop-blur-lg text-white mb-12">
-                  <CardHeader>
-                      <CardTitle className="flex items-center text-xl md:text-2xl">
-                          <Gift className="mr-3 h-7 w-7 text-white" />
-                          Challenge Rewards
-                      </CardTitle>
-                      <CardDescription className="text-white/80">
-                          You've completed the Headstand Challenge! Claim your reward.
-                      </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                      <Button onClick={() => setShowRockWheelDialog(true)} className="w-full rounded-lg bg-white/90 text-black hover:bg-white" size="lg">
-                          Claim Your Item!
-                      </Button>
-                  </CardContent>
-              </Card>
-
-              <div className="space-y-12">
-                {categoryOrder.map((category) => {
-                  const challengesInCategory = challengesByCategory[category];
-                  if (!challengesInCategory) return null;
-                  const Icon = categoryIcons[category];
-                  return (
-                    <div key={category}>
-                      <h2 className="text-3xl font-bold tracking-tight mb-6 flex items-center gap-3 text-white">
-                        <Icon className="h-8 w-8 text-white/90" />
-                        {category} Challenges
-                      </h2>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {challengesInCategory.map((challenge, index) => (
-                          <Card key={challenge.id} className="overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300 group rounded-2xl flex flex-col bg-black/20 backdrop-blur-lg border border-white/20 text-white">
-                            <div className="relative w-full h-64">
-                              <Image
-                                src={challenge.imageUrl.src}
-                                alt={`${challenge.name} background`}
-                                width={challenge.imageUrl.width}
-                                height={challenge.imageUrl.height}
-                                sizes="(max-width: 768px) 100vw, 50vw"
-                                priority={index < 2}
-                                data-ai-hint={challenge.imageHint}
-                                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                              />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-between p-4">
-                                <div className="flex justify-between items-start">
-                                    {getStatusBadge(challenge)}
-                                    {challenge.status === 'active' && challenge.daysInChallenge && (
-                                      <Badge variant="destructive">
-                                        Day {challenge.daysInChallenge} / {challenge.totalDays}
-                                      </Badge>
-                                    )}
-                                </div>
-                                <h2 className="text-2xl font-bold text-white mb-1">{challenge.name}</h2>
-                              </div>
-                            </div>
-                            <CardContent className="p-6 bg-black/20 flex-grow flex flex-col">
-                              <div className="flex justify-between items-center mb-4">
-                                <p className="text-white/70 text-sm">Difficulty:</p>
-                                <div className="flex items-center">
-                                  {Array.from({ length: 5 }).map((_, i) => (
-                                    <Star
-                                      key={i}
-                                      className={cn(
-                                        "h-5 w-5",
-                                        i < challenge.difficulty
-                                          ? "text-yellow-400 fill-yellow-400"
-                                          : "text-white/30"
-                                      )}
-                                    />
-                                  ))}
-                                </div>
-                              </div>
-                              <p className="text-white/80 mb-6 flex-grow">{challenge.description}</p>
-                              <div className="space-y-3">
-                                {challenge.status === 'active' && (
-                                  <Button 
-                                    onClick={() => handleMarkComplete(challenge.id)}
-                                    disabled={!!completedToday[challenge.id] || isMarkingLoading === challenge.id}
-                                    className={cn(
-                                      "w-full rounded-full font-bold transition-all",
-                                      completedToday[challenge.id] 
-                                        ? "bg-green-600/20 border border-green-600/40 text-green-400"
-                                        : "bg-[rgba(193,154,107,0.85)] text-[rgba(25,16,8,0.95)] hover:opacity-90"
-                                    )}
-                                  >
-                                    {isMarkingLoading === challenge.id ? <SmileyRockLoader /> : completedToday[challenge.id] ? <><Check className="mr-2 h-4 w-4" /> Completed Today</> : "Mark Today Complete"}
-                                  </Button>
-                                )}
-                                <Link href={challenge.detailLink} passHref className="block">
-                                  <Button
-                                    size="lg"
-                                    className="w-full text-lg py-6 bg-white/10 hover:bg-white/20 text-white border border-white/20 shadow-md transition-all rounded-lg"
-                                    aria-label={`Action for ${challenge.name}`}
-                                    disabled={challenge.detailLink === '#'}
-                                  >
-                                    {getButtonText(challenge.status)}
-                                    <ArrowRight className="ml-2 h-5 w-5" />
-                                  </Button>
-                                </Link>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        ))}
+            {/* B. YOUR COLLECTION */}
+            <Link href="/yoga-collection" className="block active:scale-[0.99] transition-transform">
+              <div className="w-full p-6 shadow-xl" style={sectionCardStyle}>
+                <div className="flex justify-between items-center mb-6">
+                  <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 20, fontWeight: 600, color: 'rgba(255,240,215,0.92)' }}>Your Collection</h2>
+                  <span style={{ fontSize: 11, color: 'rgba(193,154,107,0.60)', textTransform: 'uppercase', fontWeight: 600 }}>
+                    {collectedIds.length} of {allCollectibles.length} collected · tap to view ›
+                  </span>
+                </div>
+                <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+                  {allCollectibles.map((item) => {
+                    const isCollected = collectedIds.includes(item.id);
+                    return (
+                      <div key={item.id} className="flex-shrink-0 relative group">
+                        <div 
+                          className={cn(
+                            "w-14 h-14 rounded-full flex items-center justify-center border transition-all duration-500",
+                            isCollected 
+                              ? "border-[rgba(193,154,107,0.4)] bg-[rgba(193,154,107,0.1)]" 
+                              : "border-white/5 bg-white/5"
+                          )}
+                        >
+                          {isCollected ? (
+                            <Image src={item.imageUrl} alt={item.name} width={40} height={40} className="rounded-full" />
+                          ) : (
+                            <Lock className="w-4 h-4 text-white/10" />
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </main>
+            </Link>
+
+            {/* C. ACTIVE CHALLENGES */}
+            <div className="space-y-12">
+              {categoryOrder.map((category) => {
+                const challengesInCategory = challengesByCategory[category];
+                if (!challengesInCategory) return null;
+                const Icon = categoryIcons[category];
+                return (
+                  <div key={category}>
+                    <h2 className="text-2xl font-bold tracking-tight mb-6 flex items-center gap-3 text-white" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                      <Icon className="h-6 w-6 text-white/50" />
+                      {category} Challenges
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      {challengesInCategory.map((challenge, index) => (
+                        <Card key={challenge.id} className="overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 group rounded-2xl flex flex-col text-white" style={sectionCardStyle}>
+                          <div className="relative w-full h-60">
+                            <Image
+                              src={challenge.imageUrl.src}
+                              alt={challenge.name}
+                              fill
+                              priority={index < 2}
+                              data-ai-hint={challenge.imageHint}
+                              className="object-cover transition-transform duration-700 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-between p-4">
+                              <div className="flex justify-between items-start">
+                                  {getStatusBadge(challenge)}
+                                  {challenge.status === 'active' && challenge.daysInChallenge && (
+                                    <Badge variant="destructive" className="bg-red-500/80">
+                                      Day {challenge.daysInChallenge} / {challenge.totalDays}
+                                    </Badge>
+                                  )}
+                              </div>
+                              <h2 className="text-2xl font-bold text-white mb-1" style={{ fontFamily: "'Cormorant Garamond', serif" }}>{challenge.name}</h2>
+                            </div>
+                          </div>
+                          <CardContent className="p-6 flex-grow flex flex-col space-y-6">
+                            <div className="flex justify-between items-center">
+                              <div className="flex items-center gap-1">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                  <Star key={i} className={cn("h-4 w-4", i < challenge.difficulty ? "text-yellow-400 fill-yellow-400" : "text-white/10")} />
+                                ))}
+                              </div>
+                              <span className="text-[10px] uppercase tracking-widest text-white/40 font-bold">{challenge.category}</span>
+                            </div>
+                            <p className="text-white/70 text-sm leading-relaxed flex-grow">{challenge.description}</p>
+                            <div className="space-y-3 pt-2">
+                              {challenge.status === 'active' && (
+                                <Button 
+                                  onClick={() => handleMarkComplete(challenge.id)}
+                                  disabled={!!completedToday[challenge.id] || isMarkingLoading === challenge.id}
+                                  className={cn(
+                                    "w-full h-12 rounded-full font-bold transition-all",
+                                    completedToday[challenge.id] 
+                                      ? "bg-green-600/20 border border-green-600/40 text-green-400"
+                                      : "bg-[rgba(193,154,107,0.85)] text-[rgba(25,16,8,0.95)] hover:opacity-90"
+                                  )}
+                                >
+                                  {isMarkingLoading === challenge.id ? <SmileyRockLoader /> : completedToday[challenge.id] ? <><Check className="mr-2 h-4 w-4" /> Completed Today</> : "Mark Today Complete"}
+                                </Button>
+                              )}
+                              <Link href={challenge.detailLink} passHref className="block">
+                                <Button
+                                  variant="outline"
+                                  className="w-full h-12 text-sm bg-white/5 hover:bg-white/10 text-white border-white/10 rounded-full"
+                                  disabled={challenge.detailLink === '#'}
+                                >
+                                  {getButtonText(challenge.status)}
+                                  <ArrowRight className="ml-2 h-4 w-4" />
+                                </Button>
+                              </Link>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* D. CHALLENGES WITH FRIENDS (AT THE BOTTOM) */}
+            <Card className="w-full shadow-2xl text-white overflow-hidden" style={sectionCardStyle}>
+              <CardHeader className="text-center pt-10">
+                <CardTitle style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: 'rgba(255,240,215,0.92)' }} className="text-3xl font-semibold flex items-center justify-center gap-3">
+                  <Users className="h-7 w-7" style={{ color: 'rgba(193,154,107,0.80)' }} />
+                  {t('challengesWithFriendsTitle')}
+                </CardTitle>
+                <CardDescription className="text-white/60 mt-2 max-w-sm mx-auto text-sm italic">
+                  {t('challengesWithFriendsDesc')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col items-center space-y-8 p-10">
+                <div className="flex -space-x-4">
+                  {friends.map(friend => (
+                    <Avatar key={friend.id} className="h-14 w-14 border-4 border-[rgba(25,16,8,0.5)] transition-transform hover:scale-110">
+                      <AvatarImage src={friend.avatarUrl} alt={friend.name} data-ai-hint={friend.avatarHint} />
+                      <AvatarFallback className="bg-white/10 text-white/50">{friend.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                  ))}
+                </div>
+                <InviteFriendDialog />
+              </CardContent>
+            </Card>
+
+          </main>
       </div>
     </AppShell>
   );
