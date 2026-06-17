@@ -17,11 +17,10 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<Theme>('dark');
 
   useEffect(() => {
+    // Only check localStorage, ignoring system preference entirely.
     const stored = localStorage.getItem('snapyoga-theme') as Theme | null;
     if (stored === 'light' || stored === 'dark') {
       setTheme(stored);
-    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-      setTheme('light');
     }
   }, []);
 
