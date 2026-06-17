@@ -13,19 +13,20 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowRight, Users, PlusCircle, Crown, Star, Scale, Zap, Spline, Anchor, Copy, Mail, Share2, Sun, Moon, Check, Lock } from 'lucide-react';
+import { ArrowRight, Users, PlusCircle, Crown, Star, Scale, Zap, Spline, Anchor, Copy, Mail, Share2, Sun, Moon, Check, Lock, Gift } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
-import { allCollectibles } from '@/components/features/dashboard/rock-data';
+import { allCollectibles, type Collectible } from '@/components/features/dashboard/rock-data';
 import placeholderImages from '@/lib/placeholder-images.json';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, getDocs, query, where, doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { format, startOfMonth, endOfMonth, getDaysInMonth } from 'date-fns';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { RockWheelDialog } from '@/components/features/dashboard/rock-wheel-dialog';
 
 interface Friend {
   id: string;
@@ -227,7 +228,7 @@ function InviteFriendDialog() {
 }
 
 export default function ChallengesPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [friends] = useState<Friend[]>(initialFriends);
   const { t } = useLanguage();
   const { isDark, toggleTheme } = useTheme();
@@ -240,9 +241,15 @@ export default function ChallengesPage() {
   const [practicedDaysCount, setPracticedDaysCount] = useState(0);
   const [daysInMonth, setDaysInMonth] = useState(30);
   const [isLoadingPracticed, setIsLoadingPracticed] = useState(true);
+  
+  // Reward state
+  const [isRewardDialogOpen, setIsRewardDialogOpen] = useState(false);
 
-  // Collection Mock Data
+  // Collection Mock Data (should come from profile in a real app)
   const collectedIds = ['welcome_mat', 'first_analysis_block', 'join_challenge_strap'];
+
+  const currentMonthStr = format(new Date(), 'yyyy-MM');
+  const hasPulledThisMonth = profile?.lastPullMonth === currentMonthStr;
 
   useEffect(() => {
     if (!user) return;
@@ -325,6 +332,23 @@ export default function ChallengesPage() {
       setIsMarkingLoading(null);
     }
   };
+
+  const handleRewardWon = async (item: Collectible) => {
+    if (!user) return;
+    try {
+      // In a real app, you would add the item to a subcollection or profile array
+      // For this mock, we just update the lastPullMonth flag.
+      await createUserProfileDocument(user, {
+        lastPullMonth: currentMonthStr
+      });
+      toast({
+        title: "Reward Collected!",
+        description: `Your ${item.name} has been added to your collection.`
+      });
+    } catch (e) {
+      console.error("Failed to save reward pull:", e);
+    }
+  };
   
   const getStatusBadge = (challenge: Challenge) => {
     switch (challenge.status) {
@@ -338,15 +362,6 @@ export default function ChallengesPage() {
         return null;
     }
   };
-
-  const getButtonText = (status: Challenge['status']) => {
-    switch (status) {
-        case 'active': return 'View Challenge';
-        case 'upcoming': return 'View Challenge';
-        case 'completed': return 'View Results';
-        default: return 'Learn More';
-    }
-  }
 
   const sectionCardStyle = {
     borderRadius: '24px 12px 24px 24px',
@@ -409,10 +424,23 @@ export default function ChallengesPage() {
                     days practiced
                   </p>
                 </div>
-                <div className="text-right">
+                <div className="text-right flex flex-col items-end gap-2">
                   <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 16, color: 'rgba(255,240,215,0.60)' }}>
                     Practice daily to fill your month
                   </p>
+                  <Button 
+                    onClick={() => setIsRewardDialogOpen(true)}
+                    disabled={hasPulledThisMonth}
+                    className={cn(
+                      "h-10 rounded-full font-bold px-6 transition-all",
+                      hasPulledThisMonth 
+                        ? "bg-white/5 border border-white/10 text-white/20" 
+                        : "bg-[rgba(193,154,107,0.85)] text-[rgba(25,16,8,0.95)] hover:opacity-90 shadow-lg"
+                    )}
+                  >
+                    <Gift className="mr-2 h-4 w-4" />
+                    {hasPulledThisMonth ? "Next reward next month" : "Pull Monthly Reward"}
+                  </Button>
                 </div>
               </div>
 
@@ -531,7 +559,7 @@ export default function ChallengesPage() {
                                   className="w-full h-12 text-sm bg-white/5 hover:bg-white/10 text-white border-white/10 rounded-full"
                                   disabled={challenge.detailLink === '#'}
                                 >
-                                  {getButtonText(challenge.status)}
+                                  {challenge.status === 'completed' ? 'View Results' : 'View Challenge'}
                                   <ArrowRight className="ml-2 h-4 w-4" />
                                 </Button>
                               </Link>
@@ -571,6 +599,12 @@ export default function ChallengesPage() {
 
           </main>
       </div>
+
+      <RockWheelDialog 
+        isOpen={isRewardDialogOpen} 
+        onClose={() => setIsRewardDialogOpen(false)} 
+        onReward={handleRewardWon} 
+      />
     </AppShell>
   );
 }
