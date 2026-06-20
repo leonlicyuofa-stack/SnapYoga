@@ -26,6 +26,12 @@ service firebase.storage {
       allow read; 
     }
 
+    // Pose analysis media uploaded by the server action (Admin SDK writes).
+    match /user-media/{userId}/{allPaths=**} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false;
+    }
+
     // Allow authenticated users to read their own analysis result files.
     // This is necessary for the analysis-logs page to list and create download URLs.
     match /pose_analysis_results/{userId}/{allPaths=**} {

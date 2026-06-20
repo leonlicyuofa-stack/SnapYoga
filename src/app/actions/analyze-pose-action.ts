@@ -7,11 +7,10 @@
  */
 
 import { z } from 'zod';
-import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
+import { FieldValue } from 'firebase-admin/firestore';
 import { v4 as uuidv4 } from 'uuid';
-import { app, firestore } from '@/lib/firebase/clientApp';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { GoogleAuth } from 'google-auth-library';
+import { createGoogleAuth } from '@/lib/gcp/credentials';
+import { getAdminFirestore, getAdminStorageBucket } from '@/lib/firebase/adminApp';
 
 /** Default v2 route; must match your Cloud Run app. */
 const DEFAULT_VISION_PATH = '/v2/analyze-video-vision';
@@ -340,36 +339,53 @@ function parseAnalysisServiceResponse(
 }
 
 
+function extensionFromMimeType(mimeType: string): string {
+  let extension = mimeType.split('/')[1] ?? 'mp4';
+  if (extension === 'jpeg') extension = 'jpg';
+  if (extension === 'quicktime') extension = 'mov';
+  return extension;
+}
+
+function mediaObjectPath(userId: string, mediaId: string, extension: string): string {
+  return `user-media/${userId}/${mediaId}.${extension}`;
+}
+
 /**
- * Helper to upload video/image to Firebase Storage with embedded metadata.
- * This physically bundles the user's notes with the media file in the cloud.
+ * Upload video/image via Firebase Admin (server-side; bypasses client auth on Vercel).
  */
 async function uploadMediaToStorage(
-  dataUri: string, 
-  userId: string, 
-  mediaId: string, 
+  dataUri: string,
+  userId: string,
+  mediaId: string,
   mimeType: string,
   userNotes?: string
-): Promise<string> {
-    const storage = getStorage(app);
-    let extension = mimeType.split('/')[1];
-    if (extension === 'jpeg') extension = 'jpg';
-    if (extension === 'quicktime') extension = 'mov';
+): Promise<{ mediaUrl: string; gsPath: string; objectPath: string }> {
+  const extension = extensionFromMimeType(mimeType);
+  const objectPath = mediaObjectPath(userId, mediaId, extension);
+  const base64Payload = dataUri.includes(',') ? dataUri.split(',')[1] : dataUri;
+  const buffer = Buffer.from(base64Payload, 'base64');
+  const downloadToken = uuidv4();
 
-    const storageRef = ref(storage, `user-media/${userId}/${mediaId}.${extension}`);
-    
-    // Create custom metadata to bundle with the file
-    const metadata = {
+  const bucket = getAdminStorageBucket().bucket();
+  const file = bucket.file(objectPath);
+
+  await file.save(buffer, {
+    metadata: {
       contentType: mimeType,
-      customMetadata: {
-        'userId': userId,
-        'userNotes': userNotes || '',
-        'uploadedAt': new Date().toISOString(),
-      }
-    };
-    
-    await uploadString(storageRef, dataUri, 'data_url', metadata);
-    return getDownloadURL(storageRef);
+      metadata: {
+        firebaseStorageDownloadTokens: downloadToken,
+        userId,
+        userNotes: userNotes || '',
+        uploadedAt: new Date().toISOString(),
+      },
+    },
+  });
+
+  const encodedPath = encodeURIComponent(objectPath);
+  const mediaUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodedPath}?alt=media&token=${downloadToken}`;
+  const gsPath = `gs://${bucket.name}/${objectPath}`;
+
+  return { mediaUrl, gsPath, objectPath };
 }
 
 /**
@@ -383,18 +399,16 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
 
   const mediaId = uuidv4();
   const mimeType = videoDataUri.match(/data:(.*);base64,/)?.[1] || 'video/mp4';
-  
-  let extension = mimeType.split('/')[1];
-  if (extension === 'jpeg') extension = 'jpg';
-  if (extension === 'quicktime') extension = 'mov';
-  
-  // 1. Upload to Storage (Bundling notes into file metadata)
-  const mediaUrl = await uploadMediaToStorage(videoDataUri, userId, mediaId, mimeType, userNotes);
-  
-  // 2. Prepare for Cloud Run call
-  const storage = getStorage(app);
-  const storageRef = ref(storage, `user-media/${userId}/${mediaId}.${extension}`);
-  const gsPath = `gs://${storageRef.bucket}/${storageRef.fullPath}`;
+  const extension = extensionFromMimeType(mimeType);
+
+  // 1. Upload to Storage (Admin SDK — works on Vercel without client auth)
+  const { mediaUrl, gsPath } = await uploadMediaToStorage(
+    videoDataUri,
+    userId,
+    mediaId,
+    mimeType,
+    userNotes
+  );
   
   const analysisServiceUrl = ensurePostTargetsVisionRoute(resolveAnalysisServiceUrl());
   
@@ -405,8 +419,8 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
   let errorBody = '';
 
   try {
-      // Authenticate with Cloud Run
-      const auth = new GoogleAuth();
+      // Authenticate with Cloud Run (explicit SA on Vercel; ADC fallback locally)
+      const auth = createGoogleAuth();
       const client = await auth.getIdTokenClient(analysisServiceUrl);
       const headers = await client.getRequestHeaders();
 
@@ -441,19 +455,22 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
       console.error("Error calling analysis service:", e);
       rawAnalysisResult = { error: message };
   } finally {
-      // 4. Log the interaction to Firestore
+      // 4. Log the interaction to Firestore (Admin SDK)
       try {
-        const logCollectionRef = collection(firestore, 'users', userId, 'poseAnalysisRawLogs');
-        await addDoc(logCollectionRef, {
-          rawResponse: rawAnalysisResult,
-          mediaUrl: mediaUrl,
-          gsPath: gsPath,
-          userNotes: userNotes || null,
-          createdAt: serverTimestamp(),
-          isError: !responseOk,
-          responseStatus,
-          errorBody: errorBody || null,
-        });
+        await getAdminFirestore()
+          .collection('users')
+          .doc(userId)
+          .collection('poseAnalysisRawLogs')
+          .add({
+            rawResponse: rawAnalysisResult,
+            mediaUrl,
+            gsPath,
+            userNotes: userNotes || null,
+            createdAt: FieldValue.serverTimestamp(),
+            isError: !responseOk,
+            responseStatus,
+            errorBody: errorBody || null,
+          });
       } catch (logError) {
         console.error("Failed to log API response to Firestore:", logError);
       }

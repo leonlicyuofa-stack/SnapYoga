@@ -27,6 +27,12 @@ service cloud.firestore {
     match /users/{userId}/poseAnalyses/{analysisId} {
       allow read, create, update, delete: if request.auth != null && request.auth.uid == userId;
     }
+
+    // Raw API logs written by the server action (Admin SDK); users can read their own.
+    match /users/{userId}/poseAnalysisRawLogs/{logId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false;
+    }
     
     // Moods subcollection
     match /users/{userId}/moods/{moodId} {
