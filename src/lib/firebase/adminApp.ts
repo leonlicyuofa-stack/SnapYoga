@@ -1,18 +1,23 @@
 import * as admin from 'firebase-admin';
-import { getServiceAccountCredentials } from '@/lib/gcp/credentials';
+import {
+  getServiceAccountCredentials,
+  toFirebaseServiceAccount,
+} from '@/lib/gcp/credentials';
 
 function initializeAdminApp(): admin.app.App {
   if (admin.apps.length > 0) {
     return admin.apps[0]!;
   }
 
-  const credentials = getServiceAccountCredentials();
   const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+  const credentials = getServiceAccountCredentials();
 
-  if (credentials) {
+  if (credentials?.client_email && credentials?.private_key) {
+    const serviceAccount = toFirebaseServiceAccount(credentials);
+
     return admin.initializeApp({
-      credential: admin.credential.cert(credentials as admin.ServiceAccount),
-      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+      credential: admin.credential.cert(serviceAccount),
+      projectId: serviceAccount.projectId,
       storageBucket,
     });
   }

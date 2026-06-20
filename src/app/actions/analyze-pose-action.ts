@@ -401,16 +401,27 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
   const mimeType = videoDataUri.match(/data:(.*);base64,/)?.[1] || 'video/mp4';
   const extension = extensionFromMimeType(mimeType);
 
-  // 1. Upload to Storage (Admin SDK — works on Vercel without client auth)
-  const { mediaUrl, gsPath } = await uploadMediaToStorage(
-    videoDataUri,
-    userId,
-    mediaId,
-    mimeType,
-    userNotes
-  );
-  
   const analysisServiceUrl = ensurePostTargetsVisionRoute(resolveAnalysisServiceUrl());
+
+  let mediaUrl = '';
+  let gsPath = '';
+
+  // 1. Upload to Storage (Admin SDK — works on Vercel without client auth)
+  try {
+    const uploaded = await uploadMediaToStorage(
+      videoDataUri,
+      userId,
+      mediaId,
+      mimeType,
+      userNotes
+    );
+    mediaUrl = uploaded.mediaUrl;
+    gsPath = uploaded.gsPath;
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : String(e);
+    console.error('Error uploading media for pose analysis:', e);
+    throw new Error(message);
+  }
   
   let response: Response = new Response(null, { status: 500 });
   let rawAnalysisResult: Record<string, unknown> | { error: string } = {};
