@@ -21,7 +21,7 @@ import { cn } from '@/lib/utils';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import { format, subDays, startOfDay, isToday, isYesterday, differenceInDays } from 'date-fns';
+import { format, subDays, startOfDay, startOfWeek, isToday, isYesterday, differenceInDays } from 'date-fns';
 import { TierBadge } from '@/components/ui/tier-badge';
 
 const usernameChangeSchema = z.object({
@@ -92,7 +92,7 @@ export default function ProfilePage() {
         const sevenDaysAgo = subDays(now, 7);
         const startOfSevenDaysAgo = startOfDay(sevenDaysAgo);
 
-        // 0. Weekly commitment → exercise goal (days × 24h)
+        // 0. Weekly commitment → exercise goal (hours per week)
         let days = 5;
         const profileSnap = await getDoc(doc(firestore, 'users', user.uid));
         if (profileSnap.exists() && typeof profileSnap.data().commitmentDays === 'number') {
@@ -100,11 +100,12 @@ export default function ProfilePage() {
           setCommitmentDays(days);
         }
 
-        // 1. Practice (Total all-time for exercise goal)
+        // 1. Practice — this week's hours vs the weekly goal
         const analysesRef = collection(firestore, 'users', user.uid, 'poseAnalyses');
-        const analysesSnap = await getDocs(analysesRef);
-        const exerciseHrs = (analysesSnap.size * 15) / 60;
-        setPracticePercent(Math.min(Math.round((exerciseHrs / (days * 24)) * 100), 100));
+        const weekStart = startOfWeek(now, { weekStartsOn: 1 });
+        const weekAnalysesSnap = await getDocs(query(analysesRef, where('createdAt', '>=', weekStart)));
+        const weeklyExerciseHrs = (weekAnalysesSnap.size * 15) / 60;
+        setPracticePercent(Math.min(Math.round((weeklyExerciseHrs / days) * 100), 100));
 
         // 2. Recent Practices
         const practicesQuery = query(analysesRef, orderBy('createdAt', 'desc'), limit(5));
@@ -156,7 +157,7 @@ export default function ProfilePage() {
     if (!user) return;
     try {
       await createUserProfileDocument(user, { commitmentDays: days });
-      toast({ title: "Goal updated", description: `Exercise goal set to ${days * 24}h (${days} days/week).` });
+      toast({ title: "Goal updated", description: `Weekly exercise goal set to ${days}h (${days} days/week).` });
     } catch (e) {
       console.error("Error saving commitment:", e);
       toast({ title: "Error", description: "Could not save your commitment.", variant: "destructive" });
@@ -389,7 +390,7 @@ export default function ProfilePage() {
                           })}
                         </div>
                         <p style={{ textAlign: 'center', marginTop: 12, fontFamily: "'Cormorant Garamond', serif", fontSize: 15, color: 'rgba(255,240,215,0.9)' }}>
-                          → Exercise goal: <span style={{ color: 'rgba(214,178,130,0.95)', fontWeight: 600 }}>{commitmentDays * 24} h</span> <span style={{ fontSize: 11, opacity: 0.6 }}>({commitmentDays} × 24h)</span>
+                          → Weekly goal: <span style={{ color: 'rgba(214,178,130,0.95)', fontWeight: 600 }}>{commitmentDays} h</span> <span style={{ fontSize: 11, opacity: 0.6 }}>/ week (≈1h each day)</span>
                         </p>
                       </div>
                   </div>

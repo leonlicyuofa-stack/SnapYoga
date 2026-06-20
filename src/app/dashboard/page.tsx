@@ -9,7 +9,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useState, useEffect } from 'react';
 import { doc, getDoc, collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
-import { format, startOfMonth, endOfMonth } from 'date-fns';
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { MoodChart } from '@/components/features/dashboard/MoodChart';
@@ -95,7 +95,7 @@ function getInitials(email?: string | null, name?: string | null) {
 }
 
 export default function DashboardPage() {
-  const { user }                = useAuth();
+  const { user, isGold }        = useAuth();
   const { isDark }              = useTheme();
   const t                       = tok(isDark);
   const router                  = useRouter();
@@ -109,8 +109,8 @@ export default function DashboardPage() {
   const [commitmentDays, setCommitmentDays] = useState(5);
   const [showOverwrite, setShowOverwrite] = useState(false);
 
-  // Exercise goal is driven by the weekly commitment set in the profile (days × 24h).
-  const exerciseGoal = commitmentDays * 24;
+  // Exercise goal: an encouraging weekly hours target (≈1h per committed day).
+  const exerciseGoal = commitmentDays;
 
   const name = user?.displayName || user?.email?.split('@')[0] || 'Yogi';
 
@@ -150,10 +150,12 @@ export default function DashboardPage() {
       setTotalSessions(all.length);
       const scores = all.filter(a => typeof a.score === 'number').map(a => a.score as number);
       if (scores.length) setAvgScore(Math.round(scores.reduce((a,b)=>a+b,0)/scores.length));
-      setExerciseHrs(Math.round((all.length * 15) / 60 * 10) / 10);
     });
     const mStart = startOfMonth(new Date()), mEnd = endOfMonth(new Date());
     getDocs(query(ref, where('createdAt','>=',mStart), where('createdAt','<=',mEnd))).then(s => setMonthSessions(s.size));
+    // Weekly exercise hours, measured against the weekly goal
+    const wStart = startOfWeek(new Date(), { weekStartsOn: 1 }), wEnd = endOfWeek(new Date(), { weekStartsOn: 1 });
+    getDocs(query(ref, where('createdAt','>=',wStart), where('createdAt','<=',wEnd))).then(s => setExerciseHrs(Math.round((s.size * 15) / 60 * 10) / 10));
   }, [user]);
 
   const habitsList = [
@@ -169,26 +171,22 @@ export default function DashboardPage() {
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
 
-        {/* HEADER */}
-        <header style={{ padding: '14px 16px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div>
-            <h1 style={{ fontSize: 24, fontWeight: 500, color: t.text, fontFamily: FONT_PANCAKE, margin: 0, letterSpacing: '-0.5px' }}>Hey, {name}!</h1>
-            <div style={{
-              width: 26,
-              height: 1,
-              background: 'rgba(193,154,107,0.22)',
-              marginTop: 5,
-            }} />
-            <p  style={{ fontSize: 11, fontStyle: 'italic', color: t.muted, margin: '2px 0 0', fontFamily: FONT_PANCAKE, opacity: 0.8 }}>Your practice is waiting.</p>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Avatar style={{ width: 34, height: 34, border: `1.5px solid ${t.goldBorder}` }}>
+        {/* HEADER — prominent profile picture */}
+        <header style={{ padding: '20px 16px 10px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+          <div style={{ position: 'relative', marginBottom: 10 }}>
+            {isGold && (
+              <span style={{ position: 'absolute', top: -15, left: '50%', transform: 'translateX(-50%) rotate(-8deg)', fontSize: 20, zIndex: 1 }}>👑</span>
+            )}
+            <Avatar style={{ width: 76, height: 76, border: `2px solid ${GOLD},0.45)`, boxShadow: `0 0 0 6px ${GOLD},0.06), 0 0 0 12px ${GOLD},0.03)` }}>
               <AvatarImage src={user?.photoURL ?? undefined} alt={name} />
-              <AvatarFallback style={{ background: `${GOLD},0.18)`, color: t.gold, fontSize: 11, fontFamily: FONT_CASUAL, fontWeight: 600 }}>
+              <AvatarFallback style={{ background: `${GOLD},0.18)`, color: t.gold, fontSize: 26, fontFamily: FONT_PANCAKE, fontWeight: 600 }}>
                 {getInitials(user?.email, user?.displayName)}
               </AvatarFallback>
             </Avatar>
           </div>
+          <h1 style={{ fontSize: 24, fontWeight: 500, color: t.text, fontFamily: FONT_PANCAKE, margin: 0, letterSpacing: '-0.5px' }}>Hey, {name}!</h1>
+          <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', margin: '6px 0 0' }} />
+          <p style={{ fontSize: 11, fontStyle: 'italic', color: t.muted, margin: '4px 0 0', fontFamily: FONT_PANCAKE, opacity: 0.8 }}>Your practice is waiting.</p>
         </header>
 
         {/* SCROLLABLE CONTENT */}
@@ -276,10 +274,10 @@ export default function DashboardPage() {
                 <p style={{ fontSize: 32, fontWeight: 500, color: t.gold, lineHeight: 1, margin: '2px 0 0', fontFamily: FONT_PANCAKE }}>
                   {exerciseHrs}<span style={{ fontSize: 13, opacity: 0.55, marginLeft: 2 }}> hrs</span>
                 </p>
-                <p style={{ fontSize: 9, color: t.muted, margin: '2px 0 0', fontFamily: FONT_CASUAL, letterSpacing: 1, textTransform: 'uppercase' }}>this month</p>
+                <p style={{ fontSize: 9, color: t.muted, margin: '2px 0 0', fontFamily: FONT_CASUAL, letterSpacing: 1, textTransform: 'uppercase' }}>this week</p>
                 <Bar pct={(exerciseHrs / exerciseGoal) * 100} color={`${GOLD},0.78)`} />
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-                  <span style={{ fontSize: 8, color: t.muted, fontFamily: FONT_CASUAL }}>GOAL {exerciseGoal}H · {commitmentDays}D</span>
+                  <span style={{ fontSize: 8, color: t.muted, fontFamily: FONT_CASUAL }}>GOAL {exerciseGoal}H / WEEK</span>
                   <span style={{ fontSize: 8, color: t.gold, fontFamily: FONT_CASUAL }}>{Math.round((exerciseHrs/exerciseGoal)*100)}%</span>
                 </div>
               </GlassCard>

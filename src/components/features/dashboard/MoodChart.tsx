@@ -28,13 +28,27 @@ const valueToEmoji: { [key: number]: string } = {
   1: '😫',
 };
 
+// Each mood gets its own colour so the data points pop along the trend line.
+const valueToColor: { [key: number]: string } = {
+  4: 'rgba(99,196,122,0.95)',   // Joyful — green
+  3: 'rgba(151,196,89,0.95)',   // Calm — lime
+  2: 'rgba(133,183,235,0.95)',  // Emotional — blue
+  1: 'rgba(239,159,39,0.95)',   // Fatigue — amber
+};
+
 const CustomDot = (props: DotProps & { payload: any }) => {
     const { cx, cy, payload } = props;
     if (cx === undefined || cy === undefined) return null;
-    // Logged days get a solid analytical point; un-logged days get a faint marker.
+    // Logged days show the selected mood emoji on a coloured dot; un-logged days get a faint marker.
     if (payload.moodValue) {
+      const color = valueToColor[payload.moodValue] || 'rgba(193,154,107,0.95)';
       return (
-        <circle cx={cx} cy={cy} r={3.5} fill="#1a1210" stroke="rgba(214,178,130,0.95)" strokeWidth={2} />
+        <g transform={`translate(${cx},${cy})`}>
+          <circle r={13} fill={color} stroke="rgba(255,255,255,0.85)" strokeWidth={1.5} />
+          <foreignObject x={-11} y={-11} width={22} height={22}>
+            <div style={{ width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, lineHeight: 1 }}>{valueToEmoji[payload.moodValue]}</div>
+          </foreignObject>
+        </g>
       );
     }
     return (
