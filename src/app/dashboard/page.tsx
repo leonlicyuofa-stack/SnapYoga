@@ -1,9 +1,9 @@
 "use client";
 
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
-import { Sun, Moon, MessageSquare, Zap } from 'lucide-react';
+import { MessageSquare, RotateCcw } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useState, useEffect } from 'react';
@@ -98,6 +98,7 @@ export default function DashboardPage() {
   const { user }                = useAuth();
   const { isDark }              = useTheme();
   const t                       = tok(isDark);
+  const router                  = useRouter();
 
   const [moodData,      setMoodData]      = useState<any|null>(null);
   const [completedHabits, setCompletedHabits] = useState<string[]>([]);
@@ -105,8 +106,19 @@ export default function DashboardPage() {
   const [monthSessions, setMonthSessions] = useState(0);
   const [exerciseHrs,   setExerciseHrs]   = useState(0);
   const [avgScore,      setAvgScore]      = useState(78);
+  const [commitmentDays, setCommitmentDays] = useState(5);
+  const [showOverwrite, setShowOverwrite] = useState(false);
+
+  // Exercise goal is driven by the weekly commitment set in the profile (days × 24h).
+  const exerciseGoal = commitmentDays * 24;
 
   const name = user?.displayName || user?.email?.split('@')[0] || 'Yogi';
+
+  // Tapping the check-in box goes to mood selection; if already logged today, confirm overwrite first.
+  const handleCheckinClick = () => {
+    if (moodData) setShowOverwrite(true);
+    else router.push('/mood-tracker');
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -120,6 +132,13 @@ export default function DashboardPage() {
     // Fetch Habits
     getDoc(doc(firestore, 'users', user.uid, 'habits', todayStr)).then(s => {
       if (s.exists()) setCompletedHabits(s.data().completed || []);
+    });
+
+    // Fetch the weekly commitment that drives the exercise goal
+    getDoc(doc(firestore, 'users', user.uid)).then(s => {
+      if (s.exists() && typeof s.data().commitmentDays === 'number') {
+        setCommitmentDays(s.data().commitmentDays);
+      }
     });
   }, [user]);
 
@@ -175,176 +194,174 @@ export default function DashboardPage() {
         {/* SCROLLABLE CONTENT */}
         <main style={{ flex: 1, padding: '4px 14px 120px', display: 'flex', flexDirection: 'column', gap: 22 }}>
 
-          {/* §1 MOOD & REFLECTIONS */}
+          {/* §1 DAILY CHECK-IN (mood + habits merged, whole box tappable) */}
           <section>
             <SectionHead t={t}>Mood & Reflections</SectionHead>
-            <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '24px 12px 24px 24px', padding: '16px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div>
-                    <h3 style={{ fontSize: 16, fontWeight: 600, color: t.text, fontFamily: FONT_PANCAKE }}>Daily Check-in</h3>
-                    <p style={{ fontSize: 11, color: t.muted, fontFamily: FONT_CASUAL }}>How is your spirit today?</p>
-                  </div>
-                  <Button asChild style={{ height: 32, borderRadius: 16, background: `${GOLD},0.15)`, color: t.gold, border: `0.5px solid ${t.goldBorder}`, padding: '0 12px', fontSize: 11, fontWeight: 600 }}>
-                    <Link href="/mood-tracker">
-                      {moodData ? 'Update' : 'Start'}
-                    </Link>
-                  </Button>
-                </div>
-
-                {moodData ? (
-                  <div style={{ padding: '12px', background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)', borderRadius: 12, border: `0.5px solid ${t.goldBorder}` }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                      <span style={{ fontSize: 20 }}>{moodData.emoji}</span>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: t.gold, textTransform: 'uppercase', letterSpacing: 1, fontFamily: FONT_CASUAL }}>{moodData.name}</span>
+            <div
+              onClick={handleCheckinClick}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCheckinClick(); } }}
+              className="active:scale-[0.99] transition-transform cursor-pointer"
+            >
+              <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '24px 12px 24px 24px', padding: '16px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                    <div>
+                      <h3 style={{ fontSize: 16, fontWeight: 600, color: t.text, fontFamily: FONT_PANCAKE }}>Daily Check-in</h3>
+                      <p style={{ fontSize: 11, color: t.muted, fontFamily: FONT_CASUAL }}>How is your spirit today?</p>
                     </div>
-                    {moodData.reflection && (
-                      <p style={{ fontSize: 12, color: t.text, fontStyle: 'italic', margin: 0, opacity: 0.8, lineHeight: 1.4 }}>
-                        "{moodData.reflection.length > 80 ? moodData.reflection.substring(0, 80) + '...' : moodData.reflection}"
-                      </p>
-                    )}
+                    <span style={{ fontSize: 20, color: t.gold, lineHeight: 1 }}>›</span>
                   </div>
-                ) : (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px', background: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)', borderRadius: 12, border: '0.5px dashed rgba(0,0,0,0.1)' }}>
-                    <MessageSquare style={{ width: 18, height: 18, color: t.muted }} />
-                    <p style={{ fontSize: 11, color: t.muted, margin: 0 }}>No reflection logged yet. Checking in helps track your mindful progress.</p>
+
+                  {moodData ? (
+                    <div style={{ padding: '12px', background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)', borderRadius: 12, border: `0.5px solid ${t.goldBorder}` }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: moodData.reflection ? 8 : 0 }}>
+                        <span style={{ fontSize: 20 }}>{moodData.emoji}</span>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: t.gold, textTransform: 'uppercase', letterSpacing: 1, fontFamily: FONT_CASUAL }}>{moodData.name}</span>
+                      </div>
+                      {moodData.reflection && (
+                        <p style={{ fontSize: 12, color: t.text, fontStyle: 'italic', margin: 0, opacity: 0.8, lineHeight: 1.4 }}>
+                          "{moodData.reflection.length > 80 ? moodData.reflection.substring(0, 80) + '...' : moodData.reflection}"
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px', background: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.01)', borderRadius: 12, border: '0.5px dashed rgba(0,0,0,0.1)' }}>
+                      <MessageSquare style={{ width: 18, height: 18, color: t.muted }} />
+                      <p style={{ fontSize: 11, color: t.muted, margin: 0 }}>No reflection logged yet. Checking in helps track your mindful progress.</p>
+                    </div>
+                  )}
+
+                  {/* Today's habits — merged into the check-in box */}
+                  <div style={{ height: 1, background: t.goldBorder, margin: '2px 0' }} />
+                  <CardLabel color={t.gold}>Today's habits</CardLabel>
+                  <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                    {habitsList.map(h => {
+                      const done = completedHabits.includes(h.id);
+                      return (
+                        <div key={h.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                          <div style={{ width: 40, height: 40, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                            background: done ? h.color : (isDark ? `${PARCHMENT},0.05)` : 'rgba(0,0,0,0.04)'),
+                            border: `0.5px solid ${done ? h.color : (isDark ? `${PARCHMENT},0.10)` : 'rgba(0,0,0,0.06)')}`,
+                            transform: done ? 'scale(1.1)' : 'scale(1)',
+                            boxShadow: done ? `0 4px 12px ${h.color}` : 'none'
+                          }}>{h.emoji}</div>
+                          <span style={{ fontSize: 7, letterSpacing: 1.2, textTransform: 'uppercase' as const, fontFamily: FONT_CASUAL, fontWeight: 600, color: done ? t.text : t.muted }}>{h.label}</span>
+                        </div>
+                      );
+                    })}
                   </div>
-                )}
-              </div>
-            </GlassCard>
+                  <div style={{ display: 'flex', gap: 4 }}>
+                    {habitsList.map((h, i) => (
+                      <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: completedHabits.includes(h.id) ? `${GOLD},0.72)` : (isDark ? `${PARCHMENT},0.10)` : 'rgba(0,0,0,0.06)') }} />
+                    ))}
+                  </div>
+                  <p style={{ fontSize: 9, color: t.gold, margin: 0, fontFamily: FONT_CASUAL, textTransform: 'uppercase', letterSpacing: 0.8, textAlign: 'center' as const, opacity: 0.7 }}>
+                    › Tap anywhere to update your check-in
+                  </p>
+                </div>
+              </GlassCard>
+            </div>
           </section>
 
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 14,
-          }}
-          className="md:flex-row"
-          >
-            {/* §2 TODAY'S HABITS */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <section>
-                <SectionHead t={t}>Today's habits</SectionHead>
-                <Link href="/mood-tracker" className="block active:scale-95 transition-transform">
-                  <GlassCard style={{ background: t.cardDark, border: `0.5px solid ${t.goldBorder}`, borderRadius: '20px 20px 12px 20px', padding: '16px 10px 18px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                      {habitsList.map(h => {
-                        const done = completedHabits.includes(h.id);
-                        return (
-                          <div key={h.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                            <div style={{ width: 40, height: 40, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                              background: done ? h.color : (isDark ? `${PARCHMENT},0.05)` : 'rgba(0,0,0,0.04)'),
-                              border: `0.5px solid ${done ? h.color : (isDark ? `${PARCHMENT},0.10)` : 'rgba(0,0,0,0.06)')}`,
-                              transform: done ? 'scale(1.1)' : 'scale(1)',
-                              boxShadow: done ? `0 4px 12px ${h.color}` : 'none'
-                            }}>{h.emoji}</div>
-                            <span style={{ fontSize: 7, letterSpacing: 1.2, textTransform: 'uppercase' as const, fontFamily: FONT_CASUAL, fontWeight: 600, color: done ? t.text : t.muted }}>{h.label}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <div style={{ display: 'flex', gap: 4, marginTop: 14 }}>
-                      {habitsList.map((h, i) => (
-                        <div key={i} style={{ flex: 1, height: 3, borderRadius: 2, background: completedHabits.includes(h.id) ? `${GOLD},0.72)` : (isDark ? `${PARCHMENT},0.10)` : 'rgba(0,0,0,0.06)') }} />
-                      ))}
-                    </div>
-                    <p style={{ fontSize: 9, color: t.muted, margin: '6px 0 0', fontFamily: FONT_CASUAL, textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'center' as const }}>
-                      {completedHabits.length} of 5 habits done today
-                    </p>
-                  </GlassCard>
-                </Link>
-              </section>
-            </div>
-
-            {/* §3 MY PROGRESS */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <section>
-                <SectionHead t={t}>My Progress</SectionHead>
-
-                {/* Row A: Exercise hours + Poses */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
-                  <GlassCard style={{ background: t.cardTerra, border: `0.5px solid ${t.goldBorder}`, borderRadius: '20px 8px 20px 20px', padding: '12px 14px' }}>
-                    <CardLabel color={t.gold}>Exercise hours</CardLabel>
-                    <p style={{ fontSize: 32, fontWeight: 500, color: t.gold, lineHeight: 1, margin: '2px 0 0', fontFamily: FONT_PANCAKE }}>
-                      {exerciseHrs}<span style={{ fontSize: 13, opacity: 0.55, marginLeft: 2 }}> hrs</span>
-                    </p>
-                    <p style={{ fontSize: 9, color: t.muted, margin: '2px 0 0', fontFamily: FONT_CASUAL, letterSpacing: 1, textTransform: 'uppercase' }}>this month</p>
-                    <Bar pct={(exerciseHrs / 30) * 100} color={`${GOLD},0.78)`} />
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-                      <span style={{ fontSize: 8, color: t.muted, fontFamily: FONT_CASUAL }}>GOAL 30H</span>
-                      <span style={{ fontSize: 8, color: t.gold, fontFamily: FONT_CASUAL }}>{Math.round((exerciseHrs/30)*100)}%</span>
-                    </div>
-                  </GlassCard>
-
-                  <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '8px 20px 20px 20px', padding: '12px 14px' }}>
-                    <CardLabel color={t.muted}>Poses analysed</CardLabel>
-                    <p style={{ fontSize: 32, fontWeight: 500, color: t.text, lineHeight: 1, margin: '2px 0 0', fontFamily: FONT_PANCAKE }}>{totalSessions}</p>
-                    <p style={{ fontSize: 9, color: t.muted, margin: '2px 0 0', fontFamily: FONT_CASUAL, letterSpacing: 1, textTransform: 'uppercase' }}>all time</p>
-                    <div style={{ marginTop: 8 }}>
-                      <span style={{ fontSize: 8, padding: '2px 7px', borderRadius: 999, background: `${GOLD},0.14)`, color: t.gold, border: `0.5px solid ${t.goldBorder}`, letterSpacing: 1.2, textTransform: 'uppercase' as const, fontFamily: FONT_CASUAL, fontWeight: 600 }}>
-                        +{monthSessions} this month
-                      </span>
-                    </div>
-                  </GlassCard>
-                </div>
-
-                {/* Row B: Streak + Avg score */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
-                  <GlassCard style={{ background: t.cardSage, border: `0.5px solid rgba(140,170,115,0.32)`, borderRadius: '20px 20px 8px 20px', padding: '12px 14px' }}>
-                    <CardLabel color="rgba(160,195,130,0.75)">Current streak</CardLabel>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, margin: '2px 0 0' }}>
-                      <p style={{ fontSize: 32, fontWeight: 500, color: 'rgba(160,195,130,0.92)', lineHeight: 1, margin: 0, fontFamily: FONT_PANCAKE }}>7</p>
-                      <div>
-                        <div style={{ fontSize: 11, color: 'rgba(160,195,130,0.70)', fontFamily: FONT_CASUAL, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}>days</div>
-                        <div style={{ fontSize: 16 }}>🔥</div>
-                      </div>
-                    </div>
-                    <p style={{ fontSize: 9, color: t.muted, margin: '3px 0 0', fontFamily: FONT_CASUAL, textTransform: 'uppercase' }}>BEST: 14 DAYS</p>
-                  </GlassCard>
-
-                  <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '20px 20px 20px 8px', padding: '12px 14px' }}>
-                    <CardLabel color={t.muted}>Avg pose score</CardLabel>
-                    <p style={{ fontSize: 32, fontWeight: 500, color: t.gold, lineHeight: 1, margin: '2px 0 0', fontFamily: FONT_PANCAKE }}>
-                      {avgScore}<span style={{ fontSize: 13, opacity: 0.50, marginLeft: 1 }}>/100</span>
-                    </p>
-                    <p style={{ fontSize: 9, color: t.muted, margin: '2px 0 0', fontFamily: FONT_CASUAL, letterSpacing: 1, textTransform: 'uppercase' }}>↑ improving</p>
-                    <Bar pct={avgScore} color={`${GOLD},0.72)`} />
-                  </GlassCard>
-                </div>
-
-                {/* Row C: Monthly sessions full-width */}
-                <GlassCard style={{ background: t.cardDark, border: `0.5px solid ${t.goldBorder}`, borderRadius: '12px 24px 24px 12px', padding: '14px 16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ flex: 1 }}>
-                      <CardLabel color={t.muted}>Monthly sessions</CardLabel>
-                      <p style={{ fontSize: 24, fontWeight: 500, color: t.text, fontFamily: FONT_PANCAKE, margin: 0 }}>
-                        {monthSessions} <span style={{ fontSize: 14, color: t.muted, fontWeight: 400 }}>/ 26 goal</span>
-                      </p>
-                      <p style={{ fontSize: 10, color: t.muted, margin: '3px 0 0', fontFamily: FONT_CASUAL, letterSpacing: 0.5 }}>
-                        {Math.round((monthSessions/26)*100)}% of monthly goal
-                      </p>
-                      <Bar pct={(monthSessions/26)*100} color={`${GOLD},0.78)`} />
-                    </div>
-                    <div style={{ display: 'flex', gap: 4, marginLeft: 16, alignItems: 'flex-end' }}>
-                      {[1,1,0,1,0,1,1].map((done,i)=>(
-                        <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: done ? `${GOLD},0.80)` : (isDark ? `${PARCHMENT},0.12)` : 'rgba(0,0,0,0.06)') }} />
-                      ))}
-                    </div>
-                  </div>
-                </GlassCard>
-              </section>
-            </div>
-          </div>
-
-          {/* §4 WEEKLY MOOD FLOW */}
+          {/* §2 MY PROGRESS */}
           <section>
-            <SectionHead t={t}>Weekly mood flow</SectionHead>
+            <SectionHead t={t}>My Progress</SectionHead>
+
+            {/* Row A: Exercise hours + Poses */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+              <GlassCard style={{ background: t.cardTerra, border: `0.5px solid ${t.goldBorder}`, borderRadius: '20px 8px 20px 20px', padding: '12px 14px' }}>
+                <CardLabel color={t.gold}>Exercise hours</CardLabel>
+                <p style={{ fontSize: 32, fontWeight: 500, color: t.gold, lineHeight: 1, margin: '2px 0 0', fontFamily: FONT_PANCAKE }}>
+                  {exerciseHrs}<span style={{ fontSize: 13, opacity: 0.55, marginLeft: 2 }}> hrs</span>
+                </p>
+                <p style={{ fontSize: 9, color: t.muted, margin: '2px 0 0', fontFamily: FONT_CASUAL, letterSpacing: 1, textTransform: 'uppercase' }}>this month</p>
+                <Bar pct={(exerciseHrs / exerciseGoal) * 100} color={`${GOLD},0.78)`} />
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+                  <span style={{ fontSize: 8, color: t.muted, fontFamily: FONT_CASUAL }}>GOAL {exerciseGoal}H · {commitmentDays}D</span>
+                  <span style={{ fontSize: 8, color: t.gold, fontFamily: FONT_CASUAL }}>{Math.round((exerciseHrs/exerciseGoal)*100)}%</span>
+                </div>
+              </GlassCard>
+
+              <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '8px 20px 20px 20px', padding: '12px 14px' }}>
+                <CardLabel color={t.muted}>Poses analysed</CardLabel>
+                <p style={{ fontSize: 32, fontWeight: 500, color: t.text, lineHeight: 1, margin: '2px 0 0', fontFamily: FONT_PANCAKE }}>{totalSessions}</p>
+                <p style={{ fontSize: 9, color: t.muted, margin: '2px 0 0', fontFamily: FONT_CASUAL, letterSpacing: 1, textTransform: 'uppercase' }}>all time</p>
+                <div style={{ marginTop: 8 }}>
+                  <span style={{ fontSize: 8, padding: '2px 7px', borderRadius: 999, background: `${GOLD},0.14)`, color: t.gold, border: `0.5px solid ${t.goldBorder}`, letterSpacing: 1.2, textTransform: 'uppercase' as const, fontFamily: FONT_CASUAL, fontWeight: 600 }}>
+                    +{monthSessions} this month
+                  </span>
+                </div>
+              </GlassCard>
+            </div>
+
+            {/* Row B: Streak + Avg score */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              <GlassCard style={{ background: t.cardSage, border: `0.5px solid rgba(140,170,115,0.32)`, borderRadius: '20px 20px 8px 20px', padding: '12px 14px' }}>
+                <CardLabel color="rgba(160,195,130,0.75)">Current streak</CardLabel>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, margin: '2px 0 0' }}>
+                  <p style={{ fontSize: 32, fontWeight: 500, color: 'rgba(160,195,130,0.92)', lineHeight: 1, margin: 0, fontFamily: FONT_PANCAKE }}>7</p>
+                  <div>
+                    <div style={{ fontSize: 11, color: 'rgba(160,195,130,0.70)', fontFamily: FONT_CASUAL, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}>days</div>
+                    <div style={{ fontSize: 16 }}>🔥</div>
+                  </div>
+                </div>
+                <p style={{ fontSize: 9, color: t.muted, margin: '3px 0 0', fontFamily: FONT_CASUAL, textTransform: 'uppercase' }}>BEST: 14 DAYS</p>
+              </GlassCard>
+
+              <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '20px 20px 20px 8px', padding: '12px 14px' }}>
+                <CardLabel color={t.muted}>Avg pose score</CardLabel>
+                <p style={{ fontSize: 32, fontWeight: 500, color: t.gold, lineHeight: 1, margin: '2px 0 0', fontFamily: FONT_PANCAKE }}>
+                  {avgScore}<span style={{ fontSize: 13, opacity: 0.50, marginLeft: 1 }}>/100</span>
+                </p>
+                <p style={{ fontSize: 9, color: t.muted, margin: '2px 0 0', fontFamily: FONT_CASUAL, letterSpacing: 1, textTransform: 'uppercase' }}>↑ improving</p>
+                <Bar pct={avgScore} color={`${GOLD},0.72)`} />
+              </GlassCard>
+            </div>
+          </section>
+
+          {/* §3 MOOD METER */}
+          <section>
+            <SectionHead t={t}>Mood Meter</SectionHead>
             <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '24px 24px 24px 12px', padding: '12px 14px 8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 9, color: t.muted, fontFamily: FONT_CASUAL, letterSpacing: 0.5, textTransform: 'uppercase' }}>This week</span>
+              </div>
               <div style={{ height: 150 }}>
                 <MoodChart />
               </div>
             </GlassCard>
           </section>
+
+          {/* Overwrite confirmation when a mood is already logged today */}
+          {showOverwrite && (
+            <div
+              onClick={() => setShowOverwrite(false)}
+              style={{ position: 'fixed', inset: 0, zIndex: 50, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)', WebkitBackdropFilter: 'blur(2px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}
+            >
+              <div
+                onClick={(e) => e.stopPropagation()}
+                style={{ width: '100%', maxWidth: 300, background: 'linear-gradient(175deg,#221a16,#0D1821)', border: `0.5px solid ${GOLD},0.30)`, borderRadius: 20, padding: '22px 20px', textAlign: 'center' }}
+              >
+                <div style={{ width: 48, height: 48, borderRadius: '50%', margin: '0 auto 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1.5px solid ${GOLD},0.55)`, background: `${GOLD},0.12)` }}>
+                  <RotateCcw style={{ width: 22, height: 22, color: `${GOLD},0.95)` }} />
+                </div>
+                <h3 style={{ fontFamily: FONT_PANCAKE, fontSize: 19, fontWeight: 500, color: t.text, margin: '0 0 6px' }}>Overwrite today's check-in?</h3>
+                <p style={{ fontSize: 12, color: t.muted, lineHeight: 1.5, margin: '0 0 18px', fontFamily: FONT_CASUAL }}>
+                  You've already logged your mood today. Continuing will replace your previous selection.
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+                  <Button onClick={() => router.push('/mood-tracker')} style={{ height: 42, borderRadius: 12, border: `1px solid ${GOLD},0.55)`, background: `${GOLD},0.18)`, color: t.text, fontFamily: FONT_PANCAKE, fontSize: 15 }}>
+                    Overwrite
+                  </Button>
+                  <Button onClick={() => setShowOverwrite(false)} variant="ghost" style={{ height: 42, borderRadius: 12, border: `0.5px solid ${t.goldBorder}`, background: `${GOLD},0.05)`, color: t.muted, fontFamily: FONT_PANCAKE, fontSize: 15 }}>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
 
         </main>
       </div>

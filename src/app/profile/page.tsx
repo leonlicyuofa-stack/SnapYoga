@@ -9,11 +9,11 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Save, Share2, Copy, MessageSquare, Sun, Moon, Pencil, KeyRound, Star, Crown } from 'lucide-react';
 import { firestore } from '@/lib/firebase/clientApp';
-import { collection, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
+import { collection, query, where, getDocs, orderBy, limit, doc, getDoc } from 'firebase/firestore';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
@@ -58,6 +58,7 @@ export default function ProfilePage() {
   const [moodPercent, setMoodPercent] = useState(0);
   const [habitsPercent, setHabitsPercent] = useState(0);
   const [recentPractices, setRecentPractices] = useState<any[]>([]);
+  const [commitmentDays, setCommitmentDays] = useState<number>(5);
 
   const { 
     register: registerUsername, 
@@ -91,11 +92,19 @@ export default function ProfilePage() {
         const sevenDaysAgo = subDays(now, 7);
         const startOfSevenDaysAgo = startOfDay(sevenDaysAgo);
 
+        // 0. Weekly commitment → exercise goal (days × 24h)
+        let days = 5;
+        const profileSnap = await getDoc(doc(firestore, 'users', user.uid));
+        if (profileSnap.exists() && typeof profileSnap.data().commitmentDays === 'number') {
+          days = profileSnap.data().commitmentDays;
+          setCommitmentDays(days);
+        }
+
         // 1. Practice (Total all-time for exercise goal)
         const analysesRef = collection(firestore, 'users', user.uid, 'poseAnalyses');
         const analysesSnap = await getDocs(analysesRef);
         const exerciseHrs = (analysesSnap.size * 15) / 60;
-        setPracticePercent(Math.min(Math.round((exerciseHrs / 30) * 100), 100));
+        setPracticePercent(Math.min(Math.round((exerciseHrs / (days * 24)) * 100), 100));
 
         // 2. Recent Practices
         const practicesQuery = query(analysesRef, orderBy('createdAt', 'desc'), limit(5));
@@ -142,6 +151,18 @@ export default function ProfilePage() {
     setIsPasswordSubmitting(false);
   };
   
+  const handleSetCommitment = async (days: number) => {
+    setCommitmentDays(days);
+    if (!user) return;
+    try {
+      await createUserProfileDocument(user, { commitmentDays: days });
+      toast({ title: "Goal updated", description: `Exercise goal set to ${days * 24}h (${days} days/week).` });
+    } catch (e) {
+      console.error("Error saving commitment:", e);
+      toast({ title: "Error", description: "Could not save your commitment.", variant: "destructive" });
+    }
+  };
+
   const handleCopyInviteLink = () => {
     if (navigator.clipboard && inviteLink) {
       navigator.clipboard.writeText(inviteLink)
@@ -338,6 +359,38 @@ export default function ProfilePage() {
                             <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: 'rgba(200,140,90,0.85)' }}>Habits</span>
                           </div>
                         </div>
+                      </div>
+                  </div>
+
+                  {/* WEEKLY COMMITMENT — sets the exercise goal (days × 24h) */}
+                  <div className="space-y-1">
+                      <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(193,154,107,0.55)', marginBottom: 6 }}>Weekly Commitment</p>
+                      <div style={{ borderRadius: '12px 24px 24px 24px', border: '0.5px solid rgba(193,154,107,0.18)', background: 'rgba(25,16,8,0.50)', padding: '14px 16px' }}>
+                        <p style={{ fontSize: 14, fontWeight: 600, color: 'rgba(255,240,215,0.90)', fontFamily: "'Cormorant Garamond', serif", margin: 0 }}>How many days a week will you commit?</p>
+                        <p style={{ fontSize: 11, color: 'rgba(255,240,215,0.40)', margin: '2px 0 0' }}>We'll set your exercise goal from this.</p>
+                        <div style={{ display: 'flex', gap: 6, marginTop: 12 }}>
+                          {[1,2,3,4,5,6,7].map(d => {
+                            const sel = commitmentDays === d;
+                            return (
+                              <button
+                                key={d}
+                                onClick={() => handleSetCommitment(d)}
+                                style={{
+                                  flex: 1, height: 36, borderRadius: 10, cursor: 'pointer', fontFamily: "'Cormorant Garamond', serif", fontSize: 14,
+                                  border: `0.5px solid ${sel ? 'rgba(214,178,130,0.6)' : 'rgba(193,154,107,0.25)'}`,
+                                  background: sel ? 'rgba(193,154,107,0.20)' : 'rgba(193,154,107,0.05)',
+                                  color: sel ? 'rgba(255,240,215,0.95)' : 'rgba(255,240,215,0.65)',
+                                  transition: 'all 0.2s ease',
+                                }}
+                              >
+                                {d}
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <p style={{ textAlign: 'center', marginTop: 12, fontFamily: "'Cormorant Garamond', serif", fontSize: 15, color: 'rgba(255,240,215,0.9)' }}>
+                          → Exercise goal: <span style={{ color: 'rgba(214,178,130,0.95)', fontWeight: 600 }}>{commitmentDays * 24} h</span> <span style={{ fontSize: 11, opacity: 0.6 }}>({commitmentDays} × 24h)</span>
+                        </p>
                       </div>
                   </div>
 

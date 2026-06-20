@@ -31,17 +31,14 @@ const valueToEmoji: { [key: number]: string } = {
 const CustomDot = (props: DotProps & { payload: any }) => {
     const { cx, cy, payload } = props;
     if (cx === undefined || cy === undefined) return null;
+    // Logged days get a solid analytical point; un-logged days get a faint marker.
     if (payload.moodValue) {
       return (
-        <g transform={`translate(${cx},${cy})`}>
-          <foreignObject x={-15} y={-15} width={30} height={30}>
-            <div className="text-2xl flex items-center justify-center drop-shadow-md">{valueToEmoji[payload.moodValue]}</div>
-          </foreignObject>
-        </g>
+        <circle cx={cx} cy={cy} r={3.5} fill="#1a1210" stroke="rgba(214,178,130,0.95)" strokeWidth={2} />
       );
     }
     return (
-      <circle cx={cx} cy={cy} r={4} fill="rgba(255,240,215,0.2)" />
+      <circle cx={cx} cy={cy} r={2} fill="rgba(255,240,215,0.15)" />
     );
 };
 
