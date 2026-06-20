@@ -1,7 +1,9 @@
 "use client";
 
 import type { ReactNode } from 'react';
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useLayoutEffect } from 'react';
+
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 type Theme = 'dark' | 'light';
 
@@ -16,15 +18,18 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<Theme>('dark');
 
-  useEffect(() => {
-    // Only check localStorage, ignoring system preference entirely.
+  useIsomorphicLayoutEffect(() => {
     const stored = localStorage.getItem('snapyoga-theme') as Theme | null;
     if (stored === 'light' || stored === 'dark') {
       setTheme(stored);
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      setTheme('dark');
+    } else {
+      setTheme('light');
     }
   }, []);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const root = document.documentElement;
     if (theme === 'dark') {
       root.classList.add('dark');

@@ -13,11 +13,9 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
-import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
-import { Separator } from '@/components/ui/separator';
+import { OnboardingHeader } from '@/components/onboarding/onboarding-header';
 
 const signUpSchema = z.object({
   username: z.string().min(2, { message: "Username must be at least 2 characters" }),
@@ -61,7 +59,7 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="relative min-h-screen font-serif text-white" style={{ background: 'linear-gradient(175deg, #B0B5C0 0%, #9DA4B0 35%, #A8A0BC 70%, #9B96B5 100%)' }}>
+    <div className="relative min-h-screen">
         <Button
             onClick={handleBackNavigation}
             variant="ghost"
@@ -70,23 +68,17 @@ export default function SignUpPage() {
         >
             <ArrowLeft className="h-6 w-6" />
         </Button>
-        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-md backdrop-blur-lg rounded-2xl p-8 space-y-6 shadow-xl" style={{ background: 'rgba(255,255,255,0.72)', border: '0.5px solid rgba(255,255,255,0.6)' }}>
-                <header className="text-center">
-                    <div className="mx-auto mb-4 inline-block">
-                        <SnapYogaLogo />
-                    </div>
-                    <h1 className="text-3xl font-bold tracking-tight">Create Account</h1>
-                    <p className="text-sm text-white/80">Let's get started on your journey.</p>
-                </header>
-                
+        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-6">
+            <div className="w-full max-w-sm space-y-7">
+                <OnboardingHeader title="Create account" subtitle="Let's get started on your journey." />
+
                 <main className="space-y-6">
                      <div className="flex justify-center gap-4">
-                        <Button variant="outline" size="icon" onClick={signInWithApple} disabled={authLoading} className="w-14 h-14 rounded-full bg-white/10 border-white/20 hover:bg-white/20">
+                        <Button variant="outline" size="icon" onClick={signInWithApple} disabled={authLoading} className="sy-option w-14 h-14 rounded-full hover:opacity-80">
                             <AppleIcon className="h-6 w-6" />
                              <span className="sr-only">Sign up with Apple</span>
                         </Button>
-                        <Button variant="outline" size="icon" onClick={signInWithGoogle} disabled={authLoading} className="w-14 h-14 rounded-full bg-white/10 border-white/20 hover:bg-white/20">
+                        <Button variant="outline" size="icon" onClick={signInWithGoogle} disabled={authLoading} className="sy-option w-14 h-14 rounded-full hover:opacity-80">
                             <GoogleIcon className="h-6 w-6" />
                             <span className="sr-only">Sign up with Google</span>
                         </Button>
@@ -95,7 +87,7 @@ export default function SignUpPage() {
                             variant="outline"
                             size="icon"
                             disabled
-                            className="w-14 h-14 rounded-full bg-white/5 border-white/10 opacity-50 cursor-not-allowed"
+                            className="sy-option w-14 h-14 rounded-full opacity-40 cursor-not-allowed"
                           >
                             <TikTokIcon className="h-6 w-6" />
                             <span className="sr-only">TikTok login coming soon</span>
@@ -106,25 +98,22 @@ export default function SignUpPage() {
                         </div>
                     </div>
 
-                    <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <Separator className="bg-white/20" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-black/20 px-2 text-white/80">Or sign up with email</span>
-                        </div>
+                    <div className="flex items-center gap-2">
+                        <div className="flex-1 sy-divider" style={{ width: 'auto' }} />
+                        <span className="sy-tagline" style={{ whiteSpace: 'nowrap' }}>or sign up with email</span>
+                        <div className="flex-1 sy-divider" style={{ width: 'auto' }} />
                     </div>
 
                     <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4">
                         <div className="space-y-2">
                              <div className="relative">
-                                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/50" />
-                                  <Input 
+                                  <User className="sy-accent absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5" />
+                                  <Input
                                       id="username"
-                                      type="text" 
-                                      placeholder="Username" 
+                                      type="text"
+                                      placeholder="username"
                                       {...register("username")}
-                                      className="bg-white/10 border-white/20 rounded-lg h-12 pl-12 text-base text-white placeholder:text-white/50 focus:bg-white/20"
+                                      className="sy-input rounded-lg h-12 pl-12 text-base"
                                   />
                              </div>
                             {errors.username && <p className="text-sm text-red-400 text-left mt-1 pl-4">{errors.username.message}</p>}
@@ -132,44 +121,44 @@ export default function SignUpPage() {
 
                         <div className="space-y-2">
                              <div className="relative">
-                                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/50" />
-                                  <Input 
-                                      id="email" 
-                                      type="email" 
-                                      placeholder="Email" 
+                                  <Mail className="sy-accent absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5" />
+                                  <Input
+                                      id="email"
+                                      type="email"
+                                      placeholder="email"
                                       {...register("email")}
-                                      className="bg-white/10 border-white/20 rounded-lg h-12 pl-12 text-base text-white placeholder:text-white/50 focus:bg-white/20"
+                                      className="sy-input rounded-lg h-12 pl-12 text-base"
                                   />
                              </div>
                             {errors.email && <p className="text-sm text-red-400 text-left mt-1 pl-4">{errors.email.message}</p>}
                         </div>
-                        
+
                         <div className="space-y-2">
                             <div className="relative">
-                                <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/50" />
-                                <Input 
-                                    id="password" 
-                                    type={showPassword ? "text" : "password"} 
-                                    {...register("password")} 
-                                    className="bg-white/10 border-white/20 rounded-lg h-12 pl-12 pr-12 text-base text-white placeholder:text-white/50 focus:bg-white/20"
-                                    placeholder="Password"
+                                <KeyRound className="sy-accent absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5" />
+                                <Input
+                                    id="password"
+                                    type={showPassword ? "text" : "password"}
+                                    {...register("password")}
+                                    className="sy-input rounded-lg h-12 pl-12 pr-12 text-base"
+                                    placeholder="password"
                                 />
-                                <Button type="button" variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 text-white/50 hover:bg-white/20 hover:text-white" onClick={() => setShowPassword(!showPassword)}>
+                                <Button type="button" variant="ghost" size="icon" className="sy-accent absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 hover:bg-white/10" onClick={() => setShowPassword(!showPassword)}>
                                     {showPassword ? <EyeOff /> : <Eye />}
                                 </Button>
                             </div>
                              {errors.password && <p className="text-sm text-red-400 text-left mt-1 pl-4">{errors.password.message}</p>}
                         </div>
 
-                        <Button type="submit" className="w-full h-12 text-base rounded-lg mt-8 bg-white/90 text-black hover:bg-white" disabled={isLoading || !isValid}>
-                              {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Sign Up'}
+                        <Button type="submit" className="sy-cta w-full h-12 text-base rounded-xl mt-8" disabled={isLoading || !isValid}>
+                              {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Sign Up →'}
                         </Button>
                     </form>
                 </main>
                 <footer className="text-center">
-                    <p className="text-sm text-white/80">
+                    <p className="sy-subtitle" style={{ fontSize: 13 }}>
                         {t('authAlreadyHaveAccount')}{' '}
-                        <Link href="/auth/signin" className="font-medium text-white hover:underline">
+                        <Link href="/auth/signin" className="sy-accent font-medium hover:underline">
                             {t('signIn')}
                         </Link>
                     </p>

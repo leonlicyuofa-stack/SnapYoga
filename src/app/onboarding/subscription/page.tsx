@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Check, Star, ArrowLeft, Loader2 } from 'lucide-react';
-import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
+import { Check, Star, Loader2 } from 'lucide-react';
+import { OnboardingScaffold } from '@/components/onboarding/onboarding-scaffold';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { app } from '@/lib/firebase/clientApp';
 
@@ -54,56 +54,39 @@ export default function SubscriptionPage() {
   };
 
   return (
-    <div className="relative min-h-screen font-serif text-white">
-        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-md">
-                 <Button
-                    onClick={handleBackNavigation}
-                    variant="ghost"
-                    className="mb-4 rounded-full h-12 w-12 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20"
-                    aria-label="Go back"
-                >
-                    <ArrowLeft className="h-6 w-6" />
-                </Button>
-                <div className="bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
-                    <header className="text-center">
-                        <div className="mx-auto mb-4 inline-block">
-                            <SnapYogaLogo />
-                        </div>
-                        <h1 className="text-3xl font-bold tracking-tight">Unlock SnapYoga Premium</h1>
-                        <p className="text-sm text-white/80">Choose your plan to continue.</p>
-                    </header>
-                    
+    <OnboardingScaffold
+      title="Unlock SnapYoga Premium"
+      subtitle="Choose your plan to continue."
+      onBack={handleBackNavigation}
+      cardClassName="space-y-8"
+    >
                     <main className="space-y-6">
-                        <div className="p-6 border border-white/20 rounded-lg bg-white/10 text-center">
-                            <h3 className="text-2xl font-semibold">Monthly Subscription</h3>
-                            <p className="text-4xl font-bold my-2 text-white">IDR 100,000</p>
-                            <p className="text-white/80 text-sm">per month</p>
-                            <ul className="text-left space-y-2 mt-4 text-sm text-white/90">
-                                <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Unlimited Pose Analysis</li>
-                                <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Advanced Feedback</li>
-                                <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Progress Tracking & History</li>
-                                <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Exclusive Challenges</li>
+                        <div className="sy-option p-6 rounded-lg text-center">
+                            <h3 className="sy-title text-2xl">Monthly Subscription</h3>
+                            <p className="sy-accent text-4xl font-bold my-2">IDR 100,000</p>
+                            <p className="sy-subtitle text-sm">per month</p>
+                            <ul className="sy-body text-left space-y-2 mt-4 text-sm">
+                                <li className="flex items-center"><Check className="sy-accent h-5 w-5 mr-2" /> Unlimited Pose Analysis</li>
+                                <li className="flex items-center"><Check className="sy-accent h-5 w-5 mr-2" /> Advanced Feedback</li>
+                                <li className="flex items-center"><Check className="sy-accent h-5 w-5 mr-2" /> Progress Tracking & History</li>
+                                <li className="flex items-center"><Check className="sy-accent h-5 w-5 mr-2" /> Exclusive Challenges</li>
                             </ul>
                         </div>
 
-                        <Button 
-                            onClick={handleStartFreeTrial} 
-                            className="w-full h-12 bg-green-500 hover:bg-green-600 text-white"
+                        <Button
+                            onClick={handleStartFreeTrial}
+                            className="sy-cta w-full h-12 rounded-xl"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? <Loader2 className="animate-spin" /> : <><Star className="mr-2 h-5 w-5" /> Start 7-Day Free Trial</>}
                         </Button>
                     </main>
-                    
+
                     <footer className="text-center">
-                        <p className="text-xs text-white/60">
+                        <p className="sy-body text-xs">
                         Cancel anytime. Payment will be processed after the 7-day trial if not cancelled.
                         </p>
                     </footer>
-                </div>
-            </div>
-        </div>
-    </div>
+    </OnboardingScaffold>
   );
 }

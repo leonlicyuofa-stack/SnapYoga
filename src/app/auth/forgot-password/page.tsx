@@ -9,8 +9,7 @@ import * as z from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
+import { OnboardingHeader } from '@/components/onboarding/onboarding-header';
 import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
@@ -43,7 +42,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="relative min-h-screen font-serif text-white">
+    <div className="relative min-h-screen">
       {/* Back button */}
       <button
         onClick={() => router.push('/auth/signin')}
@@ -53,38 +52,35 @@ export default function ForgotPasswordPage() {
         <span className="text-sm">Back to Sign In</span>
       </button>
 
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-        <div className="w-full max-w-md bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-6 shadow-xl border border-white/10">
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-6">
+        <div className="w-full max-w-sm space-y-6">
+          <OnboardingHeader />
           <div className="text-center">
-            <div className="mx-auto mb-4 inline-block">
-              <SnapYogaLogo />
-            </div>
-
             {emailSent ? (
               // Success state
               <div className="space-y-4 text-center">
                 <div className="flex justify-center">
-                  <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center">
-                    <CheckCircle className="h-10 w-10 text-green-400" />
+                  <div className="w-16 h-16 rounded-full sy-option flex items-center justify-center">
+                    <CheckCircle className="h-9 w-9 text-green-400" />
                   </div>
                 </div>
-                <h1 className="text-2xl font-bold">Check your inbox</h1>
-                <p className="text-white/70 text-sm">
+                <h1 className="sy-title" style={{ fontSize: 22 }}>Check your inbox</h1>
+                <p className="sy-subtitle text-sm">
                   We sent a password reset link to
                 </p>
-                <p className="text-white font-medium">{getValues('email')}</p>
-                <p className="text-white/60 text-sm">
+                <p className="sy-accent font-medium">{getValues('email')}</p>
+                <p className="sy-body text-sm">
                   Follow the link in the email to reset your password. It may take a minute to arrive.
                 </p>
                 <Button
                   onClick={() => router.push('/auth/signin')}
-                  className="w-full h-12 text-base rounded-lg bg-white/90 text-black hover:bg-white mt-4"
+                  className="sy-cta w-full h-12 text-base rounded-xl mt-4"
                 >
                   Back to Sign In
                 </Button>
                 <button
                   onClick={() => setEmailSent(false)}
-                  className="text-sm text-white/60 hover:text-white underline underline-offset-2 transition-colors mt-2"
+                  className="sy-subtitle text-sm hover:underline underline-offset-2 transition-colors mt-2"
                 >
                   Try a different email
                 </button>
@@ -92,22 +88,21 @@ export default function ForgotPasswordPage() {
             ) : (
               // Form state
               <>
-                <h1 className="text-2xl font-bold">Forgot password?</h1>
-                <p className="text-white/70 text-sm mt-1">
+                <h1 className="sy-title" style={{ fontSize: 22 }}>Forgot password?</h1>
+                <p className="sy-subtitle text-sm mt-1">
                   Enter your email and we'll send you a reset link.
                 </p>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-6 text-left">
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/50" />
+                      <Mail className="sy-accent absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5" />
                       <Input
                         id="email"
                         type="email"
-                        placeholder="you@example.com"
+                        placeholder="email"
                         {...register("email")}
-                        className="pl-10 h-12 text-base rounded-lg bg-white/10 border-white/20 focus:bg-white/20 text-white placeholder:text-white/50"
+                        className="sy-input pl-12 h-12 text-base rounded-lg"
                       />
                     </div>
                     {errors.email && (
@@ -118,7 +113,7 @@ export default function ForgotPasswordPage() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full h-12 text-base rounded-lg bg-white/90 text-black hover:bg-white"
+                    className="sy-cta w-full h-12 text-base rounded-xl"
                   >
                     {isSubmitting ? <SmileyRockLoader /> : 'Send Reset Link'}
                   </Button>

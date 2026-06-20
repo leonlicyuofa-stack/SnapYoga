@@ -9,12 +9,12 @@ import * as z from 'zod';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Loader2, ArrowRight } from 'lucide-react';
+import { Loader2, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import Image from 'next/image';
-import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
+import { OnboardingScaffold } from '@/components/onboarding/onboarding-scaffold';
 
 const profileSchema = z.object({
   avatar: z.string().min(1, { message: "Please select an avatar" }),
@@ -133,67 +133,49 @@ export default function GenderProfilePage() {
   const currentItem = avatars[currentIndex];
 
   return (
-    <div className="relative min-h-screen font-serif text-white">
-        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-lg relative">
-                 <Button
-                    onClick={handleBackNavigation}
-                    variant="ghost"
-                    className="absolute top-4 left-4 rounded-full h-12 w-12 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20"
-                    aria-label="Go back"
-                >
-                    <ArrowLeft className="h-6 w-6" />
-                </Button>
-                <div className="bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
-                    <header className="text-center">
-                        <div className="mx-auto mb-4 inline-block">
-                            <SnapYogaLogo />
-                        </div>
-                        <h1 className="text-3xl font-bold tracking-tight">Choose your avatar</h1>
-                        <p className="text-sm text-white/80">Select one that represents you. Tap or swipe to select.</p>
-                    </header>
-                    
-                    <main>
-                        <form id="gender-profile-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
-                            <div 
-                                className="relative w-full flex items-center justify-center cursor-pointer" 
-                                style={{ minHeight: '13rem' }}
-                                onTouchStart={onTouchStart}
-                                onTouchMove={onTouchMove}
-                                onTouchEnd={onTouchEnd}
-                                onClick={handleNext}
-                            >
-                                <div className="relative w-48 h-48 md:w-52 md:h-52">
-                                     <div key={currentIndex} className={cn(
-                                        "w-full h-full",
-                                        animationDirection === 'right' ? 'animate-in fade-in-0 slide-in-from-right-12 duration-300' : '',
-                                        animationDirection === 'left' ? 'animate-in fade-in-0 slide-in-from-left-12 duration-300' : ''
-                                    )}>
-                                        <div className="p-1 rounded-full aspect-square flex items-center justify-center bg-white/10 ring-2 ring-offset-2 ring-white ring-offset-black/20">
-                                            <div className="rounded-full w-full h-full flex items-center justify-center overflow-hidden bg-white">
-                                                <Image src={currentItem.imagePath} alt={currentItem.id} width={192} height={192} className="object-cover" data-ai-hint={currentItem.hint} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                          
-                          {errors.avatar && <p className="text-sm text-red-400 text-center -mt-4">{errors.avatar.message}</p>}
-                        </form>
-                    </main>
-                </div>
-                <Button
-                    type="submit"
-                    form="gender-profile-form"
-                    variant="ghost"
-                    className="absolute bottom-4 right-4 rounded-full h-14 w-14 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20"
-                    aria-label="Next"
-                    disabled={isSubmitting || authLoading || !isValid}
-                >
-                    {isSubmitting || authLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : <ArrowRight className="h-7 w-7" />}
-                </Button>
-            </div>
-        </div>
-    </div>
+    <OnboardingScaffold
+      title="Choose your avatar"
+      subtitle="Select one that represents you. Tap or swipe to select."
+      onBack={handleBackNavigation}
+      next={
+        <Button
+          type="submit"
+          form="gender-profile-form"
+          variant="ghost"
+          className="rounded-full h-14 w-14 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20"
+          aria-label="Next"
+          disabled={isSubmitting || authLoading || !isValid}
+        >
+          {isSubmitting || authLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : <ArrowRight className="h-7 w-7" />}
+        </Button>
+      }
+    >
+      <form id="gender-profile-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
+          <div
+              className="relative w-full flex items-center justify-center cursor-pointer"
+              style={{ minHeight: '13rem' }}
+              onTouchStart={onTouchStart}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEnd}
+              onClick={handleNext}
+          >
+              <div className="relative w-48 h-48 md:w-52 md:h-52">
+                   <div key={currentIndex} className={cn(
+                      "w-full h-full",
+                      animationDirection === 'right' ? 'animate-in fade-in-0 slide-in-from-right-12 duration-300' : '',
+                      animationDirection === 'left' ? 'animate-in fade-in-0 slide-in-from-left-12 duration-300' : ''
+                  )}>
+                      <div className="p-1 rounded-full aspect-square flex items-center justify-center bg-white/10 ring-2 ring-offset-2 ring-[rgba(193,154,107,0.7)] ring-offset-transparent">
+                          <div className="rounded-full w-full h-full flex items-center justify-center overflow-hidden bg-white">
+                              <Image src={currentItem.imagePath} alt={currentItem.id} width={192} height={192} className="object-cover" data-ai-hint={currentItem.hint} />
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+        {errors.avatar && <p className="text-sm text-red-400 text-center -mt-4">{errors.avatar.message}</p>}
+      </form>
+    </OnboardingScaffold>
   );
 }

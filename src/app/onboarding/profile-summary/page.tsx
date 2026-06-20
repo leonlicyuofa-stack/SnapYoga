@@ -6,13 +6,14 @@ import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc, type DocumentData } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, ArrowLeft, Edit3, Loader2, Spline, Dumbbell, BrainCircuit, MoreHorizontal, Wind, HeartPulse } from 'lucide-react';
+import { ArrowRight, Edit3, Loader2, Spline, Dumbbell, BrainCircuit, MoreHorizontal, Wind, HeartPulse } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { OnboardingScaffold } from '@/components/onboarding/onboarding-scaffold';
 
 
 interface UserProfile extends DocumentData {
@@ -128,7 +129,7 @@ export default function ProfileSummaryPage() {
   const renderEditComponent = (fieldName: string) => {
     switch(fieldName) {
       case 'displayName':
-        return <Input value={fieldValue} onChange={(e) => setFieldValue(e.target.value)} onBlur={() => handleSave(fieldName, fieldValue)} className="max-w-xs bg-white/20 text-white placeholder:text-white/50" />;
+        return <Input value={fieldValue} onChange={(e) => setFieldValue(e.target.value)} onBlur={() => handleSave(fieldName, fieldValue)} className="sy-input max-w-xs" />;
       case 'mainGoals':
         return (
             <div className="flex flex-col gap-2">
@@ -142,7 +143,7 @@ export default function ProfileSummaryPage() {
                                 setFieldValue(newValue);
                                 handleSave(fieldName, newValue);
                             }}
-                            className="border-white/50 data-[state=checked]:bg-white/80 data-[state=checked]:text-black"
+                            className="border-[rgba(193,154,107,0.5)] data-[state=checked]:bg-[rgba(193,154,107,0.85)] data-[state=checked]:text-black"
                         />
                         {opt.label}
                     </Label>
@@ -162,7 +163,7 @@ export default function ProfileSummaryPage() {
                                 setFieldValue(newValue);
                                 handleSave(fieldName, newValue);
                             }}
-                            className="border-white/50 data-[state=checked]:bg-white/80 data-[state=checked]:text-black"
+                            className="border-[rgba(193,154,107,0.5)] data-[state=checked]:bg-[rgba(193,154,107,0.85)] data-[state=checked]:text-black"
                         />
                         {opt.label}
                     </Label>
@@ -184,22 +185,23 @@ export default function ProfileSummaryPage() {
     if (Array.isArray(value)) {
       displayValue = (
         <div className="flex flex-wrap gap-2">
-          {value.map(v => 
-            <Badge key={v} variant="secondary" className="bg-white/20 text-white/90 border-none">{v.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</Badge>
+          {value.map(v =>
+            <Badge key={v} variant="secondary" className="bg-[rgba(193,154,107,0.18)] text-[rgba(255,240,215,0.92)] border-none">{v.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</Badge>
           )}
         </div>
       );
     }
     else {
-      displayValue = <span className="capitalize">{value.toString()}</span>;
+      // Emails are case-sensitive identifiers — never title-case them.
+      displayValue = <span className={fieldName === 'email' ? undefined : 'capitalize'}>{value.toString()}</span>;
     }
     
     const isCurrentlyEditing = editingField === fieldName;
     
     return (
-      <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-start border-b border-white/20">
-        <dt className="text-sm font-medium leading-6 text-white/80">{label}</dt>
-        <dd className="mt-1 text-sm leading-6 text-white sm:col-span-2 sm:mt-0 flex justify-between items-start gap-2">
+      <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-start border-b border-[rgba(193,154,107,0.18)]">
+        <dt className="sy-subtitle text-sm font-medium leading-6">{label}</dt>
+        <dd className="sy-body mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0 flex justify-between items-start gap-2">
           {isCurrentlyEditing ? (
             <div className="flex-grow space-y-2">
                 {renderEditComponent(fieldName)}
@@ -207,7 +209,7 @@ export default function ProfileSummaryPage() {
           ) : (
             <>
                 <div className="flex-grow">{displayValue}</div>
-                <Button variant="ghost" size="sm" onClick={() => handleEditClick(fieldName, value)} className="text-xs text-white/80 hover:text-white shrink-0">
+                <Button variant="ghost" size="sm" onClick={() => handleEditClick(fieldName, value)} className="sy-accent text-xs hover:opacity-80 shrink-0">
                   <Edit3 className="mr-1 h-3 w-3" /> Edit
                 </Button>
             </>
@@ -246,31 +248,30 @@ export default function ProfileSummaryPage() {
   }
 
   return (
-    <div className="relative min-h-screen font-serif text-white">
-        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-2xl relative">
-                 <Button
-                    onClick={handleBackNavigation}
-                    variant="ghost"
-                    className="absolute top-4 left-4 rounded-full h-12 w-12 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20"
-                    aria-label="Go back"
-                >
-                    <ArrowLeft className="h-6 w-6" />
-                </Button>
-                <div className="bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
-                    <header className="text-center">
-                        <h1 className="text-3xl font-bold tracking-tight">Your Summary</h1>
-                        <p className="text-sm text-white/80 mb-6">Let's review your profile.</p>
-                         {profileData?.photoURL && (
-                            <Avatar className="w-24 h-24 mx-auto border-4 border-white/20">
-                                <AvatarImage src={profileData.photoURL} alt={profileData.displayName || 'User Avatar'} />
-                                <AvatarFallback className="text-2xl bg-white/20">
-                                    {getInitials(profileData.email, profileData.displayName)}
-                                </AvatarFallback>
-                            </Avatar>
-                        )}
-                    </header>
-                    
+    <OnboardingScaffold
+      title="Your summary"
+      subtitle="Let's review your profile."
+      onBack={handleBackNavigation}
+      next={
+        <Button
+          onClick={handleNext}
+          variant="ghost"
+          className="rounded-full h-14 w-14 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20"
+          aria-label="Next"
+        >
+          <ArrowRight className="h-7 w-7" />
+        </Button>
+      }
+    >
+                    {profileData?.photoURL && (
+                        <Avatar className="w-24 h-24 mx-auto mb-6 border-4 border-[rgba(193,154,107,0.25)]">
+                            <AvatarImage src={profileData.photoURL} alt={profileData.displayName || 'User Avatar'} />
+                            <AvatarFallback className="text-2xl bg-[rgba(193,154,107,0.18)]">
+                                {getInitials(profileData.email, profileData.displayName)}
+                            </AvatarFallback>
+                        </Avatar>
+                    )}
+
                     <main>
                         {profileData ? (
                         <dl>
@@ -280,23 +281,12 @@ export default function ProfileSummaryPage() {
                             {renderDetailItem("Interested Pose Types", "interestedPoses", profileData.interestedPoses)}
                         </dl>
                         ) : (
-                        <p className="text-white/80 text-center">Could not load profile data.</p>
+                        <p className="sy-body text-center">Could not load profile data.</p>
                         )}
-                        <p className="text-xs text-white/60 text-center w-full mt-6">
+                        <p className="sy-body text-xs text-center w-full mt-6">
                             Ensure all details are correct before proceeding.
                         </p>
                     </main>
-                </div>
-                 <Button
-                    onClick={handleNext}
-                    variant="ghost"
-                    className="absolute bottom-4 right-4 rounded-full h-14 w-14 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20"
-                    aria-label="Next"
-                >
-                    <ArrowRight className="h-7 w-7" />
-                </Button>
-            </div>
-        </div>
-    </div>
+    </OnboardingScaffold>
   );
 }

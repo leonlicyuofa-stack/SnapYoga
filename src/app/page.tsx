@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -11,7 +11,7 @@ export default function HomePage() {
   const { isDark, toggleTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => { setMounted(true); }, []);
+  useLayoutEffect(() => { setMounted(true); }, []);
 
   // Redirect only if the user is already authenticated
   useEffect(() => {
@@ -157,7 +157,7 @@ export default function HomePage() {
             transition: 'color 0.4s ease',
           }}
         >
-          Start Your Journey →
+          Begin Your Journey →
         </Link>
         <div style={{ display: 'flex', gap: 5 }}>
           {[0,1,2].map(i => (

@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
-import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
+import { ArrowRight, Loader2 } from 'lucide-react';
+import { OnboardingScaffold } from '@/components/onboarding/onboarding-scaffold';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
@@ -56,26 +56,24 @@ export default function PickAPrizePage() {
   };
 
   return (
-    <div className="relative min-h-screen font-serif text-white [perspective:1000px]">
-        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-lg relative">
-                 <Button
-                    onClick={handleBackNavigation}
-                    variant="ghost"
-                    className="absolute top-4 left-4 rounded-full h-12 w-12 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20"
-                    aria-label="Go back"
-                >
-                    <ArrowLeft className="h-6 w-6" />
-                </Button>
-                <div className="bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8 text-center">
-                    <header className={cn("transition-opacity duration-500", isRevealing ? 'opacity-0' : 'opacity-100')}>
-                         <div className="mx-auto mb-4 inline-block">
-                            <SnapYogaLogo />
-                        </div>
-                        <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Pick a Prize!</h1>
-                        <p className="text-lg text-white/80">A special reward just for you.</p>
-                    </header>
-
+    <OnboardingScaffold
+      title="Pick a prize!"
+      subtitle="A special reward just for you."
+      onBack={handleBackNavigation}
+      outerClassName="[perspective:1000px]"
+      cardClassName="text-center"
+      next={selectedSide ? (
+        <Button
+          onClick={handleCompleteOnboarding}
+          variant="ghost"
+          className="rounded-full h-14 w-14 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 animate-in fade-in duration-500"
+          aria-label="Next"
+          disabled={isFinalizing || authLoading}
+        >
+          {isFinalizing || authLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : <ArrowRight className="h-7 w-7" />}
+        </Button>
+      ) : undefined}
+    >
                     <main className="grid grid-cols-2 gap-4 md:gap-8 h-48 sm:h-56">
                         {/* Left Prize */}
                         <div 
@@ -87,8 +85,8 @@ export default function PickAPrizePage() {
                             onClick={() => handlePrizeSelection('left')}
                         >
                             {/* Front */}
-                            <div className="absolute inset-0 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center cursor-pointer group [backface-visibility:hidden]">
-                                <span className="text-4xl font-bold">This</span>
+                            <div className="sy-option absolute inset-0 backdrop-blur-md rounded-2xl flex items-center justify-center cursor-pointer group [backface-visibility:hidden]">
+                                <span className="sy-title text-4xl">This</span>
                             </div>
                             {/* Back */}
                             <div className="absolute inset-0 bg-yellow-400/90 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center p-4 [transform:rotateY(180deg)] [backface-visibility:hidden]">
@@ -106,8 +104,8 @@ export default function PickAPrizePage() {
                             onClick={() => handlePrizeSelection('right')}
                         >
                             {/* Front */}
-                            <div className="absolute inset-0 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center cursor-pointer group [backface-visibility:hidden]">
-                                <span className="text-4xl font-bold">That</span>
+                            <div className="sy-option absolute inset-0 backdrop-blur-md rounded-2xl flex items-center justify-center cursor-pointer group [backface-visibility:hidden]">
+                                <span className="sy-title text-4xl">That</span>
                             </div>
                             {/* Back */}
                             <div className="absolute inset-0 bg-amber-600/90 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center p-4 [transform:rotateY(180deg)] [backface-visibility:hidden]">
@@ -115,20 +113,6 @@ export default function PickAPrizePage() {
                             </div>
                         </div>
                     </main>
-                </div>
-                {selectedSide && (
-                     <Button
-                        onClick={handleCompleteOnboarding}
-                        variant="ghost"
-                        className="absolute bottom-4 right-4 rounded-full h-14 w-14 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20 animate-in fade-in duration-500"
-                        aria-label="Next"
-                        disabled={isFinalizing || authLoading}
-                    >
-                        {isFinalizing || authLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : <ArrowRight className="h-7 w-7" />}
-                    </Button>
-                )}
-            </div>
-        </div>
-    </div>
+    </OnboardingScaffold>
   );
 }

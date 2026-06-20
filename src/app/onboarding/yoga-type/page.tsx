@@ -10,10 +10,10 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowRight, ArrowLeft, Check, Loader2 } from 'lucide-react';
+import { ArrowRight, Check, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { SnapYogaLogo } from '@/components/icons/snap-yoga-logo';
+import { OnboardingScaffold } from '@/components/onboarding/onboarding-scaffold';
 import placeholderImages from '@/lib/placeholder-images.json';
 
 const interestedPosesSchema = z.object({
@@ -91,26 +91,23 @@ export default function InterestedPosesPage() {
 
 
   return (
-    <div className="relative min-h-screen font-serif text-white">
-        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-            <div className="w-full max-w-2xl relative">
-                 <Button
-                    onClick={handleBackNavigation}
-                    variant="ghost"
-                    className="absolute top-4 left-4 rounded-full h-12 w-12 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20"
-                    aria-label="Go back"
-                >
-                    <ArrowLeft className="h-6 w-6" />
-                </Button>
-                <div className="bg-black/20 backdrop-blur-lg rounded-2xl p-8 space-y-8">
-                    <header className="text-center">
-                        <div className="mx-auto mb-4 inline-block">
-                            <SnapYogaLogo />
-                        </div>
-                        <h1 className="text-3xl font-bold tracking-tight">Pose Interests</h1>
-                        <p className="text-sm text-white/80">What poses excite you?</p>
-                    </header>
-
+    <OnboardingScaffold
+      title="Pose interests"
+      subtitle="What poses excite you?"
+      onBack={handleBackNavigation}
+      next={
+        <Button
+          type="submit"
+          form="yoga-type-form"
+          variant="ghost"
+          className="rounded-full h-14 w-14 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20"
+          aria-label="Next"
+          disabled={isSubmitting || authLoading || !isValid}
+        >
+          {isSubmitting || authLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : <ArrowRight className="h-7 w-7" />}
+        </Button>
+      }
+    >
                     <main>
                         <form id="yoga-type-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
                           <Controller
@@ -138,11 +135,11 @@ export default function InterestedPosesPage() {
                                                     htmlFor={option.id}
                                                     className={cn(
                                                         "block cursor-pointer overflow-hidden rounded-2xl relative transition-all duration-300 aspect-square",
-                                                        isChecked ? 'ring-2 ring-offset-2 ring-offset-black/20 ring-white' : 'ring-0'
+                                                        isChecked ? 'ring-2 ring-offset-2 ring-offset-transparent ring-[rgba(193,154,107,0.75)]' : 'ring-0'
                                                     )}
                                                 >
-                                                    <Image 
-                                                        src={option.image.src} 
+                                                    <Image
+                                                        src={option.image.src}
                                                         alt={option.label}
                                                         width={option.image.width}
                                                         height={option.image.height}
@@ -150,9 +147,9 @@ export default function InterestedPosesPage() {
                                                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                                                     />
                                                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent group-hover:from-black/60 transition-colors" />
-                                                    <h3 className="absolute bottom-4 left-4 text-white font-bold text-lg drop-shadow-sm">{option.label}</h3>
+                                                    <h3 className="sy-option-label absolute bottom-4 left-4 text-lg drop-shadow-sm" style={{ color: 'rgba(255,240,215,0.95)' }}>{option.label}</h3>
                                                     {isChecked && (
-                                                        <div className="absolute top-3 right-3 h-6 w-6 bg-white/90 backdrop-blur-sm text-black rounded-full flex items-center justify-center shadow-lg">
+                                                        <div className="absolute top-3 right-3 h-6 w-6 bg-[rgba(193,154,107,0.95)] backdrop-blur-sm text-black rounded-full flex items-center justify-center shadow-lg">
                                                             <Check className="h-4 w-4" />
                                                         </div>
                                                     )}
@@ -166,23 +163,10 @@ export default function InterestedPosesPage() {
 
                           {errors.interestedPoses && <p className="text-sm text-red-400 text-center">{errors.interestedPoses.message}</p>}
                         </form>
-                        <p className="text-xs text-white/60 text-center w-full mt-6">
+                        <p className="sy-body text-xs text-center w-full mt-6">
                           This helps us recommend suitable poses and challenges.
                         </p>
                     </main>
-                </div>
-                 <Button
-                    type="submit"
-                    form="yoga-type-form"
-                    variant="ghost"
-                    className="absolute bottom-4 right-4 rounded-full h-14 w-14 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20"
-                    aria-label="Next"
-                    disabled={isSubmitting || authLoading || !isValid}
-                >
-                    {isSubmitting || authLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : <ArrowRight className="h-7 w-7" />}
-                </Button>
-            </div>
-        </div>
-    </div>
+    </OnboardingScaffold>
   );
 }
