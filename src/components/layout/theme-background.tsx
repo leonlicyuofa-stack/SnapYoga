@@ -13,8 +13,8 @@ export function ThemeBackground() {
           inset: 0,
           zIndex: -10,
           overflow: 'hidden',
-          background: isDark 
-            ? 'linear-gradient(175deg,#1a1210 0%,#0D1821 55%,#1a0f1e 100%)' 
+          background: isDark
+            ? 'linear-gradient(175deg,#131a24 0%,#0D1821 55%,#11121d 100%)'
             : '#F1F2EE',
           transition: 'background 0.8s ease',
         }}
@@ -24,8 +24,8 @@ export function ThemeBackground() {
           style={{
             position: 'absolute',
             inset: 0,
-            backgroundImage: isDark 
-              ? 'radial-gradient(circle at 80% 20%, rgba(90, 0, 2, 0.12) 0%, transparent 45%), radial-gradient(circle at 20% 80%, rgba(90, 0, 2, 0.08) 0%, transparent 50%)'
+            backgroundImage: isDark
+              ? 'radial-gradient(circle at 50% 13%, rgba(193,154,107,0.14) 0%, rgba(193,154,107,0.04) 28%, transparent 50%), radial-gradient(circle at 80% 85%, rgba(90,0,2,0.08) 0%, transparent 55%)'
               : 'radial-gradient(circle at 80% 20%, rgba(90, 0, 2, 0.04) 0%, transparent 40%)',
             opacity: 1,
             transition: 'background-image 0.8s ease',

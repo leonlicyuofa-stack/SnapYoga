@@ -108,11 +108,18 @@ export default function DashboardPage() {
   const [avgScore,      setAvgScore]      = useState(78);
   const [commitmentDays, setCommitmentDays] = useState(5);
   const [showOverwrite, setShowOverwrite] = useState(false);
+  const [motionOK, setMotionOK] = useState(false);
 
   // Exercise goal: an encouraging weekly hours target (≈1h per committed day).
   const exerciseGoal = commitmentDays;
 
   const name = user?.displayName || user?.email?.split('@')[0] || 'Yogi';
+
+  // Respect the user's reduced-motion preference for the half-moon orbit.
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    setMotionOK(!window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }, []);
 
   // Tapping the check-in box goes to mood selection; if already logged today, confirm overwrite first.
   const handleCheckinClick = () => {
@@ -174,10 +181,37 @@ export default function DashboardPage() {
         {/* HEADER — prominent profile picture */}
         <header style={{ padding: '20px 16px 10px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <div style={{ position: 'relative', marginBottom: 10 }}>
+            {/* Half-moon orbit: a dot enters top-left, sweeps over the apex, exits top-right */}
+            <svg
+              viewBox="0 0 200 200"
+              aria-hidden="true"
+              style={{ position: 'absolute', top: -62, left: -62, width: 200, height: 200, pointerEvents: 'none', overflow: 'visible' }}
+            >
+              <defs>
+                <radialGradient id="orbitGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="rgba(255,240,215,0.95)" />
+                  <stop offset="100%" stopColor="rgba(193,154,107,0)" />
+                </radialGradient>
+              </defs>
+              <path d="M 42,100 A 58,58 0 0 1 158,100" fill="none" stroke={`${GOLD},0.22)`} strokeWidth="1" strokeDasharray="2 7" strokeLinecap="round" />
+              {motionOK && (
+                <>
+                  <circle r="8" fill="url(#orbitGlow)">
+                    <animateMotion dur="5s" repeatCount="indefinite" path="M 42,100 A 58,58 0 0 1 158,100" />
+                  </circle>
+                  <circle r="3" fill="rgba(255,240,215,0.95)">
+                    <animateMotion dur="5s" repeatCount="indefinite" path="M 42,100 A 58,58 0 0 1 158,100" />
+                  </circle>
+                  <circle r="2" fill={`${GOLD},0.85)`}>
+                    <animateMotion dur="5s" begin="0.6s" repeatCount="indefinite" path="M 42,100 A 58,58 0 0 1 158,100" />
+                  </circle>
+                </>
+              )}
+            </svg>
             {isGold && (
-              <span style={{ position: 'absolute', top: -15, left: '50%', transform: 'translateX(-50%) rotate(-8deg)', fontSize: 20, zIndex: 1 }}>👑</span>
+              <span style={{ position: 'absolute', top: -15, left: '50%', transform: 'translateX(-50%) rotate(-8deg)', fontSize: 20, zIndex: 2 }}>👑</span>
             )}
-            <Avatar style={{ width: 76, height: 76, border: `2px solid ${GOLD},0.45)`, boxShadow: `0 0 0 6px ${GOLD},0.06), 0 0 0 12px ${GOLD},0.03)` }}>
+            <Avatar style={{ position: 'relative', zIndex: 1, width: 76, height: 76, border: `2px solid ${GOLD},0.45)`, boxShadow: `0 0 0 6px ${GOLD},0.06), 0 0 0 12px ${GOLD},0.03)` }}>
               <AvatarImage src={user?.photoURL ?? undefined} alt={name} />
               <AvatarFallback style={{ background: `${GOLD},0.18)`, color: t.gold, fontSize: 26, fontFamily: FONT_PANCAKE, fontWeight: 600 }}>
                 {getInitials(user?.email, user?.displayName)}
