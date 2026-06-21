@@ -40,6 +40,8 @@ const HABITS = [
   { id: 'active',   label: 'Active',   emoji: '🔥', color: `${SAGE},0.85)` },
 ];
 
+const BODY_TAGS_OPTIONS = ['Energized', 'Sore', 'Flexible', 'Tired', 'Tense'];
+
 export default function MoodTrackerPage() {
   const { user } = useAuth();
   const { isDark, toggleTheme } = useTheme();
@@ -51,6 +53,7 @@ export default function MoodTrackerPage() {
   const [reflection, setReflection] = useState('');
   const [messageToSelf, setMessageToSelf] = useState('');
   const [completedHabits, setCompletedHabits] = useState<string[]>([]);
+  const [bodyTags, setBodyTags] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   
@@ -75,6 +78,7 @@ export default function MoodTrackerPage() {
         setReflection(data.reflection || '');
         setMessageToSelf(data.messageToSelf || '');
         setSelectedQuote(data.quote || null);
+        setBodyTags(data.bodyTags || []);
       }
 
       const habitDoc = await getDoc(doc(firestore, 'users', user.uid, 'habits', todayStr));
@@ -107,12 +111,12 @@ export default function MoodTrackerPage() {
     }
   }, [step, selectedQuote]);
 
-  const triggerSave = (newReflection?: string, newVal?: number, newHabits?: string[], newMessageToSelf?: string) => {
+  const triggerSave = (newReflection?: string, newVal?: number, newHabits?: string[], newMessageToSelf?: string, newBodyTags?: string[]) => {
     if (!user) return;
     setIsSaving(true);
-    
+
     if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-    
+
     saveTimeoutRef.current = setTimeout(async () => {
       try {
         const todayStr = format(new Date(), 'yyyy-MM-dd');
@@ -122,6 +126,7 @@ export default function MoodTrackerPage() {
           value: newVal ?? value,
           reflection: newReflection ?? reflection,
           messageToSelf: newMessageToSelf ?? messageToSelf,
+          bodyTags: newBodyTags ?? bodyTags,
           quote: selectedQuote,
           loggedAt: serverTimestamp(),
         }, { merge: true });
@@ -141,11 +146,19 @@ export default function MoodTrackerPage() {
   };
 
   const toggleHabit = (id: string) => {
-    const updated = completedHabits.includes(id) 
-      ? completedHabits.filter(h => h !== id) 
+    const updated = completedHabits.includes(id)
+      ? completedHabits.filter(h => h !== id)
       : [...completedHabits, id];
     setCompletedHabits(updated);
     triggerSave(undefined, undefined, updated);
+  };
+
+  const toggleBodyTag = (tag: string) => {
+    const updated = bodyTags.includes(tag)
+      ? bodyTags.filter(t => t !== tag)
+      : [...bodyTags, tag];
+    setBodyTags(updated);
+    triggerSave(undefined, undefined, undefined, undefined, updated);
   };
 
   if (!isLoaded) return <AppShell><div className="flex items-center justify-center min-h-screen"><SmileyRockLoader /></div></AppShell>;
@@ -265,6 +278,33 @@ export default function MoodTrackerPage() {
                           {h.emoji}
                         </div>
                         <span style={{ fontSize: 8, letterSpacing: 1, textTransform: 'uppercase', fontFamily: FONT_CASUAL, color: done ? labelColor : (isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'), fontWeight: done ? 700 : 400 }}>{h.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+
+              {/* How's your body? (moved here from the journal) */}
+              <section className="space-y-4">
+                <div className="flex items-center gap-2 opacity-60">
+                  <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold" style={{ color: labelColor, fontFamily: FONT_CASUAL }}>How's your body?</h3>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {BODY_TAGS_OPTIONS.map(tag => {
+                    const active = bodyTags.includes(tag);
+                    return (
+                      <button
+                        key={tag}
+                        onClick={() => toggleBodyTag(tag)}
+                        style={{
+                          borderRadius: 20, padding: '6px 16px', fontSize: 11, fontWeight: 500,
+                          background: active ? 'rgba(193,154,107,0.18)' : 'transparent',
+                          border: `0.5px solid ${active ? 'rgba(214,178,130,0.6)' : 'rgba(193,154,107,0.18)'}`,
+                          color: active ? 'rgba(255,240,215,0.95)' : 'rgba(255,240,215,0.55)',
+                          transition: 'all 0.3s ease',
+                        }}
+                      >
+                        {tag}
                       </button>
                     );
                   })}

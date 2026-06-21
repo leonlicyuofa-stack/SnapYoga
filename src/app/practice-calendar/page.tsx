@@ -1,25 +1,21 @@
 "use client";
 
-import { useEffect, useState, useMemo, useRef } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp, type Timestamp } from 'firebase/firestore';
 import { AppShell } from '@/components/layout/app-shell';
-import { format, startOfWeek, endOfWeek, eachDayOfInterval, startOfMonth, endOfMonth, getDaysInMonth, isSameDay, addDays } from 'date-fns';
-import { cn } from '@/lib/utils';
-import { Smile, Wind, Frown, Meh, Activity, Flame, Droplets, Moon, Sun, Trophy, Star, CheckCircle2, Loader2, Sparkles, BrainCircuit } from 'lucide-react';
+import { format, startOfWeek, startOfMonth, endOfMonth, getDaysInMonth, isSameDay, addDays, startOfDay } from 'date-fns';
+import { CheckCircle2, Loader2, Sparkles, BrainCircuit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '@/components/ui/textarea';
 import { analyzeReflectionThemes, type ReflectionThemesOutput } from '@/ai/flows/analyze-reflection-themes';
 import { Button } from '@/components/ui/button';
+import { getMoonPhase, getSuggestedPractices, pickPrizeForDate, getPrizeById } from '@/lib/moon';
 
 // ─── Brand tokens ────────────────────────────────────────────────────────────
-const GOLD      = 'rgba(193,154,107';
-const PARCHMENT = 'rgba(255,240,215';
-const TERRACOTTA= 'rgba(180,110,65';
-const SAGE      = 'rgba(120,140,100';
-
 const FONT_PANCAKE = "'Cormorant Garamond', Georgia, serif";
 const FONT_CASUAL  = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
 
@@ -47,16 +43,6 @@ interface StoredAnalysis {
   score?: number;
 }
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-const MOOD_SPECTRUM = [
-  { name: 'Fatigue',   emoji: '😫', color: 'rgba(139,100,75,0.92)' },
-  { name: 'Emotional', emoji: '😢', color: 'rgba(193,154,107,0.92)' },
-  { name: 'Calm',      emoji: '😌', color: 'rgba(140,185,215,0.92)' },
-  { name: 'Joyful',    emoji: '😊', color: 'rgba(160,195,130,0.92)' },
-];
-
-const BODY_TAGS_OPTIONS = ['Energized', 'Sore', 'Flexible', 'Tired', 'Tense'];
-
 const HABITS_CONFIG = [
   { id: 'practice', label: 'Practice', color: `rgba(180,110,65,0.85)`, radius: 26 },
   { id: 'hydrate',  label: 'Hydrate',  color: `rgba(100,160,200,0.85)`, radius: 37 },
@@ -68,41 +54,29 @@ const HABITS_CONFIG = [
 // ─── SVG Math ────────────────────────────────────────────────────────────────
 function polarToCartesian(centerX: number, centerY: number, radius: number, angleInDegrees: number) {
   const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
-  return {
-    x: centerX + radius * Math.cos(angleInRadians),
-    y: centerY + radius * Math.sin(angleInRadians),
-  };
+  return { x: centerX + radius * Math.cos(angleInRadians), y: centerY + radius * Math.sin(angleInRadians) };
 }
-
 function describeArcSegment(x: number, y: number, innerRadius: number, outerRadius: number, startAngle: number, endAngle: number) {
   const start = polarToCartesian(x, y, outerRadius, endAngle);
   const end = polarToCartesian(x, y, outerRadius, startAngle);
   const startInner = polarToCartesian(x, y, innerRadius, endAngle);
   const endInner = polarToCartesian(x, y, innerRadius, startAngle);
-
   const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-
-  return [
-    "M", start.x, start.y,
-    "A", outerRadius, outerRadius, 0, largeArcFlag, 0, end.x, end.y,
-    "L", endInner.x, endInner.y,
-    "A", innerRadius, innerRadius, 0, largeArcFlag, 1, startInner.x, startInner.y,
-    "Z"
-  ].join(" ");
+  return ["M", start.x, start.y, "A", outerRadius, outerRadius, 0, largeArcFlag, 0, end.x, end.y,
+          "L", endInner.x, endInner.y, "A", innerRadius, innerRadius, 0, largeArcFlag, 1, startInner.x, startInner.y, "Z"].join(" ");
 }
 
-// ─── Section Header ──────────────────────────────────────────────────────────
 function SectionHead({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ 
-      fontSize: 9, 
-      letterSpacing: '0.28em', 
-      textTransform: 'uppercase' as const, 
-      color: 'rgba(193,154,107,0.55)', 
-      marginBottom: 10, 
-      fontFamily: FONT_CASUAL,
-      fontWeight: 500
-    }}>
+    <p style={{ fontSize: 9, letterSpacing: '0.28em', textTransform: 'uppercase' as const, color: 'rgba(193,154,107,0.55)', marginBottom: 10, fontFamily: FONT_CASUAL, fontWeight: 500 }}>
+      {children}
+    </p>
+  );
+}
+
+function PanelLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p style={{ fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase' as const, color: 'rgba(193,154,107,0.6)', fontWeight: 600, margin: '0 0 8px' }}>
       {children}
     </p>
   );
@@ -114,33 +88,36 @@ export default function PracticeCalendarPage() {
   const { isDark } = useTheme();
   const tokens = getThemeTokens(isDark);
   const { toast } = useToast();
+  const router = useRouter();
 
-  const [sheetOpen, setSheetOpen] = useState(false);
   const [moodsByDate, setMoodsByDate]       = useState<Record<string, StoredMood>>({});
   const [analysesByDate, setAnalysesByDate] = useState<Record<string, StoredAnalysis[]>>({});
   const [habitsByDate, setHabitsByDate]     = useState<Record<string, string[]>>({});
+  const [drawsByDate, setDrawsByDate]       = useState<Record<string, string>>({}); // dateStr -> prizeId
 
-  // Journal States
   const [selectedDay, setSelectedDay] = useState(new Date());
   const [journalNote, setJournalNote] = useState('');
-  const [bodyTags, setBodyTags] = useState<string[]>([]);
   const [dayMood, setDayMood] = useState<StoredMood | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  // AI Theme States
   const [themeGroups, setThemeGroups] = useState<ReflectionThemesOutput | null>(null);
   const [isAnalyzingThemes, setIsAnalyzingThemes] = useState(false);
 
   const now = new Date();
   const daysInMonth = getDaysInMonth(now);
   const monthName = format(now, 'MMMM');
-  const todayStr = format(now, 'yyyy-MM-dd');
 
-  // Mini week strip days
   const weekStart = startOfWeek(now, { weekStartsOn: 1 });
   const weekDays = Array.from({ length: 7 }).map((_, i) => addDays(weekStart, i));
 
-  // Load summary data (Habit Fan, Bingo)
+  const selectedStr = format(selectedDay, 'yyyy-MM-dd');
+  const isToday = isSameDay(selectedDay, now);
+  const isFuture = startOfDay(selectedDay).getTime() > startOfDay(now).getTime();
+  const moon = getMoonPhase(selectedDay);
+  const practices = getSuggestedPractices(moon.index);
+  const selectedPrize = drawsByDate[selectedStr] ? getPrizeById(drawsByDate[selectedStr]) : null;
+
+  // Load month summary (habit fan, bingo) + this week's prize draws
   useEffect(() => {
     if (authLoading || !user) return;
     const start = startOfMonth(now);
@@ -152,76 +129,60 @@ export default function PracticeCalendarPage() {
 
     Promise.all([fetchMoods, fetchAnalyses, fetchHabits]).then(([mSnap, aSnap, hSnap]) => {
       const moods: Record<string, StoredMood> = {};
-      mSnap.forEach(d => {
-        const m = d.data() as StoredMood;
-        if (m.loggedAt) moods[format(m.loggedAt.toDate(), 'yyyy-MM-dd')] = m;
-      });
+      mSnap.forEach(d => { const m = d.data() as StoredMood; if (m.loggedAt) moods[format(m.loggedAt.toDate(), 'yyyy-MM-dd')] = m; });
       setMoodsByDate(moods);
 
       const analyses: Record<string, StoredAnalysis[]> = {};
-      aSnap.forEach(d => {
-        const a = { id: d.id, ...d.data() } as StoredAnalysis;
-        if (a.createdAt) {
-          const k = format(a.createdAt.toDate(), 'yyyy-MM-dd');
-          analyses[k] = [...(analyses[k] || []), a];
-        }
-      });
+      aSnap.forEach(d => { const a = { id: d.id, ...d.data() } as StoredAnalysis; if (a.createdAt) { const k = format(a.createdAt.toDate(), 'yyyy-MM-dd'); analyses[k] = [...(analyses[k] || []), a]; } });
       setAnalysesByDate(analyses);
 
       const habits: Record<string, string[]> = {};
-      hSnap.forEach(d => {
-        const h = d.data() as { date: string; completed: string[] };
-        habits[h.date] = h.completed || [];
-      });
+      hSnap.forEach(d => { const h = d.data() as { date: string; completed: string[] }; habits[h.date] = h.completed || []; });
       setHabitsByDate(habits);
+    });
+
+    // This week's claimed prize draws (one doc per day, id = date string)
+    Promise.all(weekDays.map(d => getDoc(doc(firestore, 'users', user.uid, 'draws', format(d, 'yyyy-MM-dd'))))).then(snaps => {
+      const draws: Record<string, string> = {};
+      snaps.forEach((s, i) => { if (s.exists() && s.data().prizeId) draws[format(weekDays[i], 'yyyy-MM-dd')] = s.data().prizeId; });
+      setDrawsByDate(prev => ({ ...prev, ...draws }));
     });
   }, [user, authLoading]);
 
-  // Load specific day journal data
+  // Load the selected day's mood summary + journal note, and claim today's draw
   useEffect(() => {
     if (!user) return;
-    const dateStr = format(selectedDay, 'yyyy-MM-dd');
-    
-    // Load Mood
-    getDoc(doc(firestore, 'users', user.uid, 'moods', dateStr)).then(snap => {
+    const ds = format(selectedDay, 'yyyy-MM-dd');
+
+    getDoc(doc(firestore, 'users', user.uid, 'moods', ds)).then(snap => {
       setDayMood(snap.exists() ? snap.data() as StoredMood : null);
     });
-
-    // Load Journal (note + bodyTags)
-    getDoc(doc(firestore, 'users', user.uid, 'journal', dateStr)).then(snap => {
-      if (snap.exists()) {
-        const data = snap.data();
-        setJournalNote(data.note || '');
-        setBodyTags(data.bodyTags || []);
-      } else {
-        setJournalNote('');
-        setBodyTags([]);
-      }
+    getDoc(doc(firestore, 'users', user.uid, 'journal', ds)).then(snap => {
+      setJournalNote(snap.exists() ? (snap.data().note || '') : '');
     });
+
+    // One draw per day — claimed automatically the first time today is viewed.
+    if (isSameDay(selectedDay, now)) {
+      const ref = doc(firestore, 'users', user.uid, 'draws', ds);
+      getDoc(ref).then(snap => {
+        let prizeId: string;
+        if (snap.exists() && snap.data().prizeId) {
+          prizeId = snap.data().prizeId;
+        } else {
+          prizeId = pickPrizeForDate(user.uid, ds).id;
+          setDoc(ref, { prizeId, claimedAt: serverTimestamp() }, { merge: true });
+        }
+        setDrawsByDate(prev => ({ ...prev, [ds]: prizeId }));
+      });
+    }
   }, [selectedDay, user]);
 
-  const saveMood = async (mood: typeof MOOD_SPECTRUM[0]) => {
-    if (!user) return;
-    const dateStr = format(selectedDay, 'yyyy-MM-dd');
-    const moodData = {
-      name: mood.name,
-      emoji: mood.emoji,
-      loggedAt: serverTimestamp(),
-    };
-    await setDoc(doc(firestore, 'users', user.uid, 'moods', dateStr), moodData, { merge: true });
-    setDayMood(moodData as any);
-    // Update summary layer state too
-    setMoodsByDate(prev => ({ ...prev, [dateStr]: moodData as any }));
-  };
-
-  const saveJournal = async (noteOverride?: string, tagsOverride?: string[]) => {
+  const saveJournal = async () => {
     if (!user) return;
     setIsSaving(true);
-    const dateStr = format(selectedDay, 'yyyy-MM-dd');
     try {
-      await setDoc(doc(firestore, 'users', user.uid, 'journal', dateStr), {
-        note: noteOverride ?? journalNote,
-        bodyTags: tagsOverride ?? bodyTags,
+      await setDoc(doc(firestore, 'users', user.uid, 'journal', selectedStr), {
+        note: journalNote,
         updatedAt: serverTimestamp(),
       }, { merge: true });
     } catch (e) {
@@ -231,48 +192,28 @@ export default function PracticeCalendarPage() {
     }
   };
 
-  const toggleBodyTag = (tag: string) => {
-    const newTags = bodyTags.includes(tag) ? bodyTags.filter(t => t !== tag) : [...bodyTags, tag];
-    setBodyTags(newTags);
-    saveJournal(undefined, newTags);
-  };
-
   const handleDiscoverThemes = async () => {
-    const reflections = Object.values(moodsByDate)
-      .map(m => m.reflection)
-      .filter((r): r is string => !!r && r.trim().length > 0);
-
+    const reflections = Object.values(moodsByDate).map(m => m.reflection).filter((r): r is string => !!r && r.trim().length > 0);
     if (reflections.length < 3) {
-      toast({
-        title: "More Reflections Needed",
-        description: "Keep reflecting — themes appear once you've logged a few entries this month.",
-      });
+      toast({ title: "More Reflections Needed", description: "Keep reflecting — themes appear once you've logged a few entries this month." });
       return;
     }
-
     setIsAnalyzingThemes(true);
     try {
       const result = await analyzeReflectionThemes({ reflections });
       setThemeGroups(result);
     } catch (e) {
       console.error("AI Analysis failed", e);
-      toast({
-        title: "Analysis Failed",
-        description: "Could not analyze themes at this time. Please try again later.",
-        variant: "destructive",
-      });
+      toast({ title: "Analysis Failed", description: "Could not analyze themes at this time. Please try again later.", variant: "destructive" });
     } finally {
       setIsAnalyzingThemes(false);
     }
   };
 
-  // Bingo Rules Logic
   const bingoStatus = useMemo(() => {
     const allAnalyses = Object.values(analysesByDate).flat();
     const allHabitEntries = Object.values(habitsByDate);
-    
     const countHabit = (id: string) => allHabitEntries.filter(h => h.includes(id)).length;
-
     const squares = [
       { label: 'Mindful Start', emoji: '🧘', done: allAnalyses.length > 0 },
       { label: 'Hydration Goal', emoji: '💧', done: countHabit('hydrate') >= 5 },
@@ -284,11 +225,7 @@ export default function PracticeCalendarPage() {
       { label: 'Active Soul', emoji: '🔥', done: countHabit('active') >= 5 },
       { label: 'Monthly Goal', emoji: '🏆', done: allAnalyses.length >= 15, milestone: true },
     ];
-    
-    return {
-      squares,
-      completeCount: squares.filter(s => s.done).length
-    };
+    return { squares, completeCount: squares.filter(s => s.done).length };
   }, [analysesByDate, habitsByDate, moodsByDate]);
 
   const reflectionsCount = Object.values(moodsByDate).filter(m => !!m.reflection).length;
@@ -296,353 +233,262 @@ export default function PracticeCalendarPage() {
   return (
     <AppShell>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
-      <div style={{ position: 'relative', height: '100vh', overflow: 'hidden' }}>
+      <div style={{ padding: '16px 14px 28px', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-        {/* BASE SUMMARY LAYER — always visible */}
-        <div style={{ position: 'absolute', inset: 0, padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 24, overflowY: 'auto', paddingBottom: 120 }}>
-          <header>
-            <h1 className="text-3xl font-bold" style={{ color: tokens.text, fontFamily: FONT_PANCAKE, fontWeight: 600 }}>
-              Practice Journal
-            </h1>
-            <p className="text-[11px] uppercase tracking-widest mt-1" style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>
-              Your mindful journey log
-            </p>
-            <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 5 }} />
-          </header>
+        {/* HEADER */}
+        <header>
+          <h1 className="text-3xl font-bold" style={{ color: tokens.text, fontFamily: FONT_PANCAKE, fontWeight: 600 }}>Practice Journal</h1>
+          <p className="text-[11px] uppercase tracking-widest mt-1" style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>Your mindful journey log</p>
+          <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 5 }} />
+        </header>
 
-          {/* RADIAL HABIT FAN */}
-          <section>
-            <SectionHead>Habit Tracker · {monthName}</SectionHead>
-            <div style={{ 
-              borderRadius: '20px 10px 20px 20px', 
-              border: `0.5px solid ${tokens.cardBorder}`, 
-              background: tokens.cardBg, 
-              padding: '24px 16px',
-              backdropFilter: 'blur(14px)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center'
-            }}>
-              <svg viewBox="0 0 160 100" width="100%" height="auto" style={{ maxWidth: '300px' }}>
-                {HABITS_CONFIG.map((h) => {
-                  const anglePerDay = 210 / daysInMonth;
-                  return Array.from({ length: daysInMonth }).map((_, i) => {
-                    const dateStr = format(new Date(now.getFullYear(), now.getMonth(), i + 1), 'yyyy-MM-dd');
-                    const done = habitsByDate[dateStr]?.includes(h.id);
-                    const startAngle = 165 + (i * anglePerDay);
-                    const endAngle = 165 + ((i + 1) * anglePerDay);
-                    
-                    return (
-                      <path
-                        key={`${h.id}-${i}`}
-                        d={describeArcSegment(80, 90, h.radius, h.radius + 8, startAngle, endAngle)}
-                        fill={done ? h.color : 'rgba(255,240,215,0.05)'}
-                        stroke={isDark ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)'}
-                        strokeWidth="0.5"
-                      />
-                    );
-                  });
-                })}
-              </svg>
-              
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px 16px', marginTop: 16, width: '100%' }}>
-                {HABITS_CONFIG.map(h => (
-                  <div key={h.id} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: h.color }} />
-                    <span style={{ fontSize: 9, color: tokens.text, fontFamily: FONT_CASUAL, textTransform: 'uppercase', letterSpacing: 0.5 }}>{h.label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* SELF-CARE BINGO */}
-          <section>
-            <SectionHead>Self-Care Bingo · {monthName}</SectionHead>
-            <div style={{ 
-              borderRadius: '10px 20px 20px 20px', 
-              border: `0.5px solid ${tokens.cardBorder}`, 
-              background: tokens.cardBg, 
-              padding: '16px',
-              backdropFilter: 'blur(14px)',
-            }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-                {bingoStatus.squares.map((s, i) => (
-                  <div 
-                    key={i} 
-                    style={{ 
-                      aspectRatio: '1/1',
-                      borderRadius: 12,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: 4,
-                      padding: 4,
-                      textAlign: 'center',
-                      background: s.done 
-                        ? (s.milestone ? 'rgba(193,154,107,0.18)' : 'rgba(120,155,95,0.18)')
-                        : 'rgba(255,240,215,0.03)',
-                      border: `0.5px solid ${s.done ? (s.milestone ? 'rgba(193,154,107,0.3)' : 'rgba(120,155,95,0.3)') : 'rgba(255,240,215,0.05)'}`,
-                      transition: 'all 0.4s ease'
-                    }}
-                  >
-                    <span style={{ fontSize: 18, opacity: s.done ? 1 : 0.3 }}>{s.emoji}</span>
-                    <span style={{ fontSize: 7, fontWeight: 600, textTransform: 'uppercase', color: s.done ? tokens.text : tokens.muted, lineHeight: 1.1 }}>{s.label}</span>
-                    {s.done && <CheckCircle2 style={{ width: 10, height: 10, color: s.milestone ? 'rgba(193,154,107,0.8)' : 'rgba(120,155,95,0.8)' }} />}
-                  </div>
-                ))}
-              </div>
-              <div style={{ marginTop: 14 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                  <span style={{ fontSize: 9, color: tokens.muted, fontFamily: FONT_CASUAL }}>Monthly Wellness Progress</span>
-                  <span style={{ fontSize: 9, color: tokens.accent, fontWeight: 700 }}>{bingoStatus.completeCount} / 9</span>
-                </div>
-                <div style={{ height: 3, background: 'rgba(255,240,215,0.05)', borderRadius: 2 }}>
-                  <div style={{ 
-                    height: '100%', 
-                    background: tokens.accent, 
-                    borderRadius: 2, 
-                    width: `${(bingoStatus.completeCount / 9) * 100}%`,
-                    transition: 'width 1s ease'
-                  }} />
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* REFLECTION THEMES AI */}
-          <section>
-            <SectionHead>Reflection Themes · AI Insight</SectionHead>
-            <div style={{ 
-              borderRadius: '20px 20px 10px 20px', 
-              border: `0.5px solid ${tokens.cardBorder}`, 
-              background: tokens.cardBg, 
-              padding: '16px',
-              backdropFilter: 'blur(14px)',
-            }}>
-              {!themeGroups && !isAnalyzingThemes && (
-                <div className="text-center py-4 space-y-4">
-                  <div className="flex justify-center">
-                    <div className="p-3 rounded-full bg-[rgba(193,154,107,0.10)] border border-[rgba(193,154,107,0.25)]">
-                      <BrainCircuit className="w-8 h-8" style={{ color: tokens.accent }} />
+        {/* WEEK ROW + EXPANDING DAY PANEL */}
+        <section>
+          <div style={{ display: 'flex', gap: 5 }}>
+            {weekDays.map((d, i) => {
+              const ds = format(d, 'yyyy-MM-dd');
+              const sel = isSameDay(d, selectedDay);
+              const prize = drawsByDate[ds] ? getPrizeById(drawsByDate[ds]) : null;
+              return (
+                <button
+                  key={i}
+                  onClick={() => setSelectedDay(d)}
+                  style={{
+                    flex: 1, borderRadius: 13, padding: '6px 0 5px', textAlign: 'center', cursor: 'pointer',
+                    background: sel ? 'linear-gradient(180deg, rgba(214,178,130,0.92), rgba(193,154,107,0.78))' : 'rgba(193,154,107,0.05)',
+                    border: `0.5px solid ${sel ? 'rgba(214,178,130,0.85)' : 'rgba(193,154,107,0.22)'}`,
+                    boxShadow: sel ? '0 0 18px rgba(214,178,130,0.35)' : 'none',
+                    transition: 'all 0.3s ease',
+                  }}
+                >
+                  <div style={{ fontSize: 7.5, letterSpacing: 1, textTransform: 'uppercase', color: sel ? 'rgba(40,30,20,0.7)' : 'rgba(255,240,215,0.5)', fontFamily: FONT_CASUAL }}>{format(d, 'EE')}</div>
+                  <div style={{ fontFamily: FONT_PANCAKE, fontSize: 15, fontWeight: 600, color: sel ? '#2a1e12' : 'rgba(255,240,215,0.9)', marginTop: 1 }}>{format(d, 'd')}</div>
+                  {prize ? (
+                    <div style={{ width: 16, height: 16, borderRadius: 5, margin: '3px auto 0', overflow: 'hidden', background: 'rgba(255,240,215,0.12)' }}>
+                      <img src={prize.img} alt={prize.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                     </div>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold text-white" style={{ fontFamily: FONT_PANCAKE }}>Monthly Reflection Summary</h4>
-                    <p className="text-[11px] text-white/50 mt-1">Our AI analyzes your journaling to find growth patterns and emotional recurring themes.</p>
-                  </div>
-                  {reflectionsCount >= 3 ? (
-                    <Button 
-                      onClick={handleDiscoverThemes}
-                      className="w-full h-10 rounded-full text-[10px] font-bold tracking-[0.15em] bg-[rgba(193,154,107,0.12)] border border-[rgba(193,154,107,0.40)] text-[rgba(193,154,107,0.92)] uppercase"
-                    >
-                      Discover My Themes
-                    </Button>
                   ) : (
-                    <p className="text-[10px] italic text-[rgba(193,154,107,0.55)]">
-                      Keep reflecting — themes appear once you've logged a few entries this month ({reflectionsCount}/3).
-                    </p>
+                    <div style={{ height: 16, marginTop: 3 }} />
                   )}
-                </div>
-              )}
+                </button>
+              );
+            })}
+          </div>
 
-              {isAnalyzingThemes && (
-                <div className="flex flex-col items-center justify-center py-12 gap-4 animate-pulse">
-                  <Sparkles className="w-8 h-8 text-primary/60" />
-                  <p className="text-[11px] uppercase tracking-widest text-white/40">AI Analyzing your presence...</p>
-                </div>
-              )}
+          {/* Clean panel that unfolds below the row (selected day glows above; no bump/overlap) */}
+          <div style={{ marginTop: 10, borderRadius: 18, border: '0.5px solid rgba(214,178,130,0.4)', background: 'rgba(193,154,107,0.10)', padding: 16, backdropFilter: 'blur(14px)', boxShadow: '0 12px 34px rgba(193,154,107,0.12)' }}>
+            <p style={{ fontFamily: FONT_PANCAKE, fontSize: 20, fontWeight: 500, color: tokens.text, margin: '0 0 12px' }}>{format(selectedDay, 'EEEE, d MMMM')}</p>
 
-              {themeGroups && (
-                <div className="space-y-6 animate-in fade-in duration-700">
-                  {themeGroups.themes.map((group, idx) => (
-                    <div key={idx} className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full" style={{ background: group.color }} />
-                        <h4 className="text-[10px] font-bold uppercase tracking-widest" style={{ color: group.color }}>{group.theme}</h4>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {group.keywords.map((kw, kIdx) => (
-                          <div 
-                            key={kIdx} 
-                            style={{ 
-                              background: group.color.replace('0.85', '0.14'),
-                              border: `0.5px solid ${group.color.replace('0.85', '0.35')}`,
-                              color: group.color.replace('0.85', '0.95'),
-                              padding: '4px 10px',
-                              borderRadius: 12,
-                              fontSize: 9,
-                              fontWeight: 600,
-                              fontFamily: FONT_CASUAL
-                            }}
-                          >
-                            {kw.word} · {kw.count}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                  <button 
-                    onClick={() => setThemeGroups(null)}
-                    className="text-[9px] uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-full text-center pt-2"
-                  >
-                    Reset Analysis
-                  </button>
-                </div>
-              )}
+            {/* Moon phase for yogis (always shown) */}
+            <PanelLabel>🌙 Moon phase for yogis</PanelLabel>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 2px' }}>
+              {['🌑','🌒','🌓','🌔','🌕','🌖','🌗','🌘'].map((m, i) => (
+                <span key={i} style={{ fontSize: i === moon.index ? 25 : 16, opacity: i === moon.index ? 1 : 0.4, textShadow: i === moon.index ? '0 0 12px rgba(214,178,130,0.6)' : 'none' }}>{m}</span>
+              ))}
             </div>
-          </section>
-        </div>
+            <p style={{ textAlign: 'center', fontFamily: FONT_PANCAKE, fontSize: 16, color: 'rgba(255,240,215,0.92)', margin: '9px 0 2px' }}>{moon.name}</p>
+            <p style={{ textAlign: 'center', fontSize: 10.5, color: 'rgba(193,154,107,0.7)', fontStyle: 'italic', margin: 0 }}>{moon.note}</p>
 
-        {/* JOURNAL BOTTOM SHEET — toggles collapsed/expanded */}
-        <div
-          style={{
-            position: 'absolute',
-            left: 0, right: 0, bottom: 0,
-            background: 'linear-gradient(175deg, #1d1812 0%, #141a24 100%)',
-            borderTop: '0.5px solid rgba(193,154,107,0.25)',
-            borderRadius: sheetOpen ? '0' : '22px 22px 0 0',
-            boxShadow: '0 -12px 40px rgba(0,0,0,0.5)',
-            padding: '10px 14px 80px',
-            height: sheetOpen ? '88%' : '92px',
-            transition: 'height 0.35s cubic-bezier(0.4,0,0.2,1), border-radius 0.35s ease',
-            overflowY: sheetOpen ? 'auto' : 'hidden',
-            zIndex: 10,
-          }}
-        >
-          {/* Peek Bar / Grabber */}
-          <button
-            onClick={() => setSheetOpen((o) => !o)}
-            style={{ display: 'block', width: '100%', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
-          >
-            <div style={{ width: 36, height: 4, borderRadius: 2, background: 'rgba(193,154,107,0.35)', margin: '0 auto 8px' }} />
-            {!sheetOpen && (
-              <div style={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between' }}>
-                <div className="flex flex-col items-start">
-                  <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,240,215,0.85)', fontFamily: FONT_PANCAKE }}>
-                    {format(now, 'EEE d MMM')}
-                  </span>
-                  <span style={{ fontSize: 9, color: 'rgba(193,154,107,0.60)', letterSpacing: '0.05em', textTransform: 'uppercase', marginTop: 2 }}>
-                    {moodsByDate[todayStr] 
-                      ? `· ${moodsByDate[todayStr].emoji} ${moodsByDate[todayStr].name} logged` 
-                      : "Tap to log today's practice ↑"}
-                  </span>
+            {isFuture ? (
+              <p style={{ textAlign: 'center', fontSize: 10, color: 'rgba(193,154,107,0.6)', fontStyle: 'italic', marginTop: 14 }}>
+                Practices, draw &amp; check-in unlock on the day.
+              </p>
+            ) : (
+              <>
+                {/* Suggested practice */}
+                <div style={{ marginTop: 14 }}>
+                  <PanelLabel>Suggested practice</PanelLabel>
+                  <div style={{ display: 'flex', gap: 7 }}>
+                    {practices.map((p, i) => (
+                      <div key={i} style={{ flex: 1, borderRadius: 12, border: '0.5px solid rgba(193,154,107,0.22)', background: 'rgba(255,255,255,0.03)', padding: '8px 6px', textAlign: 'center' }}>
+                        <div style={{ fontSize: 16 }}>{p.icon}</div>
+                        <div style={{ fontSize: 9, color: 'rgba(255,240,215,0.8)', marginTop: 4, lineHeight: 1.2 }}>{p.name}</div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div style={{ width: 30, height: 30, borderRadius: '50%', border: '0.5px solid rgba(193,154,107,0.30)', background: 'rgba(193,154,107,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                   {moodsByDate[todayStr]?.emoji || "✍️"}
-                </div>
-              </div>
-            )}
-          </button>
 
-          {/* Expanded Journal Content */}
-          {sheetOpen && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 mt-6 space-y-8 pb-12">
-              
-              {/* Day Header & Week Strip */}
-              <div className="space-y-4">
-                <h2 style={{ fontFamily: FONT_PANCAKE, color: tokens.accent, fontSize: 24, fontWeight: 600 }}>
-                  {format(selectedDay, 'EEEE, d MMMM')}
-                </h2>
-                <div className="flex justify-between items-center gap-2">
-                  {weekDays.map((d, i) => {
-                    const isSelected = isSameDay(d, selectedDay);
-                    const hasLog = moodsByDate[format(d, 'yyyy-MM-dd')];
-                    return (
-                      <button
-                        key={i}
-                        onClick={() => setSelectedDay(d)}
-                        style={{
-                          flex: 1, height: 42, borderRadius: 21,
-                          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                          background: isSelected ? tokens.accent : 'rgba(255,240,215,0.05)',
-                          border: `0.5px solid ${isSelected ? tokens.accent : 'rgba(193,154,107,0.15)'}`,
-                          transition: 'all 0.3s ease'
-                        }}
-                      >
-                        <span style={{ fontSize: 9, opacity: isSelected ? 0.6 : 0.4, textTransform: 'uppercase' }}>{format(d, 'EE')}</span>
-                        <span style={{ fontSize: 13, fontWeight: 700, color: isSelected ? 'rgba(25,16,8,0.95)' : 'white' }}>{format(d, 'd')}</span>
-                        {hasLog && !isSelected && <div style={{ width: 3, height: 3, borderRadius: '50%', background: tokens.accent, marginTop: 2 }} />}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+                <div style={{ height: 1, background: 'rgba(193,154,107,0.14)', margin: '13px 0' }} />
 
-              {/* Mood Picker */}
-              <div className="space-y-3">
-                 <p style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.55)', fontWeight: 600 }}>How did you feel?</p>
-                 <div className="grid grid-cols-4 gap-3">
-                    {MOOD_SPECTRUM.map((m) => {
-                      const active = dayMood?.name === m.name;
-                      return (
-                        <button
-                          key={m.name}
-                          onClick={() => saveMood(m)}
-                          style={{
-                            borderRadius: 14, padding: '12px 8px',
-                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
-                            background: active ? `${m.color}22` : 'rgba(255,240,215,0.03)',
-                            border: `0.5px solid ${active ? m.color : 'rgba(193,154,107,0.15)'}`,
-                            transition: 'all 0.3s ease'
-                          }}
-                        >
-                          <span style={{ fontSize: 22 }}>{m.emoji}</span>
-                          <span style={{ fontSize: 8, textTransform: 'uppercase', fontWeight: 600, color: active ? 'white' : 'rgba(255,240,215,0.4)' }}>{m.name}</span>
-                        </button>
-                      );
-                    })}
-                 </div>
-              </div>
+                {/* How did you feel — read-only summary from the Daily Check-in */}
+                <PanelLabel>How did you feel?</PanelLabel>
+                {dayMood ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(255,255,255,0.03)', border: '0.5px solid rgba(193,154,107,0.16)', borderRadius: 12, padding: '10px 12px' }}>
+                    <span style={{ fontSize: 24 }}>{dayMood.emoji}</span>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(193,154,107,0.95)', textTransform: 'uppercase', letterSpacing: 1 }}>{dayMood.name}</div>
+                      {dayMood.reflection && (
+                        <div style={{ fontSize: 11, color: 'rgba(255,240,215,0.6)', fontStyle: 'italic', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {dayMood.reflection.replace(/\n/g, ' ')}
+                        </div>
+                      )}
+                    </div>
+                    <span style={{ fontSize: 9, color: 'rgba(193,154,107,0.55)', fontStyle: 'italic', marginLeft: 'auto', textAlign: 'right', whiteSpace: 'nowrap' }}>from Daily<br />Check-in</span>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => router.push('/mood-tracker')}
+                    style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, border: '0.5px dashed rgba(193,154,107,0.4)', borderRadius: 12, padding: 13, color: 'rgba(214,178,130,0.95)', fontFamily: FONT_PANCAKE, fontSize: 15, cursor: 'pointer', background: 'transparent' }}
+                  >
+                    ＋ Check-in now ›
+                  </button>
+                )}
 
-              {/* Journal Note */}
-              <div className="space-y-3">
-                 <div className="flex justify-between items-center">
-                    <p style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.55)', fontWeight: 600 }}>Journal note</p>
-                    {isSaving && <Loader2 className="h-3 w-3 animate-spin text-accent" />}
-                 </div>
-                 <Textarea 
+                {/* Yoga collection · daily draw */}
+                {(isToday || selectedPrize) && (
+                  <div style={{ marginTop: 14 }}>
+                    <PanelLabel>Yoga collection · {isToday ? "today's draw" : 'draw'}</PanelLabel>
+                    {selectedPrize ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12, borderRadius: 14, border: '0.5px solid rgba(214,178,130,0.35)', background: 'linear-gradient(135deg, rgba(193,154,107,0.16), rgba(180,110,65,0.10))', padding: '11px 13px' }}>
+                        <div style={{ width: 46, height: 46, borderRadius: 10, background: 'linear-gradient(135deg,#f4ecdd,#e3d4ba)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+                          <img src={selectedPrize.img} alt={selectedPrize.name} style={{ width: '88%', height: '88%', objectFit: 'contain' }} />
+                        </div>
+                        <div style={{ minWidth: 0 }}>
+                          <p style={{ fontFamily: FONT_PANCAKE, fontSize: 16, color: 'rgba(255,240,215,0.94)', margin: 0 }}>{selectedPrize.name}</p>
+                          <p style={{ fontSize: 10, color: 'rgba(193,154,107,0.75)', margin: '2px 0 0' }}>{isToday ? 'Added to your collection · next draw tomorrow' : 'In your collection'}</p>
+                        </div>
+                        <span onClick={() => router.push('/yoga-collection')} style={{ marginLeft: 'auto', fontSize: 11, color: 'rgba(214,178,130,0.95)', fontFamily: FONT_PANCAKE, whiteSpace: 'nowrap', cursor: 'pointer' }}>View ›</span>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 14, border: '0.5px dashed rgba(214,178,130,0.4)', padding: 14, color: 'rgba(214,178,130,0.9)', fontFamily: FONT_PANCAKE, fontSize: 14 }}>
+                        <Loader2 className="h-4 w-4 animate-spin" /> Revealing today's prize…
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Journal note */}
+                <div style={{ marginTop: 14 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <PanelLabel>Journal note</PanelLabel>
+                    {isSaving && <Loader2 className="h-3 w-3 animate-spin" style={{ color: tokens.accent }} />}
+                  </div>
+                  <Textarea
                     value={journalNote}
                     onChange={(e) => setJournalNote(e.target.value)}
-                    onBlur={() => saveJournal()}
+                    onBlur={saveJournal}
                     placeholder="Reflections on your presence today..."
-                    style={{ 
-                      borderRadius: 14, border: '0.5px solid rgba(193,154,107,0.14)', background: 'rgba(255,240,215,0.02)',
-                      minHeight: 120, fontFamily: FONT_PANCAKE, color: 'rgba(255,240,215,0.92)'
-                    }}
-                    className="placeholder:text-[rgba(255,240,215,0.25)]"
-                 />
-              </div>
+                    style={{ borderRadius: 12, border: '0.5px solid rgba(193,154,107,0.18)', background: 'rgba(0,0,0,0.18)', minHeight: 110, fontFamily: FONT_PANCAKE, color: 'rgba(255,240,215,0.85)' }}
+                    className="placeholder:text-[rgba(255,240,215,0.3)]"
+                  />
+                </div>
 
-              {/* Body Tags */}
-              <div className="space-y-3">
-                 <p style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.55)', fontWeight: 600 }}>How's your body?</p>
-                 <div className="flex flex-wrap gap-2">
-                    {BODY_TAGS_OPTIONS.map(tag => {
-                      const active = bodyTags.includes(tag);
-                      return (
-                        <button
-                          key={tag}
-                          onClick={() => toggleBodyTag(tag)}
-                          style={{
-                            borderRadius: 20, padding: '6px 16px', fontSize: 11, fontWeight: 500,
-                            background: active ? 'rgba(193,154,107,0.12)' : 'transparent',
-                            border: `0.5px solid ${active ? 'rgba(193,154,107,0.40)' : 'rgba(193,154,107,0.18)'}`,
-                            color: active ? tokens.accent : 'rgba(255,240,215,0.55)',
-                            transition: 'all 0.3s ease'
-                          }}
-                        >
-                          {tag}
-                        </button>
-                      );
-                    })}
-                 </div>
-              </div>
+                <p style={{ marginTop: 12, fontSize: 10, color: 'rgba(193,154,107,0.6)', textAlign: 'center', fontStyle: 'italic' }}>↳ Body check-in lives in your Daily Check-in</p>
+              </>
+            )}
+          </div>
+        </section>
 
+        {/* RADIAL HABIT FAN */}
+        <section>
+          <SectionHead>Habit Tracker · {monthName}</SectionHead>
+          <div style={{ borderRadius: '20px 10px 20px 20px', border: `0.5px solid ${tokens.cardBorder}`, background: tokens.cardBg, padding: '24px 16px', backdropFilter: 'blur(14px)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <svg viewBox="0 0 160 100" width="100%" height="auto" style={{ maxWidth: '300px' }}>
+              {HABITS_CONFIG.map((h) => {
+                const anglePerDay = 210 / daysInMonth;
+                return Array.from({ length: daysInMonth }).map((_, i) => {
+                  const dateStr = format(new Date(now.getFullYear(), now.getMonth(), i + 1), 'yyyy-MM-dd');
+                  const done = habitsByDate[dateStr]?.includes(h.id);
+                  const startAngle = 165 + (i * anglePerDay);
+                  const endAngle = 165 + ((i + 1) * anglePerDay);
+                  return (
+                    <path key={`${h.id}-${i}`} d={describeArcSegment(80, 90, h.radius, h.radius + 8, startAngle, endAngle)}
+                      fill={done ? h.color : 'rgba(255,240,215,0.05)'} stroke={isDark ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)'} strokeWidth="0.5" />
+                  );
+                });
+              })}
+            </svg>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px 16px', marginTop: 16, width: '100%' }}>
+              {HABITS_CONFIG.map(h => (
+                <div key={h.id} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: h.color }} />
+                  <span style={{ fontSize: 9, color: tokens.text, fontFamily: FONT_CASUAL, textTransform: 'uppercase', letterSpacing: 0.5 }}>{h.label}</span>
+                </div>
+              ))}
             </div>
-          )}
-        </div>
+          </div>
+        </section>
+
+        {/* SELF-CARE BINGO */}
+        <section>
+          <SectionHead>Self-Care Bingo · {monthName}</SectionHead>
+          <div style={{ borderRadius: '10px 20px 20px 20px', border: `0.5px solid ${tokens.cardBorder}`, background: tokens.cardBg, padding: '16px', backdropFilter: 'blur(14px)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+              {bingoStatus.squares.map((s, i) => (
+                <div key={i} style={{ aspectRatio: '1/1', borderRadius: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, padding: 4, textAlign: 'center',
+                  background: s.done ? (s.milestone ? 'rgba(193,154,107,0.18)' : 'rgba(120,155,95,0.18)') : 'rgba(255,240,215,0.03)',
+                  border: `0.5px solid ${s.done ? (s.milestone ? 'rgba(193,154,107,0.3)' : 'rgba(120,155,95,0.3)') : 'rgba(255,240,215,0.05)'}`, transition: 'all 0.4s ease' }}>
+                  <span style={{ fontSize: 18, opacity: s.done ? 1 : 0.3 }}>{s.emoji}</span>
+                  <span style={{ fontSize: 7, fontWeight: 600, textTransform: 'uppercase', color: s.done ? tokens.text : tokens.muted, lineHeight: 1.1 }}>{s.label}</span>
+                  {s.done && <CheckCircle2 style={{ width: 10, height: 10, color: s.milestone ? 'rgba(193,154,107,0.8)' : 'rgba(120,155,95,0.8)' }} />}
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: 14 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                <span style={{ fontSize: 9, color: tokens.muted, fontFamily: FONT_CASUAL }}>Monthly Wellness Progress</span>
+                <span style={{ fontSize: 9, color: tokens.accent, fontWeight: 700 }}>{bingoStatus.completeCount} / 9</span>
+              </div>
+              <div style={{ height: 3, background: 'rgba(255,240,215,0.05)', borderRadius: 2 }}>
+                <div style={{ height: '100%', background: tokens.accent, borderRadius: 2, width: `${(bingoStatus.completeCount / 9) * 100}%`, transition: 'width 1s ease' }} />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* REFLECTION THEMES AI */}
+        <section>
+          <SectionHead>Reflection Themes · AI Insight</SectionHead>
+          <div style={{ borderRadius: '20px 20px 10px 20px', border: `0.5px solid ${tokens.cardBorder}`, background: tokens.cardBg, padding: '16px', backdropFilter: 'blur(14px)' }}>
+            {!themeGroups && !isAnalyzingThemes && (
+              <div className="text-center py-4 space-y-4">
+                <div className="flex justify-center">
+                  <div className="p-3 rounded-full bg-[rgba(193,154,107,0.10)] border border-[rgba(193,154,107,0.25)]">
+                    <BrainCircuit className="w-8 h-8" style={{ color: tokens.accent }} />
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-sm font-semibold text-white" style={{ fontFamily: FONT_PANCAKE }}>Monthly Reflection Summary</h4>
+                  <p className="text-[11px] text-white/50 mt-1">Our AI analyzes your journaling to find growth patterns and emotional recurring themes.</p>
+                </div>
+                {reflectionsCount >= 3 ? (
+                  <Button onClick={handleDiscoverThemes} className="w-full h-10 rounded-full text-[10px] font-bold tracking-[0.15em] bg-[rgba(193,154,107,0.12)] border border-[rgba(193,154,107,0.40)] text-[rgba(193,154,107,0.92)] uppercase">
+                    Discover My Themes
+                  </Button>
+                ) : (
+                  <p className="text-[10px] italic text-[rgba(193,154,107,0.55)]">Keep reflecting — themes appear once you've logged a few entries this month ({reflectionsCount}/3).</p>
+                )}
+              </div>
+            )}
+            {isAnalyzingThemes && (
+              <div className="flex flex-col items-center justify-center py-12 gap-4 animate-pulse">
+                <Sparkles className="w-8 h-8 text-primary/60" />
+                <p className="text-[11px] uppercase tracking-widest text-white/40">AI Analyzing your presence...</p>
+              </div>
+            )}
+            {themeGroups && (
+              <div className="space-y-6 animate-in fade-in duration-700">
+                {themeGroups.themes.map((group, idx) => (
+                  <div key={idx} className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full" style={{ background: group.color }} />
+                      <h4 className="text-[10px] font-bold uppercase tracking-widest" style={{ color: group.color }}>{group.theme}</h4>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {group.keywords.map((kw, kIdx) => (
+                        <div key={kIdx} style={{ background: group.color.replace('0.85', '0.14'), border: `0.5px solid ${group.color.replace('0.85', '0.35')}`, color: group.color.replace('0.85', '0.95'), padding: '4px 10px', borderRadius: 12, fontSize: 9, fontWeight: 600, fontFamily: FONT_CASUAL }}>
+                          {kw.word} · {kw.count}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                <button onClick={() => setThemeGroups(null)} className="text-[9px] uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-full text-center pt-2">Reset Analysis</button>
+              </div>
+            )}
+          </div>
+        </section>
+
       </div>
     </AppShell>
   );
