@@ -300,26 +300,14 @@ export default function PracticeCalendarPage() {
 
         {/* BASE SUMMARY LAYER — always visible */}
         <div style={{ position: 'absolute', inset: 0, padding: '16px 14px', display: 'flex', flexDirection: 'column', gap: 24, overflowY: 'auto', paddingBottom: 120 }}>
-          <header className="flex items-start justify-between">
-            <div>
-              <h1 className="text-3xl font-bold" style={{ color: tokens.text, fontFamily: FONT_PANCAKE, fontWeight: 600 }}>
-                Practice Journal
-              </h1>
-              <p className="text-[11px] uppercase tracking-widest mt-1" style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>
-                Your mindful journey log
-              </p>
-              <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 5 }} />
-            </div>
-            <button
-              onClick={() => {}} 
-              aria-label="Calendar info"
-              style={{
-                width: 28, height: 28, borderRadius: '50%', border: `1.5px solid ${tokens.cardBorder}`,
-                background: 'rgba(193,154,107,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center'
-              }}
-            >
-              <span style={{ fontSize: 12 }}>📅</span>
-            </button>
+          <header>
+            <h1 className="text-3xl font-bold" style={{ color: tokens.text, fontFamily: FONT_PANCAKE, fontWeight: 600 }}>
+              Practice Journal
+            </h1>
+            <p className="text-[11px] uppercase tracking-widest mt-1" style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>
+              Your mindful journey log
+            </p>
+            <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 5 }} />
           </header>
 
           {/* RADIAL HABIT FAN */}
