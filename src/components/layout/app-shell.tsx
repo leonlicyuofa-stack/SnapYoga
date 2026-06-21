@@ -114,34 +114,44 @@ export function AppShell({ children }: AppShellProps) {
           {children}
         </main>
 
-        {/* BOTTOM NAVIGATION - Visible on desktop for dashboard, hidden on desktop elsewhere */}
+        {/* BOTTOM NAVIGATION - icons only (label on the active tab), Analyze as a center action */}
         <nav className={cn(
-          "fixed bottom-0 left-0 right-0 z-40 flex h-20 items-center justify-around border-t px-2 backdrop-blur-xl transition-colors duration-300",
+          "fixed bottom-0 left-0 right-0 z-40 flex h-20 items-center justify-around border-t px-3 backdrop-blur-xl transition-colors duration-300",
           pathname !== '/dashboard' && "md:hidden",
           theme === 'dark' ? "bg-black/40 border-white/10 text-white" : "bg-white/60 border-black/10 text-black"
         )}>
-          {navItems.map((item) => {
+          {[navItems[0], navItems[2], null, navItems[3], navItems[4]].map((item, i) => {
+            // Center slot: the Analyze action as a raised FAB
+            if (item === null) {
+              return (
+                <Link key="analyze-fab" href="/snap-yoga" aria-label="Analyze" className="flex items-center justify-center flex-1 h-full">
+                  <div
+                    className="-mt-7 flex h-14 w-14 items-center justify-center rounded-full active:scale-90 transition-transform"
+                    style={{ background: 'rgba(193,154,107,0.92)', boxShadow: '0 6px 18px rgba(193,154,107,0.35)' }}
+                  >
+                    <Sparkles className="h-6 w-6" style={{ color: '#1a1210' }} />
+                  </div>
+                </Link>
+              );
+            }
             const active = isActive(item.href);
             return (
-              <Link 
-                key={item.label} 
-                href={item.href} 
-                className="flex flex-col items-center justify-center gap-1 w-full h-full transition-all active:scale-90"
+              <Link
+                key={item.label}
+                href={item.href}
+                aria-label={item.label}
+                className="flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all active:scale-90"
               >
-                <item.icon 
+                <item.icon
                   className={cn(
                     "h-6 w-6 transition-colors duration-300",
-                    active ? "text-primary fill-primary/10" : (theme === 'dark' ? "text-white/40" : "text-black/40")
-                  )} 
+                    active ? "text-primary" : (theme === 'dark' ? "text-white/40" : "text-black/40")
+                  )}
                 />
-                <span className={cn(
-                  "text-[10px] uppercase tracking-widest font-sans font-semibold transition-colors duration-300",
-                  active ? "text-primary" : (theme === 'dark' ? "text-white/30" : "text-black/30")
-                )}>
-                  {item.label}
-                </span>
                 {active && (
-                  <div className="absolute bottom-2 h-1 w-1 rounded-full bg-primary" />
+                  <span className="text-[9px] uppercase tracking-widest font-sans font-semibold text-primary">
+                    {item.label}
+                  </span>
                 )}
               </Link>
             );
