@@ -196,14 +196,19 @@ export default function DashboardPage() {
               <path d="M 42,100 A 58,58 0 0 1 158,100" fill="none" stroke={`${GOLD},0.22)`} strokeWidth="1" strokeDasharray="2 7" strokeLinecap="round" />
               {motionOK && (
                 <>
-                  <circle r="8" fill="url(#orbitGlow)">
-                    <animateMotion dur="5s" repeatCount="indefinite" path="M 42,100 A 58,58 0 0 1 158,100" />
+                  {/* Fade in at the top-left entry, fade out at the top-right exit, then stay
+                      invisible through the loop restart so the teleport never shows as a flash. */}
+                  <circle r="8" fill="url(#orbitGlow)" opacity="0">
+                    <animateMotion dur="6s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.7;1" path="M 42,100 A 58,58 0 0 1 158,100" />
+                    <animate attributeName="opacity" dur="6s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.1;0.6;0.7;1" />
                   </circle>
-                  <circle r="3" fill="rgba(255,240,215,0.95)">
-                    <animateMotion dur="5s" repeatCount="indefinite" path="M 42,100 A 58,58 0 0 1 158,100" />
+                  <circle r="3" fill="rgba(255,240,215,0.95)" opacity="0">
+                    <animateMotion dur="6s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.7;1" path="M 42,100 A 58,58 0 0 1 158,100" />
+                    <animate attributeName="opacity" dur="6s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.1;0.6;0.7;1" />
                   </circle>
-                  <circle r="2" fill={`${GOLD},0.85)`}>
-                    <animateMotion dur="5s" begin="0.6s" repeatCount="indefinite" path="M 42,100 A 58,58 0 0 1 158,100" />
+                  <circle r="2" fill={`${GOLD},0.85)`} opacity="0">
+                    <animateMotion dur="6s" begin="0.6s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.7;1" path="M 42,100 A 58,58 0 0 1 158,100" />
+                    <animate attributeName="opacity" dur="6s" begin="0.6s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.1;0.6;0.7;1" />
                   </circle>
                 </>
               )}
