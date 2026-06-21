@@ -262,7 +262,7 @@ export default function DashboardPage() {
         </header>
 
         {/* SCROLLABLE CONTENT */}
-        <main style={{ flex: 1, padding: '4px 14px 120px', display: 'flex', flexDirection: 'column', gap: 22 }}>
+        <main style={{ flex: 1, padding: '4px 14px 24px', display: 'flex', flexDirection: 'column', gap: 22 }}>
 
           {/* §1 DAILY CHECK-IN (mood + habits merged, whole box tappable) */}
           <section>
