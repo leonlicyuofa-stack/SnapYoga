@@ -139,7 +139,6 @@ export default function DashboardPage() {
   const [avgScore,      setAvgScore]      = useState(78);
   const [commitmentDays, setCommitmentDays] = useState(5);
   const [showOverwrite, setShowOverwrite] = useState(false);
-  const [motionOK, setMotionOK] = useState(false);
 
   // Exercise goal: an encouraging weekly hours target (≈1h per committed day).
   const exerciseGoal = commitmentDays;
@@ -147,12 +146,6 @@ export default function DashboardPage() {
   const practiceMsg = exPct >= 100 ? 'Goal reached ✦' : exPct >= 50 ? 'On track — keep going' : 'A great time to practice';
 
   const name = user?.displayName || user?.email?.split('@')[0] || 'Yogi';
-
-  // Respect the user's reduced-motion preference for the half-moon orbit.
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return;
-    setMotionOK(!window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  }, []);
 
   // Tapping the check-in box goes to mood selection; if already logged today, confirm overwrite first.
   const handleCheckinClick = () => {
@@ -221,20 +214,9 @@ export default function DashboardPage() {
               style={{ position: 'absolute', top: -62, left: -62, width: 200, height: 200, pointerEvents: 'none', overflow: 'visible' }}
             >
               <path d="M 42,100 A 58,58 0 0 1 158,100" fill="none" stroke={`${GOLD},0.22)`} strokeWidth="1" strokeDasharray="2 7" strokeLinecap="round" />
-              {motionOK && (
-                <>
-                  {/* A small gold dot drifts along the arc, fading gently in at the entry and out before
-                      the exit, staying fully invisible across the loop restart — no bright glow, no flash. */}
-                  <circle r="3" fill={`${GOLD},0.85)`} opacity="0">
-                    <animateMotion dur="6s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.7;1" path="M 42,100 A 58,58 0 0 1 158,100" />
-                    <animate attributeName="opacity" dur="6s" repeatCount="indefinite" calcMode="linear" values="0;0.85;0.85;0;0" keyTimes="0;0.22;0.5;0.72;1" />
-                  </circle>
-                  <circle r="2" fill={`${GOLD},0.55)`} opacity="0">
-                    <animateMotion dur="6s" begin="0.5s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.7;1" path="M 42,100 A 58,58 0 0 1 158,100" />
-                    <animate attributeName="opacity" dur="6s" begin="0.5s" repeatCount="indefinite" calcMode="linear" values="0;0.55;0.55;0;0" keyTimes="0;0.22;0.5;0.72;1" />
-                  </circle>
-                </>
-              )}
+              {/* Static decorative end-dots — the moving orbit was removed to eliminate the sweeping flash. */}
+              <circle cx="42" cy="100" r="2" fill={`${GOLD},0.5)`} />
+              <circle cx="158" cy="100" r="2" fill={`${GOLD},0.5)`} />
             </svg>
             {isGold && (
               <span style={{ position: 'absolute', top: -15, left: '50%', transform: 'translateX(-50%) rotate(-8deg)', fontSize: 20, zIndex: 2 }}>👑</span>

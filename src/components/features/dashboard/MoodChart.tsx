@@ -142,14 +142,15 @@ export function MoodChart({ className }: { className?: string }) {
           />
           <YAxis hide={true} domain={[0, 5]} />
           <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(193,154,107,0.3)', strokeWidth: 1, strokeDasharray: '5 5' }} />
-          <Area 
-              type="monotone" 
-              dataKey="plotValue" 
-              stroke="rgba(193,154,107,0.6)" 
+          <Area
+              type="monotone"
+              dataKey="plotValue"
+              stroke="rgba(193,154,107,0.6)"
               strokeWidth={2}
-              fillOpacity={1} 
-              fill="url(#colorMood)" 
+              fillOpacity={1}
+              fill="url(#colorMood)"
               connectNulls
+              isAnimationActive={false}
               //@ts-ignore
               dot={<CustomDot />}
           />
