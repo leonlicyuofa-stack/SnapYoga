@@ -4,14 +4,13 @@ import { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, DotProps, CartesianGrid } from 'recharts';
 import { useAuth } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
-import { collection, query, where, Timestamp, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, documentId } from 'firebase/firestore';
 import { format, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 interface StoredMood {
   name: string;
   emoji: string;
-  loggedAt: Timestamp;
 }
 
 const moodToValue: { [key: string]: number } = {
@@ -86,21 +85,22 @@ export function MoodChart({ className }: { className?: string }) {
     const start = startOfWeek(new Date(), { weekStartsOn: 1 });
     const end = endOfWeek(new Date(), { weekStartsOn: 1 });
 
+    const startStr = format(start, 'yyyy-MM-dd');
+    const endStr = format(end, 'yyyy-MM-dd');
+
     const moodsRef = collection(firestore, 'users', user.uid, 'moods');
+    // Mood docs are keyed by date (yyyy-MM-dd), so query by document id — robust even
+    // when an entry has no loggedAt timestamp (which the range query would have skipped).
     const q = query(
       moodsRef,
-      where('loggedAt', '>=', start),
-      where('loggedAt', '<=', end)
+      where(documentId(), '>=', startStr),
+      where(documentId(), '<=', endStr)
     );
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const moods: { [key: string]: StoredMood } = {};
       querySnapshot.forEach((doc) => {
-        const moodData = doc.data() as StoredMood;
-        if (moodData.loggedAt) {
-            const dayKey = format(moodData.loggedAt.toDate(), 'yyyy-MM-dd');
-            moods[dayKey] = moodData;
-        }
+        moods[doc.id] = doc.data() as StoredMood;
       });
       
       const weekDays = eachDayOfInterval({ start, end });
@@ -125,7 +125,7 @@ export function MoodChart({ className }: { className?: string }) {
   return (
     <div className={cn("w-full h-full", className)}>
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
+        <AreaChart data={data} margin={{ top: 24, right: 16, left: 8, bottom: 0 }}>
           <defs>
               <linearGradient id="colorMood" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="rgba(193,154,107,0.4)" stopOpacity={0.4}/>
@@ -133,12 +133,13 @@ export function MoodChart({ className }: { className?: string }) {
               </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,240,215,0.05)" />
-          <XAxis 
-            dataKey="day" 
-            axisLine={false} 
-            tickLine={false} 
-            tick={{ fill: 'rgba(255,240,215,0.3)', fontSize: 10, fontWeight: 500 }} 
+          <XAxis
+            dataKey="day"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: 'rgba(255,240,215,0.3)', fontSize: 10, fontWeight: 500 }}
             dy={10}
+            padding={{ left: 14, right: 14 }}
           />
           <YAxis hide={true} domain={[0, 5]} />
           <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(193,154,107,0.3)', strokeWidth: 1, strokeDasharray: '5 5' }} />
