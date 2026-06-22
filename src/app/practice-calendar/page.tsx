@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -8,7 +8,7 @@ import { firestore } from '@/lib/firebase/clientApp';
 import { collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp, type Timestamp } from 'firebase/firestore';
 import { AppShell } from '@/components/layout/app-shell';
 import { format, startOfWeek, startOfMonth, endOfMonth, getDaysInMonth, isSameDay, addDays, startOfDay } from 'date-fns';
-import { CheckCircle2, Loader2, Sparkles, BrainCircuit } from 'lucide-react';
+import { CheckCircle2, Loader2, Sparkles, BrainCircuit, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '@/components/ui/textarea';
 import { analyzeReflectionThemes, type ReflectionThemesOutput } from '@/ai/flows/analyze-reflection-themes';
@@ -99,6 +99,9 @@ export default function PracticeCalendarPage() {
   const [journalNote, setJournalNote] = useState('');
   const [dayMood, setDayMood] = useState<StoredMood | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [weekOffset, setWeekOffset] = useState(0);     // weeks from the current week
+  const [expanded, setExpanded] = useState(false);     // day panel open/closed
+  const touchStartX = useRef<number | null>(null);
 
   const [themeGroups, setThemeGroups] = useState<ReflectionThemesOutput | null>(null);
   const [isAnalyzingThemes, setIsAnalyzingThemes] = useState(false);
@@ -107,7 +110,7 @@ export default function PracticeCalendarPage() {
   const daysInMonth = getDaysInMonth(now);
   const monthName = format(now, 'MMMM');
 
-  const weekStart = startOfWeek(now, { weekStartsOn: 1 });
+  const weekStart = addDays(startOfWeek(now, { weekStartsOn: 1 }), weekOffset * 7);
   const weekDays = Array.from({ length: 7 }).map((_, i) => addDays(weekStart, i));
 
   const selectedStr = format(selectedDay, 'yyyy-MM-dd');
@@ -140,14 +143,17 @@ export default function PracticeCalendarPage() {
       hSnap.forEach(d => { const h = d.data() as { date: string; completed: string[] }; habits[h.date] = h.completed || []; });
       setHabitsByDate(habits);
     });
+  }, [user, authLoading]);
 
-    // This week's claimed prize draws (one doc per day, id = date string)
+  // Claimed prize draws for the currently displayed week (re-fetched on week change)
+  useEffect(() => {
+    if (!user) return;
     Promise.all(weekDays.map(d => getDoc(doc(firestore, 'users', user.uid, 'draws', format(d, 'yyyy-MM-dd'))))).then(snaps => {
       const draws: Record<string, string> = {};
       snaps.forEach((s, i) => { if (s.exists() && s.data().prizeId) draws[format(weekDays[i], 'yyyy-MM-dd')] = s.data().prizeId; });
       setDrawsByDate(prev => ({ ...prev, ...draws }));
     });
-  }, [user, authLoading]);
+  }, [user, weekOffset]);
 
   // Load the selected day's mood summary + journal note, and claim today's draw
   useEffect(() => {
@@ -176,6 +182,30 @@ export default function PracticeCalendarPage() {
       });
     }
   }, [selectedDay, user]);
+
+  // Tapping a day expands the panel; tapping the open day again collapses it.
+  const handleDayClick = (d: Date) => {
+    if (isSameDay(d, selectedDay) && expanded) {
+      setExpanded(false);
+    } else {
+      setSelectedDay(d);
+      setExpanded(true);
+    }
+  };
+
+  // Move one week and keep the selected weekday in view.
+  const goWeek = (delta: number) => {
+    setWeekOffset(o => o + delta);
+    setSelectedDay(d => addDays(d, delta * 7));
+  };
+
+  const onTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(dx) > 50) goWeek(dx < 0 ? 1 : -1); // swipe left → next week
+    touchStartX.current = null;
+  };
 
   const saveJournal = async () => {
     if (!user) return;
@@ -232,7 +262,8 @@ export default function PracticeCalendarPage() {
 
   return (
     <AppShell>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');
+        @keyframes syWeekSwap { from { opacity: 0.45; transform: translateY(-3px); } to { opacity: 1; transform: none; } }`}</style>
       <div style={{ padding: '16px 14px 28px', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
         {/* HEADER */}
@@ -244,16 +275,26 @@ export default function PracticeCalendarPage() {
 
         {/* WEEK ROW + EXPANDING DAY PANEL */}
         <section>
-          <div style={{ display: 'flex', gap: 5 }}>
-            {weekDays.map((d, i) => {
-              const ds = format(d, 'yyyy-MM-dd');
-              const sel = isSameDay(d, selectedDay);
-              const prize = drawsByDate[ds] ? getPrizeById(drawsByDate[ds]) : null;
-              return (
-                <button
-                  key={i}
-                  onClick={() => setSelectedDay(d)}
-                  style={{
+          {/* ‹  week  › — also swipeable left/right to change weeks */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <button
+              onClick={() => goWeek(-1)}
+              aria-label="Previous week"
+              style={{ flexShrink: 0, width: 26, height: 26, borderRadius: '50%', border: '0.5px solid rgba(193,154,107,0.30)', background: 'rgba(193,154,107,0.08)', color: tokens.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <div style={{ flex: 1, overflow: 'hidden' }} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+              <div key={weekOffset} style={{ display: 'flex', gap: 5, animation: 'syWeekSwap 0.3s ease' }}>
+                {weekDays.map((d, i) => {
+                  const ds = format(d, 'yyyy-MM-dd');
+                  const sel = isSameDay(d, selectedDay);
+                  const prize = drawsByDate[ds] ? getPrizeById(drawsByDate[ds]) : null;
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => handleDayClick(d)}
+                      style={{
                     flex: 1, borderRadius: 13, padding: '6px 0 5px', textAlign: 'center', cursor: 'pointer',
                     background: sel ? 'linear-gradient(180deg, rgba(214,178,130,0.92), rgba(193,154,107,0.78))' : 'rgba(193,154,107,0.05)',
                     border: `0.5px solid ${sel ? 'rgba(214,178,130,0.85)' : 'rgba(193,154,107,0.22)'}`,
@@ -271,12 +312,30 @@ export default function PracticeCalendarPage() {
                     <div style={{ height: 16, marginTop: 3 }} />
                   )}
                 </button>
-              );
-            })}
+                  );
+                })}
+              </div>
+            </div>
+            <button
+              onClick={() => goWeek(1)}
+              aria-label="Next week"
+              style={{ flexShrink: 0, width: 26, height: 26, borderRadius: '50%', border: '0.5px solid rgba(193,154,107,0.30)', background: 'rgba(193,154,107,0.08)', color: tokens.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
           </div>
 
-          {/* Clean panel that unfolds below the row (selected day glows above; no bump/overlap) */}
-          <div style={{ marginTop: 10, borderRadius: 18, border: '0.5px solid rgba(214,178,130,0.4)', background: 'rgba(193,154,107,0.10)', padding: 16, backdropFilter: 'blur(14px)', boxShadow: '0 12px 34px rgba(193,154,107,0.12)' }}>
+          {/* Collapsed: a thin line beneath the dates; tap a day to unfold */}
+          <div style={{ height: 2, borderRadius: 2, margin: '12px 8px 0', background: 'linear-gradient(90deg, transparent, rgba(214,178,130,0.85), transparent)' }} />
+          {!expanded && (
+            <p style={{ textAlign: 'center', fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.55)', margin: '8px 0 0', fontFamily: FONT_CASUAL }}>
+              Tap a day to open ↓
+            </p>
+          )}
+
+          {/* Animated expand wrapper (unfolds from the line above) */}
+          <div style={{ maxHeight: expanded ? 2000 : 0, opacity: expanded ? 1 : 0, overflow: 'hidden', transition: 'max-height 0.4s ease, opacity 0.3s ease' }}>
+            <div style={{ marginTop: 8, borderRadius: 18, border: '0.5px solid rgba(214,178,130,0.4)', background: 'rgba(193,154,107,0.10)', padding: 16, backdropFilter: 'blur(14px)', boxShadow: '0 12px 34px rgba(193,154,107,0.12)' }}>
             <p style={{ fontFamily: FONT_PANCAKE, fontSize: 20, fontWeight: 500, color: tokens.text, margin: '0 0 12px' }}>{format(selectedDay, 'EEEE, d MMMM')}</p>
 
             {/* Moon phase for yogis (always shown) */}
@@ -376,6 +435,7 @@ export default function PracticeCalendarPage() {
                 <p style={{ marginTop: 12, fontSize: 10, color: 'rgba(193,154,107,0.6)', textAlign: 'center', fontStyle: 'italic' }}>↳ Body check-in lives in your Daily Check-in</p>
               </>
             )}
+            </div>
           </div>
         </section>
 
