@@ -1,142 +1,101 @@
-
 "use client";
 
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowRight, Users, PlusCircle, Crown, Star, Scale, Zap, Spline, Anchor, Copy, Mail, Share2, Sun, Moon, Check, Lock, Gift } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Users, PlusCircle, Crown, Copy, Mail, Share2, Bookmark } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useTheme } from '@/contexts/ThemeContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
-import { allCollectibles, type Collectible } from '@/components/features/dashboard/rock-data';
-import placeholderImages from '@/lib/placeholder-images.json';
 import { firestore } from '@/lib/firebase/clientApp';
-import { collection, getDocs, query, where, doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { format, startOfMonth, endOfMonth, getDaysInMonth } from 'date-fns';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
-import { RockWheelDialog } from '@/components/features/dashboard/rock-wheel-dialog';
 
-interface Friend {
-  id: string;
-  name: string;
-  avatarUrl: string;
-  avatarHint: string;
+const FONT_PANCAKE = "'Cormorant Garamond', Georgia, serif";
+const FONT_CASUAL  = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
+
+// ─── Data ──────────────────────────────────────────────────────────────────
+type Category = 'Balancing' | 'Strength' | 'Mobility' | 'Flexibility';
+const CATEGORIES: Category[] = ['Balancing', 'Strength', 'Mobility', 'Flexibility'];
+
+interface PoseChallenge {
+  id: string; name: string; category: Category; emoji: string; grad: string;
+  difficulty: number; status: 'active' | 'upcoming' | 'completed';
+  daysInChallenge?: number; totalDays?: number; detailLink: string;
 }
 
-interface Challenge {
-  id:string;
-  name: string;
-  description: string;
-  imageUrl: { src: string; width: number; height: number, hint: string };
-  imageHint: string;
-  detailLink: string;
-  inviteLink: string;
-  status: 'active' | 'upcoming' | 'completed';
-  daysInChallenge?: number;
-  totalDays?: number;
-  difficulty: number;
-  category: 'Strength' | 'Balancing' | 'Flexibility' | 'Foundational';
-}
-
-const initialFriends: Friend[] = [
-  { id: '1', name: 'Elena', avatarUrl: 'https://placehold.co/100x100.png', avatarHint: 'woman portrait' },
-  { id: '2', name: 'Marcus', avatarUrl: 'https://placehold.co/100x100.png', avatarHint: 'man portrait' },
-  { id: '3', name: 'Anya', avatarUrl: 'https://placehold.co/100x100.png', avatarHint: 'woman smiling' },
+const poseChallenges: PoseChallenge[] = [
+  { id: 'headstand',  name: 'Headstand',    category: 'Balancing',   emoji: '🧘', grad: 'linear-gradient(160deg,#3a4a63,#1a2233)', difficulty: 4, status: 'active', daysInChallenge: 12, totalDays: 30, detailLink: '/challenges/headstand' },
+  { id: 'warrior',    name: 'Warrior III',  category: 'Balancing',   emoji: '🏹', grad: 'linear-gradient(160deg,#3f5560,#16222a)', difficulty: 3, status: 'completed', detailLink: '#' },
+  { id: 'crow',       name: 'Crow Pose',    category: 'Strength',    emoji: '🦅', grad: 'linear-gradient(160deg,#5a3a3a,#241414)', difficulty: 3, status: 'upcoming', detailLink: '/challenges/crow' },
+  { id: 'plank',      name: 'Plank Flow',   category: 'Strength',    emoji: '💪', grad: 'linear-gradient(160deg,#5a4632,#241b10)', difficulty: 2, status: 'upcoming', detailLink: '#' },
+  { id: 'pigeon',     name: 'Pigeon Pose',  category: 'Mobility',    emoji: '🕊️', grad: 'linear-gradient(160deg,#3a5a4a,#142419)', difficulty: 2, status: 'upcoming', detailLink: '#' },
+  { id: 'forwardfold',name: 'Forward Fold', category: 'Flexibility', emoji: '🙆', grad: 'linear-gradient(160deg,#4a3a5a,#1c1424)', difficulty: 2, status: 'upcoming', detailLink: '#' },
 ];
 
-const challenges: Challenge[] = [
-  {
-    id: 'headstand',
-    name: 'Headstand (Sirsasana)',
-    description: 'Master the headstand this month! Work on your balance and core strength. Practice safely against a wall if you\'re new.',
-    imageUrl: { src: '/images/headstand.png', width: 600, height: 400, hint: 'headstand yoga silhouette' },
-    imageHint: 'headstand yoga silhouette',
-    detailLink: '/challenges/headstand',
-    inviteLink: '/challenges/headstand/invite',
-    status: 'active',
-    daysInChallenge: 12,
-    totalDays: 30,
-    difficulty: 4,
-    category: 'Balancing',
-  },
-  {
-    id: 'crow',
-    name: 'Crow Pose (Bakasana)',
-    description: 'Take on the crow pose! Build arm strength and courage. Start by practicing tucking your knees into your armpits.',
-    imageUrl: { src: '/images/crow-pose-icon.jpg', width: 600, height: 400, hint: 'crow pose yoga practice' },
-    imageHint: 'crow pose yoga practice',
-    detailLink: '/challenges/crow',
-    inviteLink: '/challenges/crow/invite',
-    status: 'upcoming',
-    difficulty: 3,
-    category: 'Strength',
-  },
-  {
-    id: 'warrior',
-    name: 'Warrior III (Virabhadrasana III)',
-    description: 'A previous challenge to build strength and improve balance. Review your progress or try it again!',
-    imageUrl: placeholderImages.challengeImages.warrior3,
-    imageHint: placeholderImages.challengeImages.warrior3.hint,
-    detailLink: '#',
-    inviteLink: '#',
-    status: 'completed',
-    difficulty: 3,
-    category: 'Balancing',
-  },
+const programs = [
+  { id: 'prog-7',  days: 7,  name: 'Kickstart' },
+  { id: 'prog-14', days: 14, name: 'Reset' },
+  { id: 'prog-30', days: 30, name: 'Journey' },
 ];
 
-const challengesByCategory = challenges.reduce((acc, challenge) => {
-  const { category } = challenge;
-  if (!acc[category]) {
-    acc[category] = [];
-  }
-  acc[category].push(challenge);
-  return acc;
-}, {} as Record<Challenge['category'], Challenge[]>);
+const routines = [
+  { id: 'rout-morning', name: 'Morning Rise', icon: '☀️', meta: '30 min · energising' },
+  { id: 'rout-restore', name: 'Restorative',  icon: '🌙', meta: '30 min · calming' },
+];
 
-const categoryOrder: Challenge['category'][] = ['Balancing', 'Strength', 'Flexibility', 'Foundational'];
+// Lookup for rendering bookmarked items in "Your Plan"
+const planLookup: Record<string, { name: string; sub: string; emoji: string; grad: string }> = {};
+poseChallenges.forEach(c => { planLookup[c.id] = { name: c.name, sub: c.category, emoji: c.emoji, grad: c.grad }; });
+programs.forEach(p => { planLookup[p.id] = { name: p.name, sub: `${p.days}-day program`, emoji: `${p.days}`, grad: 'linear-gradient(160deg,#5a4632,#1a2233)' }; });
+routines.forEach(r => { planLookup[r.id] = { name: r.name, sub: 'Quick routine', emoji: r.icon, grad: 'linear-gradient(160deg,#3f4a5a,#16202a)' }; });
 
-const categoryIcons: Record<Challenge['category'], React.ElementType> = {
-  'Balancing': Scale,
-  'Strength': Zap,
-  'Flexibility': Spline,
-  'Foundational': Anchor,
+const sectionCardStyle: React.CSSProperties = {
+  borderRadius: 16,
+  border: '0.5px solid rgba(193,154,107,0.18)',
+  background: 'rgba(13,20,30,0.50)',
+  backdropFilter: 'blur(14px)',
 };
 
+function SectionHead({ children, action }: { children: React.ReactNode; action?: React.ReactNode }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '22px 0 10px' }}>
+      <p style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.6)', fontWeight: 600, fontFamily: FONT_CASUAL }}>{children}</p>
+      {action}
+    </div>
+  );
+}
+
+function Stars({ n }: { n: number }) {
+  return <span style={{ fontSize: 9, color: 'rgba(214,178,130,0.9)', letterSpacing: 1 }}>{'★'.repeat(n)}{'☆'.repeat(5 - n)}</span>;
+}
+
+function ComingSoon() {
+  return <span style={{ fontSize: 7.5, letterSpacing: 1, textTransform: 'uppercase', color: 'rgba(214,178,130,0.85)', background: 'rgba(193,154,107,0.14)', border: '0.5px solid rgba(193,154,107,0.25)', borderRadius: 999, padding: '2px 7px' }}>Coming soon</span>;
+}
+
+// ─── Invite friend dialog (unchanged behaviour) ─────────────────────────────
 function InviteFriendDialog() {
   const { toast } = useToast();
   const { t } = useLanguage();
   const [inviteLink, setInviteLink] = useState('');
 
-  React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setInviteLink(window.location.origin);
-    }
-  }, []);
+  React.useEffect(() => { if (typeof window !== 'undefined') setInviteLink(window.location.origin); }, []);
 
   const handleCopyLink = () => {
     if (navigator.clipboard && inviteLink) {
       navigator.clipboard.writeText(inviteLink).then(() => {
-        toast({
-          title: "Link Copied!",
-          description: "A shareable link has been copied to your clipboard.",
-        });
-      }).catch(err => {
-        console.error("Copy failed", err);
-        toast({ title: "Copy Failed", description: "Could not copy the link.", variant: "destructive" });
-      });
+        toast({ title: "Link Copied!", description: "A shareable link has been copied to your clipboard." });
+      }).catch(() => toast({ title: "Copy Failed", description: "Could not copy the link.", variant: "destructive" }));
     }
   };
 
@@ -146,31 +105,18 @@ function InviteFriendDialog() {
   const pinterestShareUrl = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(inviteLink)}&media=${encodeURIComponent('https://placehold.co/600x400.png')}&description=${encodeURIComponent(shareText)}`;
 
   const handleInstagramShare = () => {
-     if (navigator.clipboard && inviteLink) {
+    if (navigator.clipboard && inviteLink) {
       navigator.clipboard.writeText(inviteLink).then(() => {
-        toast({
-          title: "Link Copied!",
-          description: "Paste this link in your Instagram bio or stories to share.",
-          duration: 5000,
-        });
-      }).catch(err => {
-        console.error("Copy failed", err);
-        toast({ title: "Copy Failed", description: "Could not copy the link.", variant: "destructive" });
-      });
+        toast({ title: "Link Copied!", description: "Paste this link in your Instagram bio or stories to share.", duration: 5000 });
+      }).catch(() => toast({ title: "Copy Failed", description: "Could not copy the link.", variant: "destructive" }));
     }
   };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button 
-          variant="outline" 
-          size="lg" 
-          className="w-full sm:w-auto text-base px-6 py-6 rounded-full" 
-          style={{ border: '0.5px solid rgba(193,154,107,0.30)', background: 'rgba(193,154,107,0.06)', color: 'rgba(193,154,107,0.85)' }}
-        >
-          <PlusCircle className="mr-2 h-5 w-5" />
-          Add Friend
+        <Button variant="outline" className="rounded-full" style={{ border: '0.5px solid rgba(193,154,107,0.30)', background: 'rgba(193,154,107,0.06)', color: 'rgba(214,178,130,0.9)', padding: '8px 18px' }}>
+          <PlusCircle className="mr-2 h-4 w-4" /> Add Friend
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md rounded-2xl bg-black/50 backdrop-blur-lg border-white/20 text-white">
@@ -181,42 +127,19 @@ function InviteFriendDialog() {
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
-          <div className="text-center p-3 bg-green-500/20 text-green-300 border border-green-500/30 rounded-lg text-sm font-medium">
-              {t('referralBonusText')}
-          </div>
+          <div className="text-center p-3 bg-green-500/20 text-green-300 border border-green-500/30 rounded-lg text-sm font-medium">{t('referralBonusText')}</div>
           <div className="space-y-2">
             <Label htmlFor="invite-link">Copy your invite link</Label>
             <div className="flex space-x-2">
-              <Input
-                id="invite-link"
-                value={inviteLink}
-                readOnly
-                className="h-11 rounded-lg text-base bg-black/20 border-white/20"
-              />
-              <Button type="button" size="icon" onClick={handleCopyLink} className="rounded-lg bg-white/20 hover:bg-white/30">
-                <Copy className="h-4 w-4" />
-              </Button>
+              <Input id="invite-link" value={inviteLink} readOnly className="h-11 rounded-lg text-base bg-black/20 border-white/20" />
+              <Button type="button" size="icon" onClick={handleCopyLink} className="rounded-lg bg-white/20 hover:bg-white/30"><Copy className="h-4 w-4" /></Button>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
-             <Button variant="outline" asChild className="rounded-lg h-11 bg-transparent border-white/20 hover:bg-white/10">
-              <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-                <Share2 className="mr-2 h-4 w-4" /> WhatsApp
-              </a>
-            </Button>
-             <Button variant="outline" asChild className="rounded-lg h-11 bg-transparent border-white/20 hover:bg-white/10">
-              <a href={mailtoLink} target="_blank" rel="noopener noreferrer">
-                <Mail className="mr-2 h-4 w-4" /> Email
-              </a>
-            </Button>
-             <Button variant="outline" onClick={handleInstagramShare} className="rounded-lg h-11 bg-transparent border-white/20 hover:bg-white/10">
-              <Share2 className="mr-2 h-4 w-4" /> Instagram
-            </Button>
-             <Button variant="outline" asChild className="rounded-lg h-11 bg-transparent border-white/20 hover:bg-white/10">
-              <a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer">
-                <PinterestIcon className="mr-2 h-4 w-4" /> Pinterest
-              </a>
-            </Button>
+            <Button variant="outline" asChild className="rounded-lg h-11 bg-transparent border-white/20 hover:bg-white/10"><a href={whatsappLink} target="_blank" rel="noopener noreferrer"><Share2 className="mr-2 h-4 w-4" /> WhatsApp</a></Button>
+            <Button variant="outline" asChild className="rounded-lg h-11 bg-transparent border-white/20 hover:bg-white/10"><a href={mailtoLink} target="_blank" rel="noopener noreferrer"><Mail className="mr-2 h-4 w-4" /> Email</a></Button>
+            <Button variant="outline" onClick={handleInstagramShare} className="rounded-lg h-11 bg-transparent border-white/20 hover:bg-white/10"><Share2 className="mr-2 h-4 w-4" /> Instagram</Button>
+            <Button variant="outline" asChild className="rounded-lg h-11 bg-transparent border-white/20 hover:bg-white/10"><a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer"><PinterestIcon className="mr-2 h-4 w-4" /> Pinterest</a></Button>
           </div>
         </div>
         <DialogFooter>
@@ -224,82 +147,71 @@ function InviteFriendDialog() {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
+}
+
+// ─── Bookmark button ─────────────────────────────────────────────────────────
+function BookmarkBtn({ active, onToggle }: { active: boolean; onToggle: () => void }) {
+  return (
+    <button
+      onClick={(e) => { e.stopPropagation(); onToggle(); }}
+      aria-label={active ? 'Remove from your plan' : 'Add to your plan'}
+      style={{ position: 'absolute', top: 7, right: 7, width: 24, height: 24, borderRadius: '50%', background: 'rgba(13,20,30,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', border: 'none', zIndex: 2 }}
+    >
+      <Bookmark className="h-3.5 w-3.5" style={{ color: 'rgba(214,178,130,0.95)', fill: active ? 'rgba(214,178,130,0.95)' : 'none' }} />
+    </button>
+  );
 }
 
 export default function ChallengesPage() {
   const { user, profile } = useAuth();
-  const [friends] = useState<Friend[]>(initialFriends);
   const { t } = useLanguage();
-  const { isDark, toggleTheme } = useTheme();
   const { toast } = useToast();
-  
-  const [completedToday, setCompletedToday] = useState<Record<string, boolean>>({});
-  const [isMarkingLoading, setIsMarkingLoading] = useState<string | null>(null);
+  const router = useRouter();
 
-  // Practiced Days state
+  const friends = [
+    { id: '1', name: 'Elena' },
+    { id: '2', name: 'Marcus' },
+    { id: '3', name: 'Anya' },
+  ];
+
+  const [selectedCategory, setSelectedCategory] = useState<'All' | Category>('All');
+  const [bookmarks, setBookmarks] = useState<string[]>([]);
+
   const [practicedDaysCount, setPracticedDaysCount] = useState(0);
   const [daysInMonth, setDaysInMonth] = useState(30);
   const [isLoadingPracticed, setIsLoadingPracticed] = useState(true);
-  
-  // Reward state
-  const [isRewardDialogOpen, setIsRewardDialogOpen] = useState(false);
 
-  // Collection Mock Data (should come from profile in a real app)
-  const collectedIds = ['welcome_mat', 'first_analysis_block', 'join_challenge_strap'];
+  // Hydrate bookmarks from the user profile.
+  useEffect(() => {
+    const saved = (profile as any)?.bookmarkedItems;
+    if (Array.isArray(saved)) setBookmarks(saved);
+  }, [profile]);
 
-  const currentMonthStr = format(new Date(), 'yyyy-MM');
-  const hasPulledThisMonth = profile?.lastPullMonth === currentMonthStr;
-
+  // Days-practiced tracker (activity ∩ analyses ∩ challenge tasks).
   useEffect(() => {
     if (!user) return;
-    const fetchCompletions = async () => {
-      const todayStr = format(new Date(), 'yyyy-MM-dd');
-      const completionsRef = collection(firestore, `users/${user.uid}/challengeTasks`);
-      const q = query(completionsRef, where('__name__', '>=', todayStr), where('__name__', '<=', todayStr + '\uf8ff'));
-      const snap = await getDocs(q);
-      const done: Record<string, boolean> = {};
-      snap.forEach(doc => {
-        const id = doc.id.split('_')[1];
-        if (id) done[id] = true;
-      });
-      setCompletedToday(done);
-    };
-
     const fetchPracticedDays = async () => {
       setIsLoadingPracticed(true);
       try {
         const now = new Date();
         const start = startOfMonth(now);
         const end = endOfMonth(now);
-        const total = getDaysInMonth(now);
-        setDaysInMonth(total);
+        setDaysInMonth(getDaysInMonth(now));
 
-        // 1. Fetch Activity
-        const activityRef = collection(firestore, `users/${user.uid}/activity`);
-        const activitySnap = await getDocs(query(activityRef, where('__name__', '>=', format(start, 'yyyy-MM-dd')), where('__name__', '<=', format(end, 'yyyy-MM-dd'))));
-        const activityDates = new Set(activitySnap.docs.map(doc => doc.id));
+        const activitySnap = await getDocs(query(collection(firestore, `users/${user.uid}/activity`), where('__name__', '>=', format(start, 'yyyy-MM-dd')), where('__name__', '<=', format(end, 'yyyy-MM-dd'))));
+        const activityDates = new Set(activitySnap.docs.map(d => d.id));
 
-        // 2. Fetch Analyses
-        const analysesRef = collection(firestore, `users/${user.uid}/poseAnalyses`);
-        const analysesSnap = await getDocs(query(analysesRef, where('createdAt', '>=', start), where('createdAt', '<=', end)));
-        const analysesDates = new Set(analysesSnap.docs.map(doc => {
-            const data = doc.data();
-            return data.createdAt ? format(data.createdAt.toDate(), 'yyyy-MM-dd') : null;
-        }).filter(Boolean));
+        const analysesSnap = await getDocs(query(collection(firestore, `users/${user.uid}/poseAnalyses`), where('createdAt', '>=', start), where('createdAt', '<=', end)));
+        const analysesDates = new Set(analysesSnap.docs.map(d => { const data = d.data(); return data.createdAt ? format(data.createdAt.toDate(), 'yyyy-MM-dd') : null; }).filter(Boolean));
 
-        // 3. Fetch Challenge Tasks
-        const tasksRef = collection(firestore, `users/${user.uid}/challengeTasks`);
-        const tasksSnap = await getDocs(query(tasksRef, where('__name__', '>=', format(start, 'yyyy-MM-dd')), where('__name__', '<=', format(end, 'yyyy-MM-dd') + '\uf8ff')));
-        const tasksDates = new Set(tasksSnap.docs.map(doc => doc.id.split('_')[0]));
+        const tasksSnap = await getDocs(query(collection(firestore, `users/${user.uid}/challengeTasks`), where('__name__', '>=', format(start, 'yyyy-MM-dd')), where('__name__', '<=', format(end, 'yyyy-MM-dd') + '')));
+        const tasksDates = new Set(tasksSnap.docs.map(d => d.id.split('_')[0]));
 
         let count = 0;
-        const currentDay = now.getDate();
-        for (let i = 1; i <= currentDay; i++) {
+        for (let i = 1; i <= now.getDate(); i++) {
           const dateStr = format(new Date(now.getFullYear(), now.getMonth(), i), 'yyyy-MM-dd');
-          if (activityDates.has(dateStr) && analysesDates.has(dateStr) && tasksDates.has(dateStr)) {
-            count++;
-          }
+          if (activityDates.has(dateStr) && analysesDates.has(dateStr) && tasksDates.has(dateStr)) count++;
         }
         setPracticedDaysCount(count);
       } catch (err) {
@@ -308,303 +220,166 @@ export default function ChallengesPage() {
         setIsLoadingPracticed(false);
       }
     };
-
-    fetchCompletions();
     fetchPracticedDays();
   }, [user]);
 
-  const handleMarkComplete = async (challengeId: string) => {
-    if (!user) return;
-    setIsMarkingLoading(challengeId);
-    const todayStr = format(new Date(), 'yyyy-MM-dd');
-    const docId = `${todayStr}_${challengeId}`;
-    try {
-      await setDoc(doc(firestore, `users/${user.uid}/challengeTasks/${docId}`), {
-        challengeId,
-        completedAt: serverTimestamp(),
-      });
-      setCompletedToday(prev => ({ ...prev, [challengeId]: true }));
-      toast({ title: "Task Complete!", description: "Today's challenge task has been recorded." });
-    } catch (e) {
-      console.error("Failed to record task", e);
-      toast({ title: "Error", description: "Failed to mark task as complete.", variant: "destructive" });
-    } finally {
-      setIsMarkingLoading(null);
+  const toggleBookmark = async (id: string) => {
+    const next = bookmarks.includes(id) ? bookmarks.filter(b => b !== id) : [...bookmarks, id];
+    setBookmarks(next);
+    if (user) {
+      try { await createUserProfileDocument(user, { bookmarkedItems: next }); }
+      catch (e) { console.error("Failed to save bookmark", e); }
     }
   };
 
-  const handleRewardWon = async (item: Collectible) => {
-    if (!user) return;
-    try {
-      // In a real app, you would add the item to a subcollection or profile array
-      // For this mock, we just update the lastPullMonth flag.
-      await createUserProfileDocument(user, {
-        lastPullMonth: currentMonthStr
-      });
-      toast({
-        title: "Reward Collected!",
-        description: `Your ${item.name} has been added to your collection.`
-      });
-    } catch (e) {
-      console.error("Failed to save reward pull:", e);
-    }
-  };
-  
-  const getStatusBadge = (challenge: Challenge) => {
-    switch (challenge.status) {
-      case 'active':
-        return <Badge variant="default" className="bg-green-600 hover:bg-green-700">Active</Badge>;
-      case 'upcoming':
-        return <Badge variant="secondary" className="bg-yellow-600 text-black">Upcoming</Badge>;
-      case 'completed':
-        return <Badge variant="outline" className="bg-white/10 text-white border-white/20">Completed</Badge>;
-      default:
-        return null;
-    }
+  const openChallenge = (c: PoseChallenge) => {
+    if (c.detailLink !== '#') router.push(c.detailLink);
+    else toast({ title: c.name, description: "This challenge's guide is coming soon." });
   };
 
-  const sectionCardStyle = {
-    borderRadius: '24px 12px 24px 24px',
-    border: '0.5px solid rgba(193,154,107,0.18)',
-    background: 'rgba(13,20,30,0.50)',
-    backdropFilter: 'blur(14px)'
-  };
+  const visibleChallenges = selectedCategory === 'All' ? poseChallenges : poseChallenges.filter(c => c.category === selectedCategory);
+  const planIds = bookmarks.filter(id => planLookup[id]);
 
   return (
     <AppShell>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
-      <div className="container mx-auto px-4 py-8">
-          <header className="mb-8 flex items-start justify-between">
-              <div>
-                <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, color: 'rgba(255,240,215,0.92)' }} className="text-3xl font-bold flex items-center gap-3">
-                    <Crown className="h-8 w-8" style={{ color: 'rgba(193,154,107,0.85)' }} />
-                    Yoga Challenges
-                </h1>
-                <p style={{ color: 'rgba(255,240,215,0.40)', fontStyle: 'italic' }} className="text-md mt-1">Improve your practice and connect with friends.</p>
-                <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 8 }} />
-              </div>
+      <div style={{ padding: '18px 14px 28px', display: 'flex', flexDirection: 'column' }}>
+
+        {/* HEADER */}
+        <header>
+          <h1 style={{ fontFamily: FONT_PANCAKE, fontWeight: 600, color: 'rgba(255,240,215,0.94)', fontSize: 26, margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Crown className="h-6 w-6" style={{ color: 'rgba(193,154,107,0.85)' }} /> Yoga Challenges
+          </h1>
+          <p style={{ color: 'rgba(255,240,215,0.4)', fontStyle: 'italic', fontFamily: FONT_PANCAKE, fontSize: 13, margin: '3px 0 0' }}>Build your practice, your way.</p>
+          <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 7 }} />
+        </header>
+
+        {/* THIS MONTH'S PRACTICE (reward removed) */}
+        <div style={{ ...sectionCardStyle, borderRadius: '20px 10px 20px 20px', padding: '14px 16px', marginTop: 18 }}>
+          <span style={{ fontFamily: FONT_PANCAKE, fontSize: 34, fontWeight: 600, color: 'rgba(255,240,215,0.94)' }}>{isLoadingPracticed ? '—' : practicedDaysCount}</span>
+          <span style={{ fontFamily: FONT_PANCAKE, fontSize: 18, color: 'rgba(193,154,107,0.7)' }}> / {daysInMonth}</span>
+          <div style={{ fontSize: 9, letterSpacing: 1, textTransform: 'uppercase', color: 'rgba(193,154,107,0.6)', fontWeight: 600, marginTop: 2, fontFamily: FONT_CASUAL }}>days practiced</div>
+          <div style={{ height: 10, background: 'rgba(255,240,215,0.08)', borderRadius: 6, overflow: 'hidden', marginTop: 10 }}>
+            <div style={{ height: '100%', width: `${(practicedDaysCount / daysInMonth) * 100}%`, background: 'linear-gradient(90deg, rgba(193,154,107,0.7), rgba(210,180,110,0.95))', borderRadius: 6, transition: 'width 1.2s ease' }} />
+          </div>
+          <p style={{ fontSize: 11, fontStyle: 'italic', color: 'rgba(255,240,215,0.5)', marginTop: 8, fontFamily: FONT_PANCAKE }}>Practice daily to fill your month.</p>
+        </div>
+
+        {/* YOUR PLAN */}
+        <SectionHead>Your Plan · bookmarked</SectionHead>
+        {planIds.length > 0 ? (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+            {planIds.map(id => {
+              const it = planLookup[id];
+              return (
+                <div key={id} style={{ borderRadius: 14, overflow: 'hidden', border: '0.5px solid rgba(214,178,130,0.3)', background: 'rgba(193,154,107,0.08)', position: 'relative' }}>
+                  <BookmarkBtn active onToggle={() => toggleBookmark(id)} />
+                  <div style={{ height: 58, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, fontFamily: FONT_PANCAKE, color: 'rgba(255,240,215,0.92)', background: it.grad }}>{it.emoji}</div>
+                  <div style={{ padding: '6px 8px' }}>
+                    <div style={{ fontFamily: FONT_PANCAKE, fontSize: 12, fontWeight: 600, color: 'rgba(255,240,215,0.92)', lineHeight: 1.1 }}>{it.name}</div>
+                    <div style={{ fontSize: 8, letterSpacing: 1, textTransform: 'uppercase', color: 'rgba(193,154,107,0.7)', marginTop: 3 }}>{it.sub}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div style={{ borderRadius: 14, border: '0.5px dashed rgba(193,154,107,0.3)', background: 'rgba(193,154,107,0.04)', padding: 18, textAlign: 'center', color: 'rgba(193,154,107,0.55)', fontSize: 11, fontStyle: 'italic' }}>
+            Bookmark a challenge, program or routine to build your plan.
+          </div>
+        )}
+
+        {/* CHALLENGES */}
+        <SectionHead>Challenges</SectionHead>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {(['All', ...CATEGORIES] as const).map(cat => {
+            const on = selectedCategory === cat;
+            return (
               <button
-                onClick={toggleTheme}
-                aria-label="Toggle theme"
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
                 style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: '50%',
-                  border: '1.5px solid rgba(193,154,107,0.30)',
-                  background: 'rgba(193,154,107,0.08)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  flexShrink: 0,
+                  borderRadius: 999, padding: '6px 14px', fontSize: 11, whiteSpace: 'nowrap', cursor: 'pointer',
+                  border: `0.5px solid ${on ? 'rgba(214,178,130,0.85)' : 'rgba(193,154,107,0.28)'}`,
+                  background: on ? 'linear-gradient(180deg, rgba(214,178,130,0.92), rgba(193,154,107,0.78))' : 'rgba(193,154,107,0.05)',
+                  color: on ? '#2a1e12' : 'rgba(255,240,215,0.7)', fontWeight: on ? 600 : 400, fontFamily: FONT_CASUAL,
                 }}
               >
-                {isDark
-                  ? <Sun style={{ width: 14, height: 14, color: 'rgba(193,154,107,0.75)' }} />
-                  : <Moon style={{ width: 14, height: 14, color: 'rgba(193,154,107,0.75)' }} />
-                }
+                {cat}
               </button>
-          </header>
-
-          <main className="space-y-12 pb-12">
-            
-            {/* A. THIS MONTH'S PRACTICE */}
-            <div className="w-full p-8 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-700" style={sectionCardStyle}>
-              <div className="flex flex-col md:flex-row justify-between items-end md:items-center gap-4 mb-6">
-                <div>
-                  <div className="flex items-baseline gap-2">
-                     <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 42, fontWeight: 600, color: 'rgba(255,240,215,0.94)', lineHeight: 1 }}>
-                       {isLoadingPracticed ? "—" : practicedDaysCount}
-                     </span>
-                     <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, fontWeight: 500, color: 'rgba(193,154,107,0.70)' }}>
-                       / {daysInMonth}
-                     </span>
-                  </div>
-                  <p style={{ fontSize: 11, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.60)', fontWeight: 600, marginTop: 4 }}>
-                    days practiced
-                  </p>
-                </div>
-                <div className="text-right flex flex-col items-end gap-2">
-                  <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 16, color: 'rgba(255,240,215,0.60)' }}>
-                    Practice daily to fill your month
-                  </p>
-                  <Button 
-                    onClick={() => setIsRewardDialogOpen(true)}
-                    disabled={hasPulledThisMonth}
-                    className={cn(
-                      "h-10 rounded-full font-bold px-6 transition-all",
-                      hasPulledThisMonth 
-                        ? "bg-white/5 border border-white/10 text-white/20" 
-                        : "bg-[rgba(193,154,107,0.85)] text-[rgba(25,16,8,0.95)] hover:opacity-90 shadow-lg"
-                    )}
-                  >
-                    <Gift className="mr-2 h-4 w-4" />
-                    {hasPulledThisMonth ? "Next reward next month" : "Pull Monthly Reward"}
-                  </Button>
-                </div>
+            );
+          })}
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 10 }}>
+          {visibleChallenges.map(c => (
+            <div key={c.id} onClick={() => openChallenge(c)} style={{ borderRadius: 14, overflow: 'hidden', border: '0.5px solid rgba(193,154,107,0.18)', background: 'rgba(13,20,30,0.5)', position: 'relative', cursor: 'pointer' }}>
+              <BookmarkBtn active={bookmarks.includes(c.id)} onToggle={() => toggleBookmark(c.id)} />
+              <div style={{ height: 88, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 34, background: c.grad }}>
+                {c.emoji}
+                {c.status === 'active' && c.daysInChallenge && (
+                  <span style={{ position: 'absolute', bottom: 7, left: 7, fontSize: 8, letterSpacing: 0.5, textTransform: 'uppercase', color: 'rgba(255,240,215,0.9)', background: 'rgba(0,0,0,0.5)', borderRadius: 999, padding: '2px 7px' }}>Day {c.daysInChallenge}/{c.totalDays}</span>
+                )}
+                {c.status === 'completed' && (
+                  <span style={{ position: 'absolute', bottom: 7, left: 7, fontSize: 8, letterSpacing: 0.5, textTransform: 'uppercase', color: 'rgba(160,195,130,0.95)', background: 'rgba(0,0,0,0.5)', borderRadius: 999, padding: '2px 7px' }}>Completed</span>
+                )}
               </div>
-
-              <div style={{ height: 14, background: 'rgba(255,240,215,0.08)', borderRadius: 8, overflow: 'hidden' }}>
-                 <div 
-                   style={{ 
-                     height: '100%', 
-                     width: `${(practicedDaysCount / daysInMonth) * 100}%`,
-                     background: 'linear-gradient(90deg, rgba(193,154,107,0.7), rgba(210,180,110,0.95))',
-                     borderRadius: 8,
-                     transition: 'width 1.5s cubic-bezier(0.4, 0, 0.2, 1)'
-                   }}
-                 />
+              <div style={{ padding: '8px 10px 10px' }}>
+                <div style={{ fontFamily: FONT_PANCAKE, fontSize: 14, fontWeight: 600, color: 'rgba(255,240,215,0.92)', lineHeight: 1.1 }}>{c.name}</div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 5 }}>
+                  <span style={{ fontSize: 8, letterSpacing: 1, textTransform: 'uppercase', color: 'rgba(193,154,107,0.7)' }}>{c.category}</span>
+                  <Stars n={c.difficulty} />
+                </div>
               </div>
             </div>
+          ))}
+        </div>
 
-            {/* B. YOUR COLLECTION */}
-            <Link href="/yoga-collection" className="block active:scale-[0.99] transition-transform">
-              <div className="w-full p-6 shadow-xl" style={sectionCardStyle}>
-                <div className="flex justify-between items-center mb-6">
-                  <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 20, fontWeight: 600, color: 'rgba(255,240,215,0.92)' }}>Your Collection</h2>
-                  <span style={{ fontSize: 11, color: 'rgba(193,154,107,0.60)', textTransform: 'uppercase', fontWeight: 600 }}>
-                    {collectedIds.length} of {allCollectibles.length} collected · tap to view ›
-                  </span>
-                </div>
-                <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-                  {allCollectibles.map((item) => {
-                    const isCollected = collectedIds.includes(item.id);
-                    return (
-                      <div key={item.id} className="flex-shrink-0 relative group">
-                        <div 
-                          className={cn(
-                            "w-14 h-14 rounded-full flex items-center justify-center border transition-all duration-500",
-                            isCollected 
-                              ? "border-[rgba(193,154,107,0.4)] bg-[rgba(193,154,107,0.1)]" 
-                              : "border-white/5 bg-white/5"
-                          )}
-                        >
-                          {isCollected ? (
-                            <Image src={item.imageUrl} alt={item.name} width={40} height={40} className="rounded-full" />
-                          ) : (
-                            <Lock className="w-4 h-4 text-white/10" />
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </Link>
-
-            {/* C. ACTIVE CHALLENGES */}
-            <div className="space-y-12">
-              {categoryOrder.map((category) => {
-                const challengesInCategory = challengesByCategory[category];
-                if (!challengesInCategory) return null;
-                const Icon = categoryIcons[category];
-                return (
-                  <div key={category}>
-                    <h2 className="text-2xl font-bold tracking-tight mb-6 flex items-center gap-3 text-white" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                      <Icon className="h-6 w-6 text-white/50" />
-                      {category} Challenges
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      {challengesInCategory.map((challenge, index) => (
-                        <Card key={challenge.id} className="overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 group rounded-2xl flex flex-col text-white" style={sectionCardStyle}>
-                          <div className="relative w-full h-60">
-                            <Image
-                              src={challenge.imageUrl.src}
-                              alt={challenge.name}
-                              fill
-                              priority={index < 2}
-                              data-ai-hint={challenge.imageHint}
-                              className="object-cover transition-transform duration-700 group-hover:scale-105"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-between p-4">
-                              <div className="flex justify-between items-start">
-                                  {getStatusBadge(challenge)}
-                                  {challenge.status === 'active' && challenge.daysInChallenge && (
-                                    <Badge variant="destructive" className="bg-red-500/80">
-                                      Day {challenge.daysInChallenge} / {challenge.totalDays}
-                                    </Badge>
-                                  )}
-                              </div>
-                              <h2 className="text-2xl font-bold text-white mb-1" style={{ fontFamily: "'Cormorant Garamond', serif" }}>{challenge.name}</h2>
-                            </div>
-                          </div>
-                          <CardContent className="p-6 flex-grow flex flex-col space-y-6">
-                            <div className="flex justify-between items-center">
-                              <div className="flex items-center gap-1">
-                                {Array.from({ length: 5 }).map((_, i) => (
-                                  <Star key={i} className={cn("h-4 w-4", i < challenge.difficulty ? "text-yellow-400 fill-yellow-400" : "text-white/10")} />
-                                ))}
-                              </div>
-                              <span className="text-[10px] uppercase tracking-widest text-white/40 font-bold">{challenge.category}</span>
-                            </div>
-                            <p className="text-white/70 text-sm leading-relaxed flex-grow">{challenge.description}</p>
-                            <div className="space-y-3 pt-2">
-                              {challenge.status === 'active' && (
-                                <Button 
-                                  onClick={() => handleMarkComplete(challenge.id)}
-                                  disabled={!!completedToday[challenge.id] || isMarkingLoading === challenge.id}
-                                  className={cn(
-                                    "w-full h-12 rounded-full font-bold transition-all",
-                                    completedToday[challenge.id] 
-                                      ? "bg-green-600/20 border border-green-600/40 text-green-400"
-                                      : "bg-[rgba(193,154,107,0.85)] text-[rgba(25,16,8,0.95)] hover:opacity-90"
-                                  )}
-                                >
-                                  {isMarkingLoading === challenge.id ? <SmileyRockLoader /> : completedToday[challenge.id] ? <><Check className="mr-2 h-4 w-4" /> Completed Today</> : "Mark Today Complete"}
-                                </Button>
-                              )}
-                              <Link href={challenge.detailLink} passHref className="block">
-                                <Button
-                                  variant="outline"
-                                  className="w-full h-12 text-sm bg-white/5 hover:bg-white/10 text-white border-white/10 rounded-full"
-                                  disabled={challenge.detailLink === '#'}
-                                >
-                                  {challenge.status === 'completed' ? 'View Results' : 'View Challenge'}
-                                  <ArrowRight className="ml-2 h-4 w-4" />
-                                </Button>
-                              </Link>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
+        {/* PROGRAMS */}
+        <SectionHead>Programs · multi-day</SectionHead>
+        <div style={{ display: 'flex', gap: 10 }}>
+          {programs.map(p => (
+            <div key={p.id} style={{ flex: 1, borderRadius: 14, border: '0.5px solid rgba(193,154,107,0.2)', background: 'linear-gradient(160deg, rgba(193,154,107,0.14), rgba(13,20,30,0.5))', padding: '12px 8px 10px', textAlign: 'center', position: 'relative' }}>
+              <BookmarkBtn active={bookmarks.includes(p.id)} onToggle={() => toggleBookmark(p.id)} />
+              <div style={{ fontFamily: FONT_PANCAKE, fontSize: 24, fontWeight: 600, color: 'rgba(255,240,215,0.94)', lineHeight: 1 }}>{p.days}</div>
+              <div style={{ fontSize: 8, letterSpacing: 1, textTransform: 'uppercase', color: 'rgba(193,154,107,0.7)' }}>day</div>
+              <div style={{ fontSize: 10, color: 'rgba(255,240,215,0.8)', margin: '6px 0 7px', lineHeight: 1.2 }}>{p.name}</div>
+              <ComingSoon />
             </div>
+          ))}
+        </div>
 
-            {/* D. CHALLENGES WITH FRIENDS (AT THE BOTTOM) */}
-            <Card className="w-full shadow-2xl text-white overflow-hidden" style={sectionCardStyle}>
-              <CardHeader className="text-center pt-10">
-                <CardTitle style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: 'rgba(255,240,215,0.92)' }} className="text-3xl font-semibold flex items-center justify-center gap-3">
-                  <Users className="h-7 w-7" style={{ color: 'rgba(193,154,107,0.80)' }} />
-                  {t('challengesWithFriendsTitle')}
-                </CardTitle>
-                <CardDescription className="text-white/60 mt-2 max-w-sm mx-auto text-sm italic">
-                  {t('challengesWithFriendsDesc')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex flex-col items-center space-y-8 p-10">
-                <div className="flex -space-x-4">
-                  {friends.map(friend => (
-                    <Avatar key={friend.id} className="h-14 w-14 border-4 border-[rgba(25,16,8,0.5)] transition-transform hover:scale-110">
-                      <AvatarImage src={friend.avatarUrl} alt={friend.name} data-ai-hint={friend.avatarHint} />
-                      <AvatarFallback className="bg-white/10 text-white/50">{friend.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                  ))}
-                </div>
-                <InviteFriendDialog />
-              </CardContent>
-            </Card>
+        {/* QUICK ROUTINES */}
+        <SectionHead>Quick Routines</SectionHead>
+        <div style={{ display: 'flex', gap: 10 }}>
+          {routines.map(r => (
+            <div key={r.id} style={{ flex: 1, borderRadius: 14, border: '0.5px solid rgba(193,154,107,0.2)', background: 'rgba(13,20,30,0.5)', padding: 12, position: 'relative' }}>
+              <BookmarkBtn active={bookmarks.includes(r.id)} onToggle={() => toggleBookmark(r.id)} />
+              <div style={{ fontSize: 22 }}>{r.icon}</div>
+              <div style={{ fontFamily: FONT_PANCAKE, fontSize: 15, color: 'rgba(255,240,215,0.92)', marginTop: 4 }}>{r.name}</div>
+              <div style={{ fontSize: 10, color: 'rgba(193,154,107,0.7)', margin: '2px 0 8px' }}>{r.meta}</div>
+              <ComingSoon />
+            </div>
+          ))}
+        </div>
 
-          </main>
+        {/* COMMUNITY */}
+        <SectionHead>Community</SectionHead>
+        <div style={{ ...sectionCardStyle, borderRadius: 18, padding: 18, textAlign: 'center' }}>
+          <div style={{ fontFamily: FONT_PANCAKE, fontSize: 18, fontWeight: 600, color: 'rgba(255,240,215,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            <Users className="h-5 w-5" style={{ color: 'rgba(193,154,107,0.8)' }} /> {t('challengesWithFriendsTitle')}
+          </div>
+          <p style={{ fontSize: 11, fontStyle: 'italic', color: 'rgba(255,240,215,0.5)', margin: '4px 0 12px' }}>{t('challengesWithFriendsDesc')}</p>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
+            {friends.map((f, i) => (
+              <Avatar key={f.id} style={{ width: 40, height: 40, border: '3px solid #11121d', marginLeft: i === 0 ? 0 : -10 }}>
+                <AvatarFallback style={{ background: 'rgba(193,154,107,0.2)', color: 'rgba(214,178,130,0.9)', fontSize: 13 }}>{f.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+            ))}
+          </div>
+          <InviteFriendDialog />
+        </div>
+
       </div>
-
-      <RockWheelDialog 
-        isOpen={isRewardDialogOpen} 
-        onClose={() => setIsRewardDialogOpen(false)} 
-        onReward={handleRewardWon} 
-      />
     </AppShell>
   );
 }
