@@ -66,7 +66,7 @@ export function AppShell({ children }: AppShellProps) {
   const isActive = (path: string) => pathname === path;
 
   // List of routes where the top header is hidden because they provide their own header/toggle
-  const hideHeaderRoutes = ['/dashboard', '/snap-yoga', '/practice-calendar', '/challenges', '/profile', '/mood-tracker'];
+  const hideHeaderRoutes = ['/dashboard', '/snap-yoga', '/practice-calendar', '/challenges', '/challenges/headstand', '/challenges/crow', '/profile', '/mood-tracker'];
 
   return (
     <div className="relative min-h-screen font-serif">
