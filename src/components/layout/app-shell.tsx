@@ -110,14 +110,13 @@ export function AppShell({ children }: AppShellProps) {
         )}
 
         {/* MAIN CONTENT */}
-        <main className="flex-grow pb-24 md:pb-0">
+        <main className="flex-grow pb-24">
           {children}
         </main>
 
         {/* BOTTOM NAVIGATION - icons only (label on the active tab), Analyze as a center action */}
         <nav className={cn(
           "fixed bottom-0 left-0 right-0 z-40 flex h-20 items-center justify-around border-t px-3 backdrop-blur-xl transition-colors duration-300",
-          pathname !== '/dashboard' && "md:hidden",
           theme === 'dark' ? "bg-black/40 border-white/10 text-white" : "bg-white/60 border-black/10 text-black"
         )}>
           {[navItems[0], navItems[2], null, navItems[3], navItems[4]].map((item, i) => {
