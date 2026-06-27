@@ -27,7 +27,7 @@ export default function HomePage() {
     : 'linear-gradient(175deg,#B0B5C0 0%,#9DA4B0 35%,#A8A0BC 70%,#9B96B5 100%)';
 
   const brandColor    = dark ? 'rgba(255,240,215,0.90)' : 'rgba(255,248,235,0.93)';
-  const tagColor      = dark ? 'rgba(193,154,107,0.48)' : 'rgba(255,248,235,0.52)';
+  const tagColor      = dark ? 'rgba(193,154,107,0.48)' : '#320E3B';
   const divColor      = dark ? 'rgba(193,154,107,0.22)' : 'rgba(255,255,255,0.28)';
   const ringDash      = dark ? 'rgba(193,154,107,0.18)' : 'rgba(255,255,255,0.22)';
   const ringSolid     = dark ? 'rgba(193,154,107,0.09)' : 'rgba(255,255,255,0.09)';
@@ -41,7 +41,7 @@ export default function HomePage() {
   const activeDot     = dark ? 'rgba(193,154,107,0.80)' : 'rgba(255,248,235,0.85)';
   const inactiveDot   = dark ? 'rgba(193,154,107,0.18)' : 'rgba(255,248,235,0.22)';
   const linkColor     = dark ? 'rgba(255,240,215,0.35)' : 'rgba(255,248,235,0.45)';
-  const linkEmColor   = dark ? 'rgba(193,154,107,0.88)' : 'rgba(255,248,235,0.88)';
+  const linkEmColor   = dark ? 'rgba(193,154,107,0.88)' : '#320E3B';
   const toggleBorder  = 'rgba(193,154,107,0.30)';
   const toggleBg      = 'rgba(193,154,107,0.08)';
 
