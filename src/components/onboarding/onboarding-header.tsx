@@ -35,14 +35,10 @@ export function OnboardingHeader({
           {Array.from({ length: steps }).map((_, i) => (
             <span
               key={i}
-              className="rounded-full transition-all"
+              className={cn('rounded-full transition-all', i <= currentStep ? 'sy-step-active' : 'sy-step')}
               style={{
                 height: 3,
                 width: i === currentStep ? 20 : 8,
-                background:
-                  i <= currentStep
-                    ? 'rgba(193,154,107,0.80)'
-                    : 'rgba(193,154,107,0.18)',
               }}
             />
           ))}
