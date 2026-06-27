@@ -42,8 +42,6 @@ export default function HomePage() {
   const inactiveDot   = dark ? 'rgba(193,154,107,0.18)' : 'rgba(255,248,235,0.22)';
   const linkColor     = dark ? 'rgba(255,240,215,0.35)' : 'rgba(255,248,235,0.45)';
   const linkEmColor   = dark ? 'rgba(193,154,107,0.88)' : '#320E3B';
-  const toggleBorder  = 'rgba(193,154,107,0.30)';
-  const toggleBg      = 'rgba(193,154,107,0.08)';
 
   return (
     <div style={{
@@ -55,36 +53,34 @@ export default function HomePage() {
       transition: 'background 0.6s ease',
     }}>
 
-      {/* Theme toggle */}
+      {/* Theme toggle — pill switch (knob left = light, knob right = dark) */}
       <button
         onClick={toggleTheme}
-        aria-label="Toggle theme"
+        role="switch"
+        aria-checked={!dark}
+        aria-label="Toggle light and dark mode"
         style={{
           position: 'absolute', top: 16, right: 16,
-          width: 32, height: 32, borderRadius: '50%',
-          border: `1.5px solid ${toggleBorder}`,
-          background: toggleBg,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer',
+          width: 52, height: 28, borderRadius: 999,
+          border: `0.5px solid ${dark ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.40)'}`,
+          padding: 0, cursor: 'pointer',
+          background: dark
+            ? 'linear-gradient(135deg,#2E2746 0%,#191327 100%)'
+            : 'linear-gradient(135deg,#BDB6D9 0%,#A49FC2 100%)',
+          boxShadow: 'inset 0 1px 2px rgba(80,70,100,0.25)',
+          transition: 'background 0.4s ease, border-color 0.4s ease',
         }}
       >
-        {dark ? (
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(193,154,107,0.75)" strokeWidth="1.5">
-            <circle cx="12" cy="12" r="5"/>
-            <line x1="12" y1="1" x2="12" y2="3"/>
-            <line x1="12" y1="21" x2="12" y2="23"/>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-            <line x1="1" y1="12" x2="3" y2="12"/>
-            <line x1="21" y1="12" x2="23" y2="12"/>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-          </svg>
-        ) : (
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(193,154,107,0.75)" strokeWidth="1.5">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/>
-          </svg>
-        )}
+        <span style={{ position: 'absolute', top: 8, width: 5, height: 5, borderRadius: '50%', background: 'rgba(255,250,240,0.80)', transition: 'all 0.3s ease', ...(dark ? { left: 10 } : { right: 10 }) }} />
+        <span style={{ position: 'absolute', top: 15, width: 3, height: 3, borderRadius: '50%', background: 'rgba(255,250,240,0.55)', transition: 'all 0.3s ease', ...(dark ? { left: 18 } : { right: 18 }) }} />
+        <span style={{
+          position: 'absolute', top: 2.5, left: 2.5,
+          width: 22, height: 22, borderRadius: '50%',
+          background: dark ? '#D9C28A' : '#FBF4E6',
+          boxShadow: '0 2px 5px rgba(60,50,80,0.35)',
+          transform: dark ? 'translateX(24px)' : 'translateX(0)',
+          transition: 'transform 0.35s cubic-bezier(0.4,0,0.2,1), background 0.4s ease',
+        }} />
       </button>
 
       {/* Brand */}
