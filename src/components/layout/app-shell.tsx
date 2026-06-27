@@ -126,9 +126,11 @@ export function AppShell({ children }: AppShellProps) {
                 <Link key="analyze-fab" href="/snap-yoga" aria-label="Analyze" className="flex items-center justify-center flex-1 h-full">
                   <div
                     className="-mt-7 flex h-14 w-14 items-center justify-center rounded-full active:scale-90 transition-transform"
-                    style={{ background: 'rgba(193,154,107,0.92)', boxShadow: '0 6px 18px rgba(193,154,107,0.35)' }}
+                    style={theme === 'dark'
+                      ? { background: 'rgba(193,154,107,0.92)', boxShadow: '0 6px 18px rgba(193,154,107,0.35)' }
+                      : { background: '#320E3B', boxShadow: '0 6px 18px rgba(50,14,59,0.40)' }}
                   >
-                    <Sparkles className="h-6 w-6" style={{ color: '#1a1210' }} />
+                    <Sparkles className="h-6 w-6" style={{ color: theme === 'dark' ? '#1a1210' : 'rgba(255,248,235,0.95)' }} />
                   </div>
                 </Link>
               );
@@ -144,11 +146,16 @@ export function AppShell({ children }: AppShellProps) {
                 <item.icon
                   className={cn(
                     "h-6 w-6 transition-colors duration-300",
-                    active ? "text-primary" : (theme === 'dark' ? "text-white/40" : "text-black/40")
+                    active
+                      ? (theme === 'dark' ? "text-primary" : "text-[#320E3B]")
+                      : (theme === 'dark' ? "text-white/40" : "text-[rgba(50,14,59,0.5)]")
                   )}
                 />
                 {active && (
-                  <span className="text-[9px] uppercase tracking-widest font-sans font-semibold text-primary">
+                  <span className={cn(
+                    "text-[9px] uppercase tracking-widest font-sans font-semibold",
+                    theme === 'dark' ? "text-primary" : "text-[#320E3B]"
+                  )}>
                     {item.label}
                   </span>
                 )}
