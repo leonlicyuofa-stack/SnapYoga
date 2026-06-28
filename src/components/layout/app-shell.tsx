@@ -114,48 +114,40 @@ export function AppShell({ children }: AppShellProps) {
           {children}
         </main>
 
-        {/* BOTTOM NAVIGATION - icons only (label on the active tab), Analyze as a center action */}
-        <nav className={cn(
-          "fixed bottom-0 left-0 right-0 z-40 flex h-20 items-center justify-around border-t px-3 backdrop-blur-xl transition-colors duration-300",
-          theme === 'dark' ? "bg-black/40 border-white/10 text-white" : "bg-white/60 border-black/10 text-black"
-        )}>
-          {[navItems[0], navItems[2], null, navItems[3], navItems[4]].map((item, i) => {
-            // Center slot: the Analyze action as a raised FAB
-            if (item === null) {
-              return (
-                <Link key="analyze-fab" href="/snap-yoga" aria-label="Analyze" className="flex items-center justify-center flex-1 h-full">
-                  <div
-                    className="-mt-7 flex h-14 w-14 items-center justify-center rounded-full active:scale-90 transition-transform"
-                    style={theme === 'dark'
-                      ? { background: 'rgba(193,154,107,0.92)', boxShadow: '0 6px 18px rgba(193,154,107,0.35)' }
-                      : { background: '#320E3B', boxShadow: '0 6px 18px rgba(50,14,59,0.40)' }}
-                  >
-                    <Sparkles className="h-6 w-6" style={{ color: theme === 'dark' ? '#1a1210' : 'rgba(255,248,235,0.95)' }} />
-                  </div>
-                </Link>
-              );
-            }
+        {/* BOTTOM NAVIGATION — floating pill; the active tab expands with its label */}
+        <nav
+          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex items-center gap-1 rounded-full px-2 py-2 backdrop-blur-xl transition-colors duration-300"
+          style={theme === 'dark'
+            ? { background: 'rgba(255,255,255,0.06)', border: '0.5px solid rgba(255,255,255,0.10)', boxShadow: '0 8px 22px rgba(0,0,0,0.35)' }
+            : { background: 'rgba(255,252,248,0.90)', border: '0.5px solid rgba(255,255,255,0.50)', boxShadow: '0 8px 22px rgba(60,40,70,0.18)' }}
+        >
+          {[navItems[0], navItems[2], navItems[1], navItems[3], navItems[4]].map((item) => {
             const active = isActive(item.href);
+            const dark = theme === 'dark';
             return (
               <Link
-                key={item.label}
+                key={item.href}
                 href={item.href}
                 aria-label={item.label}
-                className="flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all active:scale-90"
+                className="flex items-center justify-center gap-[7px] rounded-full transition-all duration-300 active:scale-90"
+                style={active
+                  ? {
+                      height: 44, padding: '0 16px',
+                      background: dark ? 'rgba(193,154,107,0.20)' : 'rgba(50,14,59,0.12)',
+                      border: `0.5px solid ${dark ? 'rgba(193,154,107,0.40)' : 'transparent'}`,
+                      color: dark ? 'rgba(214,178,130,1)' : '#320E3B',
+                    }
+                  : {
+                      height: 44, width: 44,
+                      color: dark ? 'rgba(255,240,215,0.40)' : 'rgba(50,14,59,0.50)',
+                    }}
               >
-                <item.icon
-                  className={cn(
-                    "h-6 w-6 transition-colors duration-300",
-                    active
-                      ? (theme === 'dark' ? "text-primary" : "text-[#320E3B]")
-                      : (theme === 'dark' ? "text-white/40" : "text-[rgba(50,14,59,0.5)]")
-                  )}
-                />
+                <item.icon className="h-[22px] w-[22px] shrink-0" />
                 {active && (
-                  <span className={cn(
-                    "text-[9px] uppercase tracking-widest font-sans font-semibold",
-                    theme === 'dark' ? "text-primary" : "text-[#320E3B]"
-                  )}>
+                  <span
+                    className="text-[13px] font-sans font-medium whitespace-nowrap"
+                    style={{ color: dark ? 'rgba(255,240,215,0.96)' : '#320E3B' }}
+                  >
                     {item.label}
                   </span>
                 )}
