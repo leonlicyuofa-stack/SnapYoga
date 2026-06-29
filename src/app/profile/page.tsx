@@ -46,6 +46,13 @@ export default function ProfilePage() {
   const { t } = useLanguage();
   const { isDark, toggleTheme } = useTheme();
   const { toast } = useToast();
+  // Light = amethyst on lavender; dark = the original cream/gold on ink.
+  const txt = (a: number) => isDark ? `rgba(255,240,215,${a})` : `rgba(50,14,59,${a})`;
+  const acc = (a: number) => isDark ? `rgba(193,154,107,${a})` : `rgba(50,14,59,${a})`;
+  const card = isDark ? 'rgba(25,16,8,0.50)' : 'rgba(255,255,255,0.12)';
+  const cardBorder = isDark ? 'rgba(193,154,107,0.18)' : 'rgba(255,255,255,0.40)';
+  const NAME_C = isDark ? 'rgba(255,240,215,0.94)' : 'rgba(255,248,235,0.96)';
+  const NAME_SH = isDark ? 'none' : '0 1px 3px rgba(70,60,80,0.32)';
   const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false);
   const [isUsernameSubmitting, setIsUsernameSubmitting] = useState(false);
   const [inviteLink, setInviteLink] = useState('');
@@ -205,31 +212,6 @@ export default function ProfilePage() {
       <div className="relative min-h-[calc(100vh-4rem)]">
         <div className="relative z-10 flex flex-col h-full">
             
-            {/* THEME TOGGLE */}
-            <div className="absolute top-4 right-4">
-              <button
-                onClick={toggleTheme}
-                aria-label="Toggle theme"
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: '50%',
-                  border: '1.5px solid rgba(193,154,107,0.30)',
-                  background: 'rgba(193,154,107,0.08)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  flexShrink: 0,
-                }}
-              >
-                {isDark
-                  ? <Sun style={{ width: 14, height: 14, color: 'rgba(193,154,107,0.75)' }} />
-                  : <Moon style={{ width: 14, height: 14, color: 'rgba(193,154,107,0.75)' }} />
-                }
-              </button>
-            </div>
-
             {/* PROFILE HEADER */}
             <header className="container mx-auto px-4 pt-12 pb-8 relative flex flex-col items-center text-center">
                 <div className="relative mb-4">
@@ -238,10 +220,10 @@ export default function ProfilePage() {
                       width: 84,
                       height: 84,
                       borderRadius: '50%',
-                      border: '2px solid rgba(193,154,107,0.45)',
-                      boxShadow: '0 0 0 6px rgba(193,154,107,0.06), 0 0 0 12px rgba(193,154,107,0.03)',
+                      border: `2px solid ${acc(0.45)}`,
+                      boxShadow: `0 0 0 6px ${acc(0.06)}, 0 0 0 12px ${acc(0.03)}`,
                       overflow: 'hidden',
-                      background: 'rgba(193,154,107,0.15)',
+                      background: isDark ? 'rgba(193,154,107,0.15)' : 'rgba(255,255,255,0.18)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -254,7 +236,7 @@ export default function ProfilePage() {
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
                     ) : (
-                      <span style={{ fontSize: 32, color: 'rgba(193,154,107,0.85)', fontFamily: "'Cormorant Garamond', serif" }}>
+                      <span style={{ fontSize: 32, color: acc(0.85), fontFamily: "'Cormorant Garamond', serif" }}>
                         {(user?.displayName?.[0] || user?.email?.[0] || 'U').toUpperCase()}
                       </span>
                     )}
@@ -269,7 +251,7 @@ export default function ProfilePage() {
                       width: 26,
                       height: 26,
                       borderRadius: '50%',
-                      background: 'rgba(193,154,107,0.85)',
+                      background: isDark ? 'rgba(193,154,107,0.85)' : '#320E3B',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -277,7 +259,7 @@ export default function ProfilePage() {
                       border: 'none',
                     }}
                   >
-                    <Pencil style={{ width: 14, height: 14, color: 'rgba(25,16,8,0.95)' }} />
+                    <Pencil style={{ width: 14, height: 14, color: isDark ? 'rgba(25,16,8,0.95)' : 'rgba(255,248,235,0.95)' }} />
                   </a>
                 </div>
 
@@ -285,7 +267,8 @@ export default function ProfilePage() {
                   style={{
                     fontSize: 24,
                     fontWeight: 600,
-                    color: 'rgba(255,240,215,0.94)',
+                    color: NAME_C,
+                    textShadow: NAME_SH,
                     fontFamily: "'Cormorant Garamond', Georgia, serif",
                     marginBottom: 8,
                   }}
@@ -319,43 +302,43 @@ export default function ProfilePage() {
                   {/* MY PROGRESS */}
                   <div className="space-y-1">
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                        <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(193,154,107,0.55)' }}>My Progress</p>
-                        <span style={{ fontSize: 11, color: 'rgba(193,154,107,0.40)' }}>This Week</span>
+                        <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: acc(0.55) }}>My Progress</p>
+                        <span style={{ fontSize: 11, color: acc(0.40) }}>This Week</span>
                       </div>
-                      <div style={{ 
-                        borderRadius: '24px 12px 24px 24px', 
-                        border: '0.5px solid rgba(193,154,107,0.18)', 
-                        background: 'rgba(25,16,8,0.50)', 
-                        padding: '14px 16px' 
+                      <div style={{
+                        borderRadius: '24px 12px 24px 24px',
+                        border: `0.5px solid ${cardBorder}`,
+                        background: card,
+                        padding: '14px 16px'
                       }}>
                         <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'flex-end' }}>
                           <div className="flex flex-col items-center gap-2">
                             <svg width="58" height="58" viewBox="0 0 58 58">
-                              <circle cx="29" cy="29" r="24" fill="none" stroke="rgba(255,240,215,0.07)" strokeWidth="5"/>
-                              <circle cx="29" cy="29" r="24" fill="none" stroke="rgba(193,154,107,0.85)" strokeWidth="5"
+                              <circle cx="29" cy="29" r="24" fill="none" stroke={isDark ? 'rgba(255,240,215,0.07)' : 'rgba(50,14,59,0.10)'} strokeWidth="5"/>
+                              <circle cx="29" cy="29" r="24" fill="none" stroke={acc(0.85)} strokeWidth="5"
                                 strokeDasharray="150.8" strokeDashoffset={getOffset(practicePercent)} strokeLinecap="round"
                                 transform="rotate(-90 29 29)"/>
-                              <text x="29" y="34" textAnchor="middle" fontSize="13" fontWeight="700" fill="rgba(255,240,215,0.92)" fontFamily="Cormorant Garamond, serif">{practicePercent}%</text>
+                              <text x="29" y="34" textAnchor="middle" fontSize="13" fontWeight="700" fill={txt(0.92)} fontFamily="Cormorant Garamond, serif">{practicePercent}%</text>
                             </svg>
-                            <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: 'rgba(193,154,107,0.80)' }}>Practice</span>
+                            <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: acc(0.80) }}>Practice</span>
                           </div>
                           <div className="flex flex-col items-center gap-2">
                             <svg width="58" height="58" viewBox="0 0 58 58">
-                              <circle cx="29" cy="29" r="24" fill="none" stroke="rgba(255,240,215,0.07)" strokeWidth="5"/>
+                              <circle cx="29" cy="29" r="24" fill="none" stroke={isDark ? 'rgba(255,240,215,0.07)' : 'rgba(50,14,59,0.10)'} strokeWidth="5"/>
                               <circle cx="29" cy="29" r="24" fill="none" stroke="rgba(160,195,130,0.85)" strokeWidth="5"
                                 strokeDasharray="150.8" strokeDashoffset={getOffset(moodPercent)} strokeLinecap="round"
                                 transform="rotate(-90 29 29)"/>
-                              <text x="29" y="34" textAnchor="middle" fontSize="13" fontWeight="700" fill="rgba(255,240,215,0.92)" fontFamily="Cormorant Garamond, serif">{moodPercent}%</text>
+                              <text x="29" y="34" textAnchor="middle" fontSize="13" fontWeight="700" fill={txt(0.92)} fontFamily="Cormorant Garamond, serif">{moodPercent}%</text>
                             </svg>
                             <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: 'rgba(160,195,130,0.85)' }}>Mood</span>
                           </div>
                           <div className="flex flex-col items-center gap-2">
                             <svg width="58" height="58" viewBox="0 0 58 58">
-                              <circle cx="29" cy="29" r="24" fill="none" stroke="rgba(255,240,215,0.07)" strokeWidth="5"/>
+                              <circle cx="29" cy="29" r="24" fill="none" stroke={isDark ? 'rgba(255,240,215,0.07)' : 'rgba(50,14,59,0.10)'} strokeWidth="5"/>
                               <circle cx="29" cy="29" r="24" fill="none" stroke="rgba(200,140,90,0.85)" strokeWidth="5"
                                 strokeDasharray="150.8" strokeDashoffset={getOffset(habitsPercent)} strokeLinecap="round"
                                 transform="rotate(-90 29 29)"/>
-                              <text x="29" y="34" textAnchor="middle" fontSize="13" fontWeight="700" fill="rgba(255,240,215,0.92)" fontFamily="Cormorant Garamond, serif">{habitsPercent}%</text>
+                              <text x="29" y="34" textAnchor="middle" fontSize="13" fontWeight="700" fill={txt(0.92)} fontFamily="Cormorant Garamond, serif">{habitsPercent}%</text>
                             </svg>
                             <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: 'rgba(200,140,90,0.85)' }}>Habits</span>
                           </div>
@@ -365,10 +348,10 @@ export default function ProfilePage() {
 
                   {/* WEEKLY COMMITMENT — sets the exercise goal (days × 24h) */}
                   <div className="space-y-1">
-                      <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(193,154,107,0.55)', marginBottom: 6 }}>Weekly Commitment</p>
-                      <div style={{ borderRadius: '12px 24px 24px 24px', border: '0.5px solid rgba(193,154,107,0.18)', background: 'rgba(25,16,8,0.50)', padding: '14px 16px' }}>
-                        <p style={{ fontSize: 14, fontWeight: 600, color: 'rgba(255,240,215,0.90)', fontFamily: "'Cormorant Garamond', serif", margin: 0 }}>How many days a week will you commit?</p>
-                        <p style={{ fontSize: 11, color: 'rgba(255,240,215,0.40)', margin: '2px 0 0' }}>We'll set your exercise goal from this.</p>
+                      <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: acc(0.55), marginBottom: 6 }}>Weekly Commitment</p>
+                      <div style={{ borderRadius: '12px 24px 24px 24px', border: `0.5px solid ${cardBorder}`, background: card, padding: '14px 16px' }}>
+                        <p style={{ fontSize: 14, fontWeight: 600, color: txt(0.90), fontFamily: "'Cormorant Garamond', serif", margin: 0 }}>How many days a week will you commit?</p>
+                        <p style={{ fontSize: 11, color: txt(0.40), margin: '2px 0 0' }}>We'll set your exercise goal from this.</p>
                         <div style={{ display: 'flex', gap: 6, marginTop: 12 }}>
                           {[1,2,3,4,5,6,7].map(d => {
                             const sel = commitmentDays === d;
@@ -378,9 +361,9 @@ export default function ProfilePage() {
                                 onClick={() => handleSetCommitment(d)}
                                 style={{
                                   flex: 1, height: 36, borderRadius: 10, cursor: 'pointer', fontFamily: "'Cormorant Garamond', serif", fontSize: 14,
-                                  border: `0.5px solid ${sel ? 'rgba(214,178,130,0.6)' : 'rgba(193,154,107,0.25)'}`,
-                                  background: sel ? 'rgba(193,154,107,0.20)' : 'rgba(193,154,107,0.05)',
-                                  color: sel ? 'rgba(255,240,215,0.95)' : 'rgba(255,240,215,0.65)',
+                                  border: `0.5px solid ${sel ? acc(0.6) : acc(0.25)}`,
+                                  background: sel ? acc(0.20) : (isDark ? 'rgba(193,154,107,0.05)' : 'rgba(255,255,255,0.10)'),
+                                  color: sel ? txt(0.95) : txt(0.65),
                                   transition: 'all 0.2s ease',
                                 }}
                               >
@@ -389,8 +372,8 @@ export default function ProfilePage() {
                             );
                           })}
                         </div>
-                        <p style={{ textAlign: 'center', marginTop: 12, fontFamily: "'Cormorant Garamond', serif", fontSize: 15, color: 'rgba(255,240,215,0.9)' }}>
-                          → Weekly goal: <span style={{ color: 'rgba(214,178,130,0.95)', fontWeight: 600 }}>{commitmentDays} h</span> <span style={{ fontSize: 11, opacity: 0.6 }}>/ week (≈1h each day)</span>
+                        <p style={{ textAlign: 'center', marginTop: 12, fontFamily: "'Cormorant Garamond', serif", fontSize: 15, color: txt(0.9) }}>
+                          → Weekly goal: <span style={{ color: acc(0.95), fontWeight: 600 }}>{commitmentDays} h</span> <span style={{ fontSize: 11, opacity: 0.6 }}>/ week (≈1h each day)</span>
                         </p>
                       </div>
                   </div>
@@ -398,24 +381,24 @@ export default function ProfilePage() {
                   {/* MY PRACTICES */}
                   <div className="space-y-1">
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                        <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(193,154,107,0.55)' }}>My Practices</p>
-                        <Link href="/profile/analysis-logs" style={{ fontSize: 11, color: 'rgba(193,154,107,0.40)' }}>Show all ›</Link>
+                        <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: acc(0.55) }}>My Practices</p>
+                        <Link href="/profile/analysis-logs" style={{ fontSize: 11, color: acc(0.40) }}>Show all ›</Link>
                       </div>
                       <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 6 }} className="no-scrollbar">
                         {recentPractices.length > 0 ? (
                           recentPractices.map((practice) => (
                             <Link key={practice.id} href={`/analysis/${practice.id}`}>
-                              <div style={{ flexShrink: 0, width: 130, borderRadius: '16px 16px 16px 6px', border: '0.5px solid rgba(193,154,107,0.16)', background: 'rgba(193,154,107,0.05)', overflow: 'hidden' }}>
+                              <div style={{ flexShrink: 0, width: 130, borderRadius: '16px 16px 16px 6px', border: `0.5px solid ${acc(0.16)}`, background: isDark ? 'rgba(193,154,107,0.05)' : 'rgba(255,255,255,0.12)', overflow: 'hidden' }}>
                                 <div style={{ height: 70, background: 'linear-gradient(135deg, rgba(193,154,107,0.25), rgba(180,110,65,0.20))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>
                                   🧘
                                 </div>
                                 <div style={{ padding: '8px 10px' }}>
-                                  <div className="truncate" style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,240,215,0.88)' }}>{practice.identifiedPose}</div>
-                                  <div style={{ fontSize: 9, color: 'rgba(255,240,215,0.35)', fontStyle: 'italic', marginTop: 2 }}>
+                                  <div className="truncate" style={{ fontSize: 12, fontWeight: 600, color: txt(0.88) }}>{practice.identifiedPose}</div>
+                                  <div style={{ fontSize: 9, color: txt(0.35), fontStyle: 'italic', marginTop: 2 }}>
                                     {formatPracticeDate(practice.createdAt)}
                                   </div>
                                   <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 2 }}>
-                                    <span style={{ background: 'rgba(193,154,107,0.20)', color: 'rgba(193,154,107,0.90)', borderRadius: 999, padding: '1px 6px', fontWeight: 600, fontSize: 11 }}>
+                                    <span style={{ background: acc(0.20), color: acc(0.90), borderRadius: 999, padding: '1px 6px', fontWeight: 600, fontSize: 11 }}>
                                       {Math.round(practice.score)}
                                     </span>
                                   </div>
@@ -424,8 +407,8 @@ export default function ProfilePage() {
                             </Link>
                           ))
                         ) : (
-                          <div style={{ flexShrink: 0, width: '100%', borderRadius: '16px 16px 16px 6px', border: '0.5px dashed rgba(193,154,107,0.16)', background: 'rgba(193,154,107,0.02)', padding: '24px', textAlign: 'center' }}>
-                            <p style={{ fontSize: 12, color: 'rgba(255,240,215,0.35)', fontStyle: 'italic' }}>
+                          <div style={{ flexShrink: 0, width: '100%', borderRadius: '16px 16px 16px 6px', border: `0.5px dashed ${acc(0.16)}`, background: isDark ? 'rgba(193,154,107,0.02)' : 'rgba(255,255,255,0.08)', padding: '24px', textAlign: 'center' }}>
+                            <p style={{ fontSize: 12, color: txt(0.35), fontStyle: 'italic' }}>
                               No practices recorded yet — try the Analyze tab to get started.
                             </p>
                           </div>
@@ -435,9 +418,9 @@ export default function ProfilePage() {
 
                   {/* ACCOUNT SETTINGS (CONSOLIDATED) */}
                   <div className="space-y-1">
-                      <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: 'rgba(193,154,107,0.55)', marginBottom: 6 }}>Account</p>
+                      <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: acc(0.55), marginBottom: 6 }}>Account</p>
                       
-                      <div style={{ borderRadius: 18, border: '0.5px solid rgba(193,154,107,0.18)', background: 'rgba(193,154,107,0.04)', overflow: 'hidden' }}>
+                      <div style={{ borderRadius: 18, border: `0.5px solid ${cardBorder}`, background: isDark ? 'rgba(193,154,107,0.04)' : 'rgba(255,255,255,0.12)', overflow: 'hidden' }}>
                         
                         {/* Row 1: Display Name */}
                         <div 
@@ -445,16 +428,16 @@ export default function ProfilePage() {
                           onClick={() => setExpandedSection(expandedSection === 'username' ? null : 'username')}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <span style={{ fontSize: 15, color: 'rgba(193,154,107,0.75)' }}>◎</span>
+                            <span style={{ fontSize: 15, color: acc(0.75) }}>◎</span>
                             <div>
-                              <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,240,215,0.88)' }}>Display Name</div>
-                              <div style={{ fontSize: 9.5, color: 'rgba(255,240,215,0.32)', fontStyle: 'italic', marginTop: 1 }}>{user?.displayName || 'jellycat'}</div>
+                              <div style={{ fontSize: 13, fontWeight: 600, color: txt(0.88) }}>Display Name</div>
+                              <div style={{ fontSize: 9.5, color: txt(0.32), fontStyle: 'italic', marginTop: 1 }}>{user?.displayName || 'jellycat'}</div>
                             </div>
                           </div>
-                          <span style={{ fontSize: 11, color: 'rgba(193,154,107,0.50)' }}>›</span>
+                          <span style={{ fontSize: 11, color: acc(0.50) }}>›</span>
                         </div>
                         {expandedSection === 'username' && (
-                          <div style={{ padding: '0 14px 14px', borderTop: '0.5px solid rgba(193,154,107,0.05)' }}>
+                          <div style={{ padding: '0 14px 14px', borderTop: `0.5px solid ${acc(0.05)}` }}>
                              <form onSubmit={handleSubmitUsername(onUsernameSubmit)} className="pt-4 space-y-4">
                                 <div className="flex items-center gap-2">
                                     <Input 
@@ -462,7 +445,7 @@ export default function ProfilePage() {
                                         {...registerUsername("username")}
                                         className={cn(usernameErrors.username ? "border-destructive" : "", "flex-grow h-11 text-sm rounded-lg bg-black/20 border-white/10 text-white")}
                                     />
-                                    <Button type="submit" disabled={isUsernameSubmitting || authLoading} className="h-11 w-11 rounded-lg" style={{ background: 'rgba(193,154,107,0.20)', color: 'rgba(193,154,107,0.85)' }}>
+                                    <Button type="submit" disabled={isUsernameSubmitting || authLoading} className="h-11 w-11 rounded-lg" style={{ background: acc(0.20), color: acc(0.85) }}>
                                         {isUsernameSubmitting ? <SmileyRockLoader /> : <Save className="h-4 w-4" />}
                                     </Button>
                                 </div>
@@ -473,27 +456,27 @@ export default function ProfilePage() {
 
                         {/* Row 2: Subscription */}
                         <div 
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 14px', gap: 10, cursor: 'pointer', borderTop: '0.5px solid rgba(193,154,107,0.10)' }} 
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 14px', gap: 10, cursor: 'pointer', borderTop: `0.5px solid ${acc(0.10)}` }} 
                           onClick={() => setExpandedSection(expandedSection === 'subscription' ? null : 'subscription')}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <span style={{ fontSize: 15, color: 'rgba(193,154,107,0.75)' }}>♛</span>
+                            <span style={{ fontSize: 15, color: acc(0.75) }}>♛</span>
                             <div>
-                              <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,240,215,0.88)' }}>Subscription</div>
-                              <div style={{ fontSize: 9.5, color: 'rgba(255,240,215,0.32)', fontStyle: 'italic', marginTop: 1 }}>Manage your plan</div>
+                              <div style={{ fontSize: 13, fontWeight: 600, color: txt(0.88) }}>Subscription</div>
+                              <div style={{ fontSize: 9.5, color: txt(0.32), fontStyle: 'italic', marginTop: 1 }}>Manage your plan</div>
                             </div>
                           </div>
                           <TierBadge tier={membershipTier} />
                         </div>
                         {expandedSection === 'subscription' && (
-                          <div style={{ padding: '14px', borderTop: '0.5px solid rgba(193,154,107,0.05)', background: 'rgba(180,110,65,0.08)' }}>
+                          <div style={{ padding: '14px', borderTop: `0.5px solid ${acc(0.05)}`, background: isDark ? 'rgba(180,110,65,0.08)' : 'rgba(255,255,255,0.10)' }}>
                              <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="font-medium text-white/90 text-sm">{isGold ? 'Gold Member' : 'Trial Period'}</p>
-                                    <p className="text-xs text-white/40">{isGold ? 'Enjoy your full premium access.' : 'Unlock all features with Gold.'}</p>
+                                    <p className="font-medium text-sm" style={{ color: txt(0.9) }}>{isGold ? 'Gold Member' : 'Trial Period'}</p>
+                                    <p className="text-xs" style={{ color: txt(0.5) }}>{isGold ? 'Enjoy your full premium access.' : 'Unlock all features with Gold.'}</p>
                                 </div>
                                 {!isGold && (
-                                  <Button asChild className="h-9 px-5 rounded-full font-bold text-xs" style={{ background: 'rgba(193,154,107,0.85)', color: 'rgba(25,16,8,0.95)' }}>
+                                  <Button asChild className="h-9 px-5 rounded-full font-bold text-xs" style={{ background: isDark ? 'rgba(193,154,107,0.85)' : '#320E3B', color: isDark ? 'rgba(25,16,8,0.95)' : 'rgba(255,248,235,0.95)' }}>
                                       <Link href="/upgrade">Upgrade</Link>
                                   </Button>
                                 )}
@@ -503,37 +486,37 @@ export default function ProfilePage() {
 
                         {/* Row 3: Change Password */}
                         <div 
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 14px', gap: 10, cursor: 'pointer', borderTop: '0.5px solid rgba(193,154,107,0.10)' }} 
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 14px', gap: 10, cursor: 'pointer', borderTop: `0.5px solid ${acc(0.10)}` }} 
                           onClick={() => setExpandedSection(expandedSection === 'security' ? null : 'security')}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <span style={{ fontSize: 15, color: 'rgba(193,154,107,0.75)' }}>🔑</span>
+                            <span style={{ fontSize: 15, color: acc(0.75) }}>🔑</span>
                             <div>
-                              <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,240,215,0.88)' }}>Change Password</div>
-                              <div style={{ fontSize: 9.5, color: 'rgba(255,240,215,0.32)', fontStyle: 'italic', marginTop: 1 }}>Update your credentials</div>
+                              <div style={{ fontSize: 13, fontWeight: 600, color: txt(0.88) }}>Change Password</div>
+                              <div style={{ fontSize: 9.5, color: txt(0.32), fontStyle: 'italic', marginTop: 1 }}>Update your credentials</div>
                             </div>
                           </div>
-                          <span style={{ fontSize: 11, color: 'rgba(193,154,107,0.50)' }}>›</span>
+                          <span style={{ fontSize: 11, color: acc(0.50) }}>›</span>
                         </div>
                         {expandedSection === 'security' && (
-                          <div style={{ padding: '14px', borderTop: '0.5px solid rgba(193,154,107,0.05)', background: 'rgba(25,16,8,0.20)' }}>
+                          <div style={{ padding: '14px', borderTop: `0.5px solid ${acc(0.05)}`, background: isDark ? 'rgba(25,16,8,0.20)' : 'rgba(255,255,255,0.10)' }}>
                              <form onSubmit={handleSubmitPassword(onPasswordSubmit)} className="space-y-4">
                                 <div className="space-y-1">
-                                    <Label className="text-xs text-white/60">Current Password</Label>
+                                    <Label className="text-xs" style={{ color: txt(0.6) }}>Current Password</Label>
                                     <Input type="password" {...registerPassword("currentPassword")} className="h-10 text-sm rounded-lg bg-black/30 border-white/10 text-white" />
                                     {passwordErrors.currentPassword && <p className="text-xs text-destructive">{passwordErrors.currentPassword.message}</p>}
                                 </div>
                                 <div className="space-y-1">
-                                    <Label className="text-xs text-white/60">New Password</Label>
+                                    <Label className="text-xs" style={{ color: txt(0.6) }}>New Password</Label>
                                     <Input type="password" {...registerPassword("newPassword")} className="h-10 text-sm rounded-lg bg-black/30 border-white/10 text-white" />
                                     {passwordErrors.newPassword && <p className="text-xs text-destructive">{passwordErrors.newPassword.message}</p>}
                                 </div>
                                 <div className="space-y-1">
-                                    <Label className="text-xs text-white/60">Confirm New Password</Label>
+                                    <Label className="text-xs" style={{ color: txt(0.6) }}>Confirm New Password</Label>
                                     <Input type="password" {...registerPassword("confirmNewPassword")} className="h-10 text-sm rounded-lg bg-black/30 border-white/10 text-white" />
                                     {passwordErrors.confirmNewPassword && <p className="text-xs text-destructive">{passwordErrors.confirmNewPassword.message}</p>}
                                 </div>
-                                <Button type="submit" className="w-full h-10 rounded-lg bg-white/10 text-xs text-white" disabled={isPasswordSubmitting || authLoading}>
+                                <Button type="submit" className="w-full h-10 rounded-lg text-xs" style={{ background: acc(0.12), color: txt(0.92) }} disabled={isPasswordSubmitting || authLoading}>
                                     {isPasswordSubmitting ? <SmileyRockLoader /> : "Update Password"}
                                 </Button>
                              </form>
@@ -542,39 +525,63 @@ export default function ProfilePage() {
 
                         {/* Row 4: Invite Friends */}
                         <div 
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 14px', gap: 10, cursor: 'pointer', borderTop: '0.5px solid rgba(193,154,107,0.10)' }} 
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 14px', gap: 10, cursor: 'pointer', borderTop: `0.5px solid ${acc(0.10)}` }} 
                           onClick={() => setExpandedSection(expandedSection === 'invite' ? null : 'invite')}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <span style={{ fontSize: 15, color: 'rgba(193,154,107,0.75)' }}>👥</span>
+                            <span style={{ fontSize: 15, color: acc(0.75) }}>👥</span>
                             <div>
-                              <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,240,215,0.88)' }}>Invite friends to SnapYoga</div>
-                              <div style={{ fontSize: 9.5, color: 'rgba(255,240,215,0.32)', fontStyle: 'italic', marginTop: 1 }}>Share your practice</div>
+                              <div style={{ fontSize: 13, fontWeight: 600, color: txt(0.88) }}>Invite friends to SnapYoga</div>
+                              <div style={{ fontSize: 9.5, color: txt(0.32), fontStyle: 'italic', marginTop: 1 }}>Share your practice</div>
                             </div>
                           </div>
-                          <span style={{ fontSize: 11, color: 'rgba(193,154,107,0.50)' }}>›</span>
+                          <span style={{ fontSize: 11, color: acc(0.50) }}>›</span>
                         </div>
                         {expandedSection === 'invite' && (
-                          <div style={{ padding: '14px', borderTop: '0.5px solid rgba(193,154,107,0.05)', background: 'rgba(25,16,8,0.20)' }}>
+                          <div style={{ padding: '14px', borderTop: `0.5px solid ${acc(0.05)}`, background: isDark ? 'rgba(25,16,8,0.20)' : 'rgba(255,255,255,0.10)' }}>
                              <div className="space-y-4">
                                   <div className="text-center p-3 bg-green-500/10 text-green-400 border border-green-500/20 rounded-lg text-sm font-medium">
                                       {t('referralBonusText')}
                                   </div>
                                   <div>
-                                      <p className="text-[10px] font-medium mb-1 text-white/60 uppercase tracking-widest">{t('yourInviteLink')}</p>
+                                      <p className="text-[10px] font-medium mb-1 text-[#320E3B]/70 dark:text-white/60 uppercase tracking-widest">{t('yourInviteLink')}</p>
                                       <div className="flex items-center space-x-2">
                                           <Input type="text" value={inviteLink} readOnly className="h-11 text-sm rounded-lg bg-black/20 border-white/10 text-white" />
-                                          <Button variant="outline" size="icon" onClick={handleCopyInviteLink} className="h-11 w-11 rounded-lg border-white/10 bg-transparent text-white hover:bg-white/5"><Copy className="h-4 w-4" /></Button>
+                                          <Button variant="outline" size="icon" onClick={handleCopyInviteLink} className="h-11 w-11 rounded-lg bg-transparent border-[#320E3B]/25 text-[#320E3B] hover:bg-[#320E3B]/5 dark:border-white/10 dark:text-white dark:hover:bg-white/5"><Copy className="h-4 w-4" /></Button>
                                       </div>
                                   </div>
                                   <div className="grid grid-cols-3 gap-3">
-                                      <Button variant="outline" className="h-11 rounded-lg border-white/10 bg-transparent text-white hover:bg-white/5" asChild disabled={!inviteLink}><a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer"><MessageSquare className="h-4 w-4" /></a></Button>
-                                      <Button variant="outline" className="h-11 rounded-lg border-white/10 bg-transparent text-white hover:bg-white/5" onClick={handleInstagramShare} disabled={!inviteLink}><Share2 className="h-4 w-4" /></Button>
-                                      <Button variant="outline" className="h-11 rounded-lg border-white/10 bg-transparent text-white hover:bg-white/5" asChild disabled={!inviteLink}><a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer"><PinterestIcon className="h-4 w-4" /></a></Button>
+                                      <Button variant="outline" className="h-11 rounded-lg bg-transparent border-[#320E3B]/25 text-[#320E3B] hover:bg-[#320E3B]/5 dark:border-white/10 dark:text-white dark:hover:bg-white/5" asChild disabled={!inviteLink}><a href={whatsappShareUrl} target="_blank" rel="noopener noreferrer"><MessageSquare className="h-4 w-4" /></a></Button>
+                                      <Button variant="outline" className="h-11 rounded-lg bg-transparent border-[#320E3B]/25 text-[#320E3B] hover:bg-[#320E3B]/5 dark:border-white/10 dark:text-white dark:hover:bg-white/5" onClick={handleInstagramShare} disabled={!inviteLink}><Share2 className="h-4 w-4" /></Button>
+                                      <Button variant="outline" className="h-11 rounded-lg bg-transparent border-[#320E3B]/25 text-[#320E3B] hover:bg-[#320E3B]/5 dark:border-white/10 dark:text-white dark:hover:bg-white/5" asChild disabled={!inviteLink}><a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer"><PinterestIcon className="h-4 w-4" /></a></Button>
                                   </div>
                               </div>
                           </div>
                         )}
+
+                        {/* Row 5: Appearance — dark / light mode */}
+                        <div
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 14px', gap: 10, cursor: 'pointer', borderTop: `0.5px solid ${acc(0.10)}` }}
+                          onClick={toggleTheme}
+                          role="switch"
+                          aria-checked={isDark}
+                          aria-label="Toggle dark mode"
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <span style={{ fontSize: 15, color: acc(0.75), display: 'flex' }}>
+                              {isDark ? <Moon style={{ width: 15, height: 15 }} /> : <Sun style={{ width: 15, height: 15 }} />}
+                            </span>
+                            <div>
+                              <div style={{ fontSize: 13, fontWeight: 600, color: txt(0.88) }}>Appearance</div>
+                              <div style={{ fontSize: 9.5, color: txt(0.32), fontStyle: 'italic', marginTop: 1 }}>{isDark ? 'Dark mode' : 'Light mode'}</div>
+                            </div>
+                          </div>
+                          <div style={{ width: 42, height: 24, borderRadius: 999, padding: 2, background: isDark ? 'rgba(193,154,107,0.85)' : 'rgba(50,14,59,0.18)', display: 'flex', justifyContent: isDark ? 'flex-end' : 'flex-start', alignItems: 'center', transition: 'background 0.2s ease' }}>
+                            <div style={{ width: 20, height: 20, borderRadius: '50%', background: isDark ? '#1a1210' : 'rgba(255,248,235,0.95)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              {isDark ? <Moon style={{ width: 11, height: 11, color: 'rgba(193,154,107,0.9)' }} /> : <Sun style={{ width: 11, height: 11, color: '#320E3B' }} />}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                   </div>
               </div>
