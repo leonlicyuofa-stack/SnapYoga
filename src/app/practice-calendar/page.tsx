@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '@/components/ui/textarea';
 import { analyzeReflectionThemes, type ReflectionThemesOutput } from '@/ai/flows/analyze-reflection-themes';
 import { Button } from '@/components/ui/button';
+import { TopBarIcons } from '@/components/layout/top-bar-icons';
 import { getMoonPhase, getSuggestedPractices, pickPrizeForDate, getPrizeById } from '@/lib/moon';
 
 // ─── Brand tokens ────────────────────────────────────────────────────────────
@@ -21,11 +22,13 @@ const FONT_CASUAL  = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
 
 function getThemeTokens(isDark: boolean) {
   return {
-    text: isDark ? 'rgba(255,240,215,0.92)' : 'rgba(25,16,8,0.95)',
-    muted: isDark ? 'rgba(255,240,215,0.40)' : 'rgba(25,16,8,0.55)',
-    cardBg: isDark ? `rgba(13,20,30,0.50)` : `rgba(255,255,255,0.65)`,
-    cardBorder: `rgba(193,154,107,0.18)`,
-    accent: `rgba(193,154,107,0.85)`,
+    title: isDark ? 'rgba(255,240,215,0.92)' : 'rgba(255,248,235,0.96)',
+    titleShadow: isDark ? 'none' : '0 1px 3px rgba(70,60,80,0.32)',
+    text: isDark ? 'rgba(255,240,215,0.92)' : '#320E3B',
+    muted: isDark ? 'rgba(255,240,215,0.40)' : 'rgba(50,14,59,0.60)',
+    cardBg: isDark ? `rgba(13,20,30,0.50)` : `rgba(255,255,255,0.12)`,
+    cardBorder: isDark ? `rgba(193,154,107,0.18)` : `rgba(255,255,255,0.40)`,
+    accent: isDark ? `rgba(193,154,107,0.85)` : `#320E3B`,
   };
 }
 
@@ -67,16 +70,18 @@ function describeArcSegment(x: number, y: number, innerRadius: number, outerRadi
 }
 
 function SectionHead({ children }: { children: React.ReactNode }) {
+  const { isDark } = useTheme();
   return (
-    <p style={{ fontSize: 9, letterSpacing: '0.28em', textTransform: 'uppercase' as const, color: 'rgba(193,154,107,0.55)', marginBottom: 10, fontFamily: FONT_CASUAL, fontWeight: 500 }}>
+    <p style={{ fontSize: 9, letterSpacing: '0.28em', textTransform: 'uppercase' as const, color: isDark ? 'rgba(193,154,107,0.55)' : '#320E3B', marginBottom: 10, fontFamily: FONT_CASUAL, fontWeight: 500 }}>
       {children}
     </p>
   );
 }
 
 function PanelLabel({ children }: { children: React.ReactNode }) {
+  const { isDark } = useTheme();
   return (
-    <p style={{ fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase' as const, color: 'rgba(193,154,107,0.6)', fontWeight: 600, margin: '0 0 8px' }}>
+    <p style={{ fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase' as const, color: isDark ? 'rgba(193,154,107,0.6)' : '#320E3B', fontWeight: 600, margin: '0 0 8px' }}>
       {children}
     </p>
   );
@@ -87,6 +92,9 @@ export default function PracticeCalendarPage() {
   const { user, loading: authLoading } = useAuth();
   const { isDark } = useTheme();
   const tokens = getThemeTokens(isDark);
+  // Light = amethyst on lavender; dark = the original cream/gold on ink.
+  const txt = (a: number) => isDark ? `rgba(255,240,215,${a})` : `rgba(50,14,59,${a})`;
+  const acc = (a: number) => isDark ? `rgba(193,154,107,${a})` : `rgba(50,14,59,${a})`;
   const { toast } = useToast();
   const router = useRouter();
 
@@ -266,11 +274,13 @@ export default function PracticeCalendarPage() {
         @keyframes syWeekSwap { from { opacity: 0.45; transform: translateY(-3px); } to { opacity: 1; transform: none; } }`}</style>
       <div style={{ padding: '16px 14px 28px', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
+        <TopBarIcons className="mb-3" />
+
         {/* HEADER */}
         <header>
-          <h1 className="text-3xl font-bold" style={{ color: tokens.text, fontFamily: FONT_PANCAKE, fontWeight: 600 }}>Practice Journal</h1>
+          <h1 className="text-3xl font-bold" style={{ color: tokens.title, textShadow: tokens.titleShadow, fontFamily: FONT_PANCAKE, fontWeight: 600 }}>Practice Journal</h1>
           <p className="text-[11px] uppercase tracking-widest mt-1" style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>Your mindful journey log</p>
-          <div style={{ width: 26, height: 1, background: 'rgba(193,154,107,0.22)', marginTop: 5 }} />
+          <div style={{ width: 26, height: 1, background: acc(0.22), marginTop: 5 }} />
         </header>
 
         {/* WEEK ROW + EXPANDING DAY PANEL */}
@@ -280,7 +290,7 @@ export default function PracticeCalendarPage() {
             <button
               onClick={() => goWeek(-1)}
               aria-label="Previous week"
-              style={{ flexShrink: 0, width: 26, height: 26, borderRadius: '50%', border: '0.5px solid rgba(193,154,107,0.30)', background: 'rgba(193,154,107,0.08)', color: tokens.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+              style={{ flexShrink: 0, width: 26, height: 26, borderRadius: '50%', border: `0.5px solid ${acc(0.30)}`, background: isDark ? 'rgba(193,154,107,0.08)' : 'rgba(255,255,255,0.10)', color: tokens.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -296,14 +306,16 @@ export default function PracticeCalendarPage() {
                       onClick={() => handleDayClick(d)}
                       style={{
                     flex: 1, borderRadius: 13, padding: '6px 0 5px', textAlign: 'center', cursor: 'pointer',
-                    background: sel ? 'linear-gradient(180deg, rgba(214,178,130,0.92), rgba(193,154,107,0.78))' : 'rgba(193,154,107,0.05)',
-                    border: `0.5px solid ${sel ? 'rgba(214,178,130,0.85)' : 'rgba(193,154,107,0.22)'}`,
-                    boxShadow: sel ? '0 0 18px rgba(214,178,130,0.35)' : 'none',
+                    background: sel
+                      ? (isDark ? 'linear-gradient(180deg, rgba(214,178,130,0.92), rgba(193,154,107,0.78))' : '#320E3B')
+                      : (isDark ? 'rgba(193,154,107,0.05)' : 'rgba(255,255,255,0.10)'),
+                    border: `0.5px solid ${sel ? acc(0.85) : acc(0.22)}`,
+                    boxShadow: sel ? (isDark ? '0 0 18px rgba(214,178,130,0.35)' : '0 4px 14px rgba(50,14,59,0.25)') : 'none',
                     transition: 'all 0.3s ease',
                   }}
                 >
-                  <div style={{ fontSize: 7.5, letterSpacing: 1, textTransform: 'uppercase', color: sel ? 'rgba(40,30,20,0.7)' : 'rgba(255,240,215,0.5)', fontFamily: FONT_CASUAL }}>{format(d, 'EE')}</div>
-                  <div style={{ fontFamily: FONT_PANCAKE, fontSize: 15, fontWeight: 600, color: sel ? '#2a1e12' : 'rgba(255,240,215,0.9)', marginTop: 1 }}>{format(d, 'd')}</div>
+                  <div style={{ fontSize: 7.5, letterSpacing: 1, textTransform: 'uppercase', color: sel ? (isDark ? 'rgba(40,30,20,0.7)' : 'rgba(255,248,235,0.75)') : txt(0.55), fontFamily: FONT_CASUAL }}>{format(d, 'EE')}</div>
+                  <div style={{ fontFamily: FONT_PANCAKE, fontSize: 15, fontWeight: 600, color: sel ? (isDark ? '#2a1e12' : 'rgba(255,248,235,0.96)') : txt(0.9), marginTop: 1 }}>{format(d, 'd')}</div>
                   {prize ? (
                     <div style={{ width: 16, height: 16, borderRadius: 5, margin: '3px auto 0', overflow: 'hidden', background: 'rgba(255,240,215,0.12)' }}>
                       <img src={prize.img} alt={prize.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
@@ -319,23 +331,23 @@ export default function PracticeCalendarPage() {
             <button
               onClick={() => goWeek(1)}
               aria-label="Next week"
-              style={{ flexShrink: 0, width: 26, height: 26, borderRadius: '50%', border: '0.5px solid rgba(193,154,107,0.30)', background: 'rgba(193,154,107,0.08)', color: tokens.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+              style={{ flexShrink: 0, width: 26, height: 26, borderRadius: '50%', border: `0.5px solid ${acc(0.30)}`, background: isDark ? 'rgba(193,154,107,0.08)' : 'rgba(255,255,255,0.10)', color: tokens.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
             >
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
 
           {/* Collapsed: a thin line beneath the dates; tap a day to unfold */}
-          <div style={{ height: 2, borderRadius: 2, margin: '12px 8px 0', background: 'linear-gradient(90deg, transparent, rgba(214,178,130,0.85), transparent)' }} />
+          <div style={{ height: 2, borderRadius: 2, margin: '12px 8px 0', background: `linear-gradient(90deg, transparent, ${acc(0.85)}, transparent)` }} />
           {!expanded && (
-            <p style={{ textAlign: 'center', fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.55)', margin: '8px 0 0', fontFamily: FONT_CASUAL }}>
+            <p style={{ textAlign: 'center', fontSize: 9, letterSpacing: '0.12em', textTransform: 'uppercase', color: acc(0.55), margin: '8px 0 0', fontFamily: FONT_CASUAL }}>
               Tap a day to open ↓
             </p>
           )}
 
           {/* Animated expand wrapper (unfolds from the line above) */}
           <div style={{ maxHeight: expanded ? 2000 : 0, opacity: expanded ? 1 : 0, overflow: 'hidden', transition: 'max-height 0.4s ease, opacity 0.3s ease' }}>
-            <div style={{ marginTop: 8, borderRadius: 18, border: '0.5px solid rgba(214,178,130,0.4)', background: 'rgba(193,154,107,0.10)', padding: 16, backdropFilter: 'blur(14px)', boxShadow: '0 12px 34px rgba(193,154,107,0.12)' }}>
+            <div style={{ marginTop: 8, borderRadius: 18, border: `0.5px solid ${isDark ? 'rgba(214,178,130,0.4)' : 'rgba(255,255,255,0.40)'}`, background: isDark ? 'rgba(193,154,107,0.10)' : 'rgba(255,255,255,0.12)', padding: 16, backdropFilter: 'blur(14px)', boxShadow: isDark ? '0 12px 34px rgba(193,154,107,0.12)' : '0 12px 34px rgba(60,40,70,0.12)' }}>
             <p style={{ fontFamily: FONT_PANCAKE, fontSize: 20, fontWeight: 500, color: tokens.text, margin: '0 0 12px' }}>{format(selectedDay, 'EEEE, d MMMM')}</p>
 
             {/* Moon phase for yogis (always shown) */}
@@ -345,11 +357,11 @@ export default function PracticeCalendarPage() {
                 <span key={i} style={{ fontSize: i === moon.index ? 25 : 16, opacity: i === moon.index ? 1 : 0.4, textShadow: i === moon.index ? '0 0 12px rgba(214,178,130,0.6)' : 'none' }}>{m}</span>
               ))}
             </div>
-            <p style={{ textAlign: 'center', fontFamily: FONT_PANCAKE, fontSize: 16, color: 'rgba(255,240,215,0.92)', margin: '9px 0 2px' }}>{moon.name}</p>
-            <p style={{ textAlign: 'center', fontSize: 10.5, color: 'rgba(193,154,107,0.7)', fontStyle: 'italic', margin: 0 }}>{moon.note}</p>
+            <p style={{ textAlign: 'center', fontFamily: FONT_PANCAKE, fontSize: 16, color: txt(0.92), margin: '9px 0 2px' }}>{moon.name}</p>
+            <p style={{ textAlign: 'center', fontSize: 10.5, color: acc(0.7), fontStyle: 'italic', margin: 0 }}>{moon.note}</p>
 
             {isFuture ? (
-              <p style={{ textAlign: 'center', fontSize: 10, color: 'rgba(193,154,107,0.6)', fontStyle: 'italic', marginTop: 14 }}>
+              <p style={{ textAlign: 'center', fontSize: 10, color: acc(0.6), fontStyle: 'italic', marginTop: 14 }}>
                 Practices, draw &amp; check-in unlock on the day.
               </p>
             ) : (
@@ -359,35 +371,35 @@ export default function PracticeCalendarPage() {
                   <PanelLabel>Suggested practice</PanelLabel>
                   <div style={{ display: 'flex', gap: 7 }}>
                     {practices.map((p, i) => (
-                      <div key={i} style={{ flex: 1, borderRadius: 12, border: '0.5px solid rgba(193,154,107,0.22)', background: 'rgba(255,255,255,0.03)', padding: '8px 6px', textAlign: 'center' }}>
+                      <div key={i} style={{ flex: 1, borderRadius: 12, border: `0.5px solid ${acc(0.22)}`, background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.10)', padding: '8px 6px', textAlign: 'center' }}>
                         <div style={{ fontSize: 16 }}>{p.icon}</div>
-                        <div style={{ fontSize: 9, color: 'rgba(255,240,215,0.8)', marginTop: 4, lineHeight: 1.2 }}>{p.name}</div>
+                        <div style={{ fontSize: 9, color: txt(0.8), marginTop: 4, lineHeight: 1.2 }}>{p.name}</div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div style={{ height: 1, background: 'rgba(193,154,107,0.14)', margin: '13px 0' }} />
+                <div style={{ height: 1, background: acc(0.14), margin: '13px 0' }} />
 
                 {/* How did you feel — read-only summary from the Daily Check-in */}
                 <PanelLabel>How did you feel?</PanelLabel>
                 {dayMood ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(255,255,255,0.03)', border: '0.5px solid rgba(193,154,107,0.16)', borderRadius: 12, padding: '10px 12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.10)', border: `0.5px solid ${acc(0.16)}`, borderRadius: 12, padding: '10px 12px' }}>
                     <span style={{ fontSize: 24 }}>{dayMood.emoji}</span>
                     <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(193,154,107,0.95)', textTransform: 'uppercase', letterSpacing: 1 }}>{dayMood.name}</div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: acc(0.95), textTransform: 'uppercase', letterSpacing: 1 }}>{dayMood.name}</div>
                       {dayMood.reflection && (
-                        <div style={{ fontSize: 11, color: 'rgba(255,240,215,0.6)', fontStyle: 'italic', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <div style={{ fontSize: 11, color: txt(0.6), fontStyle: 'italic', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {dayMood.reflection.replace(/\n/g, ' ')}
                         </div>
                       )}
                     </div>
-                    <span style={{ fontSize: 9, color: 'rgba(193,154,107,0.55)', fontStyle: 'italic', marginLeft: 'auto', textAlign: 'right', whiteSpace: 'nowrap' }}>from Daily<br />Check-in</span>
+                    <span style={{ fontSize: 9, color: acc(0.55), fontStyle: 'italic', marginLeft: 'auto', textAlign: 'right', whiteSpace: 'nowrap' }}>from Daily<br />Check-in</span>
                   </div>
                 ) : (
                   <button
                     onClick={() => router.push('/mood-tracker')}
-                    style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, border: '0.5px dashed rgba(193,154,107,0.4)', borderRadius: 12, padding: 13, color: 'rgba(214,178,130,0.95)', fontFamily: FONT_PANCAKE, fontSize: 15, cursor: 'pointer', background: 'transparent' }}
+                    style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, border: `0.5px dashed ${acc(0.4)}`, borderRadius: 12, padding: 13, color: acc(0.95), fontFamily: FONT_PANCAKE, fontSize: 15, cursor: 'pointer', background: 'transparent' }}
                   >
                     ＋ Check-in now ›
                   </button>
@@ -398,18 +410,18 @@ export default function PracticeCalendarPage() {
                   <div style={{ marginTop: 14 }}>
                     <PanelLabel>Yoga collection · {isToday ? "today's draw" : 'draw'}</PanelLabel>
                     {selectedPrize ? (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 12, borderRadius: 14, border: '0.5px solid rgba(214,178,130,0.35)', background: 'linear-gradient(135deg, rgba(193,154,107,0.16), rgba(180,110,65,0.10))', padding: '11px 13px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12, borderRadius: 14, border: `0.5px solid ${acc(0.35)}`, background: isDark ? 'linear-gradient(135deg, rgba(193,154,107,0.16), rgba(180,110,65,0.10))' : 'rgba(255,255,255,0.12)', padding: '11px 13px' }}>
                         <div style={{ width: 46, height: 46, borderRadius: 10, background: 'linear-gradient(135deg,#f4ecdd,#e3d4ba)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
                           <img src={selectedPrize.img} alt={selectedPrize.name} style={{ width: '88%', height: '88%', objectFit: 'contain' }} />
                         </div>
                         <div style={{ minWidth: 0 }}>
-                          <p style={{ fontFamily: FONT_PANCAKE, fontSize: 16, color: 'rgba(255,240,215,0.94)', margin: 0 }}>{selectedPrize.name}</p>
-                          <p style={{ fontSize: 10, color: 'rgba(193,154,107,0.75)', margin: '2px 0 0' }}>{isToday ? 'Added to your collection · next draw tomorrow' : 'In your collection'}</p>
+                          <p style={{ fontFamily: FONT_PANCAKE, fontSize: 16, color: txt(0.94), margin: 0 }}>{selectedPrize.name}</p>
+                          <p style={{ fontSize: 10, color: acc(0.75), margin: '2px 0 0' }}>{isToday ? 'Added to your collection · next draw tomorrow' : 'In your collection'}</p>
                         </div>
-                        <span onClick={() => router.push('/yoga-collection')} style={{ marginLeft: 'auto', fontSize: 11, color: 'rgba(214,178,130,0.95)', fontFamily: FONT_PANCAKE, whiteSpace: 'nowrap', cursor: 'pointer' }}>View ›</span>
+                        <span onClick={() => router.push('/yoga-collection')} style={{ marginLeft: 'auto', fontSize: 11, color: acc(0.95), fontFamily: FONT_PANCAKE, whiteSpace: 'nowrap', cursor: 'pointer' }}>View ›</span>
                       </div>
                     ) : (
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 14, border: '0.5px dashed rgba(214,178,130,0.4)', padding: 14, color: 'rgba(214,178,130,0.9)', fontFamily: FONT_PANCAKE, fontSize: 14 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 14, border: `0.5px dashed ${acc(0.4)}`, padding: 14, color: acc(0.9), fontFamily: FONT_PANCAKE, fontSize: 14 }}>
                         <Loader2 className="h-4 w-4 animate-spin" /> Revealing today's prize…
                       </div>
                     )}
@@ -432,7 +444,7 @@ export default function PracticeCalendarPage() {
                   />
                 </div>
 
-                <p style={{ marginTop: 12, fontSize: 10, color: 'rgba(193,154,107,0.6)', textAlign: 'center', fontStyle: 'italic' }}>↳ Body check-in lives in your Daily Check-in</p>
+                <p style={{ marginTop: 12, fontSize: 10, color: acc(0.6), textAlign: 'center', fontStyle: 'italic' }}>↳ Body check-in lives in your Daily Check-in</p>
               </>
             )}
             </div>
@@ -453,7 +465,7 @@ export default function PracticeCalendarPage() {
                   const endAngle = 165 + ((i + 1) * anglePerDay);
                   return (
                     <path key={`${h.id}-${i}`} d={describeArcSegment(80, 90, h.radius, h.radius + 8, startAngle, endAngle)}
-                      fill={done ? h.color : 'rgba(255,240,215,0.05)'} stroke={isDark ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)'} strokeWidth="0.5" />
+                      fill={done ? h.color : (isDark ? 'rgba(255,240,215,0.05)' : 'rgba(50,14,59,0.06)')} stroke={isDark ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)'} strokeWidth="0.5" />
                   );
                 });
               })}
@@ -476,11 +488,11 @@ export default function PracticeCalendarPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
               {bingoStatus.squares.map((s, i) => (
                 <div key={i} style={{ aspectRatio: '1/1', borderRadius: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, padding: 4, textAlign: 'center',
-                  background: s.done ? (s.milestone ? 'rgba(193,154,107,0.18)' : 'rgba(120,155,95,0.18)') : 'rgba(255,240,215,0.03)',
-                  border: `0.5px solid ${s.done ? (s.milestone ? 'rgba(193,154,107,0.3)' : 'rgba(120,155,95,0.3)') : 'rgba(255,240,215,0.05)'}`, transition: 'all 0.4s ease' }}>
+                  background: s.done ? (s.milestone ? acc(0.16) : 'rgba(120,155,95,0.18)') : (isDark ? 'rgba(255,240,215,0.03)' : 'rgba(255,255,255,0.08)'),
+                  border: `0.5px solid ${s.done ? (s.milestone ? acc(0.3) : 'rgba(120,155,95,0.3)') : (isDark ? 'rgba(255,240,215,0.05)' : 'rgba(50,14,59,0.10)')}`, transition: 'all 0.4s ease' }}>
                   <span style={{ fontSize: 18, opacity: s.done ? 1 : 0.3 }}>{s.emoji}</span>
                   <span style={{ fontSize: 7, fontWeight: 600, textTransform: 'uppercase', color: s.done ? tokens.text : tokens.muted, lineHeight: 1.1 }}>{s.label}</span>
-                  {s.done && <CheckCircle2 style={{ width: 10, height: 10, color: s.milestone ? 'rgba(193,154,107,0.8)' : 'rgba(120,155,95,0.8)' }} />}
+                  {s.done && <CheckCircle2 style={{ width: 10, height: 10, color: s.milestone ? acc(0.8) : 'rgba(120,155,95,0.8)' }} />}
                 </div>
               ))}
             </div>
@@ -489,7 +501,7 @@ export default function PracticeCalendarPage() {
                 <span style={{ fontSize: 9, color: tokens.muted, fontFamily: FONT_CASUAL }}>Monthly Wellness Progress</span>
                 <span style={{ fontSize: 9, color: tokens.accent, fontWeight: 700 }}>{bingoStatus.completeCount} / 9</span>
               </div>
-              <div style={{ height: 3, background: 'rgba(255,240,215,0.05)', borderRadius: 2 }}>
+              <div style={{ height: 3, background: isDark ? 'rgba(255,240,215,0.05)' : 'rgba(50,14,59,0.10)', borderRadius: 2 }}>
                 <div style={{ height: '100%', background: tokens.accent, borderRadius: 2, width: `${(bingoStatus.completeCount / 9) * 100}%`, transition: 'width 1s ease' }} />
               </div>
             </div>
@@ -503,27 +515,27 @@ export default function PracticeCalendarPage() {
             {!themeGroups && !isAnalyzingThemes && (
               <div className="text-center py-4 space-y-4">
                 <div className="flex justify-center">
-                  <div className="p-3 rounded-full bg-[rgba(193,154,107,0.10)] border border-[rgba(193,154,107,0.25)]">
+                  <div className="p-3 rounded-full" style={{ background: acc(0.10), border: `1px solid ${acc(0.25)}` }}>
                     <BrainCircuit className="w-8 h-8" style={{ color: tokens.accent }} />
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-white" style={{ fontFamily: FONT_PANCAKE }}>Monthly Reflection Summary</h4>
-                  <p className="text-[11px] text-white/50 mt-1">Our AI analyzes your journaling to find growth patterns and emotional recurring themes.</p>
+                  <h4 className="text-sm font-semibold" style={{ fontFamily: FONT_PANCAKE, color: tokens.text }}>Monthly Reflection Summary</h4>
+                  <p className="text-[11px] mt-1" style={{ color: tokens.muted }}>Our AI analyzes your journaling to find growth patterns and emotional recurring themes.</p>
                 </div>
                 {reflectionsCount >= 3 ? (
-                  <Button onClick={handleDiscoverThemes} className="w-full h-10 rounded-full text-[10px] font-bold tracking-[0.15em] bg-[rgba(193,154,107,0.12)] border border-[rgba(193,154,107,0.40)] text-[rgba(193,154,107,0.92)] uppercase">
+                  <Button onClick={handleDiscoverThemes} className="w-full h-10 rounded-full text-[10px] font-bold tracking-[0.15em] uppercase" style={{ background: acc(0.12), border: `1px solid ${acc(0.40)}`, color: isDark ? 'rgba(193,154,107,0.92)' : '#320E3B' }}>
                     Discover My Themes
                   </Button>
                 ) : (
-                  <p className="text-[10px] italic text-[rgba(193,154,107,0.55)]">Keep reflecting — themes appear once you've logged a few entries this month ({reflectionsCount}/3).</p>
+                  <p className="text-[10px] italic" style={{ color: acc(0.55) }}>Keep reflecting — themes appear once you've logged a few entries this month ({reflectionsCount}/3).</p>
                 )}
               </div>
             )}
             {isAnalyzingThemes && (
               <div className="flex flex-col items-center justify-center py-12 gap-4 animate-pulse">
-                <Sparkles className="w-8 h-8 text-primary/60" />
-                <p className="text-[11px] uppercase tracking-widest text-white/40">AI Analyzing your presence...</p>
+                <Sparkles className="w-8 h-8" style={{ color: tokens.accent, opacity: 0.6 }} />
+                <p className="text-[11px] uppercase tracking-widest" style={{ color: tokens.muted }}>AI Analyzing your presence...</p>
               </div>
             )}
             {themeGroups && (
@@ -543,7 +555,7 @@ export default function PracticeCalendarPage() {
                     </div>
                   </div>
                 ))}
-                <button onClick={() => setThemeGroups(null)} className="text-[9px] uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors w-full text-center pt-2">Reset Analysis</button>
+                <button onClick={() => setThemeGroups(null)} className="text-[9px] uppercase tracking-widest transition-colors w-full text-center pt-2" style={{ color: tokens.muted }}>Reset Analysis</button>
               </div>
             )}
           </div>
