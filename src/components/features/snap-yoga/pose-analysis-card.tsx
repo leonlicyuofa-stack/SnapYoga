@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useTheme } from '@/contexts/ThemeContext';
 
 
 interface PoseAnalysisCardProps {
@@ -76,29 +77,33 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
 
   const level = score !== null ? getScoreLevel(score) : null;
 
+  const { isDark } = useTheme();
+  const txt = (a: number) => isDark ? `rgba(255,240,215,${a})` : `rgba(50,14,59,${a})`;
+  const acc = (a: number) => isDark ? `rgba(193,154,107,${a})` : `rgba(50,14,59,${a})`;
+
   return (
-    <div 
+    <div
       className="w-full p-6 shadow-xl"
-      style={{ 
+      style={{
         borderRadius: '12px 24px 24px 24px',
-        border: '0.5px solid rgba(193,154,107,0.18)',
-        background: 'rgba(13,20,30,0.55)',
+        border: `0.5px solid ${isDark ? 'rgba(193,154,107,0.18)' : 'rgba(255,255,255,0.40)'}`,
+        background: isDark ? 'rgba(13,20,30,0.55)' : 'rgba(255,255,255,0.12)',
         backdropFilter: 'blur(14px)',
       }}
     >
       <CardHeader className="p-0">
-        <CardTitle 
-          style={{ 
-            fontFamily: "'Cormorant Garamond', Georgia, serif", 
-            fontWeight: 600, 
-            color: 'rgba(255,240,215,0.90)' 
+        <CardTitle
+          style={{
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontWeight: 600,
+            color: txt(0.90)
           }}
           className="flex items-center gap-2 text-2xl"
         >
-          <Activity className="h-7 w-7" style={{ color: 'rgba(193,154,107,0.80)' }} />
+          <Activity className="h-7 w-7" style={{ color: acc(0.80) }} />
           Pose Analysis
         </CardTitle>
-        <CardDescription className="text-white/80">
+        <CardDescription className="text-[#320E3B]/80 dark:text-white/80">
           {videoSrc ? `Showing analysis for ${videoFileName || 'your file'}.` : "Upload a video or image to see your pose analysis here."}
         </CardDescription>
       </CardHeader>
@@ -128,16 +133,16 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
             )
           ) : (
             isLoading ? (
-              <div className="flex flex-col items-center text-white/70 p-4 w-full">
+              <div className="flex flex-col items-center text-[#320E3B]/70 dark:text-white/70 p-4 w-full">
                 <Skeleton className="h-12 w-12 rounded-full bg-white/20 mb-2" />
                 <Skeleton className="h-4 w-3/4 bg-white/20 mb-1" />
                 <Skeleton className="h-4 w-1/2 bg-white/20" />
               </div>
             ) : (
               <div className="flex flex-col items-center p-8 text-center">
-                <VideoOff className="h-16 w-16 mb-4" style={{ color: 'rgba(193,154,107,0.30)' }} />
-                <p className="font-semibold text-lg" style={{ color: 'rgba(255,240,215,0.55)' }}>No Media Uploaded</p>
-                <p className="text-sm" style={{ color: 'rgba(255,240,215,0.30)' }}>Your video/image and analysis will appear here.</p>
+                <VideoOff className="h-16 w-16 mb-4" style={{ color: acc(0.30) }} />
+                <p className="font-semibold text-lg" style={{ color: txt(0.55) }}>No Media Uploaded</p>
+                <p className="text-sm" style={{ color: txt(0.30) }}>Your video/image and analysis will appear here.</p>
               </div>
             )
           )}
@@ -145,11 +150,11 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
         
         {userNotes && (
           <div className="p-4 rounded-xl border border-[rgba(193,154,107,0.14)] bg-white/5 space-y-1">
-             <h3 className="text-sm font-semibold flex items-center gap-2 text-white/60 uppercase tracking-widest">
+             <h3 className="text-sm font-semibold flex items-center gap-2 text-[#320E3B]/60 dark:text-white/60 uppercase tracking-widest">
                <MessageCircle className="h-4 w-4" />
                Your Context
              </h3>
-             <p className="text-white/90 text-sm italic">"{userNotes}"</p>
+             <p className="text-[#320E3B]/90 dark:text-white/90 text-sm italic">"{userNotes}"</p>
           </div>
         )}
 
@@ -157,7 +162,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
           <div className="space-y-4">
             <div>
                 <h3 className="text-xl font-semibold flex items-center gap-2 mb-2">
-                    <Award className="h-6 w-6 text-white" />
+                    <Award className="h-6 w-6 text-[#320E3B] dark:text-white" />
                     Pose Score
                 </h3>
                 <Skeleton className="h-8 w-1/4 bg-white/20 mb-1" />
@@ -165,14 +170,14 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
             </div>
             <div>
               <h3 className="text-xl font-semibold flex items-center gap-2 mt-4">
-                <Activity className="h-6 w-6 text-white" />
+                <Activity className="h-6 w-6 text-[#320E3B] dark:text-white" />
                 Identified Pose
               </h3>
               <Skeleton className="h-6 w-1/4 bg-white/20 mt-2" />
             </div>
             <div>
                 <h3 className="text-xl font-semibold flex items-center gap-2 mt-4">
-                <MessageSquareText className="h-6 w-6 text-white" />
+                <MessageSquareText className="h-6 w-6 text-[#320E3B] dark:text-white" />
                 Feedback
                 </h3>
                 <Skeleton className="h-6 w-1/4 bg-white/20 mt-2" />
@@ -187,7 +192,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
           <>
             {typeof score === 'number' && level && (
               <div className="space-y-4 p-4 rounded-xl bg-[rgba(255,240,215,0.02)] border border-[rgba(193,154,107,0.14)]">
-                <h3 className="text-xl font-semibold flex items-center gap-2 text-white">
+                <h3 className="text-xl font-semibold flex items-center gap-2 text-[#320E3B] dark:text-white">
                   <Award className="h-6 w-6" />
                   Pose Score
                 </h3>
@@ -198,7 +203,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
                     </Badge>
                   )}
                   {analysis.poseConfidence && (
-                    <Badge variant="outline" className="border-white/30 text-white/90 text-xs capitalize">
+                    <Badge variant="outline" className="border-[#320E3B]/30 dark:border-white/30 text-[#320E3B]/90 dark:text-white/90 text-xs capitalize">
                       Confidence: {analysis.poseConfidence}
                     </Badge>
                   )}
@@ -215,7 +220,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
                     />
                   </div>
                   <div className="flex flex-col items-end shrink-0">
-                    <span className="text-3xl font-bold text-white leading-none">{score}/100</span>
+                    <span className="text-3xl font-bold text-[#320E3B] dark:text-white leading-none">{score}/100</span>
                     <p 
                       style={{ 
                         fontFamily: "'Cormorant Garamond', Georgia, serif", 
@@ -234,47 +239,47 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
             )}
             {identifiedPose && (
               <div className="space-y-2 p-4 rounded-xl bg-[rgba(255,240,215,0.02)] border border-[rgba(193,154,107,0.14)]">
-                <h3 className="text-xl font-semibold flex items-center gap-2 text-white">
+                <h3 className="text-xl font-semibold flex items-center gap-2 text-[#320E3B] dark:text-white">
                   <Activity className="h-6 w-6" /> Identified Pose
                 </h3>
-                <p className="text-2xl font-bold text-white">{identifiedPose}</p>
+                <p className="text-2xl font-bold text-[#320E3B] dark:text-white">{identifiedPose}</p>
                 {analysis.identificationReasoning && (
-                  <p className="text-sm text-white/75 leading-relaxed">{analysis.identificationReasoning}</p>
+                  <p className="text-sm text-[#320E3B]/75 dark:text-white/75 leading-relaxed">{analysis.identificationReasoning}</p>
                 )}
-                <p className="text-sm text-white/70">Does this correctly identify your pose?</p>
+                <p className="text-sm text-[#320E3B]/70 dark:text-white/70">Does this correctly identify your pose?</p>
                 <div className="flex gap-2 mt-2">
-                  <Button variant="outline" size="sm" onClick={() => console.log('Correct Pose clicked')} className="bg-transparent border-white/20 hover:bg-white/10">
+                  <Button variant="outline" size="sm" onClick={() => console.log('Correct Pose clicked')} className="bg-transparent border-[#320E3B]/20 dark:border-white/20 hover:bg-white/10">
                     Yes
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => console.log('Incorrect Pose clicked')} className="bg-transparent border-white/20 hover:bg-white/10">No</Button>
+                  <Button variant="outline" size="sm" onClick={() => console.log('Incorrect Pose clicked')} className="bg-transparent border-[#320E3B]/20 dark:border-white/20 hover:bg-white/10">No</Button>
                 </div>
               </div>)}
 
             {analysis.motivationalNote && (
               <div className="p-4 rounded-xl border border-primary/30 bg-primary/10 space-y-2">
-                <h3 className="text-lg font-semibold flex items-center gap-2 text-white">
+                <h3 className="text-lg font-semibold flex items-center gap-2 text-[#320E3B] dark:text-white">
                   <Sparkles className="h-5 w-5 text-primary" />
                   Encouragement
                 </h3>
-                <p className="text-white/90 text-sm leading-relaxed whitespace-pre-wrap">{analysis.motivationalNote}</p>
+                <p className="text-[#320E3B]/90 dark:text-white/90 text-sm leading-relaxed whitespace-pre-wrap">{analysis.motivationalNote}</p>
               </div>
             )}
 
             <div className="space-y-3 p-4 rounded-xl bg-[rgba(255,240,215,0.02)] border border-[rgba(193,154,107,0.14)]">
-              <h3 className="text-xl font-semibold flex items-center gap-2 text-white">
+              <h3 className="text-xl font-semibold flex items-center gap-2 text-[#320E3B] dark:text-white">
                 <MessageSquareText className="h-6 w-6" />
                 AI Feedback
               </h3>
-              <p className="text-white/90 whitespace-pre-wrap leading-relaxed">
+              <p className="text-[#320E3B]/90 dark:text-white/90 whitespace-pre-wrap leading-relaxed">
                 {analysis.feedback}
               </p>
             </div>
 
             {hasV2Detail && (
-              <Accordion type="multiple" className="w-full space-y-2 rounded-xl border border-white/15 bg-black/10 p-2">
+              <Accordion type="multiple" className="w-full space-y-2 rounded-xl border border-[#320E3B]/15 dark:border-white/15 bg-black/10 p-2">
                 {analysis.jointAssessment && analysis.jointAssessment.length > 0 && (
-                  <AccordionItem value="joints" className="border-white/10 px-2">
-                    <AccordionTrigger className="text-white hover:no-underline py-3">
+                  <AccordionItem value="joints" className="border-[#320E3B]/10 dark:border-white/10 px-2">
+                    <AccordionTrigger className="text-[#320E3B] dark:text-white hover:no-underline py-3">
                       <span className="flex items-center gap-2 font-semibold">
                         <ListChecks className="h-5 w-5" />
                         Joint assessment
@@ -287,14 +292,14 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
                           className={cn('rounded-lg border p-3 text-sm', jointStatusClass(j.status))}
                         >
                           <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-                            <span className="font-semibold text-white">{j.joint}</span>
-                            <Badge variant="outline" className="border-white/25 text-xs capitalize text-white/90">
+                            <span className="font-semibold text-[#320E3B] dark:text-white">{j.joint}</span>
+                            <Badge variant="outline" className="border-[#320E3B]/25 dark:border-white/25 text-xs capitalize text-[#320E3B]/90 dark:text-white/90">
                               {j.status.replace(/_/g, ' ')}
                             </Badge>
                           </div>
-                          <p className="text-white/85 leading-relaxed">{j.observation}</p>
+                          <p className="text-[#320E3B]/85 dark:text-white/85 leading-relaxed">{j.observation}</p>
                           {j.correction && (
-                            <p className="mt-2 text-white/90 border-t border-white/10 pt-2">
+                            <p className="mt-2 text-[#320E3B]/90 dark:text-white/90 border-t border-[#320E3B]/10 dark:border-white/10 pt-2">
                               <span className="font-medium text-amber-200/90">Correction: </span>
                               {j.correction}
                             </p>
@@ -306,8 +311,8 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
                 )}
 
                 {analysis.priorityCorrections && analysis.priorityCorrections.length > 0 && (
-                  <AccordionItem value="priority" className="border-white/10 px-2">
-                    <AccordionTrigger className="text-white hover:no-underline py-3">
+                  <AccordionItem value="priority" className="border-[#320E3B]/10 dark:border-white/10 px-2">
+                    <AccordionTrigger className="text-[#320E3B] dark:text-white hover:no-underline py-3">
                       <span className="flex items-center gap-2 font-semibold">
                         <Lightbulb className="h-5 w-5" />
                         Priority corrections
@@ -316,10 +321,10 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
                     <AccordionContent className="space-y-3 pb-4">
                       {analysis.priorityCorrections.map((p, i) => (
                         <div key={`${p.joint}-${i}`} className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-sm space-y-1">
-                          <p className="font-semibold text-white">{p.joint}</p>
-                          <p className="text-white/80"><span className="text-white/60">Issue: </span>{p.issue}</p>
-                          <p className="text-white/90"><span className="text-white/60">Fix: </span>{p.correction}</p>
-                          <p className="text-white/85 italic border-t border-white/10 pt-2 mt-2">&ldquo;{p.cue}&rdquo;</p>
+                          <p className="font-semibold text-[#320E3B] dark:text-white">{p.joint}</p>
+                          <p className="text-[#320E3B]/80 dark:text-white/80"><span className="text-[#320E3B]/60 dark:text-white/60">Issue: </span>{p.issue}</p>
+                          <p className="text-[#320E3B]/90 dark:text-white/90"><span className="text-[#320E3B]/60 dark:text-white/60">Fix: </span>{p.correction}</p>
+                          <p className="text-[#320E3B]/85 dark:text-white/85 italic border-t border-[#320E3B]/10 dark:border-white/10 pt-2 mt-2">&ldquo;{p.cue}&rdquo;</p>
                         </div>
                       ))}
                     </AccordionContent>
@@ -327,15 +332,15 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
                 )}
 
                 {analysis.strengths && analysis.strengths.length > 0 && (
-                  <AccordionItem value="strengths" className="border-white/10 px-2">
-                    <AccordionTrigger className="text-white hover:no-underline py-3">
+                  <AccordionItem value="strengths" className="border-[#320E3B]/10 dark:border-white/10 px-2">
+                    <AccordionTrigger className="text-[#320E3B] dark:text-white hover:no-underline py-3">
                       <span className="flex items-center gap-2 font-semibold">
                         <Award className="h-5 w-5" />
                         Strengths
                       </span>
                     </AccordionTrigger>
                     <AccordionContent className="pb-4">
-                      <ul className="list-disc list-inside space-y-1 text-sm text-white/90">
+                      <ul className="list-disc list-inside space-y-1 text-sm text-[#320E3B]/90 dark:text-white/90">
                         {analysis.strengths.map((s) => (
                           <li key={s}>{s}</li>
                         ))}
@@ -345,8 +350,8 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
                 )}
 
                 {analysis.recommendedPreparatoryPoses && analysis.recommendedPreparatoryPoses.length > 0 && (
-                  <AccordionItem value="prep" className="border-white/10 px-2">
-                    <AccordionTrigger className="text-white hover:no-underline py-3">
+                  <AccordionItem value="prep" className="border-[#320E3B]/10 dark:border-white/10 px-2">
+                    <AccordionTrigger className="text-[#320E3B] dark:text-white hover:no-underline py-3">
                       <span className="flex items-center gap-2 font-semibold">
                         <Route className="h-5 w-5" />
                         Recommended preparatory poses
@@ -354,9 +359,9 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
                     </AccordionTrigger>
                     <AccordionContent className="space-y-3 pb-4">
                       {analysis.recommendedPreparatoryPoses.map((r) => (
-                        <div key={r.pose} className="rounded-lg border border-white/15 bg-black/20 p-3 text-sm">
-                          <p className="font-semibold text-white">{r.pose}</p>
-                          <p className="text-white/80 mt-1 leading-relaxed">{r.reason}</p>
+                        <div key={r.pose} className="rounded-lg border border-[#320E3B]/15 dark:border-white/15 bg-black/20 p-3 text-sm">
+                          <p className="font-semibold text-[#320E3B] dark:text-white">{r.pose}</p>
+                          <p className="text-[#320E3B]/80 dark:text-white/80 mt-1 leading-relaxed">{r.reason}</p>
                         </div>
                       ))}
                     </AccordionContent>
@@ -364,15 +369,15 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
                 )}
 
                 {analysis.progressionPath && (
-                  <AccordionItem value="progression" className="border-white/10 px-2">
-                    <AccordionTrigger className="text-white hover:no-underline py-3">
+                  <AccordionItem value="progression" className="border-[#320E3B]/10 dark:border-white/10 px-2">
+                    <AccordionTrigger className="text-[#320E3B] dark:text-white hover:no-underline py-3">
                       <span className="flex items-center gap-2 font-semibold">
                         <Route className="h-5 w-5" />
                         Progression path
                       </span>
                     </AccordionTrigger>
                     <AccordionContent className="pb-4">
-                      <p className="text-sm text-white/90 leading-relaxed whitespace-pre-wrap">{analysis.progressionPath}</p>
+                      <p className="text-sm text-[#320E3B]/90 dark:text-white/90 leading-relaxed whitespace-pre-wrap">{analysis.progressionPath}</p>
                     </AccordionContent>
                   </AccordionItem>
                 )}
@@ -382,14 +387,14 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
         )}
 
         {!isLoading && !analysis && videoSrc && (
-           <div className="text-center text-white/70 p-4">
+           <div className="text-center text-[#320E3B]/70 dark:text-white/70 p-4">
             <p>Analysis in progress or failed to retrieve full details. Waiting for feedback display.</p>
           </div>
         )}
       </CardContent>
       {analysis && (
         <CardFooter className="p-0 pt-6">
-            <p className="text-xs text-white/60">
+            <p className="text-xs text-[#320E3B]/60 dark:text-white/60">
                 Remember, AI feedback and scores are guides. Listen to your body and consult a professional if needed.
             </p>
         </CardFooter>
