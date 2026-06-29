@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { doc, getDoc, type Timestamp } from 'firebase/firestore';
 import { getStorage, ref, listAll, getDownloadURL } from 'firebase/storage';
@@ -11,11 +12,8 @@ import { AppShell } from '@/components/layout/app-shell';
 import { PoseAnalysisCard } from '@/components/features/snap-yoga/pose-analysis-card';
 import { RecommendedVideosCard, type StorageVideo } from '@/components/features/snap-yoga/recommended-videos-card';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, AlertCircle, FileText, YoutubeIcon, Share2, Copy } from 'lucide-react';
+import { ArrowLeft, AlertCircle, Share2, Copy } from 'lucide-react';
 import type { AnalysisServiceOutput } from '@/app/actions/analyze-pose-action';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -36,7 +34,13 @@ export default function PastAnalysisPage() {
   const { toast } = useToast();
   const analysisId = params.analysisId as string;
   const { user: currentUser, loading: authLoading } = useAuth();
+  const { isDark } = useTheme();
   const isMobile = useIsMobile();
+  // Light = amethyst on lavender; dark = the original cream/gold on ink.
+  const txt = (a: number) => isDark ? `rgba(255,240,215,${a})` : `rgba(50,14,59,${a})`;
+  const acc = (a: number) => isDark ? `rgba(193,154,107,${a})` : `rgba(50,14,59,${a})`;
+  const TITLE = isDark ? 'rgba(255,240,215,0.94)' : 'rgba(255,248,235,0.96)';
+  const TITLE_SH = isDark ? 'none' : '0 1px 3px rgba(70,60,80,0.32)';
 
   const [analysisDetail, setAnalysisDetail] = useState<StoredAnalysisData | null>(null);
   const [analysisForCard, setAnalysisForCard] = useState<AnalysisServiceOutput | null>(null);
@@ -176,12 +180,12 @@ export default function PastAnalysisPage() {
   if (error) {
     return (
       <AppShell>
-        <div className="container mx-auto px-4 py-12 text-center">
-           <Button variant="outline" onClick={() => router.back()} className="mb-8 group bg-transparent border-white/20 hover:bg-white/10">
-            <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+        <div className="container mx-auto px-4 py-12 text-center max-w-md">
+           <button onClick={() => router.back()} className="group inline-flex items-center gap-2 mb-8" style={{ fontSize: 12, color: txt(0.55) }}>
+            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" style={{ color: acc(0.75) }} />
             Go Back
-          </Button>
-          <Alert variant="destructive" className="max-w-md mx-auto bg-red-500/10 border-red-500/30 text-red-300">
+          </button>
+          <Alert variant="destructive" className="bg-red-500/10 border-red-500/30 text-red-300">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
@@ -195,11 +199,11 @@ export default function PastAnalysisPage() {
     return (
       <AppShell>
         <div className="container mx-auto px-4 py-12 text-center">
-          <p>No analysis data to display.</p>
-           <Button variant="outline" onClick={() => router.back()} className="mt-4 group bg-transparent border-white/20 hover:bg-white/10">
-             <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+          <p style={{ color: txt(0.55) }}>No analysis data to display.</p>
+           <button onClick={() => router.back()} className="group inline-flex items-center gap-2 mt-4" style={{ fontSize: 12, color: txt(0.55) }}>
+             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" style={{ color: acc(0.75) }} />
             Go Back
-          </Button>
+          </button>
         </div>
       </AppShell>
     );
@@ -207,40 +211,49 @@ export default function PastAnalysisPage() {
 
   return (
     <AppShell>
-      <div className="container mx-auto px-4 py-12">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-            <Button variant="outline" onClick={() => router.back()} className="group self-start sm:self-center bg-transparent border-white/20 hover:bg-white/10">
-              <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-              Back to Dashboard
-            </Button>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
+      <div className="container mx-auto px-4 py-8 max-w-3xl">
+        <div className="flex justify-between items-center mb-8 gap-4">
+            <button
+              onClick={() => router.back()}
+              className="group inline-flex items-center gap-2"
+              style={{ fontSize: 12, color: txt(0.55) }}
+            >
+              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" style={{ color: acc(0.75) }} />
+              Back
+            </button>
             <div className="flex gap-2">
-                <Button variant="outline" onClick={() => handleShare('link')} className="group self-start sm:self-center bg-transparent border-white/20 hover:bg-white/10">
-                  <Copy className="mr-2 h-4 w-4" />
+                <button
+                  onClick={() => handleShare('link')}
+                  className="inline-flex items-center gap-1.5 transition-all active:scale-95"
+                  style={{ color: acc(0.92), background: acc(0.10), border: `0.5px solid ${acc(0.35)}`, borderRadius: 999, padding: '7px 16px', fontSize: 12, fontWeight: 500 }}
+                >
+                  <Copy className="h-3.5 w-3.5" />
                   Copy Link
-                </Button>
-                <Button variant="outline" onClick={() => handleShare('instagram')} className="group self-start sm:self-center bg-white/90 text-black hover:bg-white">
-                  <Share2 className="mr-2 h-4 w-4" />
-                  Share to Instagram
-                </Button>
+                </button>
+                <button
+                  onClick={() => handleShare('instagram')}
+                  className="inline-flex items-center gap-1.5 transition-all active:scale-95"
+                  style={{ color: isDark ? 'rgba(25,16,8,0.95)' : 'rgba(255,248,235,0.95)', background: isDark ? 'rgba(193,154,107,0.85)' : '#320E3B', borderRadius: 999, padding: '7px 16px', fontSize: 12, fontWeight: 600 }}
+                >
+                  <Share2 className="h-3.5 w-3.5" />
+                  Share
+                </button>
             </div>
         </div>
-        
 
-        <div className="mb-8 p-6 bg-black/20 backdrop-blur-lg border border-white/20 rounded-lg shadow-xl">
-          <CardHeader className="p-0">
-            <CardTitle className="flex items-center gap-2 text-3xl text-white">
-              <FileText className="h-8 w-8" />
-              Pose Analysis Report
-            </CardTitle>
-            {analysisDetail.videoFileName && (
-              <CardDescription className="text-md text-white/80">
-                For video: <span className="font-semibold">{analysisDetail.videoFileName}</span>
-              </CardDescription>
-            )}
-            <CardDescription className="text-md text-white/80">
-              Analyzed on: {format(analysisDetail.createdAt.toDate(), 'PPP p')}
-            </CardDescription>
-          </CardHeader>
+        {/* REPORT HEADER */}
+        <div className="mb-8">
+          <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: acc(0.55) }}>
+            Pose Analysis Report
+          </p>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 30, fontWeight: 600, color: TITLE, textShadow: TITLE_SH, marginTop: 4 }}>
+            {analysisDetail.identifiedPose || 'Your Practice'}
+          </h1>
+          <p style={{ fontSize: 11, fontStyle: 'italic', color: txt(0.42), marginTop: 4 }}>
+            {analysisDetail.videoFileName ? `${analysisDetail.videoFileName} · ` : ''}
+            {format(analysisDetail.createdAt.toDate(), 'PPP p')}
+          </p>
         </div>
 
         <div className="grid grid-cols-1 gap-8 items-start">

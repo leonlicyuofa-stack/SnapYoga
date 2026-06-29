@@ -3,26 +3,17 @@
 import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { firestore } from '@/lib/firebase/clientApp'; 
-import { collection, query, orderBy, getDocs, type Timestamp } from 'firebase/firestore'; 
+import { useTheme } from '@/contexts/ThemeContext';
+import { firestore } from '@/lib/firebase/clientApp';
+import { collection, query, orderBy, getDocs, type Timestamp } from 'firebase/firestore';
 import { AppShell } from '@/components/layout/app-shell';
-import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ArrowLeft, AlertCircle, FileText, Calendar as CalendarIcon, Activity, ChevronRight, Award, Clock, MessageCircle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { ArrowLeft, ChevronRight, MessageCircle } from 'lucide-react';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { format, isSameDay } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import type { DayContentProps } from 'react-day-picker';
 import { cn } from '@/lib/utils';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-import { Badge } from '@/components/ui/badge';
 
 
 interface AnalysisSummary {
@@ -35,6 +26,21 @@ interface AnalysisSummary {
 
 export default function AnalysisLogsPage() {
   const { user: currentUser, loading: authLoading } = useAuth();
+  const { isDark } = useTheme();
+  // Light = amethyst on lavender; dark = the original cream/gold on ink.
+  const txt = (a: number) => isDark ? `rgba(255,240,215,${a})` : `rgba(50,14,59,${a})`;
+  const acc = (a: number) => isDark ? `rgba(193,154,107,${a})` : `rgba(50,14,59,${a})`;
+  const labelStyle: React.CSSProperties = {
+    fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: acc(0.55),
+  };
+  const cardStyle: React.CSSProperties = {
+    borderRadius: 18,
+    border: `0.5px solid ${isDark ? 'rgba(193,154,107,0.18)' : 'rgba(255,255,255,0.40)'}`,
+    background: isDark ? 'rgba(13,20,30,0.55)' : 'rgba(255,255,255,0.12)',
+    backdropFilter: 'blur(14px)',
+  };
+  const TITLE = isDark ? 'rgba(255,240,215,0.94)' : 'rgba(255,248,235,0.96)';
+  const TITLE_SH = isDark ? 'none' : '0 1px 3px rgba(70,60,80,0.32)';
   const [analyses, setAnalyses] = useState<AnalysisSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -74,8 +80,8 @@ export default function AnalysisLogsPage() {
         setLoading(false);
       });
   }, [currentUser, authLoading]);
-  
-  const filteredAnalyses = analyses.filter(analysis => 
+
+  const filteredAnalyses = analyses.filter(analysis =>
       selectedDate ? isSameDay(analysis.createdAt.toDate(), selectedDate) : true
   );
 
@@ -100,7 +106,7 @@ export default function AnalysisLogsPage() {
       </div>
     );
   };
-  
+
   if (authLoading) {
     return (
       <AppShell>
@@ -113,136 +119,130 @@ export default function AnalysisLogsPage() {
 
   return (
     <AppShell>
-      <div className="container mx-auto px-4 py-12">
-        <Button variant="outline" asChild className="mb-8 group">
-          <Link href="/profile">
-            <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-            Back to Profile
-          </Link>
-        </Button>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="md:col-span-1">
-                 <Card className="bg-card/80 backdrop-blur-sm shadow-md">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-xl">
-                            <CalendarIcon className="h-6 w-6 text-primary" />
-                            Select a Date
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex justify-center">
-                        <Calendar
-                            mode="single"
-                            selected={selectedDate}
-                            onSelect={setSelectedDate}
-                            className="p-0"
-                            components={{
-                                DayContent: DayWithDot
-                            }}
-                            styles={{
-                                day_selected: { 
-                                    backgroundColor: 'hsl(var(--primary))', 
-                                    color: 'hsl(var(--primary-foreground))',
-                                    borderRadius: '9999px',
-                                },
-                                day_today: {
-                                    backgroundColor: 'hsl(var(--accent))',
-                                    color: 'hsl(var(--accent-foreground))',
-                                    borderRadius: '9999px',
-                                }
-                            }}
-                        />
-                    </CardContent>
-                </Card>
-            </div>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
+      <div className="container mx-auto px-4 py-8 max-w-3xl">
 
-            <div className="md:col-span-2">
-                {error && !loading && analyses.length === 0 && (
-                  <Alert variant="destructive" className="max-w-md mx-auto">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>Notice</AlertTitle>
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
-                )}
-                
-                {loading ? (
-                    <div className="space-y-4">
-                        <Skeleton className="h-24 w-full" />
-                        <Skeleton className="h-24 w-full" />
-                        <Skeleton className="h-24 w-full" />
-                    </div>
-                ) : filteredAnalyses.length > 0 ? (
-                    <Accordion type="single" collapsible className="w-full space-y-4">
-                        <h2 className="text-2xl font-bold">
-                            Analyses for {selectedDate ? format(selectedDate, 'PPP') : 'All Time'}
-                        </h2>
-                        {filteredAnalyses.map((analysis) => {
-                             const scoreValue = analysis.score < 1 ? analysis.score * 100 : analysis.score;
-                             const score = Math.min(Math.round(scoreValue), 100);
-                             return (
-                                <AccordionItem value={analysis.id} key={analysis.id} className="border-b-0">
-                                    <Card className="bg-card/80 backdrop-blur-sm shadow-md hover:shadow-lg transition-shadow">
-                                        <AccordionTrigger className="p-4 hover:no-underline w-full">
-                                            <div className="flex items-center gap-4 text-left">
-                                                <div className="p-3 bg-primary/10 rounded-md">
-                                                    <Activity className="h-8 w-8 text-primary" />
-                                                </div>
-                                                <div className="flex-grow">
-                                                    <p className="font-semibold text-lg">{analysis.identifiedPose}</p>
-                                                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                                        <span>{format(analysis.createdAt.toDate(), 'p')}</span>
-                                                        {analysis.userNotes && (
-                                                          <Badge variant="outline" className="text-[10px] py-0 h-4 border-primary/30 text-primary/80">
-                                                            <MessageCircle className="h-2.5 w-2.5 mr-1" /> Has Note
-                                                          </Badge>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </AccordionTrigger>
-                                        <AccordionContent className="px-4 pb-4">
-                                            <div className="border-t pt-4 mt-2 space-y-3">
-                                                {analysis.userNotes && (
-                                                  <div className="p-3 bg-primary/5 rounded-lg border border-primary/10 mb-2">
-                                                    <p className="text-[10px] uppercase font-bold text-primary/60 mb-1">Your context:</p>
-                                                    <p className="text-sm italic">&ldquo;{analysis.userNotes.length > 100 ? analysis.userNotes.substring(0, 100) + '...' : analysis.userNotes}&rdquo;</p>
-                                                  </div>
-                                                )}
-                                                <div className="flex items-center justify-between text-sm">
-                                                    <span className="text-muted-foreground flex items-center"><Award className="mr-2 h-4 w-4"/>Score</span>
-                                                    <Badge variant="secondary">{score} / 100</Badge>
-                                                </div>
-                                                <div className="flex items-center justify-between text-sm">
-                                                    <span className="text-muted-foreground flex items-center"><CalendarIcon className="mr-2 h-4 w-4"/>Date</span>
-                                                    <span className="font-medium">{format(analysis.createdAt.toDate(), 'PPP')}</span>
-                                                </div>
-                                                <div className="flex items-center justify-between text-sm">
-                                                    <span className="text-muted-foreground flex items-center"><Clock className="mr-2 h-4 w-4"/>Time</span>
-                                                    <span className="font-medium">{format(analysis.createdAt.toDate(), 'p')}</span>
-                                                </div>
-                                                <Button asChild variant="outline" size="sm" className="w-full mt-2">
-                                                    <Link href={`/analysis/${analysis.id}`}>
-                                                        View Full Report
-                                                        <ChevronRight className="ml-2 h-4 w-4"/>
-                                                    </Link>
-                                                </Button>
-                                            </div>
-                                        </AccordionContent>
-                                    </Card>
-                                </AccordionItem>
-                            )
-                        })}
-                    </Accordion>
-                ) : selectedDate && (
-                    <div className="p-8 border-2 border-dashed rounded-lg text-center bg-card/50">
-                        <CalendarIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                        <h3 className="text-xl font-semibold">No Analyses Found</h3>
-                        <p className="text-muted-foreground mt-1">
-                            No analysis sessions were recorded on {format(selectedDate, 'PPP')}.
-                        </p>
-                    </div>
-                )}
+        {/* BACK */}
+        <Link
+          href="/profile"
+          className="group inline-flex items-center gap-2 mb-8"
+          style={{ fontSize: 12, color: txt(0.55) }}
+        >
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" style={{ color: acc(0.75) }} />
+          Back to Profile
+        </Link>
+
+        {/* HEADER */}
+        <div className="mb-6">
+          <p style={labelStyle}>My Practices</p>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 30, fontWeight: 600, color: TITLE, textShadow: TITLE_SH, marginTop: 4 }}>
+            Practice History
+          </h1>
+        </div>
+
+        {/* CALENDAR */}
+        <div style={cardStyle} className="p-4 mb-8 flex justify-center">
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={setSelectedDate}
+            className="p-0"
+            components={{
+              DayContent: DayWithDot
+            }}
+            styles={{
+              day_selected: {
+                backgroundColor: isDark ? 'rgba(193,154,107,0.85)' : '#320E3B',
+                color: isDark ? 'rgba(25,16,8,0.95)' : 'rgba(255,248,235,0.95)',
+                borderRadius: '9999px',
+              },
+              day_today: {
+                color: isDark ? 'rgba(214,178,130,0.95)' : '#320E3B',
+                fontWeight: 700,
+              }
+            }}
+          />
+        </div>
+
+        {/* RESULTS */}
+        <div className="space-y-3">
+          <p style={labelStyle}>
+            {selectedDate ? format(selectedDate, 'PPP') : 'All Time'}
+          </p>
+
+          {loading ? (
+            <div className="space-y-3">
+              <Skeleton className="h-16 w-full bg-white/5" />
+              <Skeleton className="h-16 w-full bg-white/5" />
+              <Skeleton className="h-16 w-full bg-white/5" />
             </div>
+          ) : filteredAnalyses.length > 0 ? (
+            <div style={cardStyle} className="overflow-hidden">
+              {filteredAnalyses.map((analysis, i) => {
+                const scoreValue = analysis.score < 1 ? analysis.score * 100 : analysis.score;
+                const score = Math.min(Math.round(scoreValue), 100);
+                return (
+                  <Link
+                    key={analysis.id}
+                    href={`/analysis/${analysis.id}`}
+                    className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-[rgba(193,154,107,0.05)]"
+                    style={{ borderTop: i === 0 ? 'none' : `0.5px solid ${acc(0.10)}` }}
+                  >
+                    {/* Pose thumbnail */}
+                    <div
+                      className="flex-shrink-0 flex items-center justify-center text-lg"
+                      style={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: '12px 12px 12px 4px',
+                        background: 'linear-gradient(135deg, rgba(193,154,107,0.25), rgba(180,110,65,0.20))',
+                      }}
+                    >
+                      🧘
+                    </div>
+
+                    {/* Pose + time */}
+                    <div className="flex-grow min-w-0">
+                      <div className="truncate" style={{ fontSize: 14, fontWeight: 600, color: txt(0.90) }}>
+                        {analysis.identifiedPose}
+                      </div>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span style={{ fontSize: 11, fontStyle: 'italic', color: txt(0.40) }}>
+                          {format(analysis.createdAt.toDate(), 'p')}
+                        </span>
+                        {analysis.userNotes && (
+                          <span className="inline-flex items-center gap-1" style={{ fontSize: 9, letterSpacing: '0.05em', textTransform: 'uppercase', color: acc(0.70) }}>
+                            <MessageCircle className="h-2.5 w-2.5" /> Note
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Score chip */}
+                    <span
+                      className="flex-shrink-0"
+                      style={{ background: acc(0.20), color: acc(0.92), borderRadius: 999, padding: '2px 10px', fontWeight: 600, fontSize: 12 }}
+                    >
+                      {score}
+                    </span>
+                    <ChevronRight className="h-4 w-4 flex-shrink-0" style={{ color: acc(0.45) }} />
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div style={{ ...cardStyle, borderStyle: 'dashed' }} className="px-6 py-10 text-center">
+              <p style={{ fontSize: 28, marginBottom: 8 }}>🧘</p>
+              <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 18, fontWeight: 600, color: txt(0.80) }}>
+                No practices {selectedDate ? 'on this day' : 'yet'}
+              </p>
+              <p style={{ fontSize: 12, fontStyle: 'italic', color: txt(0.40), marginTop: 4 }}>
+                {error && analyses.length === 0
+                  ? 'Try the Analyze tab to record your first practice.'
+                  : selectedDate ? `Nothing recorded on ${format(selectedDate, 'PPP')}.` : 'Select a date to view your practices.'}
+              </p>
+            </div>
+          )}
         </div>
 
       </div>
