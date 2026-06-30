@@ -1,7 +1,13 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Dashboard avatar-orbit sweep. Defined here (static stylesheet) rather than in an inline
+   <style> so the dashboard's load-time re-render storm never re-injects it. */
+@keyframes syOrbitSweep { from { offset-distance: 0%; } to { offset-distance: 100%; } }
 
 @layer base {
   :root {

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { MessageSquare, RotateCcw } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { doc, getDoc, collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns';
@@ -129,6 +129,34 @@ function getInitials(email?: string | null, name?: string | null) {
   return email?.[0].toUpperCase() || 'U';
 }
 
+// Avatar halo orbit — isolated and memoised so the dashboard's load-time re-render storm
+// (several staggered Firestore reads) can't restart the CSS animation. `accent` is the
+// rgba(...-prefix string (gold in dark, amethyst in light); it's stable across those renders.
+const AvatarOrbit = memo(function AvatarOrbit({ accent }: { accent: string }) {
+  return (
+    <>
+      <svg
+        viewBox="0 0 200 200"
+        aria-hidden="true"
+        style={{ position: 'absolute', top: -62, left: -62, width: 200, height: 200, pointerEvents: 'none', overflow: 'visible' }}
+      >
+        <path d="M 42,100 A 58,58 0 0 1 158,100" fill="none" stroke={`${accent},0.22)`} strokeWidth="1" strokeDasharray="2 7" strokeLinecap="round" />
+        <circle cx="42" cy="100" r="2" fill={`${accent},0.5)`} />
+        <circle cx="158" cy="100" r="2" fill={`${accent},0.5)`} />
+      </svg>
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute', top: 0, left: 0, width: 5, height: 5, borderRadius: '50%',
+          background: `${accent},0.85)`, boxShadow: `0 0 6px ${accent},0.4)`,
+          offsetPath: "path('M -20 38 A 58 58 0 0 1 96 38')", offsetRotate: '0deg',
+          animation: 'syOrbitSweep 4.5s ease-in-out infinite alternate', zIndex: 0, pointerEvents: 'none',
+        } as React.CSSProperties}
+      />
+    </>
+  );
+});
+
 export default function DashboardPage() {
   const { user, isGold }        = useAuth();
   const { isDark }              = useTheme();
@@ -208,36 +236,14 @@ export default function DashboardPage() {
   return (
     <AppShell>
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');
-          @keyframes syOrbitSweep { from { offset-distance: 0%; } to { offset-distance: 100%; } }`}</style>
-
         <TopBarIcons className="px-4 pt-3" />
 
         {/* HEADER — prominent profile picture */}
         <header style={{ padding: '12px 16px 10px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <div style={{ position: 'relative', marginBottom: 10 }}>
-            {/* Half-moon orbit (original arrangement): a dot glides between the two end-dots, over
-                the apex, and back (ping-pong). The arc is concentric with the avatar at radius 58 —
-                always ~20px outside the picture, so the dot never overlaps it. No opacity change and
-                no teleport (alternate direction), so there is no flash. */}
-            <svg
-              viewBox="0 0 200 200"
-              aria-hidden="true"
-              style={{ position: 'absolute', top: -62, left: -62, width: 200, height: 200, pointerEvents: 'none', overflow: 'visible' }}
-            >
-              <path d="M 42,100 A 58,58 0 0 1 158,100" fill="none" stroke={`${ACCENT},0.22)`} strokeWidth="1" strokeDasharray="2 7" strokeLinecap="round" />
-              <circle cx="42" cy="100" r="2" fill={`${ACCENT},0.5)`} />
-              <circle cx="158" cy="100" r="2" fill={`${ACCENT},0.5)`} />
-            </svg>
-            <div
-              aria-hidden="true"
-              style={{
-                position: 'absolute', top: 0, left: 0, width: 5, height: 5, borderRadius: '50%',
-                background: `${ACCENT},0.85)`, boxShadow: `0 0 6px ${ACCENT},0.4)`,
-                offsetPath: "path('M -20 38 A 58 58 0 0 1 96 38')", offsetRotate: '0deg',
-                animation: 'syOrbitSweep 4.5s ease-in-out infinite alternate', zIndex: 0, pointerEvents: 'none',
-              } as React.CSSProperties}
-            />
+            {/* Half-moon orbit, concentric with the avatar (radius 58, ~20px outside the picture).
+                Memoised + keyframes in globals.css so the load-time re-render storm can't flicker it. */}
+            <AvatarOrbit accent={ACCENT} />
             {isGold && (
               <span style={{ position: 'absolute', top: -15, left: '50%', transform: 'translateX(-50%) rotate(-8deg)', fontSize: 20, zIndex: 2 }}>👑</span>
             )}
