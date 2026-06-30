@@ -37,13 +37,13 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
 
   if (!isAnalysisDone) {
     return (
-      <div className="w-full p-6 bg-black/20 backdrop-blur-lg border-white/20 text-white rounded-2xl shadow-xl opacity-50 cursor-not-allowed">
+      <div className="w-full p-6 bg-white/[0.12] dark:bg-black/20 backdrop-blur-lg border border-[#320E3B]/15 dark:border-white/20 text-[#320E3B] dark:text-white rounded-2xl shadow-xl opacity-50 cursor-not-allowed">
         <CardHeader className="p-0">
           <CardTitle className="flex items-center gap-2 text-2xl">
-            <MessageCircleQuestion className="h-7 w-7 text-white" />
+            <MessageCircleQuestion className="h-7 w-7 text-[#320E3B] dark:text-white" />
             Provide Feedback
           </CardTitle>
-          <CardDescription className="text-white/80">
+          <CardDescription className="text-[#320E3B]/80 dark:text-white/80">
             Once your pose is analyzed, you can provide feedback on the suggestions here.
           </CardDescription>
         </CardHeader>
@@ -56,13 +56,13 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
   }
 
   return (
-    <div className="w-full p-6 bg-black/20 backdrop-blur-lg border-white/20 text-white rounded-2xl shadow-xl">
+    <div className="w-full p-6 bg-white/[0.12] dark:bg-black/20 backdrop-blur-lg border border-[#320E3B]/15 dark:border-white/20 text-[#320E3B] dark:text-white rounded-2xl shadow-xl">
       <CardHeader className="p-0">
         <CardTitle className="flex items-center gap-2 text-2xl">
-          <MessageCircleQuestion className="h-7 w-7 text-white" />
+          <MessageCircleQuestion className="h-7 w-7 text-[#320E3B] dark:text-white" />
           Provide Feedback on Suggestions
         </CardTitle>
-        <CardDescription className="text-white/80">
+        <CardDescription className="text-[#320E3B]/80 dark:text-white/80">
           Let us know if the suggestions were helpful or if you have any comments.
         </CardDescription>
       </CardHeader>
@@ -75,17 +75,17 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
             onChange={(e) => setFeedbackText(e.target.value)}
             placeholder="E.g., The cue about my shoulder alignment was very helpful!"
             rows={4}
-            className="mt-1 rounded-lg text-base bg-black/20 border-white/20 placeholder:text-white/50"
+            className="mt-1 rounded-lg text-base bg-white/[0.12] dark:bg-black/20 border-[#320E3B]/20 dark:border-white/20 placeholder:text-[#320E3B]/50 dark:placeholder:text-white/50"
             aria-describedby="feedback-text-help"
           />
-          <p id="feedback-text-help" className="text-sm text-white/70 mt-1">
+          <p id="feedback-text-help" className="text-sm text-[#320E3B]/70 dark:text-white/70 mt-1">
             Your input helps us improve!
           </p>
         </div>
         <Button
           onClick={handleSubmit}
           disabled={isLoading || !feedbackText.trim()}
-          className="w-full bg-white/90 hover:bg-white text-black text-lg py-6 rounded-lg shadow-md transition-all duration-150 ease-in-out transform hover:scale-105 active:scale-95"
+          className="w-full bg-[#320E3B] hover:bg-[#320E3B]/90 text-[#FBF3E4] dark:bg-white/90 dark:hover:bg-white dark:text-black text-lg py-6 rounded-lg shadow-md transition-all duration-150 ease-in-out transform hover:scale-105 active:scale-95"
           aria-label="Submit Feedback"
         >
           {isLoading ? (
@@ -97,8 +97,8 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
         </Button>
 
         {isLoading && summary === null && (
-            <div className="space-y-3 p-4 bg-black/20 rounded-xl border border-dashed border-white/20">
-                <h3 className="text-xl font-semibold flex items-center gap-2 text-white">
+            <div className="space-y-3 p-4 bg-white/[0.10] dark:bg-black/20 rounded-xl border border-dashed border-[#320E3B]/15 dark:border-white/20">
+                <h3 className="text-xl font-semibold flex items-center gap-2 text-[#320E3B] dark:text-white">
                     <Sparkles className="h-6 w-6" />
                     Feedback Summary
                 </h3>
@@ -108,12 +108,12 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
         )}
 
         {summary && (
-          <div className="mt-6 space-y-3 p-4 bg-black/20 rounded-xl border border-white/20">
-            <h3 className="text-xl font-semibold flex items-center gap-2 text-white">
+          <div className="mt-6 space-y-3 p-4 bg-white/[0.10] dark:bg-black/20 rounded-xl border border-[#320E3B]/15 dark:border-white/20">
+            <h3 className="text-xl font-semibold flex items-center gap-2 text-[#320E3B] dark:text-white">
               <Sparkles className="h-6 w-6" />
               Feedback Summary
             </h3>
-            <p className="text-white/90 whitespace-pre-wrap leading-relaxed">
+            <p className="text-[#320E3B]/90 dark:text-white/90 whitespace-pre-wrap leading-relaxed">
               {summary.summary}
             </p>
           </div>
@@ -121,7 +121,7 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
       </CardContent>
       {summary && (
         <CardFooter className="p-0 pt-6">
-            <p className="text-xs text-white/60">
+            <p className="text-xs text-[#320E3B]/60 dark:text-white/60">
                 Thank you for your feedback! We've noted your comments.
             </p>
         </CardFooter>

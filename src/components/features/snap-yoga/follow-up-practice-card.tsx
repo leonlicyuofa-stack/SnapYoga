@@ -1,20 +1,24 @@
 "use client";
 
 import { Play, Clock, Sparkles } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface FollowUpPracticeCardProps {
   onTap: () => void;
 }
 
 export function FollowUpPracticeCard({ onTap }: FollowUpPracticeCardProps) {
+  const { isDark } = useTheme();
+  const txt = (a: number) => isDark ? `rgba(255,240,215,${a})` : `rgba(50,14,59,${a})`;
+  const acc = (a: number) => isDark ? `rgba(193,154,107,${a})` : `rgba(50,14,59,${a})`;
   return (
-    <div 
+    <div
       onClick={onTap}
-      className="w-full p-6 cursor-pointer transition-all hover:bg-white/5 active:scale-[0.98] group"
-      style={{ 
+      className="w-full p-6 cursor-pointer transition-all hover:opacity-90 active:scale-[0.98] group"
+      style={{
         borderRadius: '24px 12px 24px 24px',
-        border: '0.5px solid rgba(193,154,107,0.18)',
-        background: 'rgba(13,20,30,0.50)',
+        border: `0.5px solid ${isDark ? 'rgba(193,154,107,0.18)' : 'rgba(255,255,255,0.40)'}`,
+        background: isDark ? 'rgba(13,20,30,0.50)' : 'rgba(255,255,255,0.12)',
         backdropFilter: 'blur(14px)',
       }}
     >
@@ -26,34 +30,34 @@ export function FollowUpPracticeCard({ onTap }: FollowUpPracticeCardProps) {
            
            {/* Tier Hint (optional visual flair) */}
            <div className="absolute top-2 right-2 flex gap-1">
-              <div className="w-1.5 h-1.5 rounded-full bg-[rgba(193,154,107,0.80)]" />
+              <div className="w-1.5 h-1.5 rounded-full" style={{ background: acc(0.80) }} />
            </div>
         </div>
-        
+
         {/* Content */}
         <div className="flex-1 text-center md:text-left">
           <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
-            <Sparkles className="h-4 w-4 text-[rgba(193,154,107,0.80)]" />
-            <span style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.55)', fontWeight: 600 }}>Suggested Practice</span>
+            <Sparkles className="h-4 w-4" style={{ color: acc(0.80) }} />
+            <span style={{ fontSize: 10, letterSpacing: '0.15em', textTransform: 'uppercase', color: acc(0.55), fontWeight: 600 }}>Suggested Practice</span>
           </div>
-          
-          <h3 
-            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: 'rgba(255,240,215,0.92)' }}
+
+          <h3
+            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", color: txt(0.92) }}
             className="text-2xl font-bold mb-2 leading-tight"
           >
             Recommended: Deep Hip Opening
           </h3>
-          
-          <p style={{ color: 'rgba(255,240,215,0.60)' }} className="text-sm leading-relaxed mb-4">
+
+          <p style={{ color: txt(0.60) }} className="text-sm leading-relaxed mb-4">
             A restorative flow designed to improve your alignment and release tension identified in your practice.
           </p>
           
           <div className="flex items-center justify-center md:justify-start gap-4">
-            <div className="flex items-center gap-1.5 text-xs text-white/40">
+            <div className="flex items-center gap-1.5 text-xs text-[#320E3B]/55 dark:text-white/40">
               <Clock className="h-3.5 w-3.5" />
               <span>12 min</span>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-white/40 uppercase tracking-widest font-bold">
+            <div className="flex items-center gap-1.5 text-xs text-[#320E3B]/55 dark:text-white/40 uppercase tracking-widest font-bold">
               <span>Intermediate</span>
             </div>
           </div>
