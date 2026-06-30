@@ -209,41 +209,25 @@ export default function DashboardPage() {
     <AppShell>
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');
-          @keyframes syOrbitSweep {
-            0%   { offset-distance: 0%;   opacity: 0; }
-            14%  { opacity: 1; }
-            86%  { opacity: 1; }
-            100% { offset-distance: 100%; opacity: 0; }
-          }`}</style>
+          @keyframes syOrbitSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
 
         <TopBarIcons className="px-4 pt-3" />
 
         {/* HEADER — prominent profile picture */}
         <header style={{ padding: '12px 16px 10px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <div style={{ position: 'relative', marginBottom: 10 }}>
-            {/* Half-moon orbit: a dot enters top-left, sweeps over the apex, exits top-right */}
-            <svg
-              viewBox="0 0 200 200"
-              aria-hidden="true"
-              style={{ position: 'absolute', top: -62, left: -62, width: 200, height: 200, pointerEvents: 'none', overflow: 'visible' }}
-            >
-              <path d="M 42,100 A 58,58 0 0 1 158,100" fill="none" stroke={`${ACCENT},0.22)`} strokeWidth="1" strokeDasharray="2 7" strokeLinecap="round" />
-              {/* Static decorative end-dots — the moving orbit was removed to eliminate the sweeping flash. */}
-              <circle cx="42" cy="100" r="2" fill={`${ACCENT},0.5)`} />
-              <circle cx="158" cy="100" r="2" fill={`${ACCENT},0.5)`} />
-            </svg>
-            {/* Flash-free orbiting dot: pure-CSS sweep along the half-moon arc (container coords).
-                Fully transparent at the 0%/100% loop boundary, so the teleport is never visible. */}
+            {/* Avatar halo: faint top arc + two dots in CONTINUOUS orbit. The orbit circle is
+                centred ABOVE the avatar, so the dots slide behind the avatar (lower z-index) across
+                the bottom and re-emerge over the top. No opacity ever changes, so it cannot flash,
+                and the hidden lower arc keeps it clear of the name below. */}
+            <div aria-hidden="true" style={{ position: 'absolute', top: -24, left: -2, width: 80, height: 80, borderRadius: '50%', border: `1px dashed ${ACCENT},0.22)`, zIndex: 0, pointerEvents: 'none' }} />
             <div
               aria-hidden="true"
-              style={{
-                position: 'absolute', top: 0, left: 0, width: 5, height: 5, borderRadius: '50%',
-                background: `${ACCENT},0.85)`, boxShadow: `0 0 6px ${ACCENT},0.45)`,
-                offsetPath: "path('M -20 38 A 58 58 0 0 1 96 38')",
-                offsetRotate: '0deg', offsetDistance: '0%', opacity: 0,
-                animation: 'syOrbitSweep 7s linear infinite', pointerEvents: 'none', zIndex: 0,
-              } as React.CSSProperties}
-            />
+              style={{ position: 'absolute', top: 16, left: 38, width: 0, height: 0, zIndex: 0, pointerEvents: 'none', animation: 'syOrbitSpin 9s linear infinite' }}
+            >
+              <div style={{ position: 'absolute', top: -42.5, left: -2.5, width: 5, height: 5, borderRadius: '50%', background: `${ACCENT},0.85)`, boxShadow: `0 0 6px ${ACCENT},0.4)` }} />
+              <div style={{ position: 'absolute', top: 38, left: -2, width: 4, height: 4, borderRadius: '50%', background: `${ACCENT},0.6)` }} />
+            </div>
             {isGold && (
               <span style={{ position: 'absolute', top: -15, left: '50%', transform: 'translateX(-50%) rotate(-8deg)', fontSize: 20, zIndex: 2 }}>👑</span>
             )}
