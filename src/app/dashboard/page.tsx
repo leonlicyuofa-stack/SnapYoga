@@ -208,7 +208,13 @@ export default function DashboardPage() {
   return (
     <AppShell>
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
+        <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');
+          @keyframes syOrbitSweep {
+            0%   { offset-distance: 0%;   opacity: 0; }
+            14%  { opacity: 1; }
+            86%  { opacity: 1; }
+            100% { offset-distance: 100%; opacity: 0; }
+          }`}</style>
 
         <TopBarIcons className="px-4 pt-3" />
 
@@ -226,6 +232,18 @@ export default function DashboardPage() {
               <circle cx="42" cy="100" r="2" fill={`${ACCENT},0.5)`} />
               <circle cx="158" cy="100" r="2" fill={`${ACCENT},0.5)`} />
             </svg>
+            {/* Flash-free orbiting dot: pure-CSS sweep along the half-moon arc (container coords).
+                Fully transparent at the 0%/100% loop boundary, so the teleport is never visible. */}
+            <div
+              aria-hidden="true"
+              style={{
+                position: 'absolute', top: 0, left: 0, width: 5, height: 5, borderRadius: '50%',
+                background: `${ACCENT},0.85)`, boxShadow: `0 0 6px ${ACCENT},0.45)`,
+                offsetPath: "path('M -20 38 A 58 58 0 0 1 96 38')",
+                offsetRotate: '0deg', offsetDistance: '0%', opacity: 0,
+                animation: 'syOrbitSweep 7s linear infinite', pointerEvents: 'none', zIndex: 0,
+              } as React.CSSProperties}
+            />
             {isGold && (
               <span style={{ position: 'absolute', top: -15, left: '50%', transform: 'translateX(-50%) rotate(-8deg)', fontSize: 20, zIndex: 2 }}>👑</span>
             )}
