@@ -53,6 +53,14 @@ export default function ProfilePage() {
   const cardBorder = isDark ? 'rgba(193,154,107,0.18)' : 'rgba(255,255,255,0.40)';
   const NAME_C = isDark ? 'rgba(255,240,215,0.94)' : 'rgba(255,248,235,0.96)';
   const NAME_SH = isDark ? 'none' : '0 1px 3px rgba(70,60,80,0.32)';
+  // Account card: amethyst-filled panel with cream text in light mode (dark unchanged).
+  const panelBg = isDark ? 'rgba(193,154,107,0.04)' : 'linear-gradient(160deg,#3a1545,#2c0e36)';
+  const panelBorder = isDark ? cardBorder : 'rgba(255,255,255,0.12)';
+  const panelTitle = isDark ? 'rgba(255,240,215,0.88)' : 'rgba(255,248,235,0.96)';
+  const panelSub = isDark ? 'rgba(255,240,215,0.32)' : 'rgba(255,248,235,0.55)';
+  const panelIcon = isDark ? 'rgba(193,154,107,0.75)' : 'rgba(214,180,140,0.95)';
+  const panelChevron = isDark ? 'rgba(193,154,107,0.50)' : 'rgba(255,248,235,0.40)';
+  const panelDivider = isDark ? 'rgba(193,154,107,0.10)' : 'rgba(255,255,255,0.09)';
   const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false);
   const [isUsernameSubmitting, setIsUsernameSubmitting] = useState(false);
   const [inviteLink, setInviteLink] = useState('');
@@ -421,7 +429,7 @@ export default function ProfilePage() {
                   <div className="space-y-1">
                       <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: acc(0.55), marginBottom: 6 }}>Account</p>
                       
-                      <div style={{ borderRadius: 18, border: `0.5px solid ${cardBorder}`, background: isDark ? 'rgba(193,154,107,0.04)' : 'rgba(255,255,255,0.12)', overflow: 'hidden' }}>
+                      <div style={{ borderRadius: 18, border: `0.5px solid ${panelBorder}`, background: panelBg, overflow: 'hidden' }}>
                         
                         {/* Row 1: Display Name */}
                         <div 
@@ -429,13 +437,13 @@ export default function ProfilePage() {
                           onClick={() => setExpandedSection(expandedSection === 'username' ? null : 'username')}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <span style={{ fontSize: 15, color: acc(0.75) }}>◎</span>
+                            <span style={{ fontSize: 15, color: panelIcon }}>◎</span>
                             <div>
-                              <div style={{ fontSize: 13, fontWeight: 600, color: txt(0.88) }}>Display Name</div>
-                              <div style={{ fontSize: 9.5, color: txt(0.32), fontStyle: 'italic', marginTop: 1 }}>{user?.displayName || 'jellycat'}</div>
+                              <div style={{ fontSize: 13, fontWeight: 600, color: panelTitle }}>Display Name</div>
+                              <div style={{ fontSize: 9.5, color: panelSub, fontStyle: 'italic', marginTop: 1 }}>{user?.displayName || 'jellycat'}</div>
                             </div>
                           </div>
-                          <span style={{ fontSize: 11, color: acc(0.50) }}>›</span>
+                          <span style={{ fontSize: 11, color: panelChevron }}>›</span>
                         </div>
                         {expandedSection === 'username' && (
                           <div style={{ padding: '0 14px 14px', borderTop: `0.5px solid ${acc(0.05)}` }}>
@@ -457,14 +465,14 @@ export default function ProfilePage() {
 
                         {/* Row 2: Subscription */}
                         <div 
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 14px', gap: 10, cursor: 'pointer', borderTop: `0.5px solid ${acc(0.10)}` }} 
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 14px', gap: 10, cursor: 'pointer', borderTop: `0.5px solid ${panelDivider}` }} 
                           onClick={() => setExpandedSection(expandedSection === 'subscription' ? null : 'subscription')}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <span style={{ fontSize: 15, color: acc(0.75) }}>♛</span>
+                            <span style={{ fontSize: 15, color: panelIcon }}>♛</span>
                             <div>
-                              <div style={{ fontSize: 13, fontWeight: 600, color: txt(0.88) }}>Subscription</div>
-                              <div style={{ fontSize: 9.5, color: txt(0.32), fontStyle: 'italic', marginTop: 1 }}>Manage your plan</div>
+                              <div style={{ fontSize: 13, fontWeight: 600, color: panelTitle }}>Subscription</div>
+                              <div style={{ fontSize: 9.5, color: panelSub, fontStyle: 'italic', marginTop: 1 }}>Manage your plan</div>
                             </div>
                           </div>
                           <TierBadge tier={membershipTier} />
@@ -487,17 +495,17 @@ export default function ProfilePage() {
 
                         {/* Row 3: Change Password */}
                         <div 
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 14px', gap: 10, cursor: 'pointer', borderTop: `0.5px solid ${acc(0.10)}` }} 
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 14px', gap: 10, cursor: 'pointer', borderTop: `0.5px solid ${panelDivider}` }} 
                           onClick={() => setExpandedSection(expandedSection === 'security' ? null : 'security')}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <span style={{ fontSize: 15, color: acc(0.75) }}>🔑</span>
+                            <span style={{ fontSize: 15, color: panelIcon }}>🔑</span>
                             <div>
-                              <div style={{ fontSize: 13, fontWeight: 600, color: txt(0.88) }}>Change Password</div>
-                              <div style={{ fontSize: 9.5, color: txt(0.32), fontStyle: 'italic', marginTop: 1 }}>Update your credentials</div>
+                              <div style={{ fontSize: 13, fontWeight: 600, color: panelTitle }}>Change Password</div>
+                              <div style={{ fontSize: 9.5, color: panelSub, fontStyle: 'italic', marginTop: 1 }}>Update your credentials</div>
                             </div>
                           </div>
-                          <span style={{ fontSize: 11, color: acc(0.50) }}>›</span>
+                          <span style={{ fontSize: 11, color: panelChevron }}>›</span>
                         </div>
                         {expandedSection === 'security' && (
                           <div style={{ padding: '14px', borderTop: `0.5px solid ${acc(0.05)}`, background: isDark ? 'rgba(25,16,8,0.20)' : 'rgba(255,255,255,0.10)' }}>
@@ -526,17 +534,17 @@ export default function ProfilePage() {
 
                         {/* Row 4: Invite Friends */}
                         <div 
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 14px', gap: 10, cursor: 'pointer', borderTop: `0.5px solid ${acc(0.10)}` }} 
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 14px', gap: 10, cursor: 'pointer', borderTop: `0.5px solid ${panelDivider}` }} 
                           onClick={() => setExpandedSection(expandedSection === 'invite' ? null : 'invite')}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <span style={{ fontSize: 15, color: acc(0.75) }}>👥</span>
+                            <span style={{ fontSize: 15, color: panelIcon }}>👥</span>
                             <div>
-                              <div style={{ fontSize: 13, fontWeight: 600, color: txt(0.88) }}>Invite friends to SnapYoga</div>
-                              <div style={{ fontSize: 9.5, color: txt(0.32), fontStyle: 'italic', marginTop: 1 }}>Share your practice</div>
+                              <div style={{ fontSize: 13, fontWeight: 600, color: panelTitle }}>Invite friends to SnapYoga</div>
+                              <div style={{ fontSize: 9.5, color: panelSub, fontStyle: 'italic', marginTop: 1 }}>Share your practice</div>
                             </div>
                           </div>
-                          <span style={{ fontSize: 11, color: acc(0.50) }}>›</span>
+                          <span style={{ fontSize: 11, color: panelChevron }}>›</span>
                         </div>
                         {expandedSection === 'invite' && (
                           <div style={{ padding: '14px', borderTop: `0.5px solid ${acc(0.05)}`, background: isDark ? 'rgba(25,16,8,0.20)' : 'rgba(255,255,255,0.10)' }}>
@@ -562,22 +570,22 @@ export default function ProfilePage() {
 
                         {/* Row 5: Appearance — dark / light mode */}
                         <div
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 14px', gap: 10, cursor: 'pointer', borderTop: `0.5px solid ${acc(0.10)}` }}
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '13px 14px', gap: 10, cursor: 'pointer', borderTop: `0.5px solid ${panelDivider}` }}
                           onClick={toggleTheme}
                           role="switch"
                           aria-checked={isDark}
                           aria-label="Toggle dark mode"
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <span style={{ fontSize: 15, color: acc(0.75), display: 'flex' }}>
+                            <span style={{ fontSize: 15, color: panelIcon, display: 'flex' }}>
                               {isDark ? <Moon style={{ width: 15, height: 15 }} /> : <Sun style={{ width: 15, height: 15 }} />}
                             </span>
                             <div>
-                              <div style={{ fontSize: 13, fontWeight: 600, color: txt(0.88) }}>Appearance</div>
-                              <div style={{ fontSize: 9.5, color: txt(0.32), fontStyle: 'italic', marginTop: 1 }}>{isDark ? 'Dark mode' : 'Light mode'}</div>
+                              <div style={{ fontSize: 13, fontWeight: 600, color: panelTitle }}>Appearance</div>
+                              <div style={{ fontSize: 9.5, color: panelSub, fontStyle: 'italic', marginTop: 1 }}>{isDark ? 'Dark mode' : 'Light mode'}</div>
                             </div>
                           </div>
-                          <div style={{ width: 42, height: 24, borderRadius: 999, padding: 2, background: isDark ? 'rgba(193,154,107,0.85)' : 'rgba(50,14,59,0.18)', display: 'flex', justifyContent: isDark ? 'flex-end' : 'flex-start', alignItems: 'center', transition: 'background 0.2s ease' }}>
+                          <div style={{ width: 42, height: 24, borderRadius: 999, padding: 2, background: isDark ? 'rgba(193,154,107,0.85)' : 'rgba(255,248,235,0.20)', display: 'flex', justifyContent: isDark ? 'flex-end' : 'flex-start', alignItems: 'center', transition: 'background 0.2s ease' }}>
                             <div style={{ width: 20, height: 20, borderRadius: '50%', background: isDark ? '#1a1210' : 'rgba(255,248,235,0.95)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                               {isDark ? <Moon style={{ width: 11, height: 11, color: 'rgba(193,154,107,0.9)' }} /> : <Sun style={{ width: 11, height: 11, color: '#320E3B' }} />}
                             </div>
