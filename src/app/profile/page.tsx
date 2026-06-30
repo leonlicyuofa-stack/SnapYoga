@@ -350,7 +350,7 @@ export default function ProfilePage() {
                   <div className="space-y-1">
                       <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: acc(0.55), marginBottom: 6 }}>Weekly Commitment</p>
                       <div style={{ borderRadius: '12px 24px 24px 24px', border: `0.5px solid ${cardBorder}`, background: card, padding: '14px 16px' }}>
-                        <p style={{ fontSize: 14, fontWeight: 600, color: txt(0.90), fontFamily: "'Cormorant Garamond', serif", margin: 0 }}>How many days a week will you commit?</p>
+                        <p style={{ fontSize: 14, fontWeight: 600, color: isDark ? txt(0.90) : 'rgba(255,248,235,0.97)', fontFamily: "'Cormorant Garamond', serif", margin: 0 }}>How many days a week will you commit?</p>
                         <p style={{ fontSize: 11, color: txt(0.40), margin: '2px 0 0' }}>We'll set your exercise goal from this.</p>
                         <div style={{ display: 'flex', gap: 6, marginTop: 12 }}>
                           {[1,2,3,4,5,6,7].map(d => {
@@ -362,8 +362,9 @@ export default function ProfilePage() {
                                 style={{
                                   flex: 1, height: 36, borderRadius: 10, cursor: 'pointer', fontFamily: "'Cormorant Garamond', serif", fontSize: 14,
                                   border: `0.5px solid ${sel ? acc(0.6) : acc(0.25)}`,
-                                  background: sel ? acc(0.20) : (isDark ? 'rgba(193,154,107,0.05)' : 'rgba(255,255,255,0.10)'),
-                                  color: sel ? txt(0.95) : txt(0.65),
+                                  background: sel ? (isDark ? acc(0.20) : '#320E3B') : (isDark ? 'rgba(193,154,107,0.05)' : 'rgba(255,255,255,0.10)'),
+                                  color: sel ? (isDark ? txt(0.95) : 'rgba(255,248,235,0.96)') : txt(0.65),
+                                  boxShadow: sel && !isDark ? '0 3px 10px rgba(50,14,59,0.30)' : 'none',
                                   transition: 'all 0.2s ease',
                                 }}
                               >
@@ -372,8 +373,8 @@ export default function ProfilePage() {
                             );
                           })}
                         </div>
-                        <p style={{ textAlign: 'center', marginTop: 12, fontFamily: "'Cormorant Garamond', serif", fontSize: 15, color: txt(0.9) }}>
-                          → Weekly goal: <span style={{ color: acc(0.95), fontWeight: 600 }}>{commitmentDays} h</span> <span style={{ fontSize: 11, opacity: 0.6 }}>/ week (≈1h each day)</span>
+                        <p style={{ textAlign: 'center', marginTop: 12, fontFamily: "'Cormorant Garamond', serif", fontSize: 15, color: isDark ? txt(0.9) : 'rgba(255,248,235,0.96)' }}>
+                          → Weekly goal: <span style={{ display: 'inline-flex', alignItems: 'center', background: isDark ? 'rgba(193,154,107,0.20)' : '#320E3B', color: isDark ? txt(0.95) : 'rgba(255,248,235,0.96)', borderRadius: 999, padding: '2px 11px', fontWeight: 600, margin: '0 2px' }}>{commitmentDays} h</span> <span style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: 11, color: txt(0.6) }}>/ week (≈1h each day)</span>
                         </p>
                       </div>
                   </div>
