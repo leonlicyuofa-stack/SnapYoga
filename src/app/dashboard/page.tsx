@@ -28,6 +28,7 @@ const FONT_CASUAL  = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
 function tok(isDark: boolean) {
   return {
     text:        isDark ? `${PARCHMENT},0.90)`  : `#320E3B`,
+    headline:    isDark ? `${PARCHMENT},0.90)`  : `rgba(255,248,235,0.96)`,
     muted:       isDark ? `${PARCHMENT},0.38)`  : `rgba(50,14,59,0.72)`,
     gold:        isDark ? `${GOLD},0.90)`        : `#320E3B`,
     label:       isDark ? `${GOLD},0.55)`        : `#320E3B`,
@@ -257,7 +258,7 @@ export default function DashboardPage() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                     <div>
-                      <h3 style={{ fontSize: 16, fontWeight: 600, color: t.text, fontFamily: FONT_PANCAKE }}>Daily Check-in</h3>
+                      <h3 style={{ fontSize: 16, fontWeight: 600, color: t.headline, fontFamily: FONT_PANCAKE }}>Daily Check-in</h3>
                       <p style={{ fontSize: 11, color: t.muted, fontFamily: FONT_CASUAL }}>How is your spirit today?</p>
                     </div>
                     <span style={{ fontSize: 20, color: t.accent, lineHeight: 1 }}>›</span>
@@ -298,7 +299,7 @@ export default function DashboardPage() {
                         );
                       })}
                     </div>
-                    <Ring size={42} stroke={4} pct={(completedHabits.length / 5) * 100} color={t.gold} track={isDark ? `${PARCHMENT},0.10)` : 'rgba(255,255,255,0.20)'} label={`${completedHabits.length}/5`} textColor={t.text} />
+                    <Ring size={42} stroke={4} pct={(completedHabits.length / 5) * 100} color={t.gold} track={isDark ? `${PARCHMENT},0.10)` : 'rgba(255,255,255,0.20)'} label={`${completedHabits.length}/5`} textColor={t.headline} />
                   </div>
                 </div>
               </GlassCard>
@@ -310,17 +311,17 @@ export default function DashboardPage() {
             <SectionHead t={t}>This Week</SectionHead>
 
             <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: 20, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 16 }}>
-              <Ring size={84} stroke={6} pct={exPct} color={t.gold} track={isDark ? `${PARCHMENT},0.08)` : 'rgba(255,255,255,0.20)'} centerTop={`${exerciseHrs}`} centerSub={`OF ${exerciseGoal} HRS`} textColor={t.text} subColor={t.accent} />
+              <Ring size={84} stroke={6} pct={exPct} color={t.gold} track={isDark ? `${PARCHMENT},0.08)` : 'rgba(255,255,255,0.20)'} centerTop={`${exerciseHrs}`} centerSub={`OF ${exerciseGoal} HRS`} textColor={t.headline} subColor={t.accent} />
               <div>
-                <p style={{ fontFamily: FONT_PANCAKE, fontSize: 19, fontWeight: 500, color: t.text, margin: 0 }}>Practice</p>
+                <p style={{ fontFamily: FONT_PANCAKE, fontSize: 19, fontWeight: 500, color: t.headline, margin: 0 }}>Practice</p>
                 <p style={{ fontSize: 11, color: t.muted, margin: '4px 0 0', fontFamily: FONT_CASUAL }}>{practiceMsg}</p>
               </div>
             </GlassCard>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 9, marginTop: 10 }}>
-              <Chip emoji="🔥" num={7} word="Streak" color={isDark ? 'rgba(160,195,130,0.92)' : t.accent} t={t} />
-              <Chip emoji="📸" num={totalSessions} word="Poses" color={isDark ? t.text : t.accent} t={t} />
-              <Chip emoji="⭐" num={avgScore} word="Score" color={isDark ? t.gold : t.accent} t={t} />
+              <Chip emoji="🔥" num={7} word="Streak" color={isDark ? 'rgba(160,195,130,0.92)' : t.headline} t={t} />
+              <Chip emoji="📸" num={totalSessions} word="Poses" color={isDark ? t.text : t.headline} t={t} />
+              <Chip emoji="⭐" num={avgScore} word="Score" color={isDark ? t.gold : t.headline} t={t} />
             </div>
           </section>
 

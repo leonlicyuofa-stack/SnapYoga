@@ -407,7 +407,7 @@ export default function ProfilePage() {
                                     {formatPracticeDate(practice.createdAt)}
                                   </div>
                                   <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 2 }}>
-                                    <span style={{ background: acc(0.20), color: acc(0.90), borderRadius: 999, padding: '1px 6px', fontWeight: 600, fontSize: 11 }}>
+                                    <span style={{ background: isDark ? acc(0.20) : '#320E3B', color: isDark ? acc(0.90) : 'rgba(255,248,235,0.95)', borderRadius: 999, padding: '1px 6px', fontWeight: 600, fontSize: 11 }}>
                                       {Math.round(practice.score)}
                                     </span>
                                   </div>

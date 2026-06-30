@@ -41,6 +41,19 @@ export default function AnalysisLogsPage() {
   };
   const TITLE = isDark ? 'rgba(255,240,215,0.94)' : 'rgba(255,248,235,0.96)';
   const TITLE_SH = isDark ? 'none' : '0 1px 3px rgba(70,60,80,0.32)';
+  // The populated results list is an amethyst-filled panel in light mode (dark = the original ink card).
+  const listPanel: React.CSSProperties = {
+    borderRadius: 18,
+    border: `0.5px solid ${isDark ? 'rgba(193,154,107,0.18)' : 'rgba(255,255,255,0.12)'}`,
+    background: isDark ? 'rgba(13,20,30,0.55)' : 'linear-gradient(160deg,#3a1545,#2c0e36)',
+    backdropFilter: 'blur(14px)',
+    boxShadow: isDark ? 'none' : '0 10px 26px rgba(40,12,48,0.30)',
+  };
+  const onPanelName = isDark ? 'rgba(255,240,215,0.90)' : 'rgba(255,248,235,0.96)';
+  const onPanelMuted = isDark ? 'rgba(255,240,215,0.40)' : 'rgba(255,248,235,0.55)';
+  const onPanelAccent = isDark ? 'rgba(193,154,107,0.70)' : 'rgba(214,180,140,0.90)';
+  const onPanelChevron = isDark ? 'rgba(193,154,107,0.45)' : 'rgba(255,248,235,0.40)';
+  const onPanelDivider = isDark ? 'rgba(193,154,107,0.10)' : 'rgba(255,255,255,0.09)';
   const [analyses, setAnalyses] = useState<AnalysisSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -177,7 +190,7 @@ export default function AnalysisLogsPage() {
               <Skeleton className="h-16 w-full bg-white/5" />
             </div>
           ) : filteredAnalyses.length > 0 ? (
-            <div style={cardStyle} className="overflow-hidden">
+            <div style={listPanel} className="overflow-hidden">
               {filteredAnalyses.map((analysis, i) => {
                 const scoreValue = analysis.score < 1 ? analysis.score * 100 : analysis.score;
                 const score = Math.min(Math.round(scoreValue), 100);
@@ -186,7 +199,7 @@ export default function AnalysisLogsPage() {
                     key={analysis.id}
                     href={`/analysis/${analysis.id}`}
                     className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-[rgba(193,154,107,0.05)]"
-                    style={{ borderTop: i === 0 ? 'none' : `0.5px solid ${acc(0.10)}` }}
+                    style={{ borderTop: i === 0 ? 'none' : `0.5px solid ${onPanelDivider}` }}
                   >
                     {/* Pose thumbnail */}
                     <div
@@ -203,15 +216,15 @@ export default function AnalysisLogsPage() {
 
                     {/* Pose + time */}
                     <div className="flex-grow min-w-0">
-                      <div className="truncate" style={{ fontSize: 14, fontWeight: 600, color: txt(0.90) }}>
+                      <div className="truncate" style={{ fontSize: 14, fontWeight: 600, color: onPanelName }}>
                         {analysis.identifiedPose}
                       </div>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span style={{ fontSize: 11, fontStyle: 'italic', color: txt(0.40) }}>
+                        <span style={{ fontSize: 11, fontStyle: 'italic', color: onPanelMuted }}>
                           {format(analysis.createdAt.toDate(), 'p')}
                         </span>
                         {analysis.userNotes && (
-                          <span className="inline-flex items-center gap-1" style={{ fontSize: 9, letterSpacing: '0.05em', textTransform: 'uppercase', color: acc(0.70) }}>
+                          <span className="inline-flex items-center gap-1" style={{ fontSize: 9, letterSpacing: '0.05em', textTransform: 'uppercase', color: onPanelAccent }}>
                             <MessageCircle className="h-2.5 w-2.5" /> Note
                           </span>
                         )}
@@ -221,11 +234,11 @@ export default function AnalysisLogsPage() {
                     {/* Score chip */}
                     <span
                       className="flex-shrink-0"
-                      style={{ background: acc(0.20), color: acc(0.92), borderRadius: 999, padding: '2px 10px', fontWeight: 600, fontSize: 12 }}
+                      style={{ background: isDark ? acc(0.20) : 'rgba(214,180,140,0.92)', color: isDark ? acc(0.92) : '#2c0e36', borderRadius: 999, padding: '2px 10px', fontWeight: 700, fontSize: 12 }}
                     >
                       {score}
                     </span>
-                    <ChevronRight className="h-4 w-4 flex-shrink-0" style={{ color: acc(0.45) }} />
+                    <ChevronRight className="h-4 w-4 flex-shrink-0" style={{ color: onPanelChevron }} />
                   </Link>
                 );
               })}

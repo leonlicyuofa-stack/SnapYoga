@@ -348,7 +348,7 @@ export default function PracticeCalendarPage() {
           {/* Animated expand wrapper (unfolds from the line above) */}
           <div style={{ maxHeight: expanded ? 2000 : 0, opacity: expanded ? 1 : 0, overflow: 'hidden', transition: 'max-height 0.4s ease, opacity 0.3s ease' }}>
             <div style={{ marginTop: 8, borderRadius: 18, border: `0.5px solid ${isDark ? 'rgba(214,178,130,0.4)' : 'rgba(255,255,255,0.40)'}`, background: isDark ? 'rgba(193,154,107,0.10)' : 'rgba(255,255,255,0.12)', padding: 16, backdropFilter: 'blur(14px)', boxShadow: isDark ? '0 12px 34px rgba(193,154,107,0.12)' : '0 12px 34px rgba(60,40,70,0.12)' }}>
-            <p style={{ fontFamily: FONT_PANCAKE, fontSize: 20, fontWeight: 500, color: tokens.text, margin: '0 0 12px' }}>{format(selectedDay, 'EEEE, d MMMM')}</p>
+            <p style={{ fontFamily: FONT_PANCAKE, fontSize: 20, fontWeight: 500, color: tokens.title, margin: '0 0 12px' }}>{format(selectedDay, 'EEEE, d MMMM')}</p>
 
             {/* Moon phase for yogis (always shown) */}
             <PanelLabel>🌙 Moon phase for yogis</PanelLabel>
@@ -357,7 +357,7 @@ export default function PracticeCalendarPage() {
                 <span key={i} style={{ fontSize: i === moon.index ? 25 : 16, opacity: i === moon.index ? 1 : 0.4, textShadow: i === moon.index ? '0 0 12px rgba(214,178,130,0.6)' : 'none' }}>{m}</span>
               ))}
             </div>
-            <p style={{ textAlign: 'center', fontFamily: FONT_PANCAKE, fontSize: 16, color: txt(0.92), margin: '9px 0 2px' }}>{moon.name}</p>
+            <p style={{ textAlign: 'center', fontFamily: FONT_PANCAKE, fontSize: 16, color: tokens.title, margin: '9px 0 2px' }}>{moon.name}</p>
             <p style={{ textAlign: 'center', fontSize: 10.5, color: acc(0.7), fontStyle: 'italic', margin: 0 }}>{moon.note}</p>
 
             {isFuture ? (

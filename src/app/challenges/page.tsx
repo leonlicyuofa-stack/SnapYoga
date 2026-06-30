@@ -253,7 +253,7 @@ export default function ChallengesPage() {
 
         {/* THIS MONTH'S PRACTICE (reward removed) */}
         <div style={{ ...sectionCard, borderRadius: '20px 10px 20px 20px', padding: '14px 16px', marginTop: 18 }}>
-          <span style={{ fontFamily: FONT_PANCAKE, fontSize: 34, fontWeight: 600, color: txt(0.94) }}>{isLoadingPracticed ? '—' : practicedDaysCount}</span>
+          <span style={{ fontFamily: FONT_PANCAKE, fontSize: 34, fontWeight: 600, color: TITLE }}>{isLoadingPracticed ? '—' : practicedDaysCount}</span>
           <span style={{ fontFamily: FONT_PANCAKE, fontSize: 18, color: acc(0.7) }}> / {daysInMonth}</span>
           <div style={{ fontSize: 9, letterSpacing: 1, textTransform: 'uppercase', color: acc(0.6), fontWeight: 600, marginTop: 2, fontFamily: FONT_CASUAL }}>days practiced</div>
           <div style={{ height: 10, background: txt(0.08), borderRadius: 6, overflow: 'hidden', marginTop: 10 }}>
@@ -273,7 +273,7 @@ export default function ChallengesPage() {
                   <BookmarkBtn active onToggle={() => toggleBookmark(id)} />
                   <div style={{ height: 58, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, fontFamily: FONT_PANCAKE, color: 'rgba(255,240,215,0.92)', background: it.grad }}>{it.emoji}</div>
                   <div style={{ padding: '6px 8px' }}>
-                    <div style={{ fontFamily: FONT_PANCAKE, fontSize: 12, fontWeight: 600, color: txt(0.92), lineHeight: 1.1 }}>{it.name}</div>
+                    <div style={{ fontFamily: FONT_PANCAKE, fontSize: 12, fontWeight: 600, color: TITLE, lineHeight: 1.1 }}>{it.name}</div>
                     <div style={{ fontSize: 8, letterSpacing: 1, textTransform: 'uppercase', color: acc(0.7), marginTop: 3 }}>{it.sub}</div>
                   </div>
                 </div>
@@ -323,7 +323,7 @@ export default function ChallengesPage() {
                 )}
               </div>
               <div style={{ padding: '8px 10px 10px' }}>
-                <div style={{ fontFamily: FONT_PANCAKE, fontSize: 14, fontWeight: 600, color: txt(0.92), lineHeight: 1.1 }}>{c.name}</div>
+                <div style={{ fontFamily: FONT_PANCAKE, fontSize: 14, fontWeight: 600, color: TITLE, lineHeight: 1.1 }}>{c.name}</div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 5 }}>
                   <span style={{ fontSize: 8, letterSpacing: 1, textTransform: 'uppercase', color: acc(0.7) }}>{c.category}</span>
                   <Stars n={c.difficulty} />
@@ -339,7 +339,7 @@ export default function ChallengesPage() {
           {programs.map(p => (
             <div key={p.id} style={{ flex: 1, borderRadius: 14, border: `0.5px solid ${acc(0.2)}`, background: isDark ? 'linear-gradient(160deg, rgba(193,154,107,0.14), rgba(13,20,30,0.5))' : 'rgba(255,255,255,0.12)', padding: '12px 8px 10px', textAlign: 'center', position: 'relative' }}>
               <BookmarkBtn active={bookmarks.includes(p.id)} onToggle={() => toggleBookmark(p.id)} />
-              <div style={{ fontFamily: FONT_PANCAKE, fontSize: 24, fontWeight: 600, color: txt(0.94), lineHeight: 1 }}>{p.days}</div>
+              <div style={{ fontFamily: FONT_PANCAKE, fontSize: 24, fontWeight: 600, color: TITLE, lineHeight: 1 }}>{p.days}</div>
               <div style={{ fontSize: 8, letterSpacing: 1, textTransform: 'uppercase', color: acc(0.7) }}>day</div>
               <div style={{ fontSize: 10, color: txt(0.8), margin: '6px 0 7px', lineHeight: 1.2 }}>{p.name}</div>
               <ComingSoon />
@@ -354,7 +354,7 @@ export default function ChallengesPage() {
             <div key={r.id} style={{ flex: 1, borderRadius: 14, border: `0.5px solid ${acc(0.2)}`, background: card, padding: 12, position: 'relative' }}>
               <BookmarkBtn active={bookmarks.includes(r.id)} onToggle={() => toggleBookmark(r.id)} />
               <div style={{ fontSize: 22 }}>{r.icon}</div>
-              <div style={{ fontFamily: FONT_PANCAKE, fontSize: 15, color: txt(0.92), marginTop: 4 }}>{r.name}</div>
+              <div style={{ fontFamily: FONT_PANCAKE, fontSize: 15, color: TITLE, marginTop: 4 }}>{r.name}</div>
               <div style={{ fontSize: 10, color: acc(0.7), margin: '2px 0 8px' }}>{r.meta}</div>
               <ComingSoon />
             </div>
@@ -364,7 +364,7 @@ export default function ChallengesPage() {
         {/* COMMUNITY */}
         <SectionHead>Community</SectionHead>
         <div style={{ ...sectionCard, borderRadius: 18, padding: 18, textAlign: 'center' }}>
-          <div style={{ fontFamily: FONT_PANCAKE, fontSize: 18, fontWeight: 600, color: txt(0.92), display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+          <div style={{ fontFamily: FONT_PANCAKE, fontSize: 18, fontWeight: 600, color: TITLE, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <Users className="h-5 w-5" style={{ color: acc(0.8) }} /> {t('challengesWithFriendsTitle')}
           </div>
           <p style={{ fontSize: 11, fontStyle: 'italic', color: txt(0.5), margin: '4px 0 12px' }}>{t('challengesWithFriendsDesc')}</p>
