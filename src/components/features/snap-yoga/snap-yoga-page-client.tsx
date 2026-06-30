@@ -117,7 +117,8 @@ export function SnapYogaPageClient() {
       }
 
       setIsLoadingRecommendations(false);
-      setCurrentStep(3);
+      // Stay on the loader — AnalysisLoader animates the score reveal, then
+      // calls onComplete (handleRevealComplete) to advance to step 3.
 
     } catch (e: any) {
       console.error("Error analyzing pose:", e);
@@ -129,9 +130,14 @@ export function SnapYogaPageClient() {
         variant: "destructive",
       });
       setIsLoadingRecommendations(false);
-    } finally {
-      setIsLoadingAnalysis(false);
+      setIsLoadingAnalysis(false); // hide the loader on failure
     }
+  };
+
+  // Called by AnalysisLoader once the score-reveal animation has settled.
+  const handleRevealComplete = () => {
+    setCurrentStep(3);
+    setIsLoadingAnalysis(false);
   };
 
   const handleFeedbackSubmit = async (feedback: string) => {
@@ -225,7 +231,10 @@ export function SnapYogaPageClient() {
         </div>
 
         {isLoadingAnalysis ? (
-          <AnalysisLoader />
+          <AnalysisLoader
+            score={analysisResult ? Math.round(analysisResult.score) : null}
+            onComplete={handleRevealComplete}
+          />
         ) : (
           <div className="flex-1">
             {currentStep === 1 && (

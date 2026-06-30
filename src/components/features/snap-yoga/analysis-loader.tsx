@@ -1,71 +1,155 @@
 "use client";
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
+import { getScoreLevel } from './pose-analysis-card';
 
-export function AnalysisLoader() {
-  const pathRef = useRef<SVGPathElement>(null);
+const RADIUS = 60;
+const STROKE = 6;
+const CIRC = 2 * Math.PI * RADIUS;
+
+// Reveal timeline (seconds from when the real score arrives)
+const A_END = 0.5;          // ease ring up to 100%
+const COPY_FADE_START = 0.5;
+const COPY_FADE_END = 0.9;  // loading copy must finish fading before the label appears
+const REVEAL_START = 0.9;
+const REVEAL_END = 1.6;      // ring eases back to score, label + colour fade in
+const DONE_AT = 2.1;         // brief hold on the settled score, then advance
+
+const clamp = (v: number, lo: number, hi: number) => Math.min(Math.max(v, lo), hi);
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+const parseRGB = (c: string): [number, number, number] => {
+  const m = c.match(/(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+  return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : [0, 0, 0];
+};
+
+interface AnalysisLoaderProps {
+  /** Real score (0–100) once the analysis resolves; null/undefined while loading. */
+  score?: number | null;
+  /** Fired once the score-reveal animation has settled. */
+  onComplete?: () => void;
+}
+
+export function AnalysisLoader({ score = null, onComplete }: AnalysisLoaderProps) {
   const { isDark } = useTheme();
+  const accentRGB: [number, number, number] = isDark ? [193, 154, 107] : [50, 14, 59];
+  const accent = (a: number) => `rgba(${accentRGB[0]},${accentRGB[1]},${accentRGB[2]},${a})`;
+  const numColor = isDark ? 'rgba(255,240,215,0.94)' : 'rgba(50,14,59,0.95)';
+  const copyColor = isDark ? 'rgba(255,240,215,0.70)' : 'rgba(50,14,59,0.72)';
+  const trackColor = isDark ? 'rgba(255,240,215,0.08)' : 'rgba(50,14,59,0.10)';
+
+  const level = score != null ? getScoreLevel(score) : null;
+  const levelRGB = level ? parseRGB(level.color) : accentRGB;
+
+  const [vals, setVals] = useState({ pct: 0, copy: 1, reveal: 0, color: 0 });
+
+  const animRef = useRef({ pct: 0, pctAtRevealStart: 0 });
+  const scoreRef = useRef(score);
+  const onCompleteRef = useRef(onComplete);
+  const revealStartRef = useRef<number | null>(null);
+  const doneRef = useRef(false);
+
+  useEffect(() => { scoreRef.current = score; }, [score]);
+  useEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
 
   useEffect(() => {
-    const path = pathRef.current;
-    if (!path) return;
+    let raf = 0;
+    let last = performance.now();
 
-    const len = path.getTotalLength();
-    path.style.strokeDasharray = String(len);
-    path.style.strokeDashoffset = String(len);
+    const tick = (now: number) => {
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      const a = animRef.current;
+      const real = scoreRef.current;
+      let copy = 1, reveal = 0, color = 0;
 
-    let drawing = true;
-    const DURATION = 2200; // ms for each draw or erase pass
+      if (real == null) {
+        // Loading: ease asymptotically toward ~90% and hold there.
+        a.pct += (90 - a.pct) * (1 - Math.exp(-dt * 1.1));
+      } else {
+        if (revealStartRef.current == null) {
+          revealStartRef.current = now;
+          a.pctAtRevealStart = a.pct;
+        }
+        const e = (now - revealStartRef.current) / 1000;
+        if (e <= A_END) {
+          a.pct = lerp(a.pctAtRevealStart, 100, easeOutCubic(clamp(e / A_END, 0, 1)));
+        } else if (e < REVEAL_END) {
+          const r = clamp((e - REVEAL_START) / (REVEAL_END - REVEAL_START), 0, 1);
+          a.pct = lerp(100, real, easeInOut(r));
+          copy = 1 - clamp((e - COPY_FADE_START) / (COPY_FADE_END - COPY_FADE_START), 0, 1);
+          reveal = r;
+          color = r;
+        } else {
+          a.pct = real; copy = 0; reveal = 1; color = 1;
+          if (e >= DONE_AT && !doneRef.current) {
+            doneRef.current = true;
+            onCompleteRef.current?.();
+          }
+        }
+      }
 
-    function cycle() {
-      const p = pathRef.current;
-      if (!p) return;
-      p.style.transition = `stroke-dashoffset ${DURATION}ms cubic-bezier(0.45,0,0.25,1)`;
-      p.style.strokeDashoffset = drawing ? '0' : String(len);
-      drawing = !drawing;
-    }
-
-    // start first pass after a tick so the initial state is applied
-    const startTimer = setTimeout(cycle, 50);
-    const interval = setInterval(cycle, DURATION + 200);
-
-    return () => {
-      clearTimeout(startTimer);
-      clearInterval(interval);
+      setVals({ pct: a.pct, copy, reveal, color });
+      if (!doneRef.current) raf = requestAnimationFrame(tick);
     };
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
   }, []);
 
+  const strokeColor = `rgba(${Math.round(lerp(accentRGB[0], levelRGB[0], vals.color))},${Math.round(lerp(accentRGB[1], levelRGB[1], vals.color))},${Math.round(lerp(accentRGB[2], levelRGB[2], vals.color))},0.92)`;
+  const offset = CIRC * (1 - clamp(vals.pct, 0, 100) / 100);
+
   return (
-    <div style={{
-      width: '100%',
-      flex: 1,
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '300px',
-      gap: 28,
-      background: 'transparent',
-    }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
-      <svg viewBox="0 0 400 400" width="280" height="280">
-        <path
-          ref={pathRef}
-          d="M195.801 66.736 C 156.363 68.758,123.505 97.871,115.253 138.101 C 114.402 142.248,114.048 145.249,113.516 152.832 L 113.379 154.785 89.838 154.817 C 63.743 154.853,65.319 154.777,62.402 156.145 C 47.072 163.333,37.182 198.553,40.929 232.617 C 43.717 257.956,53.255 277.001,64.746 280.174 C 66.330 280.611,73.241 280.822,73.245 280.433 C 73.247 280.244,73.299 280.253,73.440 280.469 C 73.651 280.790,74.105 280.367,73.901 280.039 C 73.724 279.752,73.972 279.879,74.244 280.213 C 74.426 280.438,74.433 280.497,74.268 280.397 C 74.133 280.316,74.023 280.343,74.023 280.457 C 74.023 280.571,74.155 280.664,74.316 280.664 C 74.478 280.664,74.609 280.559,74.609 280.430 C 74.609 280.248,74.662 280.248,74.844 280.430 C 75.148 280.734,329.312 280.767,332.227 280.463 C 345.605 279.067,356.028 260.176,359.164 231.641 C 362.727 199.209,352.897 164.209,338.073 156.547 C 334.593 154.749,336.023 154.852,313.794 154.798 C 303.038 154.772,292.502 154.736,290.381 154.719 L 286.523 154.688 286.521 153.076 C 286.515 148.103,285.433 140.377,283.861 134.082 C 273.507 92.619,236.906 64.627,195.801 66.736 M205.176 85.552 C 230.189 87.653,251.749 103.621,262.010 127.643 C 265.562 135.959,267.950 147.513,267.591 154.642 C 267.578 154.900,134.531 155.003,133.028 154.746 L 132.364 154.633 132.492 151.959 C 134.358 112.867,167.699 82.405,205.176 85.552 M139.323 164.063 L 139.439 164.746 139.089 164.063 C 138.897 163.687,138.778 163.305,138.825 163.215 C 138.968 162.944,139.199 163.337,139.323 164.063 M140.024 165.186 C 140.014 165.392,139.969 165.430,139.909 165.282 C 139.855 165.147,139.730 165.086,139.632 165.147 C 139.534 165.208,139.453 165.164,139.453 165.051 C 139.453 164.937,139.585 164.844,139.746 164.844 C 139.907 164.844,140.032 164.998,140.024 165.186 M153.483 299.329 C 139.292 301.897,134.409 319.845,145.371 329.145 C 156.605 338.675,173.568 330.876,173.626 316.154 C 173.668 305.626,163.877 297.449,153.483 299.329 M240.949 299.215 C 226.912 301.769,221.536 318.326,231.530 328.223 C 245.806 342.360,268.458 324.653,258.232 307.350 C 254.825 301.584,247.326 298.054,240.949 299.215"
-          fill="none"
-          stroke={isDark ? 'rgba(193,154,107,0.85)' : 'rgba(50,14,59,0.85)'}
-          strokeWidth={2}
-          strokeLinecap="round"
-          strokeLinejoin="round"
+    <div style={{ width: '100%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '320px', gap: 8, position: 'relative' }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');
+        @keyframes syBreath { 0%,100% { transform: scale(0.9); opacity: 0.65; } 50% { transform: scale(1.12); opacity: 1; } }
+        .sy-loader-blob { animation: syBreath 4.5s ease-in-out infinite; }
+        @media (prefers-reduced-motion: reduce) { .sy-loader-blob { animation: none; } }
+      `}</style>
+
+      <div style={{ position: 'relative', width: 220, height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {/* Soft breathing glow behind the ring */}
+        <div
+          className="sy-loader-blob"
+          aria-hidden="true"
+          style={{ position: 'absolute', width: 200, height: 200, borderRadius: '50%', background: `radial-gradient(circle, ${accent(0.20)} 0%, ${accent(0.06)} 45%, transparent 70%)`, filter: 'blur(22px)', zIndex: 0 }}
         />
-      </svg>
-      <p style={{
-        fontFamily: "'Cormorant Garamond', Georgia, serif",
-        fontSize: 18, fontStyle: 'italic',
-        color: isDark ? 'rgba(255,240,215,0.70)' : 'rgba(50,14,59,0.72)', letterSpacing: '0.05em',
-      }}>
-        Analyzing your pose…
-      </p>
+
+        <svg width="200" height="200" viewBox="0 0 140 140" style={{ position: 'relative', zIndex: 1 }}>
+          <circle cx="70" cy="70" r={RADIUS} fill="none" stroke={trackColor} strokeWidth={STROKE} />
+          <circle
+            cx="70" cy="70" r={RADIUS} fill="none"
+            stroke={strokeColor} strokeWidth={STROKE} strokeLinecap="round"
+            strokeDasharray={CIRC} strokeDashoffset={offset}
+            transform="rotate(-90 70 70)"
+          />
+        </svg>
+
+        {/* Centre number + /100 */}
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}>
+          <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 46, fontWeight: 600, color: numColor, lineHeight: 1 }}>
+            {Math.round(clamp(vals.pct, 0, 100))}
+          </span>
+          <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 18, fontWeight: 500, color: numColor, opacity: vals.reveal * 0.55, marginLeft: 2, alignSelf: 'flex-start', marginTop: 6 }}>
+            /100
+          </span>
+        </div>
+      </div>
+
+      {/* Loading copy ⇄ score-level label (cross-fade, never both at once) */}
+      <div style={{ position: 'relative', height: 26, width: '100%', marginTop: 14 }}>
+        <p style={{ position: 'absolute', inset: 0, textAlign: 'center', margin: 0, fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 18, fontStyle: 'italic', letterSpacing: '0.04em', color: copyColor, opacity: vals.copy }}>
+          Finding the breath in your pose…
+        </p>
+        {level && (
+          <p style={{ position: 'absolute', inset: 0, textAlign: 'center', margin: 0, fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 18, fontWeight: 600, fontStyle: 'italic', color: level.color, opacity: vals.reveal }}>
+            {level.label}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
