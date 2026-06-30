@@ -310,7 +310,7 @@ export function SnapYogaPageClient() {
                 <button 
                   onClick={handleStartAnalysis}
                   disabled={isLoadingAnalysis}
-                  style={{ color: isDark ? 'rgba(25,16,8,0.95)' : 'rgba(255,248,235,0.95)', background: isDark ? 'rgba(193,154,107,0.85)' : '#320E3B', borderRadius: 999, padding: '12px 32px', fontSize: 14, fontWeight: 600 }}
+                  style={{ color: isDark ? 'rgba(25,16,8,0.95)' : 'rgba(255,248,235,0.95)', background: isDark ? 'rgba(193,154,107,0.85)' : '#320E3B', border: isDark ? 'none' : `0.5px solid ${acc(0.40)}`, borderRadius: 999, padding: '12px 32px', fontSize: 14, fontWeight: 600 }}
                   className="w-full flex items-center justify-center gap-2 transition-all active:scale-95"
                 >
                   Analyze Pose <ArrowRight className="w-4 h-4" />
@@ -354,15 +354,15 @@ export function SnapYogaPageClient() {
                       <h3 style={{ fontSize: 24, fontWeight: 700, color: txt(0.92), marginTop: 4 }}>{analysisResult.identifiedPose}</h3>
                       <p style={{ fontSize: 12, color: txt(0.40), marginTop: 12 }}>Does this correctly identify your pose?</p>
                       <div className="flex justify-center gap-3 mt-4">
-                        <button style={{ borderRadius: 99, border: `0.5px solid ${acc(0.40)}`, padding: '6px 20px', fontSize: 12, color: acc(0.92), background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.12)' }} className="transition-colors">Yes</button>
-                        <button style={{ borderRadius: 99, border: `0.5px solid ${acc(0.40)}`, padding: '6px 20px', fontSize: 12, color: acc(0.92), background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.12)' }} className="transition-colors">No</button>
+                        <button style={{ borderRadius: 99, border: `0.5px solid ${acc(0.40)}`, padding: '6px 20px', fontSize: 12, color: acc(0.92), background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(50,14,59,0.08)' }} className="transition-colors">Yes</button>
+                        <button style={{ borderRadius: 99, border: `0.5px solid ${acc(0.40)}`, padding: '6px 20px', fontSize: 12, color: acc(0.92), background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(50,14,59,0.08)' }} className="transition-colors">No</button>
                       </div>
                     </div>
 
                     {/* View Full Feedback Trigger */}
                     <button 
                       onClick={() => setShowFullResults(!showFullResults)}
-                      style={{ color: acc(0.92), background: isDark ? 'rgba(193,154,107,0.12)' : 'rgba(50,14,59,0.10)', border: `0.5px solid ${acc(0.40)}`, borderRadius: 999, padding: '8px 20px', fontSize: 13, fontWeight: 500 }}
+                      style={{ color: acc(0.92), background: isDark ? 'rgba(193,154,107,0.12)' : 'rgba(50,14,59,0.08)', border: `0.5px solid ${acc(0.40)}`, borderRadius: 999, padding: '8px 20px', fontSize: 13, fontWeight: 500 }}
                       className="flex items-center gap-2 transition-all mx-auto"
                     >
                       {showFullResults ? "Hide Full Report" : "View Full Feedback →"}
