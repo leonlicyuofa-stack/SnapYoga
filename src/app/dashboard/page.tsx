@@ -299,7 +299,7 @@ export default function DashboardPage() {
                         );
                       })}
                     </div>
-                    <Ring size={42} stroke={4} pct={(completedHabits.length / 5) * 100} color={t.gold} track={isDark ? `${PARCHMENT},0.10)` : 'rgba(255,255,255,0.20)'} label={`${completedHabits.length}/5`} textColor={t.headline} />
+                    <Ring size={42} stroke={4} pct={(completedHabits.length / 5) * 100} color={t.gold} track={isDark ? `${PARCHMENT},0.10)` : 'rgba(255,255,255,0.20)'} label={`${completedHabits.length}/5`} textColor={t.text} />
                   </div>
                 </div>
               </GlassCard>
@@ -311,7 +311,7 @@ export default function DashboardPage() {
             <SectionHead t={t}>This Week</SectionHead>
 
             <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: 20, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 16 }}>
-              <Ring size={84} stroke={6} pct={exPct} color={t.gold} track={isDark ? `${PARCHMENT},0.08)` : 'rgba(255,255,255,0.20)'} centerTop={`${exerciseHrs}`} centerSub={`OF ${exerciseGoal} HRS`} textColor={t.headline} subColor={t.accent} />
+              <Ring size={84} stroke={6} pct={exPct} color={t.gold} track={isDark ? `${PARCHMENT},0.08)` : 'rgba(255,255,255,0.20)'} centerTop={`${exerciseHrs}`} centerSub={`OF ${exerciseGoal} HRS`} textColor={t.text} subColor={t.accent} />
               <div>
                 <p style={{ fontFamily: FONT_PANCAKE, fontSize: 19, fontWeight: 500, color: t.headline, margin: 0 }}>Practice</p>
                 <p style={{ fontSize: 11, color: t.muted, margin: '4px 0 0', fontFamily: FONT_CASUAL }}>{practiceMsg}</p>
@@ -319,9 +319,9 @@ export default function DashboardPage() {
             </GlassCard>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 9, marginTop: 10 }}>
-              <Chip emoji="🔥" num={7} word="Streak" color={isDark ? 'rgba(160,195,130,0.92)' : t.headline} t={t} />
-              <Chip emoji="📸" num={totalSessions} word="Poses" color={isDark ? t.text : t.headline} t={t} />
-              <Chip emoji="⭐" num={avgScore} word="Score" color={isDark ? t.gold : t.headline} t={t} />
+              <Chip emoji="🔥" num={7} word="Streak" color={isDark ? 'rgba(160,195,130,0.92)' : t.text} t={t} />
+              <Chip emoji="📸" num={totalSessions} word="Poses" color={isDark ? t.text : t.text} t={t} />
+              <Chip emoji="⭐" num={avgScore} word="Score" color={isDark ? t.gold : t.text} t={t} />
             </div>
           </section>
 

@@ -220,7 +220,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
                     />
                   </div>
                   <div className="flex flex-col items-end shrink-0">
-                    <span className="text-3xl font-bold text-[#FFF8EB] dark:text-white leading-none">{score}/100</span>
+                    <span className="text-3xl font-bold text-[#320E3B] dark:text-white leading-none">{score}/100</span>
                     <p 
                       style={{ 
                         fontFamily: "'Cormorant Garamond', Georgia, serif", 
@@ -242,7 +242,7 @@ export function PoseAnalysisCard({ videoDataUri, videoFileName, userNotes, analy
                 <h3 className="text-xl font-semibold flex items-center gap-2 text-[#320E3B] dark:text-white">
                   <Activity className="h-6 w-6" /> Identified Pose
                 </h3>
-                <p className="text-2xl font-bold text-[#FFF8EB] dark:text-white">{identifiedPose}</p>
+                <p className="text-2xl font-bold text-[#320E3B] dark:text-white">{identifiedPose}</p>
                 {analysis.identificationReasoning && (
                   <p className="text-sm text-[#320E3B]/75 dark:text-white/75 leading-relaxed">{analysis.identificationReasoning}</p>
                 )}
