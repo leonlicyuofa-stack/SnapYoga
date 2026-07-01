@@ -48,7 +48,7 @@ export default function HomePage() {
       position: 'fixed', inset: 0,
       background: bg,
       display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'space-between',
+      alignItems: 'center', justifyContent: 'center', gap: 18,
       padding: '28px 0 36px',
       transition: 'background 0.6s ease',
     }}>
