@@ -40,7 +40,7 @@ export function OnboardingScaffold({
         <Button
           onClick={onBack}
           variant="ghost"
-          className="absolute top-4 left-4 rounded-full h-12 w-12 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20"
+          className="absolute top-4 left-4 rounded-full h-12 w-12 p-0 bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-[rgba(50,14,59,0.4)] dark:border-white/20 z-20"
           aria-label="Go back"
         >
           <ArrowLeft className="h-6 w-6" />

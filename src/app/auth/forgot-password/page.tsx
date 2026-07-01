@@ -46,10 +46,10 @@ export default function ForgotPasswordPage() {
       {/* Back button */}
       <button
         onClick={() => router.push('/auth/signin')}
-        className="absolute top-4 left-4 z-20 flex items-center gap-2 text-white/70 hover:text-white transition-colors p-2 rounded-full bg-black/30 backdrop-blur-sm"
+        aria-label="Back to sign in"
+        className="absolute top-4 left-4 z-20 rounded-full h-12 w-12 p-0 flex items-center justify-center bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border border-[rgba(50,14,59,0.4)] dark:border-white/20"
       >
-        <ArrowLeft className="h-5 w-5" />
-        <span className="text-sm">Back to Sign In</span>
+        <ArrowLeft className="h-6 w-6" />
       </button>
 
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-6">

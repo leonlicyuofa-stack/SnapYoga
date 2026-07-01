@@ -7,7 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
-import { Mail, User, KeyRound, EyeOff, Eye, ArrowLeft } from 'lucide-react';
+import { Mail, User, KeyRound, EyeOff, Eye, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -63,7 +63,7 @@ export default function SignUpPage() {
         <Button
             onClick={handleBackNavigation}
             variant="ghost"
-            className="absolute top-4 left-4 rounded-full h-12 w-12 p-0 bg-black/30 hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-white/20 z-20"
+            className="absolute top-4 left-4 rounded-full h-12 w-12 p-0 bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-[rgba(50,14,59,0.4)] dark:border-white/20 z-20"
             aria-label="Go back"
         >
             <ArrowLeft className="h-6 w-6" />
@@ -150,9 +150,18 @@ export default function SignUpPage() {
                              {errors.password && <p className="text-sm text-red-400 text-left mt-1 pl-4">{errors.password.message}</p>}
                         </div>
 
-                        <Button type="submit" className="sy-cta w-full h-12 text-base rounded-xl mt-8" disabled={isLoading || !isValid}>
-                              {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Sign Up →'}
-                        </Button>
+                        <div className="flex items-center justify-end gap-4 mt-8">
+                          <span className="text-[#320E3B] dark:text-[rgba(255,240,215,0.90)]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 16, letterSpacing: '0.12em' }}>Sign Up</span>
+                          <Button
+                            type="submit"
+                            variant="ghost"
+                            aria-label="Sign up"
+                            disabled={isLoading || !isValid}
+                            className="rounded-full h-12 w-12 p-0 bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-[rgba(50,14,59,0.4)] dark:border-white/20"
+                          >
+                            {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : <ArrowRight className="h-6 w-6" />}
+                          </Button>
+                        </div>
                     </form>
                 </main>
                 <footer className="text-center">

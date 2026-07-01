@@ -11,7 +11,7 @@ import { AnalysisLoader } from './analysis-loader';
 import { UpgradeSheet } from '@/components/features/upgrade/upgrade-sheet';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal, Video, Play, ArrowRight, MessageCircle } from "lucide-react";
+import { Terminal, Video, Play, ArrowRight, ArrowLeft, MessageCircle } from "lucide-react";
 import { Separator } from '@/components/ui/separator';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { firestore } from '@/lib/firebase/clientApp';
@@ -218,9 +218,15 @@ export function SnapYogaPageClient() {
           {currentStep > 1 && !isLoadingAnalysis ? (
             <button
               onClick={() => setCurrentStep((s) => (s - 1) as 1 | 2 | 3)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: acc(0.85) }}
               aria-label="Go back"
-            >←</button>
+              style={{
+                width: 44, height: 44, borderRadius: 999, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: isDark ? 'rgba(0,0,0,0.30)' : '#320E3B',
+                border: `0.5px solid ${isDark ? 'rgba(255,255,255,0.20)' : 'rgba(50,14,59,0.40)'}`,
+                color: isDark ? 'rgba(255,255,255,0.92)' : 'rgba(255,248,235,0.95)',
+                cursor: 'pointer', backdropFilter: 'blur(4px)', boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
+              }}
+            ><ArrowLeft className="w-5 h-5" /></button>
           ) : <span />}
         </div>
 
