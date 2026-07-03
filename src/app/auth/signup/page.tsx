@@ -60,19 +60,11 @@ export default function SignUpPage() {
 
   return (
     <div className="relative min-h-screen">
-        <Button
-            onClick={handleBackNavigation}
-            variant="ghost"
-            className="absolute top-4 left-4 rounded-full h-12 w-12 p-0 bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-[rgba(50,14,59,0.4)] dark:border-white/20 z-20"
-            aria-label="Go back"
-        >
-            <ArrowLeft className="h-6 w-6" />
-        </Button>
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-6">
             <div className="w-full max-w-sm space-y-7">
                 <OnboardingHeader title="Create account" subtitle="Let's get started on your journey." />
 
-                <main className="space-y-6">
+                <main className="sy-card backdrop-blur-lg rounded-2xl p-6 space-y-6">
                      <div className="flex justify-center gap-4">
                         <Button variant="outline" size="icon" onClick={signInWithApple} disabled={authLoading} className="sy-option w-14 h-14 rounded-full hover:opacity-80">
                             <AppleIcon className="h-6 w-6" />
@@ -150,8 +142,7 @@ export default function SignUpPage() {
                              {errors.password && <p className="text-sm text-red-400 text-left mt-1 pl-4">{errors.password.message}</p>}
                         </div>
 
-                        <div className="flex items-center justify-end gap-4 mt-8">
-                          <span className="text-[#320E3B] dark:text-[rgba(255,240,215,0.90)]" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 16, letterSpacing: '0.12em' }}>Sign Up</span>
+                        <div className="flex items-center justify-end mt-8">
                           <Button
                             type="submit"
                             variant="ghost"

@@ -25,8 +25,12 @@ export function OnboardingHeader({
   className,
 }: OnboardingHeaderProps) {
   return (
-    <header className={cn('flex flex-col items-center text-center', className)}>
-      <span className="sy-wordmark" style={{ fontSize: 28 }}>SnapYoga</span>
+    <header className={cn('relative flex flex-col items-center text-center', className)}>
+      <div className="sy-echo" aria-hidden="true">
+        <div className="sy-echo-ring" />
+        <div className="sy-echo-spin"><div className="sy-echo-dot" /></div>
+      </div>
+      <span className="sy-wordmark" style={{ fontSize: 28, position: 'relative' }}>SnapYoga</span>
       <span className="sy-tagline" style={{ marginTop: 3 }}>Listen · Guide · Activate</span>
       <div className="sy-divider" style={{ margin: '8px 0 16px' }} />
 

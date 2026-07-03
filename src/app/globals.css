@@ -9,6 +9,16 @@
    <style> so the dashboard's load-time re-render storm never re-injects it. */
 @keyframes syOrbitSweep { from { offset-distance: 0%; } to { offset-distance: 100%; } }
 
+/* Brand-header orbit echo (auth + onboarding) — a faint dashed halo with an orbiting dot,
+   echoing the homepage orbit for cross-surface consistency. */
+@keyframes syEchoSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.sy-echo { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 72px; height: 72px; pointer-events: none; }
+.sy-echo-ring { position: absolute; inset: 0; border-radius: 50%; border: 1px dashed rgba(50,14,59,0.26); }
+.sy-echo-spin { position: absolute; top: 50%; left: 50%; width: 0; height: 0; animation: syEchoSpin 9s linear infinite; }
+.sy-echo-dot { position: absolute; top: -36px; left: -2px; width: 4px; height: 4px; border-radius: 50%; background: #320E3B; }
+.dark .sy-echo-ring { border-color: rgba(193,154,107,0.26); }
+.dark .sy-echo-dot { background: rgba(193,154,107,0.90); }
+
 @layer base {
   :root {
     --background: 75 5% 94%; /* White Smoke #F1F2EE */

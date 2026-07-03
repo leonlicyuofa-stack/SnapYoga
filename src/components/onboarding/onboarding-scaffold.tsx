@@ -2,9 +2,9 @@
 
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { OnboardingHeader } from '@/components/onboarding/onboarding-header';
+import { OnboardingThemeToggle } from '@/components/onboarding/onboarding-theme-toggle';
 
 interface OnboardingScaffoldProps {
   title?: string;
@@ -36,27 +36,28 @@ export function OnboardingScaffold({
 }: OnboardingScaffoldProps) {
   return (
     <div className={cn('relative min-h-screen', outerClassName)}>
-      {onBack && (
-        <Button
-          onClick={onBack}
-          variant="ghost"
-          className="absolute top-4 left-4 rounded-full h-12 w-12 p-0 bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-[rgba(50,14,59,0.4)] dark:border-white/20 z-20"
-          aria-label="Go back"
-        >
-          <ArrowLeft className="h-6 w-6" />
-        </Button>
-      )}
+      <OnboardingThemeToggle />
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-6">
         <div className="w-full max-w-2xl flex flex-col items-center">
           <OnboardingHeader title={title} subtitle={subtitle} className="mb-6" />
           <div className={cn('sy-card backdrop-blur-lg rounded-2xl p-8 w-full', cardClassName)}>
             {children}
+            {(onBack || next) && (
+              <div className="flex items-center justify-between mt-6">
+                {onBack ? (
+                  <button
+                    type="button"
+                    onClick={onBack}
+                    aria-label="Go back"
+                    className="rounded-full h-12 w-12 p-0 flex items-center justify-center bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border border-[rgba(50,14,59,0.4)] dark:border-white/20"
+                  >
+                    <ArrowLeft className="h-6 w-6" />
+                  </button>
+                ) : <span />}
+                {next ?? <span />}
+              </div>
+            )}
           </div>
-          {next && (
-            <div className="w-full flex justify-end mt-5 min-h-[3.5rem] items-center">
-              {next}
-            </div>
-          )}
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { Check, ArrowUp } from 'lucide-react';
 import { OnboardingHeader } from '@/components/onboarding/onboarding-header';
+import { OnboardingThemeToggle } from '@/components/onboarding/onboarding-theme-toggle';
 
 export default function OnboardingCompletePage() {
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function OnboardingCompletePage() {
       className="relative min-h-screen flex flex-col items-center justify-center p-6 cursor-pointer"
       onClick={handleContinue}
     >
+      <OnboardingThemeToggle />
       <div className="relative z-10 w-full max-w-sm animate-in fade-in duration-1000 text-center space-y-6">
         <div className="flex justify-center">
           <div className="w-16 h-16 rounded-full sy-option flex items-center justify-center">
