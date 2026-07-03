@@ -313,14 +313,18 @@ export function SnapYogaPageClient() {
                   />
                 </div>
 
-                <button 
-                  onClick={handleStartAnalysis}
-                  disabled={isLoadingAnalysis}
-                  style={{ color: isDark ? 'rgba(25,16,8,0.95)' : 'rgba(255,248,235,0.95)', background: isDark ? 'rgba(193,154,107,0.85)' : '#320E3B', border: isDark ? 'none' : `0.5px solid ${acc(0.40)}`, borderRadius: 999, padding: '12px 32px', fontSize: 14, fontWeight: 600 }}
-                  className="w-full flex items-center justify-center gap-2 transition-all active:scale-95"
-                >
-                  Analyze Pose <ArrowRight className="w-4 h-4" />
-                </button>
+                <div className="flex items-center justify-end gap-4">
+                  <span style={{ color: isDark ? 'rgba(255,240,215,0.90)' : '#320E3B', fontSize: 15, fontWeight: 600 }}>Analyze Pose</span>
+                  <button
+                    onClick={handleStartAnalysis}
+                    disabled={isLoadingAnalysis}
+                    aria-label="Analyze pose"
+                    style={{ color: isDark ? 'rgba(25,16,8,0.95)' : 'rgba(255,248,235,0.95)', background: isDark ? 'rgba(193,154,107,0.85)' : '#320E3B', border: `0.5px solid ${isDark ? 'rgba(255,255,255,0.20)' : acc(0.40)}`, width: 48, height: 48, borderRadius: 999 }}
+                    className="inline-flex items-center justify-center transition-all active:scale-95 disabled:opacity-50"
+                  >
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
             )}
 
@@ -366,13 +370,17 @@ export function SnapYogaPageClient() {
                     </div>
 
                     {/* View Full Feedback Trigger */}
-                    <button 
-                      onClick={() => setShowFullResults(!showFullResults)}
-                      style={{ color: acc(0.92), background: isDark ? 'rgba(193,154,107,0.12)' : 'rgba(50,14,59,0.08)', border: `0.5px solid ${acc(0.40)}`, borderRadius: 999, padding: '8px 20px', fontSize: 13, fontWeight: 500 }}
-                      className="flex items-center gap-2 transition-all mx-auto"
-                    >
-                      {showFullResults ? "Hide Full Report" : "View Full Feedback →"}
-                    </button>
+                    <div className="flex items-center justify-center gap-3">
+                      <span style={{ color: acc(0.92), fontSize: 13, fontWeight: 500 }}>{showFullResults ? "Hide Full Report" : "View Full Feedback"}</span>
+                      <button
+                        onClick={() => setShowFullResults(!showFullResults)}
+                        aria-label={showFullResults ? "Hide full report" : "View full feedback"}
+                        style={{ color: acc(0.92), background: isDark ? 'rgba(193,154,107,0.12)' : 'rgba(50,14,59,0.08)', border: `0.5px solid ${acc(0.40)}`, width: 40, height: 40, borderRadius: 999 }}
+                        className="inline-flex items-center justify-center transition-all shrink-0"
+                      >
+                        <ArrowRight className="w-4 h-4" style={{ transform: showFullResults ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s ease' }} />
+                      </button>
+                    </div>
 
                     {showFullResults && (
                       <div className="animate-in fade-in slide-in-from-top-4 duration-500">

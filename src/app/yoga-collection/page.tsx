@@ -39,12 +39,9 @@ export default function YogaCollectionPage() {
   return (
     <AppShell>
       <div className="container mx-auto px-4 py-12">
-        <Button variant="outline" asChild className="mb-8 group">
-          <Link href="/dashboard">
-            <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-            Back to Dashboard
-          </Link>
-        </Button>
+        <Link href="/dashboard" aria-label="Back to dashboard" className="rounded-full h-10 w-10 p-0 inline-flex items-center justify-center bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-md transition-all hover:scale-105 backdrop-blur-sm border border-[rgba(50,14,59,0.4)] dark:border-white/20 mb-8">
+          <ArrowLeft className="h-5 w-5" />
+        </Link>
         <header className="text-center mb-12">
           <h1 className="text-4xl font-extrabold tracking-tight text-primary flex items-center justify-center gap-3">
             <Gem className="h-10 w-10" />

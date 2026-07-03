@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { Loader2, CheckCircle, XCircle, ArrowRight } from 'lucide-react';
 import { OnboardingHeader } from '@/components/onboarding/onboarding-header';
 import { Button } from '@/components/ui/button';
 import { getFunctions, httpsCallable } from 'firebase/functions';
@@ -68,9 +68,12 @@ function PaymentSuccessContent() {
                 </div>
                 <h1 className="sy-title" style={{ fontSize: 22 }}>Payment confirmed</h1>
                 <p className="sy-body text-sm">Your subscription is now active. Let's finish setting things up.</p>
-                <Button onClick={() => router.replace('/onboarding/complete')} className="sy-cta w-full h-12 rounded-xl">
-                  Continue →
-                </Button>
+                <div className="flex items-center justify-end gap-4">
+                  <span className="sy-title" style={{ fontSize: 16 }}>Continue</span>
+                  <Button onClick={() => router.replace('/onboarding/complete')} variant="ghost" aria-label="Continue" className="rounded-full h-12 w-12 p-0 bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border border-[rgba(50,14,59,0.4)] dark:border-white/20">
+                    <ArrowRight className="h-6 w-6" />
+                  </Button>
+                </div>
               </>
             )}
 

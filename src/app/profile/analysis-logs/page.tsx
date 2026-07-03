@@ -138,11 +138,10 @@ export default function AnalysisLogsPage() {
         {/* BACK */}
         <Link
           href="/profile"
-          className="group inline-flex items-center gap-2 mb-8"
-          style={{ fontSize: 12, color: txt(0.55) }}
+          aria-label="Back to profile"
+          className="rounded-full h-10 w-10 p-0 inline-flex items-center justify-center bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-md transition-all hover:scale-105 backdrop-blur-sm border border-[rgba(50,14,59,0.4)] dark:border-white/20 mb-8"
         >
-          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" style={{ color: acc(0.75) }} />
-          Back to Profile
+          <ArrowLeft className="h-5 w-5" />
         </Link>
 
         {/* HEADER */}

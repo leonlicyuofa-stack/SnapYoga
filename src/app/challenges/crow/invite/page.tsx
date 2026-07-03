@@ -204,12 +204,9 @@ export default function CrowPoseInvitePage() {
   return (
     <AppShell>
       <div className="container mx-auto px-4 py-12">
-        <Button variant="outline" asChild className="mb-8 group">
-          <Link href="/challenges">
-            <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-            Back to Challenges
-          </Link>
-        </Button>
+        <Link href="/challenges" aria-label="Back to challenges" className="rounded-full h-10 w-10 p-0 inline-flex items-center justify-center bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-md transition-all hover:scale-105 backdrop-blur-sm border border-[rgba(50,14,59,0.4)] dark:border-white/20 mb-8">
+          <ArrowLeft className="h-5 w-5" />
+        </Link>
         <div className="max-w-2xl mx-auto p-6 md:p-8 bg-card/80 backdrop-blur-sm shadow-xl rounded-lg overflow-hidden">
           <CardHeader className="p-0 text-center mb-8">
             <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-full mx-auto mb-4">

@@ -51,11 +51,12 @@ export function ActiveChallengesSnapshotCard() {
                         </div>
                     </div>
                 ))}
-                 <Button asChild className="w-full bg-transparent border-white/20 hover:bg-white/10" variant="outline">
-                    <Link href="/challenges">
-                        View All Challenges <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                </Button>
+                 <div className="flex items-center justify-end gap-4">
+                    <span className="font-semibold text-sm text-[#320E3B] dark:text-white/90">View All Challenges</span>
+                    <Button asChild variant="ghost" aria-label="View all challenges" className="rounded-full h-12 w-12 p-0 bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border border-[rgba(50,14,59,0.4)] dark:border-white/20">
+                        <Link href="/challenges"><ArrowRight className="h-6 w-6" /></Link>
+                    </Button>
+                </div>
             </CardContent>
         </div>
     );

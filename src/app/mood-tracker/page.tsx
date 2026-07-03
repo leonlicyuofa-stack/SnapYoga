@@ -172,11 +172,12 @@ export default function MoodTrackerPage() {
         
         <header className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
-            <button 
-              onClick={() => step === 1 ? router.push('/dashboard') : setStep(1)} 
-              className="p-2 rounded-full hover:bg-white/5 transition-colors"
+            <button
+              onClick={() => step === 1 ? router.push('/dashboard') : setStep(1)}
+              aria-label="Go back"
+              className="rounded-full h-10 w-10 p-0 inline-flex items-center justify-center bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-md transition-all hover:scale-105 backdrop-blur-sm border border-[rgba(50,14,59,0.4)] dark:border-white/20"
             >
-              <ArrowLeft className="w-5 h-5" style={{ color: isDark ? `${GOLD},0.9)` : `${TERRACOTTA},1)` }} />
+              <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
               <h1 style={{ fontSize: 24, fontFamily: FONT_PANCAKE, color: headerColor }}>Daily Check-in</h1>
@@ -346,19 +347,18 @@ export default function MoodTrackerPage() {
               </section>
 
               <footer className="pt-8 text-center">
-                <Button 
-                  onClick={() => setStep(2)}
-                  disabled={!currentMood}
-                  className="w-full h-14 rounded-full text-sm font-bold tracking-widest flex items-center justify-center gap-2 transition-all"
-                  style={{ 
-                    fontFamily: FONT_CASUAL,
-                    background: 'rgba(193,154,107,0.12)', 
-                    border: '0.5px solid rgba(193,154,107,0.40)', 
-                    color: 'rgba(193,154,107,0.92)'
-                  }}
-                >
-                  NEXT: REFLECT <ArrowRight className="w-4 h-4" />
-                </Button>
+                <div className="flex items-center justify-end gap-4">
+                  <span style={{ fontFamily: FONT_CASUAL, fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', color: isDark ? 'rgba(193,154,107,0.92)' : '#320E3B' }}>NEXT: REFLECT</span>
+                  <button
+                    onClick={() => setStep(2)}
+                    disabled={!currentMood}
+                    aria-label="Next: reflect"
+                    className="rounded-full h-12 w-12 p-0 inline-flex items-center justify-center text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm disabled:opacity-50 disabled:pointer-events-none"
+                    style={{ background: isDark ? 'rgba(0,0,0,0.30)' : '#320E3B', border: `0.5px solid ${isDark ? 'rgba(255,255,255,0.20)' : 'rgba(50,14,59,0.40)'}` }}
+                  >
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                </div>
               </footer>
             </>
           )}

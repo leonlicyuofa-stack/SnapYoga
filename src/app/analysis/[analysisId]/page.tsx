@@ -181,9 +181,8 @@ export default function PastAnalysisPage() {
     return (
       <AppShell>
         <div className="container mx-auto px-4 py-12 text-center max-w-md">
-           <button onClick={() => router.back()} className="group inline-flex items-center gap-2 mb-8" style={{ fontSize: 12, color: txt(0.55) }}>
-            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" style={{ color: acc(0.75) }} />
-            Go Back
+           <button onClick={() => router.back()} aria-label="Go back" className="rounded-full h-10 w-10 p-0 inline-flex items-center justify-center bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-md transition-all hover:scale-105 backdrop-blur-sm border border-[rgba(50,14,59,0.4)] dark:border-white/20 mb-8">
+            <ArrowLeft className="h-5 w-5" />
           </button>
           <Alert variant="destructive" className="bg-red-500/10 border-red-500/30 text-red-300">
             <AlertCircle className="h-4 w-4" />
@@ -200,9 +199,8 @@ export default function PastAnalysisPage() {
       <AppShell>
         <div className="container mx-auto px-4 py-12 text-center">
           <p style={{ color: txt(0.55) }}>No analysis data to display.</p>
-           <button onClick={() => router.back()} className="group inline-flex items-center gap-2 mt-4" style={{ fontSize: 12, color: txt(0.55) }}>
-             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" style={{ color: acc(0.75) }} />
-            Go Back
+           <button onClick={() => router.back()} aria-label="Go back" className="rounded-full h-10 w-10 p-0 inline-flex items-center justify-center bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-md transition-all hover:scale-105 backdrop-blur-sm border border-[rgba(50,14,59,0.4)] dark:border-white/20 mt-4">
+             <ArrowLeft className="h-5 w-5" />
           </button>
         </div>
       </AppShell>
@@ -216,11 +214,10 @@ export default function PastAnalysisPage() {
         <div className="flex justify-between items-center mb-8 gap-4">
             <button
               onClick={() => router.back()}
-              className="group inline-flex items-center gap-2"
-              style={{ fontSize: 12, color: txt(0.55) }}
+              aria-label="Go back"
+              className="rounded-full h-10 w-10 p-0 inline-flex items-center justify-center bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-md transition-all hover:scale-105 backdrop-blur-sm border border-[rgba(50,14,59,0.4)] dark:border-white/20"
             >
-              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" style={{ color: acc(0.75) }} />
-              Back
+              <ArrowLeft className="h-5 w-5" />
             </button>
             <div className="flex gap-2">
                 <button

@@ -65,18 +65,12 @@ export default function VerifyEmailPage() {
 
           <div className="space-y-3 pt-2">
             {/* Primary CTA */}
-            <Button
-              onClick={handleContinue}
-              disabled={isChecking}
-              className="sy-cta w-full h-12 text-base rounded-xl"
-            >
-              {isChecking ? (
-                <RefreshCw className="h-5 w-5 animate-spin mr-2" />
-              ) : (
-                <ArrowRight className="h-5 w-5 mr-2" />
-              )}
-              {isChecking ? "Checking..." : "I've verified my email"}
-            </Button>
+            <div className="flex items-center justify-end gap-4">
+              <span className="sy-title" style={{ fontSize: 16 }}>{isChecking ? "Checking..." : "I've verified my email"}</span>
+              <Button onClick={handleContinue} disabled={isChecking} variant="ghost" aria-label="I've verified my email" className="rounded-full h-12 w-12 p-0 shrink-0 bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border border-[rgba(50,14,59,0.4)] dark:border-white/20">
+                {isChecking ? <RefreshCw className="h-5 w-5 animate-spin" /> : <ArrowRight className="h-6 w-6" />}
+              </Button>
+            </div>
 
             {/* Resend */}
             <Button

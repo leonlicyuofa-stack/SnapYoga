@@ -102,8 +102,8 @@ export function ChallengeDetail(props: ChallengeDetailProps) {
 
         {/* Back + top actions */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-          <Link href="/challenges" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, color: acc(0.9), border: `0.5px solid ${acc(0.28)}`, background: softBtn, borderRadius: 999, padding: '7px 14px', textDecoration: 'none' }}>
-            <ArrowLeft className="h-4 w-4" /> Back to Challenges
+          <Link href="/challenges" aria-label="Back to challenges" style={{ textDecoration: 'none' }} className="rounded-full h-10 w-10 p-0 inline-flex items-center justify-center bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-md transition-all hover:scale-105 backdrop-blur-sm border border-[rgba(50,14,59,0.4)] dark:border-white/20">
+            <ArrowLeft className="h-5 w-5" />
           </Link>
           <TopBarIcons />
         </div>
