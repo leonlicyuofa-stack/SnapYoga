@@ -57,7 +57,7 @@ export default function ProfilePage() {
   // Light: a filled-but-frosted panel (a touch more solid than the plain frosted cards) with amethyst text.
   const panelBg = isDark ? 'rgba(193,154,107,0.04)' : 'rgba(255,255,255,0.22)';
   const panelBorder = isDark ? cardBorder : 'rgba(255,255,255,0.50)';
-  const panelTitle = isDark ? 'rgba(255,240,215,0.88)' : '#320E3B';
+  const panelTitle = isDark ? 'rgba(255,240,215,0.70)' : 'rgba(50,14,59,0.70)';
   const panelSub = isDark ? 'rgba(255,240,215,0.32)' : 'rgba(50,14,59,0.60)';
   const panelIcon = isDark ? 'rgba(193,154,107,0.75)' : 'rgba(50,14,59,0.70)';
   const panelChevron = isDark ? 'rgba(193,154,107,0.50)' : 'rgba(50,14,59,0.40)';
@@ -311,7 +311,7 @@ export default function ProfilePage() {
                   {/* MY PROGRESS */}
                   <div className="space-y-1">
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                        <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: acc(0.55) }}>My Progress</p>
+                        <p style={{ fontSize: 14, letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 600, color: acc(0.95) }}>My Progress</p>
                         <span style={{ fontSize: 11, color: acc(0.40) }}>This Week</span>
                       </div>
                       <div style={{
@@ -357,7 +357,7 @@ export default function ProfilePage() {
 
                   {/* WEEKLY COMMITMENT — sets the exercise goal (days × 24h) */}
                   <div className="space-y-1">
-                      <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: acc(0.55), marginBottom: 6 }}>Weekly Commitment</p>
+                      <p style={{ fontSize: 14, letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 600, color: acc(0.95), marginBottom: 6 }}>Weekly Commitment</p>
                       <div style={{ borderRadius: '12px 24px 24px 24px', border: `0.5px solid ${cardBorder}`, background: card, padding: '14px 16px' }}>
                         <p style={{ fontSize: 14, fontWeight: 600, color: isDark ? txt(0.90) : 'rgba(255,248,235,0.97)', fontFamily: "'Cormorant Garamond', serif", margin: 0 }}>How many days a week will you commit?</p>
                         <p style={{ fontSize: 11, color: txt(0.40), margin: '2px 0 0' }}>We'll set your exercise goal from this.</p>
@@ -391,7 +391,7 @@ export default function ProfilePage() {
                   {/* MY PRACTICES */}
                   <div className="space-y-1">
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                        <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: acc(0.55) }}>My Practices</p>
+                        <p style={{ fontSize: 14, letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 600, color: acc(0.95) }}>My Practices</p>
                         <Link href="/profile/analysis-logs" style={{ fontSize: 11, color: acc(0.40) }}>Show all ›</Link>
                       </div>
                       <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 6 }} className="no-scrollbar">
@@ -428,7 +428,7 @@ export default function ProfilePage() {
 
                   {/* ACCOUNT SETTINGS (CONSOLIDATED) */}
                   <div className="space-y-1">
-                      <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: acc(0.55), marginBottom: 6 }}>Account</p>
+                      <p style={{ fontSize: 14, letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 600, color: acc(0.95), marginBottom: 6 }}>Account</p>
                       
                       <div style={{ borderRadius: '10px 20px 20px 20px', border: `0.5px solid ${panelBorder}`, background: panelBg, overflow: 'hidden' }}>
                         
@@ -440,7 +440,7 @@ export default function ProfilePage() {
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                             <span style={{ fontSize: 15, color: panelIcon }}>◎</span>
                             <div>
-                              <div style={{ fontSize: 13, fontWeight: 600, color: panelTitle }}>Display Name</div>
+                              <div style={{ fontSize: 13, fontWeight: 500, color: panelTitle }}>Display Name</div>
                               <div style={{ fontSize: 9.5, color: panelSub, fontStyle: 'italic', marginTop: 1 }}>{user?.displayName || 'jellycat'}</div>
                             </div>
                           </div>
@@ -472,7 +472,7 @@ export default function ProfilePage() {
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                             <span style={{ fontSize: 15, color: panelIcon }}>♛</span>
                             <div>
-                              <div style={{ fontSize: 13, fontWeight: 600, color: panelTitle }}>Subscription</div>
+                              <div style={{ fontSize: 13, fontWeight: 500, color: panelTitle }}>Subscription</div>
                               <div style={{ fontSize: 9.5, color: panelSub, fontStyle: 'italic', marginTop: 1 }}>Manage your plan</div>
                             </div>
                           </div>
@@ -502,7 +502,7 @@ export default function ProfilePage() {
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                             <span style={{ fontSize: 15, color: panelIcon }}>🔑</span>
                             <div>
-                              <div style={{ fontSize: 13, fontWeight: 600, color: panelTitle }}>Change Password</div>
+                              <div style={{ fontSize: 13, fontWeight: 500, color: panelTitle }}>Change Password</div>
                               <div style={{ fontSize: 9.5, color: panelSub, fontStyle: 'italic', marginTop: 1 }}>Update your credentials</div>
                             </div>
                           </div>
@@ -541,7 +541,7 @@ export default function ProfilePage() {
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                             <span style={{ fontSize: 15, color: panelIcon }}>👥</span>
                             <div>
-                              <div style={{ fontSize: 13, fontWeight: 600, color: panelTitle }}>Invite friends to SnapYoga</div>
+                              <div style={{ fontSize: 13, fontWeight: 500, color: panelTitle }}>Invite friends to SnapYoga</div>
                               <div style={{ fontSize: 9.5, color: panelSub, fontStyle: 'italic', marginTop: 1 }}>Share your practice</div>
                             </div>
                           </div>
@@ -582,7 +582,7 @@ export default function ProfilePage() {
                               {isDark ? <Moon style={{ width: 15, height: 15 }} /> : <Sun style={{ width: 15, height: 15 }} />}
                             </span>
                             <div>
-                              <div style={{ fontSize: 13, fontWeight: 600, color: panelTitle }}>Appearance</div>
+                              <div style={{ fontSize: 13, fontWeight: 500, color: panelTitle }}>Appearance</div>
                               <div style={{ fontSize: 9.5, color: panelSub, fontStyle: 'italic', marginTop: 1 }}>{isDark ? 'Dark mode' : 'Light mode'}</div>
                             </div>
                           </div>
