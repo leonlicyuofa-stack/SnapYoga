@@ -54,13 +54,14 @@ export default function ProfilePage() {
   const NAME_C = isDark ? 'rgba(255,240,215,0.94)' : 'rgba(255,248,235,0.96)';
   const NAME_SH = isDark ? 'none' : '0 1px 3px rgba(70,60,80,0.32)';
   // Account card: amethyst-filled panel with cream text in light mode (dark unchanged).
-  const panelBg = isDark ? 'rgba(193,154,107,0.04)' : 'linear-gradient(160deg,#3a1545,#2c0e36)';
-  const panelBorder = isDark ? cardBorder : 'rgba(255,255,255,0.12)';
-  const panelTitle = isDark ? 'rgba(255,240,215,0.88)' : 'rgba(255,248,235,0.96)';
-  const panelSub = isDark ? 'rgba(255,240,215,0.32)' : 'rgba(255,248,235,0.55)';
-  const panelIcon = isDark ? 'rgba(193,154,107,0.75)' : 'rgba(214,180,140,0.95)';
-  const panelChevron = isDark ? 'rgba(193,154,107,0.50)' : 'rgba(255,248,235,0.40)';
-  const panelDivider = isDark ? 'rgba(193,154,107,0.10)' : 'rgba(255,255,255,0.09)';
+  // Light: a filled-but-frosted panel (a touch more solid than the plain frosted cards) with amethyst text.
+  const panelBg = isDark ? 'rgba(193,154,107,0.04)' : 'rgba(255,255,255,0.22)';
+  const panelBorder = isDark ? cardBorder : 'rgba(255,255,255,0.50)';
+  const panelTitle = isDark ? 'rgba(255,240,215,0.88)' : '#320E3B';
+  const panelSub = isDark ? 'rgba(255,240,215,0.32)' : 'rgba(50,14,59,0.60)';
+  const panelIcon = isDark ? 'rgba(193,154,107,0.75)' : 'rgba(50,14,59,0.70)';
+  const panelChevron = isDark ? 'rgba(193,154,107,0.50)' : 'rgba(50,14,59,0.40)';
+  const panelDivider = isDark ? 'rgba(193,154,107,0.10)' : 'rgba(50,14,59,0.10)';
   const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false);
   const [isUsernameSubmitting, setIsUsernameSubmitting] = useState(false);
   const [inviteLink, setInviteLink] = useState('');
@@ -288,9 +289,9 @@ export default function ProfilePage() {
                   <TierBadge tier={membershipTier} />
                   <div
                     style={{
-                      background: 'rgba(120,155,95,0.20)',
-                      color: 'rgba(160,195,130,0.92)',
-                      border: '0.5px solid rgba(140,170,115,0.35)',
+                      background: isDark ? 'rgba(120,155,95,0.20)' : 'rgba(120,155,95,0.22)',
+                      color: isDark ? 'rgba(160,195,130,0.92)' : '#3B6D11',
+                      border: `0.5px solid ${isDark ? 'rgba(140,170,115,0.35)' : 'rgba(90,130,60,0.45)'}`,
                       fontSize: 9,
                       letterSpacing: '0.15em',
                       textTransform: 'uppercase',
@@ -333,22 +334,22 @@ export default function ProfilePage() {
                           <div className="flex flex-col items-center gap-2">
                             <svg width="58" height="58" viewBox="0 0 58 58">
                               <circle cx="29" cy="29" r="24" fill="none" stroke={isDark ? 'rgba(255,240,215,0.07)' : 'rgba(50,14,59,0.10)'} strokeWidth="5"/>
-                              <circle cx="29" cy="29" r="24" fill="none" stroke="rgba(160,195,130,0.85)" strokeWidth="5"
+                              <circle cx="29" cy="29" r="24" fill="none" stroke={isDark ? 'rgba(160,195,130,0.85)' : 'rgba(59,109,17,0.90)'} strokeWidth="5"
                                 strokeDasharray="150.8" strokeDashoffset={getOffset(moodPercent)} strokeLinecap="round"
                                 transform="rotate(-90 29 29)"/>
                               <text x="29" y="34" textAnchor="middle" fontSize="13" fontWeight="700" fill={txt(0.92)} fontFamily="Cormorant Garamond, serif">{moodPercent}%</text>
                             </svg>
-                            <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: 'rgba(160,195,130,0.85)' }}>Mood</span>
+                            <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: isDark ? 'rgba(160,195,130,0.85)' : '#3B6D11' }}>Mood</span>
                           </div>
                           <div className="flex flex-col items-center gap-2">
                             <svg width="58" height="58" viewBox="0 0 58 58">
                               <circle cx="29" cy="29" r="24" fill="none" stroke={isDark ? 'rgba(255,240,215,0.07)' : 'rgba(50,14,59,0.10)'} strokeWidth="5"/>
-                              <circle cx="29" cy="29" r="24" fill="none" stroke="rgba(200,140,90,0.85)" strokeWidth="5"
+                              <circle cx="29" cy="29" r="24" fill="none" stroke={isDark ? 'rgba(200,140,90,0.85)' : 'rgba(168,83,28,0.90)'} strokeWidth="5"
                                 strokeDasharray="150.8" strokeDashoffset={getOffset(habitsPercent)} strokeLinecap="round"
                                 transform="rotate(-90 29 29)"/>
                               <text x="29" y="34" textAnchor="middle" fontSize="13" fontWeight="700" fill={txt(0.92)} fontFamily="Cormorant Garamond, serif">{habitsPercent}%</text>
                             </svg>
-                            <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: 'rgba(200,140,90,0.85)' }}>Habits</span>
+                            <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: isDark ? 'rgba(200,140,90,0.85)' : '#A8531C' }}>Habits</span>
                           </div>
                         </div>
                       </div>
@@ -429,7 +430,7 @@ export default function ProfilePage() {
                   <div className="space-y-1">
                       <p style={{ fontSize: 9.5, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: acc(0.55), marginBottom: 6 }}>Account</p>
                       
-                      <div style={{ borderRadius: 18, border: `0.5px solid ${panelBorder}`, background: panelBg, overflow: 'hidden' }}>
+                      <div style={{ borderRadius: '10px 20px 20px 20px', border: `0.5px solid ${panelBorder}`, background: panelBg, overflow: 'hidden' }}>
                         
                         {/* Row 1: Display Name */}
                         <div 
