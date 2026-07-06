@@ -14,7 +14,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { MoodChart } from '@/components/features/dashboard/MoodChart';
 import { TopBarIcons } from '@/components/layout/top-bar-icons';
-import Link from 'next/link';
 
 // Rotating daily affirmations for the intention card (seeded by the date so it's stable per day).
 const AFFIRMATIONS = [
@@ -411,25 +410,6 @@ export default function DashboardPage() {
                 <MoodChart />
               </div>
             </GlassCard>
-          </section>
-
-          {/* QUICK ACTIONS — glass tiles into the core surfaces */}
-          <section>
-            <SectionHead t={t}>Explore</SectionHead>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 9 }}>
-              {[
-                { href: '/snap-yoga', label: 'Analyze', icon: '📸' },
-                { href: '/challenges', label: 'Challenges', icon: '🏆' },
-                { href: '/practice-calendar', label: 'Journal', icon: '📖' },
-              ].map(tile => (
-                <Link key={tile.href} href={tile.href} style={{ textDecoration: 'none' }} className="active:scale-95 transition-transform">
-                  <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: 16, padding: '14px 6px', textAlign: 'center', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
-                    <div style={{ fontSize: 20 }}>{tile.icon}</div>
-                    <div style={{ fontFamily: FONT_PANCAKE, fontSize: 14, color: t.text, marginTop: 4 }}>{tile.label}</div>
-                  </GlassCard>
-                </Link>
-              ))}
-            </div>
           </section>
 
           {/* Overwrite confirmation when a mood is already logged today */}
