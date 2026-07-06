@@ -311,7 +311,7 @@ export default function ProfilePage() {
                   {/* MY PROGRESS */}
                   <div className="space-y-1">
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                        <p style={{ fontSize: 14, letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 600, color: acc(0.95) }}>My Progress</p>
+                        <p style={{ fontSize: 9, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: isDark ? 'rgba(193,154,107,0.55)' : '#320E3B' }}>My Progress</p>
                         <span style={{ fontSize: 11, color: acc(0.40) }}>This Week</span>
                       </div>
                       <div style={{
@@ -357,7 +357,7 @@ export default function ProfilePage() {
 
                   {/* WEEKLY COMMITMENT — sets the exercise goal (days × 24h) */}
                   <div className="space-y-1">
-                      <p style={{ fontSize: 14, letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 600, color: acc(0.95), marginBottom: 6 }}>Weekly Commitment</p>
+                      <p style={{ fontSize: 9, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: isDark ? 'rgba(193,154,107,0.55)' : '#320E3B', marginBottom: 6 }}>Weekly Commitment</p>
                       <div style={{ borderRadius: '12px 24px 24px 24px', border: `0.5px solid ${cardBorder}`, background: card, padding: '14px 16px' }}>
                         <p style={{ fontSize: 14, fontWeight: 600, color: isDark ? txt(0.90) : 'rgba(255,248,235,0.97)', fontFamily: "'Cormorant Garamond', serif", margin: 0 }}>How many days a week will you commit?</p>
                         <p style={{ fontSize: 11, color: txt(0.40), margin: '2px 0 0' }}>We'll set your exercise goal from this.</p>
@@ -391,7 +391,7 @@ export default function ProfilePage() {
                   {/* MY PRACTICES */}
                   <div className="space-y-1">
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                        <p style={{ fontSize: 14, letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 600, color: acc(0.95) }}>My Practices</p>
+                        <p style={{ fontSize: 9, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: isDark ? 'rgba(193,154,107,0.55)' : '#320E3B' }}>My Practices</p>
                         <Link href="/profile/analysis-logs" style={{ fontSize: 11, color: acc(0.40) }}>Show all ›</Link>
                       </div>
                       <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 6 }} className="no-scrollbar">
@@ -428,7 +428,7 @@ export default function ProfilePage() {
 
                   {/* ACCOUNT SETTINGS (CONSOLIDATED) */}
                   <div className="space-y-1">
-                      <p style={{ fontSize: 14, letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 600, color: acc(0.95), marginBottom: 6 }}>Account</p>
+                      <p style={{ fontSize: 9, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: isDark ? 'rgba(193,154,107,0.55)' : '#320E3B', marginBottom: 6 }}>Account</p>
                       
                       <div style={{ borderRadius: '10px 20px 20px 20px', border: `0.5px solid ${panelBorder}`, background: panelBg, overflow: 'hidden' }}>
                         
