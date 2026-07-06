@@ -9,11 +9,24 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useState, useEffect, memo } from 'react';
 import { doc, getDoc, collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns';
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, getDay } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { MoodChart } from '@/components/features/dashboard/MoodChart';
 import { TopBarIcons } from '@/components/layout/top-bar-icons';
+import Link from 'next/link';
+
+// Rotating daily affirmations for the intention card (seeded by the date so it's stable per day).
+const AFFIRMATIONS = [
+  'What will you carry with you today?',
+  'Breathe in calm, breathe out tension.',
+  'Small steps still move you forward.',
+  'Your body is listening — be kind to it.',
+  'Show up for yourself, gently.',
+  'Progress, not perfection.',
+  'Let today be grounded and soft.',
+  'You are exactly where you need to be.',
+];
 
 const GOLD       = 'rgba(193,154,107';
 const PARCHMENT  = 'rgba(255,240,215';
@@ -34,7 +47,9 @@ function tok(isDark: boolean) {
     label:       isDark ? `${GOLD},0.55)`        : `#320E3B`,
     accent:      isDark ? `${GOLD},0.90)`        : `#320E3B`,
     goldBorder:  isDark ? `${GOLD},0.18)`        : `rgba(255,255,255,0.40)`,
-    cardBg:      isDark ? `${GOLD},0.07)`        : `rgba(255,255,255,0.12)`,
+    cardBg:      isDark ? `linear-gradient(160deg,${PARCHMENT},0.10),${PARCHMENT},0.03))` : `linear-gradient(160deg,rgba(255,255,255,0.32),rgba(255,255,255,0.14))`,
+    cardShadow:  isDark ? `0 8px 22px rgba(0,0,0,0.45)` : `0 8px 22px rgba(90,80,120,0.16)`,
+    cardHi:      isDark ? `${PARCHMENT},0.10)`   : `rgba(255,255,255,0.60)`,
     cardTerra:   isDark ? `${TERRACOTTA},0.18)`  : `rgba(200,135,85,0.12)`,
     cardSage:    isDark ? `${SAGE},0.18)`        : `rgba(120,155,95,0.14)`,
     cardBark:    isDark ? `${DEEP_BARK},0.65)`   : `rgba(255,255,255,0.85)`,
@@ -116,7 +131,7 @@ function Ring({ size, stroke, pct, color, track, textColor, label, centerTop, ce
 // Compact stat: icon + number + one word.
 function Chip({ emoji, num, word, color, t }: { emoji: string; num: number | string; word: string; color: string; t: ReturnType<typeof tok> }) {
   return (
-    <div style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: 16, padding: '11px 8px', textAlign: 'center', backdropFilter: 'blur(14px)' }}>
+    <div style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: 16, padding: '11px 8px', textAlign: 'center', backdropFilter: 'blur(14px)', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
       <div style={{ fontSize: 16 }}>{emoji}</div>
       <div style={{ fontFamily: FONT_PANCAKE, fontSize: 22, fontWeight: 500, color, lineHeight: 1, margin: '2px 0 0' }}>{num}</div>
       <div style={{ fontSize: 10, letterSpacing: '0.06em', color: t.accent, marginTop: 3, fontFamily: FONT_CASUAL }}>{word}</div>
@@ -173,6 +188,9 @@ export default function DashboardPage() {
   const [avgScore,      setAvgScore]      = useState(78);
   const [commitmentDays, setCommitmentDays] = useState(5);
   const [showOverwrite, setShowOverwrite] = useState(false);
+  // Weekday indices (Mon=0) that had a practice this week — drives the check-in consistency dots.
+  const [weekDays, setWeekDays] = useState<Set<number>>(new Set());
+  const [affIdx, setAffIdx] = useState(() => new Date().getDate() % AFFIRMATIONS.length);
 
   // Exercise goal: an encouraging weekly hours target (≈1h per committed day).
   const exerciseGoal = commitmentDays;
@@ -222,7 +240,12 @@ export default function DashboardPage() {
     getDocs(query(ref, where('createdAt','>=',mStart), where('createdAt','<=',mEnd))).then(s => setMonthSessions(s.size));
     // Weekly exercise hours, measured against the weekly goal
     const wStart = startOfWeek(new Date(), { weekStartsOn: 1 }), wEnd = endOfWeek(new Date(), { weekStartsOn: 1 });
-    getDocs(query(ref, where('createdAt','>=',wStart), where('createdAt','<=',wEnd))).then(s => setExerciseHrs(Math.round((s.size * 15) / 60 * 10) / 10));
+    getDocs(query(ref, where('createdAt','>=',wStart), where('createdAt','<=',wEnd))).then(s => {
+      setExerciseHrs(Math.round((s.size * 15) / 60 * 10) / 10);
+      const days = new Set<number>();
+      s.forEach(d => { const c = (d.data().createdAt as any)?.toDate?.(); if (c) days.add((getDay(c) + 6) % 7); });
+      setWeekDays(days);
+    });
   }, [user]);
 
   const habitsList = [
@@ -239,7 +262,9 @@ export default function DashboardPage() {
         <TopBarIcons className="px-4 pt-3" />
 
         {/* HEADER — prominent profile picture */}
-        <header style={{ padding: '12px 16px 10px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+        <header style={{ position: 'relative', padding: '12px 16px 10px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+          <span aria-hidden="true" style={{ position: 'absolute', top: 6, left: 34, fontSize: 10, color: `${ACCENT},0.32)`, pointerEvents: 'none' }}>✦</span>
+          <span aria-hidden="true" style={{ position: 'absolute', top: 46, right: 36, fontSize: 8, color: `${ACCENT},0.26)`, pointerEvents: 'none' }}>✦</span>
           <div style={{ position: 'relative', marginBottom: 10 }}>
             {/* Half-moon orbit, concentric with the avatar (radius 58, ~20px outside the picture).
                 Memoised + keyframes in globals.css so the load-time re-render storm can't flicker it. */}
@@ -262,6 +287,19 @@ export default function DashboardPage() {
         {/* SCROLLABLE CONTENT */}
         <main style={{ flex: 1, padding: '4px 14px 24px', display: 'flex', flexDirection: 'column', gap: 22 }}>
 
+          {/* TODAY'S INTENTION — a gentle daily affirmation */}
+          <section>
+            <SectionHead t={t}>Today's Intention</SectionHead>
+            <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '12px 24px 24px 24px', padding: '15px 16px', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <p style={{ fontFamily: FONT_PANCAKE, fontSize: 18, fontWeight: 500, color: t.text, margin: 0, flex: 1, lineHeight: 1.3 }}>{AFFIRMATIONS[affIdx]}</p>
+                <button onClick={() => setAffIdx((affIdx + 1) % AFFIRMATIONS.length)} aria-label="New intention" style={{ flexShrink: 0, width: 32, height: 32, borderRadius: '50%', background: 'transparent', border: `0.5px solid ${t.goldBorder}`, color: t.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                  <RotateCcw style={{ width: 14, height: 14 }} />
+                </button>
+              </div>
+            </GlassCard>
+          </section>
+
           {/* §1 DAILY CHECK-IN (mood + habits merged, whole box tappable) */}
           <section>
             <SectionHead t={t}>Mood & Reflections</SectionHead>
@@ -272,7 +310,7 @@ export default function DashboardPage() {
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCheckinClick(); } }}
               className="active:scale-[0.99] transition-transform cursor-pointer"
             >
-              <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '24px 12px 24px 24px', padding: '16px' }}>
+              <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '24px 12px 24px 24px', padding: '16px', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                     <div>
@@ -328,12 +366,31 @@ export default function DashboardPage() {
           <section>
             <SectionHead t={t}>This Week</SectionHead>
 
-            <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: 20, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 16 }}>
-              <Ring size={84} stroke={6} pct={exPct} color={t.gold} track={isDark ? `${PARCHMENT},0.08)` : 'rgba(255,255,255,0.20)'} centerTop={`${exerciseHrs}`} centerSub={`OF ${exerciseGoal} HRS`} textColor={t.text} subColor={t.accent} />
-              <div>
-                <p style={{ fontFamily: FONT_PANCAKE, fontSize: 19, fontWeight: 500, color: t.headline, margin: 0 }}>Practice</p>
-                <p style={{ fontSize: 11, color: t.muted, margin: '4px 0 0', fontFamily: FONT_CASUAL }}>{practiceMsg}</p>
+            <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: 20, padding: '14px 18px', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <Ring size={84} stroke={6} pct={exPct} color={t.gold} track={isDark ? `${PARCHMENT},0.08)` : 'rgba(255,255,255,0.20)'} centerTop={`${exerciseHrs}`} centerSub={`OF ${exerciseGoal} HRS`} textColor={t.text} subColor={t.accent} />
+                <div>
+                  <p style={{ fontFamily: FONT_PANCAKE, fontSize: 19, fontWeight: 500, color: t.headline, margin: 0 }}>Practice</p>
+                  <p style={{ fontSize: 11, color: t.muted, margin: '4px 0 0', fontFamily: FONT_CASUAL }}>{practiceMsg}</p>
+                </div>
               </div>
+              {/* Weekly check-in dots — a passive glance, distinct from the dated practice journal */}
+              <div style={{ display: 'flex', gap: 4, marginTop: 14 }}>
+                {['M','T','W','T','F','S','S'].map((d, i) => {
+                  const on = weekDays.has(i);
+                  const today = i === (getDay(new Date()) + 6) % 7;
+                  return (
+                    <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+                      <span style={{ width: 10, height: 10, borderRadius: '50%',
+                        background: on ? t.accent : (isDark ? `${PARCHMENT},0.08)` : 'rgba(50,14,59,0.10)'),
+                        border: today ? `1.5px solid ${t.accent}` : 'none',
+                        boxShadow: today ? `0 0 0 2px ${isDark ? `${GOLD},0.20)` : 'rgba(50,14,59,0.15)'}` : 'none' }} />
+                      <span style={{ fontSize: 8, color: t.muted, fontFamily: FONT_CASUAL }}>{d}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <p style={{ fontSize: 9, color: t.muted, fontFamily: FONT_CASUAL, margin: '6px 0 0', textAlign: 'center' }}>Check-ins this week · {weekDays.size} of 7</p>
             </GlassCard>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 9, marginTop: 10 }}>
@@ -346,7 +403,7 @@ export default function DashboardPage() {
           {/* §3 MOOD METER */}
           <section>
             <SectionHead t={t}>Mood Meter</SectionHead>
-            <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '24px 24px 24px 12px', padding: '12px 14px 8px' }}>
+            <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '24px 24px 24px 12px', padding: '12px 14px 8px', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: 9, color: t.muted, fontFamily: FONT_CASUAL, letterSpacing: 0.5, textTransform: 'uppercase' }}>This week</span>
               </div>
@@ -354,6 +411,25 @@ export default function DashboardPage() {
                 <MoodChart />
               </div>
             </GlassCard>
+          </section>
+
+          {/* QUICK ACTIONS — glass tiles into the core surfaces */}
+          <section>
+            <SectionHead t={t}>Explore</SectionHead>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 9 }}>
+              {[
+                { href: '/snap-yoga', label: 'Analyze', icon: '📸' },
+                { href: '/challenges', label: 'Challenges', icon: '🏆' },
+                { href: '/practice-calendar', label: 'Journal', icon: '📖' },
+              ].map(tile => (
+                <Link key={tile.href} href={tile.href} style={{ textDecoration: 'none' }} className="active:scale-95 transition-transform">
+                  <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: 16, padding: '14px 6px', textAlign: 'center', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
+                    <div style={{ fontSize: 20 }}>{tile.icon}</div>
+                    <div style={{ fontFamily: FONT_PANCAKE, fontSize: 14, color: t.text, marginTop: 4 }}>{tile.label}</div>
+                  </GlassCard>
+                </Link>
+              ))}
+            </div>
           </section>
 
           {/* Overwrite confirmation when a mood is already logged today */}
