@@ -49,6 +49,7 @@ function tok(isDark: boolean) {
     cardBg:      isDark ? `linear-gradient(160deg,${PARCHMENT},0.10),${PARCHMENT},0.03))` : `linear-gradient(160deg,rgba(255,255,255,0.32),rgba(255,255,255,0.14))`,
     cardShadow:  isDark ? `0 8px 22px rgba(0,0,0,0.45)` : `0 8px 22px rgba(90,80,120,0.16)`,
     cardHi:      isDark ? `${PARCHMENT},0.10)`   : `rgba(255,255,255,0.60)`,
+    chipInner:   isDark ? `${PARCHMENT},0.04)`   : `rgba(255,255,255,0.20)`,
     cardTerra:   isDark ? `${TERRACOTTA},0.18)`  : `rgba(200,135,85,0.12)`,
     cardSage:    isDark ? `${SAGE},0.18)`        : `rgba(120,155,95,0.14)`,
     cardBark:    isDark ? `${DEEP_BARK},0.65)`   : `rgba(255,255,255,0.85)`,
@@ -130,10 +131,10 @@ function Ring({ size, stroke, pct, color, track, textColor, label, centerTop, ce
 // Compact stat: icon + number + one word.
 function Chip({ emoji, num, word, color, t }: { emoji: string; num: number | string; word: string; color: string; t: ReturnType<typeof tok> }) {
   return (
-    <div style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: 16, padding: '11px 8px', textAlign: 'center', backdropFilter: 'blur(14px)', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
-      <div style={{ fontSize: 16 }}>{emoji}</div>
-      <div style={{ fontFamily: FONT_PANCAKE, fontSize: 22, fontWeight: 500, color, lineHeight: 1, margin: '2px 0 0' }}>{num}</div>
-      <div style={{ fontSize: 10, letterSpacing: '0.06em', color: t.accent, marginTop: 3, fontFamily: FONT_CASUAL }}>{word}</div>
+    <div style={{ background: t.chipInner, border: `0.5px solid ${t.goldBorder}`, borderRadius: 14, padding: '9px 4px', textAlign: 'center', boxShadow: `inset 0 1px 0 ${t.cardHi}` }}>
+      <div style={{ fontSize: 14 }}>{emoji}</div>
+      <div style={{ fontFamily: FONT_PANCAKE, fontSize: 19, fontWeight: 500, color, lineHeight: 1, margin: '2px 0 0' }}>{num}</div>
+      <div style={{ fontSize: 8.5, letterSpacing: '0.06em', color: t.accent, marginTop: 3, fontFamily: FONT_CASUAL, textTransform: 'uppercase' as const }}>{word}</div>
     </div>
   );
 }
@@ -180,7 +181,7 @@ export default function DashboardPage() {
   const router                  = useRouter();
 
   const [moodData,      setMoodData]      = useState<any|null>(null);
-  const [completedHabits, setCompletedHabits] = useState<string[]>([]);
+  const [habitWeekCounts, setHabitWeekCounts] = useState<Record<string, number>>({});
   const [totalSessions, setTotalSessions] = useState(0);
   const [monthSessions, setMonthSessions] = useState(0);
   const [exerciseHrs,   setExerciseHrs]   = useState(0);
@@ -213,9 +214,12 @@ export default function DashboardPage() {
       if (s.exists()) setMoodData(s.data()); 
     });
 
-    // Fetch Habits
-    getDoc(doc(firestore, 'users', user.uid, 'habits', todayStr)).then(s => {
-      if (s.exists()) setCompletedHabits(s.data().completed || []);
+    // Weekly habit completions — how many days each habit was done this week (drives the bars)
+    const weekStartStr = format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
+    getDocs(query(collection(firestore, 'users', user.uid, 'habits'), where('date', '>=', weekStartStr))).then(snap => {
+      const counts: Record<string, number> = {};
+      snap.forEach(d => { ((d.data().completed as string[]) || []).forEach(id => { counts[id] = (counts[id] || 0) + 1; }); });
+      setHabitWeekCounts(counts);
     });
 
     // Fetch the weekly commitment that drives the exercise goal
@@ -338,23 +342,23 @@ export default function DashboardPage() {
                     </div>
                   )}
 
-                  {/* Today's habits — icon row + a single progress ring (no labels/bar/count) */}
+                  {/* This week's habit consistency — completion bars (days done of 7) */}
                   <div style={{ height: 1, background: t.goldBorder, margin: '2px 0' }} />
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-                    <div style={{ display: 'flex', gap: 8 }}>
-                      {habitsList.map(h => {
-                        const done = completedHabits.includes(h.id);
-                        return (
-                          <div key={h.id} style={{ width: 38, height: 38, borderRadius: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                            background: done ? h.color : (isDark ? `${PARCHMENT},0.05)` : 'rgba(255,255,255,0.08)'),
-                            border: `0.5px solid ${done ? h.color : (isDark ? `${PARCHMENT},0.10)` : 'rgba(255,255,255,0.16)')}`,
-                            filter: done ? 'none' : 'grayscale(0.5) opacity(0.6)',
-                            boxShadow: done ? `0 4px 12px ${h.color}` : 'none'
-                          }}>{h.emoji}</div>
-                        );
-                      })}
-                    </div>
-                    <Ring size={42} stroke={4} pct={(completedHabits.length / 5) * 100} color={t.gold} track={isDark ? `${PARCHMENT},0.10)` : 'rgba(255,255,255,0.20)'} label={`${completedHabits.length}/5`} textColor={t.text} />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+                    {habitsList.map(h => {
+                      const cnt = habitWeekCounts[h.id] || 0;
+                      const pct = (cnt / 7) * 100;
+                      return (
+                        <div key={h.id} style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                          <span style={{ fontSize: 14, width: 16, textAlign: 'center' }}>{h.emoji}</span>
+                          <span style={{ fontSize: 12, width: 56, color: isDark ? `${PARCHMENT},0.62)` : 'rgba(50,14,59,0.68)', fontFamily: FONT_CASUAL }}>{h.label}</span>
+                          <div style={{ flex: 1, height: 9, borderRadius: 6, background: isDark ? `${PARCHMENT},0.07)` : 'rgba(50,14,59,0.10)', overflow: 'hidden', boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.10)' }}>
+                            <div style={{ height: '100%', width: `${pct}%`, borderRadius: 6, background: h.color, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.5)', transition: 'width 0.9s ease' }} />
+                          </div>
+                          <span style={{ fontSize: 10, width: 22, textAlign: 'right', color: t.muted, fontFamily: FONT_CASUAL }}>{cnt}/7</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </GlassCard>
@@ -389,14 +393,13 @@ export default function DashboardPage() {
                   );
                 })}
               </div>
-              <p style={{ fontSize: 9, color: t.muted, fontFamily: FONT_CASUAL, margin: '6px 0 0', textAlign: 'center' }}>Check-ins this week · {weekDays.size} of 7</p>
+              <p style={{ fontSize: 9, color: t.muted, fontFamily: FONT_CASUAL, margin: '6px 0 10px', textAlign: 'center' }}>Check-ins this week · {weekDays.size} of 7</p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+                <Chip emoji="🔥" num={7} word="Streak" color={isDark ? 'rgba(160,195,130,0.92)' : t.text} t={t} />
+                <Chip emoji="📸" num={totalSessions} word="Poses" color={isDark ? t.text : t.text} t={t} />
+                <Chip emoji="⭐" num={avgScore} word="Score" color={isDark ? t.gold : t.text} t={t} />
+              </div>
             </GlassCard>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 9, marginTop: 10 }}>
-              <Chip emoji="🔥" num={7} word="Streak" color={isDark ? 'rgba(160,195,130,0.92)' : t.text} t={t} />
-              <Chip emoji="📸" num={totalSessions} word="Poses" color={isDark ? t.text : t.text} t={t} />
-              <Chip emoji="⭐" num={avgScore} word="Score" color={isDark ? t.gold : t.text} t={t} />
-            </div>
           </section>
 
           {/* §3 MOOD METER */}
