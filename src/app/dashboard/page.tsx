@@ -3,29 +3,18 @@
 import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, RotateCcw } from 'lucide-react';
+import { MessageSquare, RotateCcw, Play } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useState, useEffect, memo } from 'react';
 import { doc, getDoc, collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, getDay } from 'date-fns';
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, getDay, formatDistanceToNow } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { MoodChart } from '@/components/features/dashboard/MoodChart';
 import { TopBarIcons } from '@/components/layout/top-bar-icons';
-
-// Rotating daily affirmations for the intention card (seeded by the date so it's stable per day).
-const AFFIRMATIONS = [
-  'What will you carry with you today?',
-  'Breathe in calm, breathe out tension.',
-  'Small steps still move you forward.',
-  'Your body is listening — be kind to it.',
-  'Show up for yourself, gently.',
-  'Progress, not perfection.',
-  'Let today be grounded and soft.',
-  'You are exactly where you need to be.',
-];
+import Link from 'next/link';
 
 const GOLD       = 'rgba(193,154,107';
 const PARCHMENT  = 'rgba(255,240,215';
@@ -190,7 +179,7 @@ export default function DashboardPage() {
   const [showOverwrite, setShowOverwrite] = useState(false);
   // Weekday indices (Mon=0) that had a practice this week — drives the check-in consistency dots.
   const [weekDays, setWeekDays] = useState<Set<number>>(new Set());
-  const [affIdx, setAffIdx] = useState(() => new Date().getDate() % AFFIRMATIONS.length);
+  const [recentSessions, setRecentSessions] = useState<any[]>([]);
 
   // Exercise goal: an encouraging weekly hours target (≈1h per committed day).
   const exerciseGoal = commitmentDays;
@@ -234,8 +223,9 @@ export default function DashboardPage() {
     if (!user) return;
     const ref = collection(firestore, 'users', user.uid, 'poseAnalyses');
     getDocs(query(ref, orderBy('createdAt', 'desc'))).then(snap => {
-      const all = snap.docs.map(d => d.data());
+      const all = snap.docs.map(d => ({ id: d.id, ...d.data() } as any));
       setTotalSessions(all.length);
+      setRecentSessions(all.slice(0, 4));
       const scores = all.filter(a => typeof a.score === 'number').map(a => a.score as number);
       if (scores.length) setAvgScore(Math.round(scores.reduce((a,b)=>a+b,0)/scores.length));
     });
@@ -257,6 +247,13 @@ export default function DashboardPage() {
     { id: 'rest',     label: 'Rest',     emoji: '🌙', color: `${GOLD},0.85)` },
     { id: 'sunlight', label: 'Sunlight', emoji: '☀️', color: 'rgba(220,180,80,0.85)' },
     { id: 'active',   label: 'Active',   emoji: '🔥', color: `${SAGE},0.85)` },
+  ];
+
+  // Session card gradients (amethyst / mocha / plum) — cycled per session, light text on all.
+  const sessionThemes = [
+    { grad: isDark ? 'linear-gradient(135deg,#4A2E58,#6E4A7E)' : 'linear-gradient(135deg,#5A3B66,#8A5A9A)', icon: '🧘' },
+    { grad: isDark ? 'linear-gradient(135deg,#6E5A3C,#93764A)' : 'linear-gradient(135deg,#7B613E,#A88A5E)', icon: '🌿' },
+    { grad: isDark ? 'linear-gradient(135deg,#4E3F5C,#6A5580)' : 'linear-gradient(135deg,#6E4C7A,#9D7BAE)', icon: '🌙' },
   ];
 
   return (
@@ -290,17 +287,82 @@ export default function DashboardPage() {
         {/* SCROLLABLE CONTENT */}
         <main style={{ flex: 1, padding: '4px 14px 24px', display: 'flex', flexDirection: 'column', gap: 22 }}>
 
-          {/* TODAY'S INTENTION — a gentle daily affirmation */}
+          {/* THIS WEEK — hero practice ring, check-in dots + quick stat chips */}
           <section>
-            <SectionHead t={t}>Today's Intention</SectionHead>
-            <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '12px 24px 24px 24px', padding: '15px 16px', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <p style={{ fontFamily: FONT_PANCAKE, fontSize: 18, fontWeight: 500, color: t.text, margin: 0, flex: 1, lineHeight: 1.3 }}>{AFFIRMATIONS[affIdx]}</p>
-                <button onClick={() => setAffIdx((affIdx + 1) % AFFIRMATIONS.length)} aria-label="New intention" style={{ flexShrink: 0, width: 32, height: 32, borderRadius: '50%', background: 'transparent', border: `0.5px solid ${t.goldBorder}`, color: t.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                  <RotateCcw style={{ width: 14, height: 14 }} />
-                </button>
+            <SectionHead t={t}>This Week</SectionHead>
+
+            <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: 20, padding: '14px 18px', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <Ring size={84} stroke={6} pct={exPct} color={t.gold} track={isDark ? `${PARCHMENT},0.08)` : 'rgba(255,255,255,0.20)'} centerTop={`${exerciseHrs}`} centerSub={`OF ${exerciseGoal} HRS`} textColor={t.text} subColor={t.accent} />
+                <div>
+                  <p style={{ fontFamily: FONT_PANCAKE, fontSize: 19, fontWeight: 500, color: t.headline, margin: 0 }}>Practice</p>
+                  <p style={{ fontSize: 11, color: t.muted, margin: '4px 0 0', fontFamily: FONT_CASUAL }}>{practiceMsg}</p>
+                </div>
+              </div>
+              {/* Weekly check-in dots — a passive glance, distinct from the dated practice journal */}
+              <div style={{ display: 'flex', gap: 4, marginTop: 14 }}>
+                {['M','T','W','T','F','S','S'].map((d, i) => {
+                  const on = weekDays.has(i);
+                  const today = i === (getDay(new Date()) + 6) % 7;
+                  return (
+                    <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+                      <span style={{ width: 10, height: 10, borderRadius: '50%',
+                        background: on ? t.accent : (isDark ? `${PARCHMENT},0.08)` : 'rgba(50,14,59,0.10)'),
+                        border: today ? `1.5px solid ${t.accent}` : 'none',
+                        boxShadow: today ? `0 0 0 2px ${isDark ? `${GOLD},0.20)` : 'rgba(50,14,59,0.15)'}` : 'none' }} />
+                      <span style={{ fontSize: 8, color: t.muted, fontFamily: FONT_CASUAL }}>{d}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <p style={{ fontSize: 9, color: t.muted, fontFamily: FONT_CASUAL, margin: '6px 0 10px', textAlign: 'center' }}>Check-ins this week · {weekDays.size} of 7</p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+                <Chip emoji="🔥" num={7} word="Streak" color={isDark ? 'rgba(160,195,130,0.92)' : t.text} t={t} />
+                <Chip emoji="📸" num={totalSessions} word="Poses" color={isDark ? t.text : t.text} t={t} />
+                <Chip emoji="⭐" num={avgScore} word="Score" color={isDark ? t.gold : t.text} t={t} />
               </div>
             </GlassCard>
+          </section>
+
+          {/* RECENT SESSIONS — the user's latest pose analyses, presented as cards */}
+          <section>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
+              <p style={{ fontSize: 11, letterSpacing: '0.28em', textTransform: 'uppercase', color: t.label, fontFamily: FONT_CASUAL, fontWeight: 500, margin: 0 }}>Recent Sessions</p>
+              <Link href="/profile/analysis-logs" style={{ fontSize: 11, color: t.accent, textDecoration: 'none' }}>View all ›</Link>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {recentSessions.length > 0 ? recentSessions.map((s, i) => {
+                const th = sessionThemes[i % sessionThemes.length];
+                const cue = typeof s.feedback === 'string' && s.feedback ? (s.feedback.length > 62 ? s.feedback.slice(0, 62).trim() + '…' : s.feedback) : 'Tap to view your feedback.';
+                const when = s.createdAt?.toDate ? formatDistanceToNow(s.createdAt.toDate(), { addSuffix: true }) : '';
+                return (
+                  <Link key={s.id} href={`/analysis/${s.id}`} style={{ textDecoration: 'none' }} className="active:scale-[0.98] transition-transform">
+                    <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 20, padding: '13px 14px', display: 'flex', gap: 10, background: th.grad, boxShadow: '0 10px 24px rgba(50,30,60,0.22)' }}>
+                      <div style={{ flex: 1, color: '#F3EAF2' }}>
+                        <span style={{ display: 'inline-block', borderRadius: 999, padding: '2px 9px', fontSize: 9, letterSpacing: '0.06em', textTransform: 'uppercase', background: 'rgba(255,255,255,0.18)', fontFamily: FONT_CASUAL }}>{when}</span>
+                        <div style={{ fontFamily: FONT_PANCAKE, fontSize: 18, fontWeight: 600, margin: '6px 0 2px' }}>{s.identifiedPose || 'Practice'}</div>
+                        <div style={{ fontSize: 11, opacity: 0.75, lineHeight: 1.4 }}>{cue}</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 9 }}>
+                          <div style={{ width: 30, height: 30, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.22)', border: '0.5px solid rgba(255,255,255,0.35)' }}>
+                            <Play style={{ width: 13, height: 13, color: '#fff' }} />
+                          </div>
+                          {typeof s.score === 'number' && <span style={{ fontSize: 12, fontWeight: 600 }}>Score {Math.round(s.score)}</span>}
+                        </div>
+                      </div>
+                      <div style={{ width: 48, height: 48, borderRadius: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, alignSelf: 'center', background: 'rgba(255,255,255,0.16)', border: '0.5px solid rgba(255,255,255,0.22)' }}>{th.icon}</div>
+                    </div>
+                  </Link>
+                );
+              }) : (
+                <Link href="/snap-yoga" style={{ textDecoration: 'none' }} className="active:scale-[0.98] transition-transform">
+                  <GlassCard style={{ background: t.cardBg, border: `0.5px dashed ${t.goldBorder}`, borderRadius: 18, padding: '18px 16px', textAlign: 'center', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
+                    <div style={{ fontSize: 22 }}>🧘</div>
+                    <p style={{ fontFamily: FONT_PANCAKE, fontSize: 15, color: t.text, margin: '4px 0 0' }}>Start your first practice →</p>
+                    <p style={{ fontSize: 11, color: t.muted, margin: '2px 0 0', fontFamily: FONT_CASUAL }}>Analyze a pose to see it here.</p>
+                  </GlassCard>
+                </Link>
+              )}
+            </div>
           </section>
 
           {/* §1 DAILY CHECK-IN (mood + habits merged, whole box tappable) */}
@@ -363,43 +425,6 @@ export default function DashboardPage() {
                 </div>
               </GlassCard>
             </div>
-          </section>
-
-          {/* §2 THIS WEEK — hero practice ring + quick stat chips */}
-          <section>
-            <SectionHead t={t}>This Week</SectionHead>
-
-            <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: 20, padding: '14px 18px', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <Ring size={84} stroke={6} pct={exPct} color={t.gold} track={isDark ? `${PARCHMENT},0.08)` : 'rgba(255,255,255,0.20)'} centerTop={`${exerciseHrs}`} centerSub={`OF ${exerciseGoal} HRS`} textColor={t.text} subColor={t.accent} />
-                <div>
-                  <p style={{ fontFamily: FONT_PANCAKE, fontSize: 19, fontWeight: 500, color: t.headline, margin: 0 }}>Practice</p>
-                  <p style={{ fontSize: 11, color: t.muted, margin: '4px 0 0', fontFamily: FONT_CASUAL }}>{practiceMsg}</p>
-                </div>
-              </div>
-              {/* Weekly check-in dots — a passive glance, distinct from the dated practice journal */}
-              <div style={{ display: 'flex', gap: 4, marginTop: 14 }}>
-                {['M','T','W','T','F','S','S'].map((d, i) => {
-                  const on = weekDays.has(i);
-                  const today = i === (getDay(new Date()) + 6) % 7;
-                  return (
-                    <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-                      <span style={{ width: 10, height: 10, borderRadius: '50%',
-                        background: on ? t.accent : (isDark ? `${PARCHMENT},0.08)` : 'rgba(50,14,59,0.10)'),
-                        border: today ? `1.5px solid ${t.accent}` : 'none',
-                        boxShadow: today ? `0 0 0 2px ${isDark ? `${GOLD},0.20)` : 'rgba(50,14,59,0.15)'}` : 'none' }} />
-                      <span style={{ fontSize: 8, color: t.muted, fontFamily: FONT_CASUAL }}>{d}</span>
-                    </div>
-                  );
-                })}
-              </div>
-              <p style={{ fontSize: 9, color: t.muted, fontFamily: FONT_CASUAL, margin: '6px 0 10px', textAlign: 'center' }}>Check-ins this week · {weekDays.size} of 7</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
-                <Chip emoji="🔥" num={7} word="Streak" color={isDark ? 'rgba(160,195,130,0.92)' : t.text} t={t} />
-                <Chip emoji="📸" num={totalSessions} word="Poses" color={isDark ? t.text : t.text} t={t} />
-                <Chip emoji="⭐" num={avgScore} word="Score" color={isDark ? t.gold : t.text} t={t} />
-              </div>
-            </GlassCard>
           </section>
 
           {/* §3 MOOD METER */}
