@@ -6,11 +6,10 @@ import { Button } from '@/components/ui/button';
 import { MessageSquare, RotateCcw, Play } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { useState, useEffect, memo } from 'react';
+import { useState, useEffect } from 'react';
 import { doc, getDoc, collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, getDay, formatDistanceToNow } from 'date-fns';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { MoodChart } from '@/components/features/dashboard/MoodChart';
 import { TopBarIcons } from '@/components/layout/top-bar-icons';
@@ -128,45 +127,10 @@ function Chip({ emoji, num, word, color, t }: { emoji: string; num: number | str
   );
 }
 
-function getInitials(email?: string | null, name?: string | null) {
-  if (name) { const n = name.split(' '); return (n[0][0] + (n[n.length-1][0]||'')).toUpperCase(); }
-  return email?.[0].toUpperCase() || 'U';
-}
-
-// Avatar halo orbit — isolated and memoised so the dashboard's load-time re-render storm
-// (several staggered Firestore reads) can't restart the CSS animation. `accent` is the
-// rgba(...-prefix string (gold in dark, amethyst in light); it's stable across those renders.
-const AvatarOrbit = memo(function AvatarOrbit({ accent }: { accent: string }) {
-  return (
-    <>
-      <svg
-        viewBox="0 0 200 200"
-        aria-hidden="true"
-        style={{ position: 'absolute', top: -62, left: -62, width: 200, height: 200, pointerEvents: 'none', overflow: 'visible' }}
-      >
-        <path d="M 42,100 A 58,58 0 0 1 158,100" fill="none" stroke={`${accent},0.22)`} strokeWidth="1" strokeDasharray="2 7" strokeLinecap="round" />
-        <circle cx="42" cy="100" r="2" fill={`${accent},0.5)`} />
-        <circle cx="158" cy="100" r="2" fill={`${accent},0.5)`} />
-      </svg>
-      <div
-        aria-hidden="true"
-        style={{
-          position: 'absolute', top: 0, left: 0, width: 5, height: 5, borderRadius: '50%',
-          background: `${accent},0.85)`, boxShadow: `0 0 6px ${accent},0.4)`,
-          offsetPath: "path('M -20 38 A 58 58 0 0 1 96 38')", offsetRotate: '0deg',
-          animation: 'syOrbitSweep 4.5s ease-in-out infinite alternate', zIndex: 0, pointerEvents: 'none',
-        } as React.CSSProperties}
-      />
-    </>
-  );
-});
-
 export default function DashboardPage() {
-  const { user, isGold }        = useAuth();
+  const { user }                = useAuth();
   const { isDark }              = useTheme();
   const t                       = tok(isDark);
-  // rgba() prefix for decorative accents — gold in dark, amethyst in light
-  const ACCENT                  = isDark ? GOLD : 'rgba(50,14,59';
   const router                  = useRouter();
 
   const [moodData,      setMoodData]      = useState<any|null>(null);
@@ -259,29 +223,13 @@ export default function DashboardPage() {
   return (
     <AppShell>
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <TopBarIcons className="px-4 pt-3" />
-
-        {/* HEADER — prominent profile picture */}
-        <header style={{ position: 'relative', padding: '12px 16px 10px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-          <span aria-hidden="true" style={{ position: 'absolute', top: 6, left: 34, fontSize: 10, color: `${ACCENT},0.32)`, pointerEvents: 'none' }}>✦</span>
-          <span aria-hidden="true" style={{ position: 'absolute', top: 46, right: 36, fontSize: 8, color: `${ACCENT},0.26)`, pointerEvents: 'none' }}>✦</span>
-          <div style={{ position: 'relative', marginBottom: 10 }}>
-            {/* Half-moon orbit, concentric with the avatar (radius 58, ~20px outside the picture).
-                Memoised + keyframes in globals.css so the load-time re-render storm can't flicker it. */}
-            <AvatarOrbit accent={ACCENT} />
-            {isGold && (
-              <span style={{ position: 'absolute', top: -15, left: '50%', transform: 'translateX(-50%) rotate(-8deg)', fontSize: 20, zIndex: 2 }}>👑</span>
-            )}
-            <Avatar style={{ position: 'relative', zIndex: 1, width: 76, height: 76, border: `2px solid ${ACCENT},0.45)`, boxShadow: `0 0 0 6px ${ACCENT},0.06), 0 0 0 12px ${ACCENT},0.03)` }}>
-              <AvatarImage src={user?.photoURL ?? undefined} alt={name} />
-              <AvatarFallback style={{ background: isDark ? `${GOLD},0.18)` : 'rgba(255,248,235,0.85)', color: t.gold, fontSize: 26, fontFamily: FONT_PANCAKE, fontWeight: 600 }}>
-                {getInitials(user?.email, user?.displayName)}
-              </AvatarFallback>
-            </Avatar>
+        {/* HEADER — compact greeting (left) + top-bar actions incl. profile avatar (right) */}
+        <header style={{ padding: '12px 16px 8px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+          <div>
+            <p style={{ fontSize: 9, letterSpacing: '0.22em', textTransform: 'uppercase', color: t.label, fontFamily: FONT_CASUAL, fontWeight: 600, margin: '0 0 3px', opacity: 0.85 }}>{format(new Date(), 'EEEE · MMM d')}</p>
+            <h1 style={{ fontSize: 26, fontWeight: 600, color: isDark ? t.text : 'rgba(255,248,235,0.96)', textShadow: isDark ? 'none' : '0 1px 3px rgba(70,60,80,0.32)', fontFamily: FONT_PANCAKE, margin: 0, letterSpacing: '-0.5px' }}>Hey, {name}!</h1>
           </div>
-          <h1 style={{ fontSize: 24, fontWeight: 500, color: isDark ? t.text : 'rgba(255,248,235,0.96)', textShadow: isDark ? 'none' : '0 1px 3px rgba(70,60,80,0.32)', fontFamily: FONT_PANCAKE, margin: 0, letterSpacing: '-0.5px' }}>Hey, {name}!</h1>
-          <div style={{ width: 26, height: 1, background: t.goldBorder, margin: '6px 0 0' }} />
-          <p style={{ fontSize: 11, fontStyle: 'italic', color: t.muted, margin: '4px 0 0', fontFamily: FONT_PANCAKE, opacity: 0.8 }}>Your practice is waiting.</p>
+          <TopBarIcons className="pt-1" />
         </header>
 
         {/* SCROLLABLE CONTENT */}
