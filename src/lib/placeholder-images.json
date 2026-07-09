@@ -41,13 +41,13 @@
   },
   "onboardingGoalImages": {
     "mobility": {
-      "src": "https://picsum.photos/seed/mobility/400/400",
+      "src": "/images/mobility.png",
       "width": 400,
       "height": 400,
       "hint": "yoga mobility"
     },
     "nourishment": {
-      "src": "https://picsum.photos/seed/nourishment/400/400",
+      "src": "/images/nourishment.png",
       "width": 400,
       "height": 400,
       "hint": "healthy food"
