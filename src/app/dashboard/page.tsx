@@ -303,7 +303,7 @@ export default function DashboardPage() {
                 );
               }) : (
                 <Link href="/snap-yoga" style={{ textDecoration: 'none' }} className="active:scale-[0.98] transition-transform">
-                  <GlassCard style={{ background: t.cardBg, border: `0.5px dashed ${t.goldBorder}`, borderRadius: 18, padding: '18px 16px', textAlign: 'center', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
+                  <GlassCard style={{ background: t.cardBg, border: `0.5px dashed ${t.goldBorder}`, borderRadius: 20, padding: '18px 16px', textAlign: 'center', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
                     <div style={{ fontSize: 22 }}>🧘</div>
                     <p style={{ fontFamily: FONT_PANCAKE, fontSize: 15, color: t.text, margin: '4px 0 0' }}>Start your first practice →</p>
                     <p style={{ fontSize: 11, color: t.muted, margin: '2px 0 0', fontFamily: FONT_CASUAL }}>Analyze a pose to see it here.</p>
@@ -323,7 +323,7 @@ export default function DashboardPage() {
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCheckinClick(); } }}
               className="active:scale-[0.99] transition-transform cursor-pointer"
             >
-              <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '24px 12px 24px 24px', padding: '16px', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
+              <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: 20, padding: '16px', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                     <div>
@@ -378,7 +378,7 @@ export default function DashboardPage() {
           {/* §3 MOOD METER */}
           <section>
             <SectionHead t={t}>Mood Meter</SectionHead>
-            <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: '24px 24px 24px 12px', padding: '12px 14px 8px', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
+            <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: 20, padding: '12px 14px 8px', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: 9, color: t.muted, fontFamily: FONT_CASUAL, letterSpacing: 0.5, textTransform: 'uppercase' }}>This week</span>
               </div>
