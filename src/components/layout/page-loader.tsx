@@ -1,27 +1,32 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
 
 const WORD = 'SnapYoga';
-const SESSION_KEY = 'sy-loader-played';
 const LETTER_STAGGER_MS = 75;
 const LETTER_DURATION_MS = 550;
 const HOLD_MS = 2800;   // total time the overlay stays up before it starts fading
 const FADE_OUT_MS = 850;
 const BREATHE_DELAY_MS = (WORD.length - 1) * LETTER_STAGGER_MS + LETTER_DURATION_MS;
 
-/** Full-screen wordmark loader, played once per tab session on initial load. */
+/**
+ * Full-screen wordmark splash for the homepage ("/"). Plays once when the homepage
+ * document loads (before sign-in), then fades away to reveal the splash underneath.
+ * The root layout persists across in-app navigation, so this only runs on an actual
+ * homepage page load — it never replays while moving around inside the app.
+ */
 export function PageLoader() {
   const { isDark } = useTheme();
+  const pathname = usePathname();
   const [phase, setPhase] = useState<'hidden' | 'playing' | 'fading'>('hidden');
   const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
-    let alreadyPlayed = false;
-    try { alreadyPlayed = sessionStorage.getItem(SESSION_KEY) === '1'; } catch { /* ignore */ }
-    if (alreadyPlayed) return;
-    try { sessionStorage.setItem(SESSION_KEY, '1'); } catch { /* ignore */ }
+    // Only act as the homepage splash — don't consume the animation on a deep-linked
+    // internal route (e.g. a signed-in user redirected straight to /dashboard).
+    if (pathname !== '/') return;
 
     setReducedMotion(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     setPhase('playing');
@@ -29,6 +34,7 @@ export function PageLoader() {
     const fadeTimer = setTimeout(() => setPhase('fading'), HOLD_MS);
     const unmountTimer = setTimeout(() => setPhase('hidden'), HOLD_MS + FADE_OUT_MS);
     return () => { clearTimeout(fadeTimer); clearTimeout(unmountTimer); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (phase === 'hidden') return null;
@@ -79,10 +85,12 @@ export function PageLoader() {
         <div
           style={{
             display: 'flex',
-            fontFamily: 'var(--font-cormorant), Georgia, serif',
-            fontWeight: 500,
+            // Match the homepage wordmark exactly so the mark reads identically as the
+            // splash fades to reveal it (same family reference, weight and tracking).
+            fontFamily: "'Cormorant Garamond', Georgia, serif",
+            fontWeight: 400,
             fontSize: 40,
-            letterSpacing: '0.05em',
+            letterSpacing: '0.08em',
             color: wordColor,
             animation: reducedMotion ? 'none' : 'syLoaderBreathe 3.4s ease-in-out infinite',
             animationDelay: reducedMotion ? undefined : `${BREATHE_DELAY_MS}ms`,
