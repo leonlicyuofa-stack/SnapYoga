@@ -64,24 +64,15 @@ export function PageLoader() {
       }}
     >
       {!reducedMotion && (
-        <>
-          <div style={{
-            position: 'absolute', top: '50%', left: '50%', width: 190, height: 190, borderRadius: '50%',
-            border: `1px solid ${ringColor}`,
-            transform: 'translate(-50%,-50%) scale(0.6)',
-            animation: 'syLoaderRing 3.4s ease-in-out infinite',
-          }} />
-          <div style={{
-            position: 'absolute', top: '50%', left: '50%', width: 190, height: 190, borderRadius: '50%',
-            border: `1px solid ${ringColor}`,
-            transform: 'translate(-50%,-50%) scale(0.6)',
-            animation: 'syLoaderRing 3.4s ease-in-out infinite',
-            animationDelay: '-1.7s',
-          }} />
-        </>
+        <div style={{
+          position: 'absolute', top: '50%', left: '50%', width: 130, height: 130, borderRadius: '50%',
+          border: `1px solid ${ringColor}`,
+          transform: 'translate(-50%,-50%) scale(0.6)',
+          animation: 'syLoaderRing 3.4s ease-in-out infinite',
+        }} />
       )}
 
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 22, position: 'relative' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, position: 'relative' }}>
         <div
           style={{
             display: 'flex',
@@ -89,7 +80,7 @@ export function PageLoader() {
             // splash fades to reveal it (same family reference, weight and tracking).
             fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontWeight: 400,
-            fontSize: 40,
+            fontSize: 28,
             letterSpacing: '0.08em',
             color: wordColor,
             animation: reducedMotion ? 'none' : 'syLoaderBreathe 3.4s ease-in-out infinite',
@@ -112,7 +103,7 @@ export function PageLoader() {
         </div>
 
         {!reducedMotion && (
-          <div style={{ width: 176, height: 2, borderRadius: 2, background: lineTrack, overflow: 'hidden' }}>
+          <div style={{ width: 130, height: 2, borderRadius: 2, background: lineTrack, overflow: 'hidden' }}>
             <div style={{
               height: '100%', width: 0, background: lineFill, borderRadius: 2,
               animation: 'syLoaderFill 2.6s ease-out forwards',
