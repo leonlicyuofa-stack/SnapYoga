@@ -67,8 +67,12 @@ export default function SignInPage() {
     <div className="relative min-h-screen">
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-6">
         <div className="w-full max-w-sm space-y-7">
-          <OnboardingHeader title={t('authWelcomeBack')} subtitle={t('authWelcomeBackDesc')} />
-          <main className="space-y-6">
+          <OnboardingHeader />
+          <main className="sy-card backdrop-blur-lg rounded-2xl p-6 space-y-6">
+             <div className="text-center">
+               <h1 className="sy-card-heading" style={{ fontSize: 18, margin: 0 }}>{t('authWelcomeBack')}</h1>
+               <p className="sy-subtitle" style={{ fontSize: 12, letterSpacing: '0.04em', margin: '3px 0 0' }}>{t('authWelcomeBackDesc')}</p>
+             </div>
              <div className="flex justify-center gap-4">
                 <Button variant="outline" size="icon" onClick={signInWithApple} disabled={isLoading} className="sy-option w-14 h-14 rounded-full hover:opacity-80">
                     <AppleIcon className="h-6 w-6" />

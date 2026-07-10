@@ -42,7 +42,6 @@ export default function HeadstandChallengePage() {
       friendsCount={2}
       inviteLink="/challenges/headstand/invite"
       analyzeLabel="Analyze My Headstand"
-      dayInChallenge={12}
       totalDays={30}
       weeklyTutorials={weeklyTutorials}
       friends={friends}

@@ -9,6 +9,7 @@ import { firestore } from '@/lib/firebase/clientApp';
 import { collection, query, orderBy, limit, getDocs, type Timestamp } from 'firebase/firestore';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { poseChallenges } from '@/lib/challenges-data';
+import { ensureChallengeStarted, computeChallengeDay } from '@/lib/challenge-progress';
 import { differenceInCalendarDays, isToday, formatDistanceToNowStrict } from 'date-fns';
 
 const READ_KEY = 'sy_read_notifications';
@@ -49,6 +50,16 @@ export function NotificationsPanel({ open, onClose }: { open: boolean; onClose: 
   const [analyses, setAnalyses] = useState<AnalysisDoc[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [read, setRead] = useState<Set<string>>(new Set());
+  const [challengeDays, setChallengeDays] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    if (!open || !user) return;
+    const active = poseChallenges.filter(c => c.status === 'active' && c.totalDays);
+    Promise.all(active.map(async c => {
+      const startDate = await ensureChallengeStarted(user.uid, c.id);
+      return [c.id, computeChallengeDay(startDate, c.totalDays!)] as const;
+    })).then(entries => setChallengeDays(Object.fromEntries(entries)));
+  }, [open, user]);
 
   useEffect(() => {
     try {
@@ -88,16 +99,16 @@ export function NotificationsPanel({ open, onClose }: { open: boolean; onClose: 
       });
     }
 
-    poseChallenges.filter(c => c.status === 'active').forEach(c => {
+    poseChallenges.filter(c => c.status === 'active' && challengeDays[c.id]).forEach(c => {
       out.push({
-        id: `challenge-${c.id}-day${c.daysInChallenge}`, icon: Trophy, tint: 'rgba(193,154,107',
-        title: `${c.name} · Day ${c.daysInChallenge}/${c.totalDays}`, sub: 'Continue your challenge',
+        id: `challenge-${c.id}-day${challengeDays[c.id]}`, icon: Trophy, tint: 'rgba(193,154,107',
+        title: `${c.name} · Day ${challengeDays[c.id]}/${c.totalDays}`, sub: 'Continue your challenge',
         date: new Date(Date.now() - 86400000), href: c.detailLink !== '#' ? c.detailLink : '/challenges',
       });
     });
 
     return out.sort((a, b) => b.date.getTime() - a.date.getTime());
-  }, [analyses]);
+  }, [analyses, challengeDays]);
 
   const persist = (next: Set<string>) => {
     setRead(next);

@@ -6,6 +6,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { ThemeBackground } from '@/components/layout/theme-background';
+import { PageLoader } from '@/components/layout/page-loader';
 
 const lora = Lora({
   subsets: ['latin'],
@@ -43,6 +44,7 @@ export default function RootLayout({
       <body className={`${lora.variable} ${shadowsIntoLight.variable} ${cormorantGaramond.variable} font-serif antialiased`}>
         <ThemeProvider>
           <ThemeBackground />
+          <PageLoader />
           <div className="relative z-10">
             <AuthProvider>
               <LanguageProvider>

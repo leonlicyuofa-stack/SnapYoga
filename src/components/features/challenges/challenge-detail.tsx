@@ -9,6 +9,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { format } from 'date-fns';
+import { ensureChallengeStarted, computeChallengeDay } from '@/lib/challenge-progress';
 import { useToast } from '@/hooks/use-toast';
 import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import { TopBarIcons } from '@/components/layout/top-bar-icons';
@@ -35,7 +36,6 @@ export interface ChallengeDetailProps {
   friendsCount: number;
   inviteLink: string;
   analyzeLabel: string;
-  dayInChallenge?: number;
   totalDays?: number;
   weeklyTutorials: TutorialWeek[];
   friends: ChallengeFriend[];
@@ -54,6 +54,7 @@ export function ChallengeDetail(props: ChallengeDetailProps) {
   const { isDark } = useTheme();
   const [isCompletedToday, setIsCompletedToday] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [dayInChallenge, setDayInChallenge] = useState<number | null>(null);
 
   // Light-mode = amethyst on lavender; dark-mode = the original cream/gold on ink.
   const txt = (a: number) => isDark ? `rgba(255,240,215,${a})` : `rgba(50,14,59,${a})`;
@@ -71,6 +72,13 @@ export function ChallengeDetail(props: ChallengeDetailProps) {
     };
     checkStatus();
   }, [user, props.id]);
+
+  useEffect(() => {
+    if (!user || props.status !== 'active' || !props.totalDays) return;
+    ensureChallengeStarted(user.uid, props.id).then(startDate => {
+      setDayInChallenge(computeChallengeDay(startDate, props.totalDays!));
+    });
+  }, [user, props.id, props.status, props.totalDays]);
 
   const handleMarkComplete = async () => {
     if (!user) return;
@@ -93,7 +101,7 @@ export function ChallengeDetail(props: ChallengeDetailProps) {
 
   const isActive = props.status === 'active';
   const stars = '★'.repeat(props.difficulty) + '☆'.repeat(5 - props.difficulty);
-  const pct = props.dayInChallenge && props.totalDays ? Math.round((props.dayInChallenge / props.totalDays) * 100) : 0;
+  const pct = dayInChallenge && props.totalDays ? Math.round((dayInChallenge / props.totalDays) * 100) : 0;
 
   return (
     <AppShell>
@@ -127,10 +135,10 @@ export function ChallengeDetail(props: ChallengeDetailProps) {
         </div>
 
         {/* Progress (active only) */}
-        {isActive && props.dayInChallenge && (
+        {isActive && dayInChallenge && (
           <div style={{ marginTop: 14, borderRadius: 16, border: `0.5px solid ${cardBorder}`, background: card, padding: '12px 14px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-              <span style={{ fontFamily: FONT_PANCAKE, color: txt(0.94), fontSize: 20 }}>Day {props.dayInChallenge} <span style={{ fontSize: 14, color: acc(0.7) }}>/ {props.totalDays}</span></span>
+              <span style={{ fontFamily: FONT_PANCAKE, color: txt(0.94), fontSize: 20 }}>Day {dayInChallenge} <span style={{ fontSize: 14, color: acc(0.7) }}>/ {props.totalDays}</span></span>
               <span style={{ fontSize: 10, color: acc(0.7), textTransform: 'uppercase', letterSpacing: 1 }}>{pct}% complete</span>
             </div>
             <div style={{ height: 8, background: txt(0.08), borderRadius: 5, overflow: 'hidden', marginTop: 8 }}>

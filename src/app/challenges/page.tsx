@@ -22,6 +22,7 @@ import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { format, startOfMonth, endOfMonth, getDaysInMonth } from 'date-fns';
+import { ensureChallengeStarted, computeChallengeDay } from '@/lib/challenge-progress';
 
 const FONT_PANCAKE = "'Cormorant Garamond', Georgia, serif";
 const FONT_CASUAL  = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
@@ -176,6 +177,17 @@ export default function ChallengesPage() {
   const [practicedDaysCount, setPracticedDaysCount] = useState(0);
   const [daysInMonth, setDaysInMonth] = useState(30);
   const [isLoadingPracticed, setIsLoadingPracticed] = useState(true);
+  const [challengeDays, setChallengeDays] = useState<Record<string, number>>({});
+
+  // Real per-user Day X/Y for each active challenge (start date recorded on first view).
+  useEffect(() => {
+    if (!user) return;
+    const active = poseChallenges.filter(c => c.status === 'active' && c.totalDays);
+    Promise.all(active.map(async c => {
+      const startDate = await ensureChallengeStarted(user.uid, c.id);
+      return [c.id, computeChallengeDay(startDate, c.totalDays!)] as const;
+    })).then(entries => setChallengeDays(Object.fromEntries(entries)));
+  }, [user]);
 
   // Hydrate bookmarks from the user profile.
   useEffect(() => {
@@ -315,8 +327,8 @@ export default function ChallengesPage() {
               <BookmarkBtn active={bookmarks.includes(c.id)} onToggle={() => toggleBookmark(c.id)} />
               <div style={{ height: 88, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 34, background: c.grad }}>
                 {c.emoji}
-                {c.status === 'active' && c.daysInChallenge && (
-                  <span style={{ position: 'absolute', bottom: 7, left: 7, fontSize: 8, letterSpacing: 0.5, textTransform: 'uppercase', color: 'rgba(255,240,215,0.9)', background: 'rgba(0,0,0,0.5)', borderRadius: 999, padding: '2px 7px' }}>Day {c.daysInChallenge}/{c.totalDays}</span>
+                {c.status === 'active' && challengeDays[c.id] && (
+                  <span style={{ position: 'absolute', bottom: 7, left: 7, fontSize: 8, letterSpacing: 0.5, textTransform: 'uppercase', color: 'rgba(255,240,215,0.9)', background: 'rgba(0,0,0,0.5)', borderRadius: 999, padding: '2px 7px' }}>Day {challengeDays[c.id]}/{c.totalDays}</span>
                 )}
                 {c.status === 'completed' && (
                   <span style={{ position: 'absolute', bottom: 7, left: 7, fontSize: 8, letterSpacing: 0.5, textTransform: 'uppercase', color: 'rgba(160,195,130,0.95)', background: 'rgba(0,0,0,0.5)', borderRadius: 999, padding: '2px 7px' }}>Completed</span>

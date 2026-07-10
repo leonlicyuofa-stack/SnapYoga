@@ -53,9 +53,9 @@ export default function ForgotPasswordPage() {
       </button>
 
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-6">
-        <div className="w-full max-w-sm space-y-6">
+        <div className="w-full max-w-sm space-y-7">
           <OnboardingHeader />
-          <div className="text-center">
+          <main className="sy-card backdrop-blur-lg rounded-2xl p-6 text-center">
             {emailSent ? (
               // Success state
               <div className="space-y-4 text-center">
@@ -64,7 +64,7 @@ export default function ForgotPasswordPage() {
                     <CheckCircle className="h-9 w-9 text-green-400" />
                   </div>
                 </div>
-                <h1 className="sy-title" style={{ fontSize: 22 }}>Check your inbox</h1>
+                <h1 className="sy-card-heading" style={{ fontSize: 18, margin: 0 }}>Check your inbox</h1>
                 <p className="sy-subtitle text-sm">
                   We sent a password reset link to
                 </p>
@@ -88,7 +88,7 @@ export default function ForgotPasswordPage() {
             ) : (
               // Form state
               <>
-                <h1 className="sy-title" style={{ fontSize: 22 }}>Forgot password?</h1>
+                <h1 className="sy-card-heading" style={{ fontSize: 18, margin: 0 }}>Forgot password?</h1>
                 <p className="sy-subtitle text-sm mt-1">
                   Enter your email and we'll send you a reset link.
                 </p>
@@ -120,7 +120,7 @@ export default function ForgotPasswordPage() {
                 </form>
               </>
             )}
-          </div>
+          </main>
         </div>
       </div>
     </div>

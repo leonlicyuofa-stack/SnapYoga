@@ -51,6 +51,8 @@ export default function ProfilePage() {
   const acc = (a: number) => isDark ? `rgba(193,154,107,${a})` : `rgba(50,14,59,${a})`;
   const card = isDark ? 'rgba(25,16,8,0.50)' : 'rgba(255,255,255,0.12)';
   const cardBorder = isDark ? 'rgba(193,154,107,0.18)' : 'rgba(255,255,255,0.40)';
+  const cardShadow = isDark ? '0 8px 22px rgba(0,0,0,0.45)' : '0 8px 22px rgba(90,80,120,0.16)';
+  const cardHi = isDark ? 'rgba(255,240,215,0.10)' : 'rgba(255,255,255,0.60)';
   const NAME_C = isDark ? 'rgba(255,240,215,0.94)' : 'rgba(255,248,235,0.96)';
   const NAME_SH = isDark ? 'none' : '0 1px 3px rgba(70,60,80,0.32)';
   // Account card: amethyst-filled panel with cream text in light mode (dark unchanged).
@@ -315,10 +317,12 @@ export default function ProfilePage() {
                         <span style={{ fontSize: 11, color: acc(0.40) }}>This Week</span>
                       </div>
                       <div style={{
-                        borderRadius: '24px 12px 24px 24px',
+                        borderRadius: 20,
                         border: `0.5px solid ${cardBorder}`,
                         background: card,
-                        padding: '14px 16px'
+                        padding: '14px 16px',
+                        backdropFilter: 'blur(14px)',
+                        boxShadow: `${cardShadow}, inset 0 1px 0 ${cardHi}`,
                       }}>
                         <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'flex-end' }}>
                           <div className="flex flex-col items-center gap-2">
@@ -358,7 +362,7 @@ export default function ProfilePage() {
                   {/* WEEKLY COMMITMENT — sets the exercise goal (days × 24h) */}
                   <div className="space-y-1">
                       <p style={{ fontSize: 9, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: isDark ? 'rgba(193,154,107,0.55)' : '#320E3B', marginBottom: 6 }}>Weekly Commitment</p>
-                      <div style={{ borderRadius: '12px 24px 24px 24px', border: `0.5px solid ${cardBorder}`, background: card, padding: '14px 16px' }}>
+                      <div style={{ borderRadius: 20, border: `0.5px solid ${cardBorder}`, background: card, padding: '14px 16px', backdropFilter: 'blur(14px)', boxShadow: `${cardShadow}, inset 0 1px 0 ${cardHi}` }}>
                         <p style={{ fontSize: 14, fontWeight: 600, color: isDark ? txt(0.90) : 'rgba(255,248,235,0.97)', fontFamily: "'Cormorant Garamond', serif", margin: 0 }}>How many days a week will you commit?</p>
                         <p style={{ fontSize: 11, color: txt(0.40), margin: '2px 0 0' }}>We'll set your exercise goal from this.</p>
                         <div style={{ display: 'flex', gap: 6, marginTop: 12 }}>
@@ -398,7 +402,7 @@ export default function ProfilePage() {
                         {recentPractices.length > 0 ? (
                           recentPractices.map((practice) => (
                             <Link key={practice.id} href={`/analysis/${practice.id}`}>
-                              <div style={{ flexShrink: 0, width: 130, borderRadius: '16px 16px 16px 6px', border: `0.5px solid ${acc(0.16)}`, background: isDark ? 'rgba(193,154,107,0.05)' : 'rgba(255,255,255,0.12)', overflow: 'hidden' }}>
+                              <div style={{ flexShrink: 0, width: 130, borderRadius: 16, border: `0.5px solid ${acc(0.16)}`, background: isDark ? 'rgba(193,154,107,0.05)' : 'rgba(255,255,255,0.12)', overflow: 'hidden', boxShadow: cardShadow }}>
                                 <div style={{ height: 70, background: 'linear-gradient(135deg, rgba(193,154,107,0.25), rgba(180,110,65,0.20))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>
                                   🧘
                                 </div>
@@ -417,7 +421,7 @@ export default function ProfilePage() {
                             </Link>
                           ))
                         ) : (
-                          <div style={{ flexShrink: 0, width: '100%', borderRadius: '16px 16px 16px 6px', border: `0.5px dashed ${acc(0.16)}`, background: isDark ? 'rgba(193,154,107,0.02)' : 'rgba(255,255,255,0.08)', padding: '24px', textAlign: 'center' }}>
+                          <div style={{ flexShrink: 0, width: '100%', borderRadius: 16, border: `0.5px dashed ${acc(0.16)}`, background: isDark ? 'rgba(193,154,107,0.02)' : 'rgba(255,255,255,0.08)', padding: '24px', textAlign: 'center' }}>
                             <p style={{ fontSize: 12, color: txt(0.35), fontStyle: 'italic' }}>
                               No practices recorded yet — try the Analyze tab to get started.
                             </p>
@@ -430,7 +434,7 @@ export default function ProfilePage() {
                   <div className="space-y-1">
                       <p style={{ fontSize: 9, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: isDark ? 'rgba(193,154,107,0.55)' : '#320E3B', marginBottom: 6 }}>Account</p>
                       
-                      <div style={{ borderRadius: '10px 20px 20px 20px', border: `0.5px solid ${panelBorder}`, background: panelBg, overflow: 'hidden' }}>
+                      <div style={{ borderRadius: 20, border: `0.5px solid ${panelBorder}`, background: panelBg, overflow: 'hidden', backdropFilter: 'blur(14px)', boxShadow: `${cardShadow}, inset 0 1px 0 ${cardHi}` }}>
                         
                         {/* Row 1: Display Name */}
                         <div 

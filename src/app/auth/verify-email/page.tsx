@@ -40,61 +40,63 @@ export default function VerifyEmailPage() {
   return (
     <div className="relative min-h-screen">
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-6">
-        <div className="w-full max-w-sm space-y-6 text-center">
+        <div className="w-full max-w-sm space-y-7">
           <OnboardingHeader />
 
-          {/* Icon */}
-          <div className="flex justify-center">
-            <div className="w-16 h-16 rounded-full sy-option flex items-center justify-center">
-              <Mail className="sy-accent h-9 w-9" />
+          <main className="sy-card backdrop-blur-lg rounded-2xl p-6 space-y-6 text-center">
+            {/* Icon */}
+            <div className="flex justify-center">
+              <div className="w-16 h-16 rounded-full sy-option flex items-center justify-center">
+                <Mail className="sy-accent h-9 w-9" />
+              </div>
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <h1 className="sy-title" style={{ fontSize: 22 }}>Check your inbox</h1>
-            <p className="sy-subtitle text-sm">
-              We sent a verification link to
-            </p>
-            <p className="sy-accent font-medium">
-              {user?.email}
-            </p>
-            <p className="sy-body text-sm pt-2">
-              Click the link in the email to verify your account, then come back here to continue.
-            </p>
-          </div>
+            <div className="space-y-2">
+              <h1 className="sy-card-heading" style={{ fontSize: 18, margin: 0 }}>Check your inbox</h1>
+              <p className="sy-subtitle text-sm">
+                We sent a verification link to
+              </p>
+              <p className="sy-accent font-medium">
+                {user?.email}
+              </p>
+              <p className="sy-body text-sm pt-2">
+                Click the link in the email to verify your account, then come back here to continue.
+              </p>
+            </div>
 
-          <div className="space-y-3 pt-2">
-            {/* Primary CTA */}
-            <div className="flex items-center justify-end gap-4">
-              <span className="sy-title" style={{ fontSize: 16 }}>{isChecking ? "Checking..." : "I've verified my email"}</span>
-              <Button onClick={handleContinue} disabled={isChecking} variant="ghost" aria-label="I've verified my email" className="rounded-full h-12 w-12 p-0 shrink-0 bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border border-[rgba(50,14,59,0.4)] dark:border-white/20">
-                {isChecking ? <RefreshCw className="h-5 w-5 animate-spin" /> : <ArrowRight className="h-6 w-6" />}
+            <div className="space-y-3 pt-2">
+              {/* Primary CTA */}
+              <div className="flex items-center justify-end gap-4">
+                <span className="sy-card-heading" style={{ fontSize: 16 }}>{isChecking ? "Checking..." : "I've verified my email"}</span>
+                <Button onClick={handleContinue} disabled={isChecking} variant="ghost" aria-label="I've verified my email" className="rounded-full h-12 w-12 p-0 shrink-0 bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border border-[rgba(50,14,59,0.4)] dark:border-white/20">
+                  {isChecking ? <RefreshCw className="h-5 w-5 animate-spin" /> : <ArrowRight className="h-6 w-6" />}
+                </Button>
+              </div>
+
+              {/* Resend */}
+              <Button
+                onClick={handleResend}
+                disabled={isSending}
+                variant="outline"
+                className="sy-option sy-cta-outline w-full h-12 text-base rounded-xl hover:opacity-80"
+              >
+                {isSending ? (
+                  <RefreshCw className="h-5 w-5 animate-spin mr-2" />
+                ) : (
+                  <Mail className="h-5 w-5 mr-2" />
+                )}
+                {isSending ? "Sending..." : "Resend verification email"}
               </Button>
+
+              {/* Wrong email */}
+              <button
+                onClick={handleChangeEmail}
+                className="sy-subtitle text-sm hover:underline underline-offset-2 transition-colors mt-4"
+              >
+                Wrong email? Sign up again
+              </button>
             </div>
-
-            {/* Resend */}
-            <Button
-              onClick={handleResend}
-              disabled={isSending}
-              variant="outline"
-              className="sy-option sy-cta-outline w-full h-12 text-base rounded-xl hover:opacity-80"
-            >
-              {isSending ? (
-                <RefreshCw className="h-5 w-5 animate-spin mr-2" />
-              ) : (
-                <Mail className="h-5 w-5 mr-2" />
-              )}
-              {isSending ? "Sending..." : "Resend verification email"}
-            </Button>
-
-            {/* Wrong email */}
-            <button
-              onClick={handleChangeEmail}
-              className="sy-subtitle text-sm hover:underline underline-offset-2 transition-colors mt-4"
-            >
-              Wrong email? Sign up again
-            </button>
-          </div>
+          </main>
         </div>
       </div>
     </div>

@@ -15,6 +15,7 @@ import { analyzeReflectionThemes, type ReflectionThemesOutput } from '@/ai/flows
 import { Button } from '@/components/ui/button';
 import { TopBarIcons } from '@/components/layout/top-bar-icons';
 import { getMoonPhase, getSuggestedPractices, pickPrizeForDate, getPrizeById } from '@/lib/moon';
+import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 
 // ─── Brand tokens ────────────────────────────────────────────────────────────
 const FONT_PANCAKE = "'Cormorant Garamond', Georgia, serif";
@@ -28,6 +29,8 @@ function getThemeTokens(isDark: boolean) {
     muted: isDark ? 'rgba(255,240,215,0.40)' : 'rgba(50,14,59,0.60)',
     cardBg: isDark ? `rgba(13,20,30,0.50)` : `rgba(255,255,255,0.12)`,
     cardBorder: isDark ? `rgba(193,154,107,0.18)` : `rgba(255,255,255,0.40)`,
+    cardShadow: isDark ? `0 8px 22px rgba(0,0,0,0.45)` : `0 8px 22px rgba(90,80,120,0.16)`,
+    cardHi: isDark ? `rgba(255,240,215,0.10)` : `rgba(255,255,255,0.60)`,
     accent: isDark ? `rgba(193,154,107,0.85)` : `#320E3B`,
   };
 }
@@ -113,6 +116,12 @@ export default function PracticeCalendarPage() {
 
   const [themeGroups, setThemeGroups] = useState<ReflectionThemesOutput | null>(null);
   const [isAnalyzingThemes, setIsAnalyzingThemes] = useState(false);
+
+  // "now"/"selectedDay" are computed from the browser's local clock+timezone; rendering them
+  // during SSR can disagree with the client (e.g. server in UTC vs. a non-UTC visitor), which
+  // throws a hydration mismatch. Deferring the real render to after mount avoids that entirely.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   const now = new Date();
   const daysInMonth = getDaysInMonth(now);
@@ -268,6 +277,8 @@ export default function PracticeCalendarPage() {
 
   const reflectionsCount = Object.values(moodsByDate).filter(m => !!m.reflection).length;
 
+  if (!mounted) return <AppShell><div className="flex items-center justify-center min-h-screen"><SmileyRockLoader /></div></AppShell>;
+
   return (
     <AppShell>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');
@@ -347,7 +358,7 @@ export default function PracticeCalendarPage() {
 
           {/* Animated expand wrapper (unfolds from the line above) */}
           <div style={{ maxHeight: expanded ? 2000 : 0, opacity: expanded ? 1 : 0, overflow: 'hidden', transition: 'max-height 0.4s ease, opacity 0.3s ease' }}>
-            <div style={{ marginTop: 8, borderRadius: 18, border: `0.5px solid ${isDark ? 'rgba(214,178,130,0.4)' : 'rgba(255,255,255,0.40)'}`, background: isDark ? 'rgba(193,154,107,0.10)' : 'rgba(255,255,255,0.12)', padding: 16, backdropFilter: 'blur(14px)', boxShadow: isDark ? '0 12px 34px rgba(193,154,107,0.12)' : '0 12px 34px rgba(60,40,70,0.12)' }}>
+            <div style={{ marginTop: 8, borderRadius: 20, border: `0.5px solid ${isDark ? 'rgba(214,178,130,0.4)' : 'rgba(255,255,255,0.40)'}`, background: isDark ? 'rgba(193,154,107,0.10)' : 'rgba(255,255,255,0.12)', padding: 16, backdropFilter: 'blur(14px)', boxShadow: `${tokens.cardShadow}, inset 0 1px 0 ${tokens.cardHi}` }}>
             <p style={{ fontFamily: FONT_PANCAKE, fontSize: 20, fontWeight: 500, color: tokens.title, margin: '0 0 12px' }}>{format(selectedDay, 'EEEE, d MMMM')}</p>
 
             {/* Moon phase for yogis (always shown) */}
@@ -454,7 +465,7 @@ export default function PracticeCalendarPage() {
         {/* RADIAL HABIT FAN */}
         <section>
           <SectionHead>Habit Tracker · {monthName}</SectionHead>
-          <div style={{ borderRadius: '20px 10px 20px 20px', border: `0.5px solid ${tokens.cardBorder}`, background: tokens.cardBg, padding: '24px 16px', backdropFilter: 'blur(14px)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ borderRadius: 20, border: `0.5px solid ${tokens.cardBorder}`, background: tokens.cardBg, padding: '24px 16px', backdropFilter: 'blur(14px)', boxShadow: `${tokens.cardShadow}, inset 0 1px 0 ${tokens.cardHi}`, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <svg viewBox="0 0 160 100" width="100%" height="auto" style={{ maxWidth: '300px' }}>
               {HABITS_CONFIG.map((h) => {
                 const anglePerDay = 210 / daysInMonth;
@@ -484,7 +495,7 @@ export default function PracticeCalendarPage() {
         {/* SELF-CARE BINGO */}
         <section>
           <SectionHead>Self-Care Bingo · {monthName}</SectionHead>
-          <div style={{ borderRadius: '10px 20px 20px 20px', border: `0.5px solid ${tokens.cardBorder}`, background: tokens.cardBg, padding: '16px', backdropFilter: 'blur(14px)' }}>
+          <div style={{ borderRadius: 20, border: `0.5px solid ${tokens.cardBorder}`, background: tokens.cardBg, padding: '16px', backdropFilter: 'blur(14px)', boxShadow: `${tokens.cardShadow}, inset 0 1px 0 ${tokens.cardHi}` }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
               {bingoStatus.squares.map((s, i) => (
                 <div key={i} style={{ aspectRatio: '1/1', borderRadius: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, padding: 4, textAlign: 'center',
@@ -511,7 +522,7 @@ export default function PracticeCalendarPage() {
         {/* REFLECTION THEMES AI */}
         <section>
           <SectionHead>Reflection Themes · AI Insight</SectionHead>
-          <div style={{ borderRadius: '20px 20px 10px 20px', border: `0.5px solid ${tokens.cardBorder}`, background: tokens.cardBg, padding: '16px', backdropFilter: 'blur(14px)' }}>
+          <div style={{ borderRadius: 20, border: `0.5px solid ${tokens.cardBorder}`, background: tokens.cardBg, padding: '16px', backdropFilter: 'blur(14px)', boxShadow: `${tokens.cardShadow}, inset 0 1px 0 ${tokens.cardHi}` }}>
             {!themeGroups && !isAnalyzingThemes && (
               <div className="text-center py-4 space-y-4">
                 <div className="flex justify-center">
