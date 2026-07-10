@@ -90,7 +90,7 @@ export default function YogaGoalPage() {
 
   return (
     <OnboardingScaffold
-      title="Your yoga goal"
+      title="Yoga goals"
       subtitle="What do you want to achieve?"
       onBack={handleBackNavigation}
       next={

@@ -39,8 +39,14 @@ export function OnboardingScaffold({
       <OnboardingThemeToggle />
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-6">
         <div className="w-full max-w-2xl flex flex-col items-center">
-          <OnboardingHeader title={title} subtitle={subtitle} className="mb-6" />
+          <OnboardingHeader className="mb-6" />
           <div className={cn('sy-card backdrop-blur-lg rounded-2xl p-8 w-full', cardClassName)}>
+            {(title || subtitle) && (
+              <div className="text-center mb-6">
+                {title && <h1 className="sy-card-heading" style={{ fontSize: 18, margin: 0 }}>{title}</h1>}
+                {subtitle && <p className="sy-subtitle" style={{ fontSize: 12, letterSpacing: '0.04em', margin: '3px 0 0' }}>{subtitle}</p>}
+              </div>
+            )}
             {children}
             {(onBack || next) && (
               <div className="flex items-center justify-between mt-6">

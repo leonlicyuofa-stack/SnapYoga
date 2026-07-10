@@ -143,6 +143,13 @@
     font-family: system-ui, -apple-system, sans-serif;
     color: rgba(50, 14, 59, 0.82);
   }
+  /* Page heading rendered INSIDE the frosted card — readable on glass (amethyst / parchment, no shadow). */
+  .sy-card-heading {
+    font-family: var(--font-cormorant), Georgia, serif;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #320E3B;
+  }
 
   .sy-input {
     font-family: system-ui, -apple-system, sans-serif;
@@ -213,6 +220,7 @@
   .dark .sy-divider { background: rgba(193, 154, 107, 0.25); }
   .dark .sy-title { color: rgba(255, 240, 215, 0.90); }
   .dark .sy-subtitle, .dark .sy-body { color: rgba(193, 154, 107, 0.66); }
+  .dark .sy-card-heading { color: rgba(255, 240, 215, 0.90); }
 
   .dark .sy-input {
     background: rgba(255, 255, 255, 0.04);
