@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Sparkles, Flame, Trophy, type LucideIcon } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, query, orderBy, limit, getDocs, type Timestamp } from 'firebase/firestore';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
@@ -47,6 +48,17 @@ function computeStreak(dates: Date[]): number {
 
 export function NotificationsPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { user } = useAuth();
+  const { isDark } = useTheme();
+  // Light = amethyst on lavender; dark = the original parchment/gold on ink.
+  const txt = (a: number) => isDark ? `rgba(255,245,230,${a})` : `rgba(50,14,59,${a})`;
+  const acc = (a: number) => isDark ? `rgba(193,154,107,${a})` : `rgba(50,14,59,${a})`;
+  const sheetBg = isDark
+    ? 'radial-gradient(120% 40% at 50% 0%, #1a2230 0%, #0d1016 55%)'
+    : 'linear-gradient(175deg,#B0B5C0 0%,#9DA4B0 35%,#A8A0BC 70%,#9B96B5 100%)';
+  const sheetBorder = isDark ? 'rgba(193,154,107,0.2)' : 'rgba(255,255,255,0.40)';
+  const divider = isDark ? 'rgba(193,154,107,0.14)' : 'rgba(50,14,59,0.12)';
+  const unreadBg = isDark ? 'rgba(193,154,107,0.07)' : 'rgba(255,255,255,0.30)';
+  const unreadDot = isDark ? '#c19a6b' : '#320E3B';
   const [analyses, setAnalyses] = useState<AnalysisDoc[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [read, setRead] = useState<Set<string>>(new Set());
@@ -124,17 +136,17 @@ export function NotificationsPanel({ open, onClose }: { open: boolean; onClose: 
     const unread = !read.has(n.id);
     return (
       <Link key={n.id} href={n.href} onClick={() => { markOne(n.id); onClose(); }} className="block">
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '11px 12px', borderRadius: 12, background: unread ? 'rgba(193,154,107,0.07)' : 'transparent', marginBottom: 6 }}>
-          <span style={{ width: 36, height: 36, flexShrink: 0, borderRadius: '50%', background: `${n.tint},0.15)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '11px 12px', borderRadius: 12, background: unread ? unreadBg : 'transparent', marginBottom: 6 }}>
+          <span style={{ width: 36, height: 36, flexShrink: 0, borderRadius: '50%', background: `${n.tint},${isDark ? 0.15 : 0.2})`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <n.icon className="h-[18px] w-[18px]" style={{ color: `${n.tint},0.9)` }} />
           </span>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: 13, fontWeight: 500, color: unread ? 'rgba(255,245,230,0.92)' : 'rgba(255,245,230,0.78)', margin: 0 }}>{n.title}</p>
-            <p style={{ fontSize: 11, color: 'rgba(255,245,230,0.45)', margin: '2px 0 0' }}>{n.sub}</p>
+            <p style={{ fontSize: 13, fontWeight: 500, color: unread ? txt(0.92) : txt(0.7), margin: 0 }}>{n.title}</p>
+            <p style={{ fontSize: 11, color: txt(0.5), margin: '2px 0 0' }}>{n.sub}</p>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 5 }}>
-            <span style={{ fontSize: 10, color: 'rgba(255,245,230,0.35)', whiteSpace: 'nowrap' }}>{shortAgo(n.date)}</span>
-            {unread && <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#c19a6b' }} />}
+            <span style={{ fontSize: 10, color: txt(0.4), whiteSpace: 'nowrap' }}>{shortAgo(n.date)}</span>
+            {unread && <span style={{ width: 7, height: 7, borderRadius: '50%', background: unreadDot }} />}
           </div>
         </div>
       </Link>
@@ -146,14 +158,14 @@ export function NotificationsPanel({ open, onClose }: { open: boolean; onClose: 
       <SheetContent
         side="right"
         className="p-0 w-full sm:max-w-md border-l overflow-y-auto"
-        style={{ background: 'radial-gradient(120% 40% at 50% 0%, #1a2230 0%, #0d1016 55%)', borderColor: 'rgba(193,154,107,0.2)' }}
+        style={{ background: sheetBg, borderColor: sheetBorder }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 18px 14px', borderBottom: '0.5px solid rgba(193,154,107,0.14)' }}>
-          <SheetTitle style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 21, fontWeight: 600, color: 'rgba(255,245,230,0.94)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 18px 14px', borderBottom: `0.5px solid ${divider}` }}>
+          <SheetTitle style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 21, fontWeight: 600, color: isDark ? 'rgba(255,245,230,0.94)' : '#320E3B' }}>
             Notifications
           </SheetTitle>
           {notes.length > 0 && (
-            <button onClick={markAll} style={{ border: 'none', background: 'transparent', color: 'rgba(193,154,107,0.85)', fontSize: 11, cursor: 'pointer', marginRight: 24 }}>
+            <button onClick={markAll} style={{ border: 'none', background: 'transparent', color: acc(0.85), fontSize: 11, cursor: 'pointer', marginRight: 24 }}>
               Mark all read
             </button>
           )}
@@ -161,14 +173,14 @@ export function NotificationsPanel({ open, onClose }: { open: boolean; onClose: 
 
         <div className="px-4 py-4 pb-8">
           {notes.length === 0 ? (
-            <p style={{ textAlign: 'center', marginTop: 40, fontSize: 13, fontStyle: 'italic', color: 'rgba(255,245,230,0.4)' }}>
+            <p style={{ textAlign: 'center', marginTop: 40, fontSize: 13, fontStyle: 'italic', color: txt(0.4) }}>
               {loaded ? "You're all caught up." : 'Loading…'}
             </p>
           ) : (
             <>
-              {today.length > 0 && <p style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.55)', margin: '0 0 8px 2px' }}>Today</p>}
+              {today.length > 0 && <p style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: acc(0.55), margin: '0 0 8px 2px' }}>Today</p>}
               {today.map(row)}
-              {earlier.length > 0 && <p style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(193,154,107,0.55)', margin: '16px 0 8px 2px' }}>Earlier</p>}
+              {earlier.length > 0 && <p style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: acc(0.55), margin: '16px 0 8px 2px' }}>Earlier</p>}
               {earlier.map(row)}
             </>
           )}
