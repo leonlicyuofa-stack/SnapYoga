@@ -4,24 +4,35 @@ import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
 
-const WORD = 'SnapYoga';
-const LETTER_STAGGER_MS = 75;
-const LETTER_DURATION_MS = 550;
-const HOLD_MS = 2800;   // total time the overlay stays up before it starts fading
-const FADE_OUT_MS = 850;
-const BREATHE_DELAY_MS = (WORD.length - 1) * LETTER_STAGGER_MS + LETTER_DURATION_MS;
+const HOLD_MS = 2800;     // time the overlay stays up before it starts fading
+const FADE_OUT_MS = 450;
+const MOON_STAGGER_S = 0.2;
+const ARC_WIDTH = 500;    // sum of moon sizes (464) + gaps (6×6) at full scale
+
+// Illuminated fraction per moon, waxing crescent → full (centre) → waning crescent.
+// Phases past the centre are mirrored (scaleX(-1)) so the lit side flips to waning.
+const MOON_F = [0.16, 0.5, 0.8, 1, 0.8, 0.5, 0.16];
+
+// Lit-region path for an illuminated fraction f on a 100×100 cell (disc r=40 at 50,50).
+function moonPath(f: number): string {
+  const rx = Math.abs(1 - 2 * f) * 40;
+  const sweep = f < 0.5 ? 0 : 1;
+  return `M50,10 A40 40 0 0 1 50 90 A${rx} 40 0 0 ${sweep} 50 10 Z`;
+}
 
 /**
- * Full-screen wordmark splash for the homepage ("/"). Plays once when the homepage
- * document loads (before sign-in), then fades away to reveal the splash underneath.
- * The root layout persists across in-app navigation, so this only runs on an actual
- * homepage page load — it never replays while moving around inside the app.
+ * Full-screen moon-phase splash for the homepage ("/"). A horizontal arc of 7 moon
+ * phases (crescent → full → crescent) whose glow travels left-to-right as the loading
+ * indicator, then the overlay fades away to reveal the homepage. The root layout
+ * persists across in-app navigation, so this only runs on an actual homepage page load.
  */
 export function PageLoader() {
   const { isDark } = useTheme();
   const pathname = usePathname();
   const [phase, setPhase] = useState<'hidden' | 'playing' | 'fading'>('hidden');
   const [reducedMotion, setReducedMotion] = useState(false);
+  // Keep the fixed-geometry arc from clipping on narrow (mobile) viewports.
+  const [scale, setScale] = useState(1);
 
   useEffect(() => {
     // Only act as the homepage splash — don't consume the animation on a deep-linked
@@ -29,6 +40,7 @@ export function PageLoader() {
     if (pathname !== '/') return;
 
     setReducedMotion(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    setScale(Math.min(1, (window.innerWidth - 24) / ARC_WIDTH));
     setPhase('playing');
 
     const fadeTimer = setTimeout(() => setPhase('fading'), HOLD_MS);
@@ -39,14 +51,12 @@ export function PageLoader() {
 
   if (phase === 'hidden') return null;
 
-  // Overlay + wordmark colors reuse the app's existing light/dark tokens (splash gradient
-  // stops + the standing "cream hero title" / "parchment dark text" colors) rather than
-  // introducing new literals.
+  // Overlay + moon colours reuse the app's existing light/dark tokens (splash surface,
+  // cream/parchment fill, amethyst/gold accent) rather than introducing new literals.
   const bg        = isDark ? '#0D1821' : '#9DA4B0';
-  const wordColor = isDark ? 'rgba(255,240,215,0.92)' : 'rgba(255,248,235,0.96)';
-  const ringColor = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.30)';
-  const lineTrack = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.18)';
-  const lineFill  = isDark ? 'rgba(255,240,215,0.55)' : 'rgba(255,248,235,0.85)';
+  const moonColor = isDark ? 'rgba(255,240,215,0.72)' : 'rgba(255,248,235,0.9)';
+  const accent    = isDark ? 'rgba(193,154,107,0.95)' : '#320E3B';
+  const dim       = isDark ? 0.24 : 0.2;
 
   const fading = phase === 'fading';
 
@@ -58,80 +68,49 @@ export function PageLoader() {
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         background: bg,
         opacity: fading ? 0 : 1,
-        transform: fading ? 'scale(1.04)' : 'scale(1)',
-        transition: `opacity ${FADE_OUT_MS}ms ease, transform ${FADE_OUT_MS}ms ease`,
         pointerEvents: fading ? 'none' : 'auto',
+        transition: `opacity ${FADE_OUT_MS}ms ease, background-color 500ms ease`,
+        // Consumed by the glow keyframe so each moon dips to the theme's dim opacity.
+        ['--moon-dim' as string]: dim,
       }}
     >
-      {!reducedMotion && (
-        <div style={{
-          position: 'absolute', top: '50%', left: '50%', width: 130, height: 130, borderRadius: '50%',
-          border: `1px solid ${ringColor}`,
-          transform: 'translate(-50%,-50%) scale(0.6)',
-          animation: 'syLoaderRing 3.4s ease-in-out infinite',
-        }} />
-      )}
-
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, position: 'relative' }}>
-        <div
-          style={{
-            display: 'flex',
-            // Match the homepage wordmark exactly so the mark reads identically as the
-            // splash fades to reveal it (same family reference, weight and tracking).
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontWeight: 400,
-            fontSize: 28,
-            letterSpacing: '0.08em',
-            color: wordColor,
-            animation: reducedMotion ? 'none' : 'syLoaderBreathe 3.4s ease-in-out infinite',
-            animationDelay: reducedMotion ? undefined : `${BREATHE_DELAY_MS}ms`,
-          }}
-        >
-          {WORD.split('').map((ch, i) => (
-            <span
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6, transform: `scale(${scale})`, transformOrigin: 'center' }}>
+        {MOON_F.map((f, i) => {
+          const d = Math.abs(i - 3);
+          const size = 92 - d * 15;          // centre largest, ends smallest
+          const dip = d * 20;                // ends dip downward → arc shape
+          const waning = i > 3;
+          const fill = i === 3 ? accent : moonColor;
+          return (
+            <svg
               key={i}
+              width={size}
+              height={size}
+              viewBox="0 0 100 100"
               style={{
-                display: 'inline-block',
-                opacity: 0,
-                animation: reducedMotion ? 'syLoaderFadeIn 0.6s ease forwards' : 'syLoaderLetterIn 0.55s ease forwards',
-                animationDelay: reducedMotion ? '0ms' : `${i * LETTER_STAGGER_MS}ms`,
+                marginTop: dip,
+                opacity: reducedMotion ? 1 : `var(--moon-dim)` as unknown as number,
+                animation: reducedMotion ? 'none' : `syMoonGlow 2.6s ease-in-out ${i * MOON_STAGGER_S}s infinite`,
               }}
             >
-              {ch}
-            </span>
-          ))}
-        </div>
-
-        {!reducedMotion && (
-          <div style={{ width: 130, height: 2, borderRadius: 2, background: lineTrack, overflow: 'hidden' }}>
-            <div style={{
-              height: '100%', width: 0, background: lineFill, borderRadius: 2,
-              animation: 'syLoaderFill 2.6s ease-out forwards',
-            }} />
-          </div>
-        )}
+              {f === 1 ? (
+                <circle cx="50" cy="50" r="40" style={{ fill, transition: 'fill 500ms ease' }} />
+              ) : (
+                <path
+                  d={moonPath(f)}
+                  style={{ fill, transition: 'fill 500ms ease' }}
+                  transform={waning ? 'translate(100,0) scale(-1,1)' : undefined}
+                />
+              )}
+            </svg>
+          );
+        })}
       </div>
 
       <style>{`
-        @keyframes syLoaderLetterIn {
-          from { opacity: 0; transform: translateY(14px); filter: blur(6px); }
-          to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
-        }
-        @keyframes syLoaderFadeIn {
-          from { opacity: 0; }
-          to   { opacity: 1; }
-        }
-        @keyframes syLoaderBreathe {
-          0%, 100% { transform: scale(1); }
-          50%      { transform: scale(1.055); }
-        }
-        @keyframes syLoaderRing {
-          0%   { transform: translate(-50%,-50%) scale(0.6); opacity: 0.5; }
-          100% { transform: translate(-50%,-50%) scale(1.9); opacity: 0; }
-        }
-        @keyframes syLoaderFill {
-          from { width: 0%; }
-          to   { width: 100%; }
+        @keyframes syMoonGlow {
+          0%, 100% { opacity: var(--moon-dim); }
+          50%      { opacity: 1; }
         }
       `}</style>
     </div>
