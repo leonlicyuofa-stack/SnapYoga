@@ -94,6 +94,8 @@ export default function InterestedPosesPage() {
     <OnboardingScaffold
       title="Pose interests"
       subtitle="What poses excite you?"
+      step={3}
+      totalSteps={5}
       onBack={handleBackNavigation}
       next={
         <Button

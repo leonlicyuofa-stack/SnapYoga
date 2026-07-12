@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from '@/lib/utils';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface OnboardingHeaderProps {
   title?: string;
@@ -24,6 +25,9 @@ export function OnboardingHeader({
   currentStep = 0,
   className,
 }: OnboardingHeaderProps) {
+  const { isDark } = useTheme();
+  const badgeBg = isDark ? 'rgba(214,178,130,0.95)' : '#320E3B';
+  const badgeColor = isDark ? '#1a1210' : 'rgba(255,248,235,0.96)';
   return (
     <header className={cn('relative flex flex-col items-center text-center', className)}>
       <div className="sy-echo" aria-hidden="true">
@@ -35,15 +39,22 @@ export function OnboardingHeader({
       <div className="sy-divider" style={{ margin: '8px 0 16px' }} />
 
       {typeof steps === 'number' && steps > 0 && (
-        <div className="flex gap-1 mb-5" aria-label={`Step ${currentStep + 1} of ${steps}`}>
+        <div className="flex items-center gap-1.5 mb-5" aria-label={`Step ${currentStep + 1} of ${steps}`}>
+          <span
+            style={{
+              width: 22, height: 22, borderRadius: '50%',
+              background: badgeBg, color: badgeColor,
+              fontFamily: 'system-ui, -apple-system, sans-serif', fontWeight: 700, fontSize: 11,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
+          >
+            {currentStep + 1}
+          </span>
           {Array.from({ length: steps }).map((_, i) => (
             <span
               key={i}
               className={cn('rounded-full transition-all', i <= currentStep ? 'sy-step-active' : 'sy-step')}
-              style={{
-                height: 3,
-                width: i === currentStep ? 20 : 8,
-              }}
+              style={{ height: 6, width: 20 }}
             />
           ))}
         </div>

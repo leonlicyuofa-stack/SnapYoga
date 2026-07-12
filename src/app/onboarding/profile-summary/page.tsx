@@ -251,6 +251,8 @@ export default function ProfileSummaryPage() {
     <OnboardingScaffold
       title="Your summary"
       subtitle="Let's review your profile."
+      step={4}
+      totalSteps={5}
       onBack={handleBackNavigation}
       next={
         <Button

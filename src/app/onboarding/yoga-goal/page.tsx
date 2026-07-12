@@ -92,6 +92,8 @@ export default function YogaGoalPage() {
     <OnboardingScaffold
       title="Yoga goals"
       subtitle="What do you want to achieve?"
+      step={2}
+      totalSteps={5}
       onBack={handleBackNavigation}
       next={
         <Button

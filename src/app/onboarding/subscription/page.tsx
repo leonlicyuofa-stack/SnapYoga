@@ -57,6 +57,8 @@ export default function SubscriptionPage() {
     <OnboardingScaffold
       title="Unlock SnapYoga Premium"
       subtitle="Choose your plan to continue."
+      step={5}
+      totalSteps={5}
       onBack={handleBackNavigation}
       cardClassName="space-y-8"
     >

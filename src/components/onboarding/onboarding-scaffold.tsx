@@ -17,6 +17,10 @@ interface OnboardingScaffoldProps {
   children: ReactNode;
   cardClassName?: string;
   outerClassName?: string;
+  /** 1-based step number; renders the onboarding progress bar in the header. */
+  step?: number;
+  /** Total number of onboarding steps. */
+  totalSteps?: number;
 }
 
 /**
@@ -33,13 +37,19 @@ export function OnboardingScaffold({
   children,
   cardClassName,
   outerClassName,
+  step,
+  totalSteps,
 }: OnboardingScaffoldProps) {
   return (
     <div className={cn('relative min-h-screen', outerClassName)}>
       <OnboardingThemeToggle />
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-6">
         <div className="w-full max-w-2xl flex flex-col items-center">
-          <OnboardingHeader className="mb-6" />
+          <OnboardingHeader
+            className="mb-6"
+            steps={totalSteps}
+            currentStep={step ? step - 1 : 0}
+          />
           <div className={cn('sy-card backdrop-blur-lg rounded-2xl p-8 w-full', cardClassName)}>
             {(title || subtitle) && (
               <div className="text-center mb-6">
