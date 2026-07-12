@@ -1,15 +1,17 @@
-
 "use client";
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
+import { useTheme } from '@/contexts/ThemeContext';
 import { OnboardingHeader } from '@/components/onboarding/onboarding-header';
-import { Mail, RefreshCw, ArrowRight } from 'lucide-react';
+import { OnboardingThemeToggle } from '@/components/onboarding/onboarding-theme-toggle';
+import { Mail } from 'lucide-react';
 
 export default function VerifyEmailPage() {
   const { user, sendVerificationEmail, signOutUser } = useAuth();
+  const { isDark } = useTheme();
   const router = useRouter();
   const [isSending, setIsSending] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
@@ -37,66 +39,84 @@ export default function VerifyEmailPage() {
     router.push('/auth/signup');
   };
 
+  // Solid contrast capsule — amethyst on lavender (light) / gold on ink (dark).
+  const ctaBg = isDark ? 'rgba(193,154,107,0.92)' : '#320E3B';
+  const ctaColor = isDark ? '#1a1210' : 'rgba(255,248,235,0.96)';
+  const ctaShadow = isDark ? '0 6px 16px rgba(0,0,0,0.32)' : '0 6px 16px rgba(50,30,60,0.28)';
+
   return (
     <div className="relative min-h-screen">
+      <OnboardingThemeToggle />
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-6">
         <div className="w-full max-w-sm space-y-7">
           <OnboardingHeader />
 
-          <main className="sy-card backdrop-blur-lg rounded-2xl p-6 space-y-6 text-center">
+          <main className="sy-card backdrop-blur-lg rounded-2xl p-6 text-center space-y-5">
             {/* Icon */}
             <div className="flex justify-center">
-              <div className="w-16 h-16 rounded-full sy-option flex items-center justify-center">
-                <Mail className="sy-accent h-9 w-9" />
-              </div>
+              <Mail className="sy-accent" style={{ width: 40, height: 40 }} />
             </div>
 
             <div className="space-y-2">
               <h1 className="sy-card-heading" style={{ fontSize: 18, margin: 0 }}>Check your inbox</h1>
-              <p className="sy-subtitle text-sm">
-                We sent a verification link to
-              </p>
-              <p className="sy-accent font-medium">
-                {user?.email}
-              </p>
-              <p className="sy-body text-sm pt-2">
-                Click the link in the email to verify your account, then come back here to continue.
+              <p className="sy-body text-sm">
+                We sent a confirmation link to{' '}
+                <span className="sy-accent font-medium">{user?.email}</span>.
+                <br />You&apos;ll only do this once.
               </p>
             </div>
 
-            <div className="space-y-3 pt-2">
-              {/* Primary CTA */}
-              <div className="flex items-center justify-end gap-4">
-                <span className="sy-card-heading" style={{ fontSize: 16 }}>{isChecking ? "Checking..." : "I've verified my email"}</span>
-                <Button onClick={handleContinue} disabled={isChecking} variant="ghost" aria-label="I've verified my email" className="rounded-full h-12 w-12 p-0 shrink-0 bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border border-[rgba(50,14,59,0.4)] dark:border-white/20">
-                  {isChecking ? <RefreshCw className="h-5 w-5 animate-spin" /> : <ArrowRight className="h-6 w-6" />}
-                </Button>
-              </div>
+            {/* Wrong email */}
+            <button
+              onClick={handleChangeEmail}
+              className="sy-subtitle text-sm block w-full hover:underline underline-offset-2"
+            >
+              Wrong email? <span className="sy-accent font-medium">Sign up again</span>
+            </button>
 
-              {/* Resend */}
-              <Button
-                onClick={handleResend}
-                disabled={isSending}
-                variant="outline"
-                className="sy-option sy-cta-outline w-full h-12 text-base rounded-xl hover:opacity-80"
-              >
-                {isSending ? (
-                  <RefreshCw className="h-5 w-5 animate-spin mr-2" />
-                ) : (
-                  <Mail className="h-5 w-5 mr-2" />
-                )}
-                {isSending ? "Sending..." : "Resend verification email"}
-              </Button>
+            {/* Primary CTA — solid contrast capsule */}
+            <button
+              onClick={handleContinue}
+              disabled={isChecking}
+              className="w-full disabled:opacity-60 transition-transform hover:scale-[1.02]"
+              style={{
+                borderRadius: 999,
+                padding: 12,
+                fontFamily: 'system-ui, -apple-system, sans-serif',
+                fontWeight: 600,
+                fontSize: 13.5,
+                whiteSpace: 'nowrap',
+                border: 'none',
+                cursor: isChecking ? 'default' : 'pointer',
+                background: ctaBg,
+                color: ctaColor,
+                boxShadow: ctaShadow,
+              }}
+            >
+              {isChecking ? 'Checking…' : "I've verified my email"}
+            </button>
 
-              {/* Wrong email */}
-              <button
-                onClick={handleChangeEmail}
-                className="sy-subtitle text-sm hover:underline underline-offset-2 transition-colors mt-4"
-              >
-                Wrong email? Sign up again
-              </button>
-            </div>
+            {/* Resend */}
+            <button
+              onClick={handleResend}
+              disabled={isSending}
+              className="sy-subtitle text-sm block w-full"
+            >
+              Didn&apos;t receive it?{' '}
+              <span className="sy-accent font-medium underline underline-offset-2">
+                {isSending ? 'Sending…' : 'Resend email'}
+              </span>
+            </button>
           </main>
+
+          <footer className="text-center">
+            <p className="sy-subtitle text-sm">
+              Already have an account?{' '}
+              <Link href="/auth/signin" className="sy-accent font-medium hover:underline">
+                Sign in
+              </Link>
+            </p>
+          </footer>
         </div>
       </div>
     </div>
