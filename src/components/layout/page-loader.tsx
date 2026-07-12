@@ -6,7 +6,10 @@ import { useTheme } from '@/contexts/ThemeContext';
 
 const HOLD_MS = 2800;     // time the overlay stays up before it starts fading
 const FADE_OUT_MS = 450;
-const MOON_STAGGER_S = 0.2;
+// A single highlight sweeps left→right: the peaks are spread evenly across the
+// whole cycle (stagger × 7 moons = cycle) so only ~one moon is lit at a time.
+const MOON_CYCLE_S = 2.8;
+const MOON_STAGGER_S = MOON_CYCLE_S / 7;
 const ARC_WIDTH = 500;    // sum of moon sizes (464) + gaps (6×6) at full scale
 
 // Illuminated fraction per moon, waxing crescent → full (centre) → waning crescent.
@@ -90,7 +93,7 @@ export function PageLoader() {
               style={{
                 marginTop: dip,
                 opacity: reducedMotion ? 1 : `var(--moon-dim)` as unknown as number,
-                animation: reducedMotion ? 'none' : `syMoonGlow 2.6s ease-in-out ${i * MOON_STAGGER_S}s infinite`,
+                animation: reducedMotion ? 'none' : `syMoonGlow ${MOON_CYCLE_S}s linear ${i * MOON_STAGGER_S}s infinite`,
               }}
             >
               {f === 1 ? (
@@ -109,8 +112,10 @@ export function PageLoader() {
 
       <style>{`
         @keyframes syMoonGlow {
-          0%, 100% { opacity: var(--moon-dim); }
-          50%      { opacity: 1; }
+          0%   { opacity: var(--moon-dim); }
+          9%   { opacity: 1; }
+          22%  { opacity: var(--moon-dim); }
+          100% { opacity: var(--moon-dim); }
         }
       `}</style>
     </div>
