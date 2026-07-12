@@ -49,16 +49,19 @@ export default function ProfilePage() {
   // Light = amethyst on lavender; dark = the original cream/gold on ink.
   const txt = (a: number) => isDark ? `rgba(255,240,215,${a})` : `rgba(50,14,59,${a})`;
   const acc = (a: number) => isDark ? `rgba(193,154,107,${a})` : `rgba(50,14,59,${a})`;
-  const card = isDark ? 'rgba(25,16,8,0.50)' : 'rgba(255,255,255,0.12)';
+  // Shared card cosmetic — the same frosted gradient the homepage/dashboard cards use,
+  // so My Progress, Weekly Commitment and Account all read identically.
+  const card = isDark
+    ? 'linear-gradient(160deg,rgba(255,240,215,0.10),rgba(255,240,215,0.03))'
+    : 'linear-gradient(160deg,rgba(255,255,255,0.32),rgba(255,255,255,0.14))';
   const cardBorder = isDark ? 'rgba(193,154,107,0.18)' : 'rgba(255,255,255,0.40)';
   const cardShadow = isDark ? '0 8px 22px rgba(0,0,0,0.45)' : '0 8px 22px rgba(90,80,120,0.16)';
   const cardHi = isDark ? 'rgba(255,240,215,0.10)' : 'rgba(255,255,255,0.60)';
   const NAME_C = isDark ? 'rgba(255,240,215,0.94)' : 'rgba(255,248,235,0.96)';
   const NAME_SH = isDark ? 'none' : '0 1px 3px rgba(70,60,80,0.32)';
-  // Account card: amethyst-filled panel with cream text in light mode (dark unchanged).
-  // Light: a filled-but-frosted panel (a touch more solid than the plain frosted cards) with amethyst text.
-  const panelBg = isDark ? 'rgba(193,154,107,0.04)' : 'rgba(255,255,255,0.22)';
-  const panelBorder = isDark ? cardBorder : 'rgba(255,255,255,0.50)';
+  // Account card shares the same frosted-gradient surface as the other cards.
+  const panelBg = card;
+  const panelBorder = cardBorder;
   const panelTitle = isDark ? 'rgba(255,240,215,0.70)' : 'rgba(50,14,59,0.70)';
   const panelSub = isDark ? 'rgba(255,240,215,0.32)' : 'rgba(50,14,59,0.60)';
   const panelIcon = isDark ? 'rgba(193,154,107,0.75)' : 'rgba(50,14,59,0.70)';
