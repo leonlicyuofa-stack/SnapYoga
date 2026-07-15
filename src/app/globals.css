@@ -263,3 +263,13 @@
   .dark .sy-step-active { background: rgba(193, 154, 107, 0.80); }
   .dark .sy-cta-outline { color: rgba(255, 240, 215, 0.85); }
 /* end SnapYoga onboarding / auth design system */
+
+/* Character creator — gentle idle bob (disabled under reduced motion) */
+@keyframes syCharBob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+.sy-char-bob { animation: syCharBob 5s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .sy-char-bob { animation: none !important; }
+}
