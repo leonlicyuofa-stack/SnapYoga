@@ -43,10 +43,13 @@ export default function BuildCharacterPage() {
   const titleColor = isDark ? 'rgba(255,240,215,0.92)' : '#320E3B';
   const subColor   = isDark ? 'rgba(193,154,107,0.66)' : 'rgba(44,14,54,0.62)';
   const cardBg = isDark
-    ? 'linear-gradient(160deg,rgba(255,240,215,0.06),rgba(255,240,215,0.02))'
+    ? 'linear-gradient(160deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02))'
     : 'linear-gradient(160deg,rgba(255,255,255,0.34),rgba(255,255,255,0.16))';
-  const cardBorder = isDark ? 'rgba(193,154,107,0.18)' : 'rgba(255,255,255,0.5)';
-  const cardShadow = isDark ? '0 10px 30px rgba(0,0,0,0.40)' : '0 10px 30px rgba(90,80,120,0.18)';
+  const cardBorder = isDark ? 'rgba(193,154,107,0.22)' : 'rgba(255,255,255,0.5)';
+  // Soft drop shadow + inner top highlight.
+  const cardShadow = isDark
+    ? '0 10px 30px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06)'
+    : '0 10px 30px rgba(90,80,120,0.18), inset 0 1px 0 rgba(255,255,255,0.5)';
   const selBorder  = isDark ? 'rgba(214,178,130,0.95)' : '#320E3B';
   const selGlow    = isDark ? 'rgba(193,154,107,0.15)' : 'rgba(50,14,59,0.12)';
   const optBg      = isDark ? 'rgba(255,240,215,0.05)' : 'rgba(255,255,255,0.2)';
@@ -100,7 +103,7 @@ export default function BuildCharacterPage() {
   const AvatarStage = ({ h = 236 }: { h?: number }) => (
     <div style={{ position: 'relative', width: 214, height: h, margin: '0 auto', display: 'flex', justifyContent: 'center', alignItems: 'flex-end' }}>
       <Character shape={config.shape} colour={config.colour} mood={config.mood} size={208} animate className="" />
-      <ThoughtBubble item={config.item} style={{ position: 'absolute', top: -4, right: 2, zIndex: 3, pointerEvents: 'none' }} />
+      <ThoughtBubble item={config.item} isDark={isDark} style={{ position: 'absolute', top: -4, right: 2, zIndex: 3, pointerEvents: 'none' }} />
     </div>
   );
 
@@ -158,9 +161,9 @@ export default function BuildCharacterPage() {
                     const on = screen === i;
                     return (
                       <button key={label} type="button" onClick={() => setScreen(i as Screen)}
-                        style={{ fontSize: 10.5, padding: '6px 13px', borderRadius: 999, cursor: 'pointer',
-                          background: on ? solid : 'transparent', color: on ? onSolid : txt(0.55),
-                          border: on ? 'none' : `0.5px solid ${acc(0.25)}`, fontWeight: on ? 600 : 400 }}>
+                        style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 13.5, letterSpacing: '0.02em', padding: '5px 14px', borderRadius: 999, cursor: 'pointer',
+                          background: on ? solid : 'transparent', color: on ? onSolid : txt(0.6),
+                          border: on ? 'none' : `0.5px solid ${acc(0.25)}`, fontWeight: on ? 600 : 500 }}>
                         {label}
                       </button>
                     );

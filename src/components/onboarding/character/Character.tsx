@@ -113,15 +113,23 @@ function scribble(cx: number, cy: number, r: number): string {
   const a = r * 1.45, b = r;
   return `M${cx},${cy - b} C${cx + a},${cy - b} ${cx + a},${cy + b} ${cx},${cy + b} C${cx - a},${cy + b} ${cx - a},${cy - b} ${cx + 2},${cy - b + 1} C${cx + a * 0.7},${cy - b * 0.4} ${cx + a * 0.4},${cy + b * 0.6} ${cx - 1},${cy + 1}`;
 }
-function bubbleMarkup(item: ItemId, uid: string): string {
+// Bubble palette flips by theme: plum ink on white (light) / gold ink on
+// parchment (dark) — matching the "gold leads dark" brand direction.
+function bubblePalette(isDark: boolean) {
+  return isDark
+    ? { ink: '#8A6A3C', fill: '#F4E7CE', q: 'rgba(199,163,110,0.55)' }
+    : { ink: PLUM,      fill: '#FFFFFF', q: 'rgba(90,61,84,0.45)' };
+}
+function bubbleMarkup(item: ItemId, uid: string, isDark: boolean): string {
   const rf1 = `brf1-${uid}`, rf2 = `brf2-${uid}`, cr = `bcr-${uid}`;
+  const { ink, fill, q } = bubblePalette(isDark);
   const cloud = 'M42,62 C30,64 27,49 38,45 C32,27 53,19 60,32 C67,19 86,25 82,45 C94,48 90,63 79,62 C76,69 46,69 42,62 Z';
   const dbl = (d: string) =>
-    `<path d="${d}" fill="none" stroke="${PLUM}" stroke-width="2.2" opacity="0.9" stroke-linecap="round" filter="url(#${rf1})"/>` +
-    `<path d="${d}" fill="none" stroke="${PLUM}" stroke-width="1.3" opacity="0.6" stroke-linecap="round" filter="url(#${rf2})"/>`;
+    `<path d="${d}" fill="none" stroke="${ink}" stroke-width="2.2" opacity="0.9" stroke-linecap="round" filter="url(#${rf1})"/>` +
+    `<path d="${d}" fill="none" stroke="${ink}" stroke-width="1.3" opacity="0.6" stroke-linecap="round" filter="url(#${rf2})"/>`;
   const inner = item !== 'none'
     ? `<g filter="url(#${cr})" transform="translate(-22,21) scale(0.8)">${itemArt(item)}</g>`
-    : `<text x="58" y="47" text-anchor="middle" font-size="26" fill="rgba(90,61,84,0.45)" font-family="Georgia,serif">?</text>`;
+    : `<text x="58" y="47" text-anchor="middle" font-size="26" fill="${q}" font-family="Georgia,serif">?</text>`;
   return (
     `<svg width="110" height="98" viewBox="0 0 110 98" style="overflow:visible;display:block">` +
     `<defs>` +
@@ -129,17 +137,17 @@ function bubbleMarkup(item: ItemId, uid: string): string {
     `<filter id="${rf2}" x="-30%" y="-30%" width="160%" height="160%"><feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="1" seed="3" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="2.5" xChannelSelector="R" yChannelSelector="G"/></filter>` +
     `<filter id="${cr}" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="turbulence" baseFrequency="0.09" numOctaves="1" seed="4" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="2" xChannelSelector="R" yChannelSelector="G"/></filter>` +
     `</defs>` +
-    `<path d="${cloud}" fill="#FFFFFF" filter="url(#${rf1})"/>` +
-    `<path d="${cloud}" fill="none" stroke="${PLUM}" stroke-width="2.2" opacity="0.9" filter="url(#${rf1})"/>` +
-    `<path d="${cloud}" fill="none" stroke="${PLUM}" stroke-width="1.3" opacity="0.6" filter="url(#${rf2})"/>` +
+    `<path d="${cloud}" fill="${fill}" filter="url(#${rf1})"/>` +
+    `<path d="${cloud}" fill="none" stroke="${ink}" stroke-width="2.2" opacity="0.9" filter="url(#${rf1})"/>` +
+    `<path d="${cloud}" fill="none" stroke="${ink}" stroke-width="1.3" opacity="0.6" filter="url(#${rf2})"/>` +
     dbl(scribble(40, 74, 3.8)) + dbl(scribble(31, 84, 2.5)) +
     inner + `</svg>`
   );
 }
-export function ThoughtBubble({ item, className, style }: { item: ItemId; className?: string; style?: React.CSSProperties }) {
+export function ThoughtBubble({ item, isDark = false, className, style }: { item: ItemId; isDark?: boolean; className?: string; style?: React.CSSProperties }) {
   const uid = useId().replace(/:/g, '');
   if (item === 'none') return null;
   return (
-    <span className={className} style={style} aria-hidden="true" dangerouslySetInnerHTML={{ __html: bubbleMarkup(item, uid) }} />
+    <span className={className} style={style} aria-hidden="true" dangerouslySetInnerHTML={{ __html: bubbleMarkup(item, uid, isDark) }} />
   );
 }

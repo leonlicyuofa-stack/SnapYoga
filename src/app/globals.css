@@ -272,4 +272,5 @@
 .sy-char-bob { animation: syCharBob 5s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) {
   .sy-char-bob { animation: none !important; }
+  .sy-echo-spin { animation: none !important; }
 }
