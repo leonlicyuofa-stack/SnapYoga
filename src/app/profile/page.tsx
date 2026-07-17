@@ -11,7 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Save, Share2, Copy, MessageSquare, Sun, Moon, Pencil, KeyRound, Star, Crown } from 'lucide-react';
+import { Save, Share2, Copy, MessageSquare, Sun, Moon, Pencil, KeyRound, Star, Crown, LogOut } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, query, where, getDocs, orderBy, limit, doc, getDoc } from 'firebase/firestore';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -42,10 +43,16 @@ const passwordChangeSchema = z.object({
 type PasswordChangeFormValues = z.infer<typeof passwordChangeSchema>;
 
 export default function ProfilePage() {
-  const { user, updateUserPassword, updateUserDisplayName, loading: authLoading, membershipTier, isGold } = useAuth();
+  const { user, updateUserPassword, updateUserDisplayName, signOutUser, loading: authLoading, membershipTier, isGold } = useAuth();
   const { t } = useLanguage();
   const { isDark, toggleTheme } = useTheme();
   const { toast } = useToast();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOutUser();
+    router.push('/auth/signin');
+  };
   // Light = amethyst on lavender; dark = the original cream/gold on ink.
   const txt = (a: number) => isDark ? `rgba(255,240,215,${a})` : `rgba(50,14,59,${a})`;
   const acc = (a: number) => isDark ? `rgba(193,154,107,${a})` : `rgba(50,14,59,${a})`;
@@ -600,6 +607,20 @@ export default function ProfilePage() {
                           </div>
                         </div>
                       </div>
+
+                      <button
+                        onClick={handleSignOut}
+                        style={{
+                          width: '100%', marginTop: 12, height: 46, borderRadius: 14,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                          cursor: 'pointer', fontSize: 13, fontWeight: 500,
+                          background: isDark ? 'rgba(255,240,215,0.03)' : 'rgba(255,255,255,0.16)',
+                          border: `0.5px solid ${isDark ? 'rgba(200,90,100,0.45)' : 'rgba(150,45,55,0.5)'}`,
+                          color: isDark ? '#d98a92' : '#8a2e37',
+                        }}
+                      >
+                        <LogOut style={{ width: 16, height: 16 }} /> Sign out
+                      </button>
                   </div>
               </div>
             </main>
