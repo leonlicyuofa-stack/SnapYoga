@@ -615,8 +615,8 @@ export default function ProfilePage() {
                           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                           cursor: 'pointer', fontSize: 13, fontWeight: 500,
                           background: isDark ? 'rgba(255,240,215,0.03)' : 'rgba(255,255,255,0.16)',
-                          border: `0.5px solid ${isDark ? 'rgba(200,90,100,0.45)' : 'rgba(150,45,55,0.5)'}`,
-                          color: isDark ? '#d98a92' : '#8a2e37',
+                          border: `0.5px solid ${isDark ? 'rgba(193,154,107,0.40)' : 'rgba(50,14,59,0.35)'}`,
+                          color: isDark ? 'rgba(193,154,107,0.90)' : '#320E3B',
                         }}
                       >
                         <LogOut style={{ width: 16, height: 16 }} /> Sign out
