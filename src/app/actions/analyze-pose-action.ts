@@ -12,61 +12,90 @@ import { v4 as uuidv4 } from 'uuid';
 import { createGoogleAuth } from '@/lib/gcp/credentials';
 import { getAdminFirestore, getAdminStorageBucket } from '@/lib/firebase/adminApp';
 
-/** Default v2 route; must match your Cloud Run app. */
+/** Default v2 route; must match your Cloud Run app (see /openapi.json on the service). */
 const DEFAULT_VISION_PATH = '/v2/analyze-video-vision';
 
-const DEFAULT_ANALYSIS_SERVICE_URL = `https://gcloud-yoga-pose-test-526785842170.asia-east2.run.app${DEFAULT_VISION_PATH}`;
+const DEFAULT_ANALYSIS_SERVICE_ORIGIN =
+  'https://gcloud-yoga-pose-test-526785842170.asia-east2.run.app';
+
+const DEFAULT_ANALYSIS_SERVICE_URL = `${DEFAULT_ANALYSIS_SERVICE_ORIGIN}${DEFAULT_VISION_PATH}`;
+
+function resolveVisionPath(): string {
+  const customPath = process.env.ANALYSIS_SERVICE_PATH?.trim();
+  if (!customPath) return DEFAULT_VISION_PATH;
+  return customPath.startsWith('/') ? customPath : `/${customPath}`;
+}
+
+/** Normalize path: collapse slashes, drop trailing slash (FastAPI 404/307 on mismatch). */
+function normalizeServiceUrl(url: string): string {
+  const u = new URL(url);
+  u.pathname = u.pathname.replace(/\/+/g, '/').replace(/\/+$/, '') || '/';
+  return u.toString();
+}
 
 /**
  * ANALYSIS_SERVICE_URL is often set to the Cloud Run origin only in Firebase/GCP.
- * POST to `/` returns 405 if the handler lives under `/v2/...` only.
+ * ANALYSIS_SERVICE_PATH can override the POST path (default: /v2/analyze-video-vision).
  */
 function resolveAnalysisServiceUrl(): string {
   const raw = process.env.ANALYSIS_SERVICE_URL?.trim();
-  if (!raw) return DEFAULT_ANALYSIS_SERVICE_URL;
+  if (!raw) return normalizeServiceUrl(DEFAULT_ANALYSIS_SERVICE_URL);
 
   try {
     const withScheme = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
     const u = new URL(withScheme);
-    const normalizedPath = (u.pathname.replace(/\/+$/, '') || '') || '/';
-    // Origin-only → use full vision path (POST / alone causes 405 on many FastAPI apps).
-    if (normalizedPath === '' || normalizedPath === '/') {
-      return new URL(DEFAULT_VISION_PATH, `${u.origin}/`).toString();
+    const normalizedPath = u.pathname.replace(/\/+$/, '') || '/';
+
+    // Origin-only → attach vision path.
+    if (normalizedPath === '/') {
+      return normalizeServiceUrl(new URL(resolveVisionPath(), `${u.origin}/`).toString());
     }
-    return u.toString();
+
+    return normalizeServiceUrl(u.toString());
   } catch {
     console.warn('Invalid ANALYSIS_SERVICE_URL, using default vision URL.');
-    return DEFAULT_ANALYSIS_SERVICE_URL;
+    return normalizeServiceUrl(DEFAULT_ANALYSIS_SERVICE_URL);
   }
 }
 
 /**
  * Last line of defense: if anything above produced a root URL, always attach the vision route.
- * (Also makes server logs honest about the pathname we POST to.)
  */
 function ensurePostTargetsVisionRoute(url: string): string {
   try {
     const u = new URL(url);
-    const pathOnly = (u.pathname.replace(/\/+$/, '') || '') || '/';
-    if (pathOnly === '/' || pathOnly === '') {
-      const fixed = new URL(DEFAULT_VISION_PATH, `${u.origin}/`).toString();
+    const pathOnly = u.pathname.replace(/\/+$/, '') || '/';
+    if (pathOnly === '/') {
+      const fixed = normalizeServiceUrl(new URL(resolveVisionPath(), `${u.origin}/`).toString());
       console.warn(
-        `[pose-analysis] ANALYSIS_SERVICE_URL resolved to root; forcing path ${DEFAULT_VISION_PATH}. Now: ${fixed}`
+        `[pose-analysis] ANALYSIS_SERVICE_URL resolved to root; forcing path ${resolveVisionPath()}. Now: ${fixed}`
       );
       return fixed;
     }
-    return url;
+    return normalizeServiceUrl(url);
   } catch {
-    return DEFAULT_ANALYSIS_SERVICE_URL;
+    return normalizeServiceUrl(DEFAULT_ANALYSIS_SERVICE_URL);
   }
 }
 
-// Define the schema for the action's input
+function cloudRunOrigin(serviceUrl: string): string {
+  return new URL(serviceUrl).origin;
+}
+
+// Define the schema for the action's input.
+// Media is uploaded to Firebase Storage directly from the browser; the action
+// only receives the resulting storage path (no large payload through Vercel).
 const AnalyzePoseInputSchema = z.object({
-  videoDataUri: z
+  userId: z.string().min(1).describe("The UID of the user uploading the media."),
+  objectPath: z
     .string()
-    .describe("A video or image of the user performing a yoga pose, as a data URI."),
-  userId: z.string().describe("The UID of the user uploading the video."),
+    .min(1)
+    .describe("Storage object path, e.g. user-media/{uid}/{id}.mp4."),
+  mediaUrl: z
+    .string()
+    .url()
+    .describe("Public download URL for the uploaded media (from getDownloadURL)."),
+  mimeType: z.string().min(1).describe("MIME type of the uploaded media."),
   userNotes: z.string().optional().describe("Optional context or questions from the user."),
 });
 
@@ -346,46 +375,26 @@ function extensionFromMimeType(mimeType: string): string {
   return extension;
 }
 
-function mediaObjectPath(userId: string, mediaId: string, extension: string): string {
-  return `user-media/${userId}/${mediaId}.${extension}`;
-}
-
 /**
- * Upload video/image via Firebase Admin (server-side; bypasses client auth on Vercel).
+ * Ensure the client-supplied object path belongs to the calling user and lives
+ * under the expected media prefix, then resolve it to a gs:// URL using the
+ * server's authoritative bucket name.
  */
-async function uploadMediaToStorage(
-  dataUri: string,
-  userId: string,
-  mediaId: string,
-  mimeType: string,
-  userNotes?: string
-): Promise<{ mediaUrl: string; gsPath: string; objectPath: string }> {
-  const extension = extensionFromMimeType(mimeType);
-  const objectPath = mediaObjectPath(userId, mediaId, extension);
-  const base64Payload = dataUri.includes(',') ? dataUri.split(',')[1] : dataUri;
-  const buffer = Buffer.from(base64Payload, 'base64');
-  const downloadToken = uuidv4();
+function resolveUserMediaGsPath(userId: string, objectPath: string): string {
+  const normalized = objectPath.replace(/^\/+/, '');
+  const expectedPrefix = `user-media/${userId}/`;
 
-  const bucket = getAdminStorageBucket().bucket();
-  const file = bucket.file(objectPath);
+  if (!normalized.startsWith(expectedPrefix)) {
+    throw new Error(
+      `Invalid media path for this user. Expected it to start with "${expectedPrefix}".`
+    );
+  }
+  if (normalized.includes('..')) {
+    throw new Error('Invalid media path.');
+  }
 
-  await file.save(buffer, {
-    metadata: {
-      contentType: mimeType,
-      metadata: {
-        firebaseStorageDownloadTokens: downloadToken,
-        userId,
-        userNotes: userNotes || '',
-        uploadedAt: new Date().toISOString(),
-      },
-    },
-  });
-
-  const encodedPath = encodeURIComponent(objectPath);
-  const mediaUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodedPath}?alt=media&token=${downloadToken}`;
-  const gsPath = `gs://${bucket.name}/${objectPath}`;
-
-  return { mediaUrl, gsPath, objectPath };
+  const bucketName = getAdminStorageBucket().bucket().name;
+  return `gs://${bucketName}/${normalized}`;
 }
 
 /**
@@ -395,34 +404,18 @@ async function uploadMediaToStorage(
 export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<AnalysisServiceOutput> {
   // Validate input from client
   const validatedInput = AnalyzePoseInputSchema.parse(input);
-  const { userId, videoDataUri, userNotes } = validatedInput;
+  const { userId, objectPath, mediaUrl, mimeType, userNotes } = validatedInput;
 
   const mediaId = uuidv4();
-  const mimeType = videoDataUri.match(/data:(.*);base64,/)?.[1] || 'video/mp4';
   const extension = extensionFromMimeType(mimeType);
 
+  // Media is already in Storage (uploaded directly from the browser).
+  // Validate ownership and resolve the gs:// path from the server's bucket.
+  const gsPath = resolveUserMediaGsPath(userId, objectPath);
+
   const analysisServiceUrl = ensurePostTargetsVisionRoute(resolveAnalysisServiceUrl());
+  console.info(`[pose-analysis] POST ${analysisServiceUrl} for ${gsPath}`);
 
-  let mediaUrl = '';
-  let gsPath = '';
-
-  // 1. Upload to Storage (Admin SDK — works on Vercel without client auth)
-  try {
-    const uploaded = await uploadMediaToStorage(
-      videoDataUri,
-      userId,
-      mediaId,
-      mimeType,
-      userNotes
-    );
-    mediaUrl = uploaded.mediaUrl;
-    gsPath = uploaded.gsPath;
-  } catch (e: unknown) {
-    const message = e instanceof Error ? e.message : String(e);
-    console.error('Error uploading media for pose analysis:', e);
-    throw new Error(message);
-  }
-  
   let response: Response = new Response(null, { status: 500 });
   let rawAnalysisResult: Record<string, unknown> | { error: string } = {};
   let responseStatus = 500;
@@ -430,9 +423,9 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
   let errorBody = '';
 
   try {
-      // Authenticate with Cloud Run (explicit SA on Vercel; ADC fallback locally)
+      // Cloud Run ID token audience is the service origin (not the path).
       const auth = createGoogleAuth();
-      const client = await auth.getIdTokenClient(analysisServiceUrl);
+      const client = await auth.getIdTokenClient(cloudRunOrigin(analysisServiceUrl));
       const headers = await client.getRequestHeaders();
 
       // 3. Bundle everything for the API request
@@ -456,7 +449,15 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
 
       if (!response.ok) {
           errorBody = await response.text();
-          throw new Error(`Analysis service failed with status ${response.status}: ${errorBody}`);
+          const hint =
+            response.status === 404
+              ? ` Route not found on Cloud Run. Verify ANALYSIS_SERVICE_URL is your *.run.app origin ` +
+                `(e.g. ${DEFAULT_ANALYSIS_SERVICE_ORIGIN}) or set ANALYSIS_SERVICE_PATH=/v2/analyze-video-vision. ` +
+                `Check routes at {origin}/openapi.json. Called: ${analysisServiceUrl}`
+              : '';
+          throw new Error(
+            `Analysis service failed with status ${response.status}: ${errorBody}.${hint}`
+          );
       }
       
       rawAnalysisResult = await response.json();
@@ -488,7 +489,13 @@ export async function performPoseAnalysis(input: AnalyzePoseInput): Promise<Anal
   }
 
   if (!responseOk) {
-      throw new Error(`Analysis service failed with status ${responseStatus}: ${errorBody}`);
+      const hint =
+        responseStatus === 404
+          ? ` (POST ${analysisServiceUrl} — check ANALYSIS_SERVICE_URL on Vercel)`
+          : '';
+      throw new Error(
+        `Analysis service failed with status ${responseStatus}: ${errorBody}${hint}`
+      );
   }
   
   const finalResult = parseAnalysisServiceResponse(rawAnalysisResult, mediaUrl);

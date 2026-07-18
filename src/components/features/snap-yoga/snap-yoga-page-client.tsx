@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { performPoseAnalysis, type AnalysisServiceOutput } from '@/app/actions/analyze-pose-action';
 import { summarizeFeedback, type SummarizeFeedbackInput, type SummarizeFeedbackOutput } from '@/ai/flows/summarize-feedback';
 import { PoseAnalysisCard, getScoreLevel } from './pose-analysis-card';
@@ -14,11 +15,23 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal, Video, Play, ArrowRight, ArrowLeft, MessageCircle } from "lucide-react";
 import { Separator } from '@/components/ui/separator';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
-import { firestore } from '@/lib/firebase/clientApp';
+import { firestore, storage } from '@/lib/firebase/clientApp';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Textarea } from '@/components/ui/textarea';
 import { TopBarIcons } from '@/components/layout/top-bar-icons';
+
+const MAX_UPLOAD_BYTES = 150 * 1024 * 1024; // 150MB
+
+function extensionForFile(file: File): string {
+  const fromName = file.name.includes('.') ? file.name.split('.').pop()!.toLowerCase() : '';
+  if (fromName) return fromName === 'jpeg' ? 'jpg' : fromName;
+  let ext = (file.type.split('/')[1] || 'mp4').toLowerCase();
+  if (ext === 'jpeg') ext = 'jpg';
+  if (ext === 'quicktime') ext = 'mov';
+  return ext;
+}
 
 export function SnapYogaPageClient() {
   const { user: currentUser, isGold } = useAuth();
@@ -36,13 +49,18 @@ export function SnapYogaPageClient() {
   const [showFullResults, setShowFullResults] = useState(false);
   const [isUpgradeSheetOpen, setIsUpgradeSheetOpen] = useState(false);
 
+  // Local preview URL (object URL) for the selected media; the raw File is what we upload.
   const [videoDataUri, setVideoDataUri] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [mediaKind, setMediaKind] = useState<'video' | 'image'>('video');
   const [videoFileName, setVideoFileName] = useState<string | null>(null);
   const [userNotes, setUserNotes] = useState<string>("");
   const [analysisResult, setAnalysisResult] = useState<AnalysisServiceOutput | null>(null);
   const [summaryResult, setSummaryResult] = useState<SummarizeFeedbackOutput | null>(null);
   const [recommendedVideos, setRecommendedVideos] = useState<StorageVideo[]>([]);
   
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
   const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
@@ -53,31 +71,84 @@ export function SnapYogaPageClient() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      if (file.type.startsWith('video/')) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setVideoDataUri(reader.result as string);
-          setVideoFileName(file.name);
-          setCurrentStep(2);
-        };
-        reader.readAsDataURL(file);
-      } else {
-        toast({
-          title: "Invalid File Type",
-          description: "Please select a video file.",
-          variant: "destructive",
-        });
-        if (fileInputRef.current) fileInputRef.current.value = "";
-      }
+    if (!file) return;
+
+    const isVideo = file.type.startsWith('video/');
+    const isImage = file.type.startsWith('image/');
+
+    if (!isVideo && !isImage) {
+      toast({
+        title: "Invalid File Type",
+        description: "Please select a video or image file.",
+        variant: "destructive",
+      });
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
     }
+
+    if (file.size > MAX_UPLOAD_BYTES) {
+      toast({
+        title: "File Too Large",
+        description: "Please choose a file under 150MB.",
+        variant: "destructive",
+      });
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
+    // Use an object URL for preview so we never load a 150MB file into memory as base64.
+    if (videoDataUri) URL.revokeObjectURL(videoDataUri);
+    const previewUrl = URL.createObjectURL(file);
+    setVideoDataUri(previewUrl);
+    setSelectedFile(file);
+    setMediaKind(isImage ? 'image' : 'video');
+    setVideoFileName(file.name);
+    setCurrentStep(2);
+  };
+
+  const uploadToStorage = (
+    file: File,
+    userId: string
+  ): Promise<{ objectPath: string; mediaUrl: string }> => {
+    const extension = extensionForFile(file);
+    const objectPath = `user-media/${userId}/${uuidv4()}.${extension}`;
+    const fileRef = storageRef(storage, objectPath);
+    const task = uploadBytesResumable(fileRef, file, {
+      contentType: file.type || undefined,
+      customMetadata: {
+        userId,
+        userNotes: userNotes || '',
+        uploadedAt: new Date().toISOString(),
+      },
+    });
+
+    return new Promise((resolve, reject) => {
+      task.on(
+        'state_changed',
+        (snapshot) => {
+          const pct = snapshot.totalBytes
+            ? Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
+            : 0;
+          setUploadProgress(pct);
+        },
+        (err) => reject(err),
+        async () => {
+          try {
+            const mediaUrl = await getDownloadURL(task.snapshot.ref);
+            resolve({ objectPath, mediaUrl });
+          } catch (err) {
+            reject(err);
+          }
+        }
+      );
+    });
   };
 
   const handleStartAnalysis = async () => {
-    if (!currentUser || !videoDataUri) {
+    if (!currentUser || !selectedFile) {
         toast({
             title: "Error",
-            description: "Missing video data or authentication.",
+            description: "Missing media or authentication.",
             variant: "destructive",
         });
         return;
@@ -87,17 +158,28 @@ export function SnapYogaPageClient() {
     setSummaryResult(null); 
     setRecommendedVideos([]);
     setError(null);
-    setIsLoadingAnalysis(true);
-    setIsLoadingRecommendations(true);
+    setUploadProgress(0);
+    setIsUploading(true);
 
     try {
+      // 1. Upload media directly to Firebase Storage (bypasses Vercel body limit).
+      const { objectPath, mediaUrl } = await uploadToStorage(selectedFile, currentUser.uid);
+
+      setIsUploading(false);
+      setIsLoadingAnalysis(true);
+      setIsLoadingRecommendations(true);
+
+      // 2. Ask the server action to run analysis using the storage path only.
       const result = await performPoseAnalysis({ 
-          videoDataUri: videoDataUri,
           userId: currentUser.uid,
+          objectPath,
+          mediaUrl,
+          mimeType: selectedFile.type || 'video/mp4',
           userNotes: userNotes,
       });
       
       if (result.videoUrl) {
+          if (videoDataUri) URL.revokeObjectURL(videoDataUri);
           setVideoDataUri(result.videoUrl);
       }
       
@@ -129,6 +211,7 @@ export function SnapYogaPageClient() {
         description: `${errorMessage}`,
         variant: "destructive",
       });
+      setIsUploading(false);
       setIsLoadingRecommendations(false);
       setIsLoadingAnalysis(false); // hide the loader on failure
     }
@@ -199,12 +282,16 @@ export function SnapYogaPageClient() {
   };
 
   const handleReset = () => {
+    if (videoDataUri && videoDataUri.startsWith('blob:')) URL.revokeObjectURL(videoDataUri);
     setVideoDataUri(null);
+    setSelectedFile(null);
+    setMediaKind('video');
     setVideoFileName(null);
     setUserNotes("");
     setAnalysisResult(null);
     setSummaryResult(null);
     setShowFullResults(false);
+    setUploadProgress(0);
     setCurrentStep(1);
   };
 
@@ -236,7 +323,18 @@ export function SnapYogaPageClient() {
           ))}
         </div>
 
-        {isLoadingAnalysis ? (
+        {isUploading ? (
+          <div className="flex-1 flex flex-col items-center justify-center gap-4 py-16 animate-in fade-in duration-300">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: acc(0.12) }}>
+              <Video style={{ color: acc(0.85) }} className="w-8 h-8" />
+            </div>
+            <p style={{ fontSize: 13, fontWeight: 500, color: txt(0.85) }}>Uploading your {mediaKind}…</p>
+            <div style={{ width: '80%', maxWidth: 320, height: 6, borderRadius: 999, background: txt(0.12), overflow: 'hidden' }}>
+              <div style={{ width: `${uploadProgress}%`, height: '100%', background: acc(0.85), transition: 'width 0.2s ease' }} />
+            </div>
+            <p style={{ fontSize: 11, color: txt(0.42) }}>{uploadProgress}%</p>
+          </div>
+        ) : isLoadingAnalysis ? (
           <AnalysisLoader
             score={analysisResult ? Math.round(analysisResult.score) : null}
             onComplete={handleRevealComplete}
@@ -247,8 +345,8 @@ export function SnapYogaPageClient() {
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div>
                   <p style={{ fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: acc(0.55), fontWeight: 500 }}>Step 1 of 3</p>
-                  <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 20, fontWeight: 600, color: TITLE, textShadow: TITLE_SH, marginTop: 4 }}>Upload Your Video</h2>
-                  <p style={{ fontSize: 10, fontStyle: 'italic', color: txt(0.42), marginTop: 2 }}>Record or select a video of your yoga pose for AI analysis.</p>
+                  <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 20, fontWeight: 600, color: TITLE, textShadow: TITLE_SH, marginTop: 4 }}>Upload Your Practice</h2>
+                  <p style={{ fontSize: 10, fontStyle: 'italic', color: txt(0.42), marginTop: 2 }}>Record or select a video or photo of your yoga pose for AI analysis.</p>
                 </div>
 
                 <div
@@ -264,12 +362,12 @@ export function SnapYogaPageClient() {
                   <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-transform group-hover:scale-110" style={{ background: acc(0.12) }}>
                     <Video style={{ color: acc(0.85) }} className="w-8 h-8" />
                   </div>
-                  <p className="font-medium mb-1 text-[#320E3B]/85 dark:text-white/80">Tap to upload a video of your practice</p>
-                  <p className="text-xs text-[#320E3B]/55 dark:text-white/40">MP4, MOV · Max 50MB</p>
+                  <p className="font-medium mb-1 text-[#320E3B]/85 dark:text-white/80">Tap to upload a video or photo of your practice</p>
+                  <p className="text-xs text-[#320E3B]/55 dark:text-white/40">MP4, MOV, JPG, PNG · Max 150MB</p>
 
                   <div className="mt-6">
                     <span style={{ color: isDark ? 'rgba(193,154,107,0.92)' : 'rgba(255,248,235,0.95)', background: isDark ? 'rgba(193,154,107,0.12)' : '#320E3B', border: `0.5px solid ${acc(0.40)}`, borderRadius: 999, padding: '8px 24px', fontSize: 13, fontWeight: 500 }}>
-                      Choose Video
+                      Choose File
                     </span>
                   </div>
                   
@@ -277,7 +375,7 @@ export function SnapYogaPageClient() {
                     type="file" 
                     ref={fileInputRef}
                     onChange={handleFileChange}
-                    accept="video/*"
+                    accept="video/*,image/*"
                     className="hidden"
                   />
                 </div>
@@ -289,12 +387,16 @@ export function SnapYogaPageClient() {
                 <div>
                   <p style={{ fontSize: 9, letterSpacing: '0.25em', textTransform: 'uppercase', color: acc(0.55), fontWeight: 500 }}>Step 2 of 3</p>
                   <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 20, fontWeight: 600, color: TITLE, textShadow: TITLE_SH, marginTop: 4 }}>Review & Add Context</h2>
-                  <p style={{ fontSize: 10, fontStyle: 'italic', color: txt(0.42), marginTop: 2 }}>Confirm your video and add any notes before analysis.</p>
+                  <p style={{ fontSize: 10, fontStyle: 'italic', color: txt(0.42), marginTop: 2 }}>Confirm your {mediaKind} and add any notes before analysis.</p>
                 </div>
 
                 {videoDataUri && (
                   <div style={{ height: '150px', borderRadius: 16, border: `0.5px solid ${cardBorder}`, overflow: 'hidden', background: 'black' }}>
-                    <video src={videoDataUri} controls className="w-full h-full object-contain" />
+                    {mediaKind === 'image' ? (
+                      <img src={videoDataUri} alt="Selected pose" className="w-full h-full object-contain" />
+                    ) : (
+                      <video src={videoDataUri} controls className="w-full h-full object-contain" />
+                    )}
                   </div>
                 )}
 
@@ -317,7 +419,7 @@ export function SnapYogaPageClient() {
                   <span style={{ color: isDark ? 'rgba(255,240,215,0.90)' : '#320E3B', fontSize: 15, fontWeight: 600 }}>Analyze Pose</span>
                   <button
                     onClick={handleStartAnalysis}
-                    disabled={isLoadingAnalysis}
+                    disabled={isLoadingAnalysis || isUploading}
                     aria-label="Analyze pose"
                     style={{ color: isDark ? 'rgba(25,16,8,0.95)' : 'rgba(255,248,235,0.95)', background: isDark ? 'rgba(193,154,107,0.85)' : '#320E3B', border: `0.5px solid ${isDark ? 'rgba(255,255,255,0.20)' : acc(0.40)}`, width: 48, height: 48, borderRadius: 999 }}
                     className="inline-flex items-center justify-center transition-all active:scale-95 disabled:opacity-50"
