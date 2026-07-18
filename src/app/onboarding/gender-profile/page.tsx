@@ -35,7 +35,16 @@ export default function BuildCharacterPage() {
   const [config, setConfig] = useState<CharacterConfig>(DEFAULT_CHARACTER);
   const [screen, setScreen] = useState<Screen>(0);
   const [isSaving, setIsSaving] = useState(false);
+  // Editing the avatar from the profile (or an already-onboarded user) should NOT
+  // continue into the onboarding chain — finish returns to the profile instead.
+  const [editContext, setEditContext] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('edit') === '1') {
+      setEditContext(true);
+    }
+  }, []);
 
   // Light = amethyst on lavender (per spec); dark = parchment/gold (tuned later).
   const txt = (a: number) => isDark ? `rgba(255,240,215,${a})` : `rgba(50,14,59,${a})`;
@@ -60,10 +69,13 @@ export default function BuildCharacterPage() {
   useEffect(() => {
     if (user && !authLoading) {
       getDoc(doc(firestore, 'users', user.uid)).then(snap => {
-        const c = snap.exists() ? snap.data().character : null;
+        const data = snap.exists() ? snap.data() : null;
+        const c = data?.character;
         if (c && c.shape && c.colour && c.mood) {
           setConfig({ shape: c.shape, colour: c.colour, mood: c.mood, item: c.item || 'none' });
         }
+        // Already-onboarded users are editing, not onboarding.
+        if (data?.onboardingCompleted) setEditContext(true);
       });
     }
   }, [user, authLoading]);
@@ -97,7 +109,7 @@ export default function BuildCharacterPage() {
     if (typeof screen === 'number' && screen < 3) { setScreen((screen + 1) as Screen); return; }
     if (screen === 3) { setScreen('review'); return; }
     if (screen === 'review') { saveAndFinish(); return; }
-    if (screen === 'success') { router.push('/onboarding/yoga-goal'); }
+    if (screen === 'success') { router.push(editContext ? '/profile' : '/onboarding/yoga-goal'); }
   };
 
   const AvatarStage = ({ h = 236 }: { h?: number }) => (

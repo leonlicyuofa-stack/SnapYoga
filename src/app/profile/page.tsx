@@ -264,7 +264,7 @@ export default function ProfilePage() {
                   </div>
                   
                   <a
-                    href="/onboarding/gender-profile"
+                    href="/onboarding/gender-profile?edit=1"
                     style={{
                       position: 'absolute',
                       bottom: 0,

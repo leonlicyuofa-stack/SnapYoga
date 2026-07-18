@@ -1,12 +1,24 @@
 "use client";
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Check, ArrowUp } from 'lucide-react';
+import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { OnboardingHeader } from '@/components/onboarding/onboarding-header';
 import { OnboardingThemeToggle } from '@/components/onboarding/onboarding-theme-toggle';
 
 export default function OnboardingCompletePage() {
   const router = useRouter();
+  const { user } = useAuth();
+
+  // Mark onboarding finished so future sign-ins go straight to the dashboard
+  // instead of being routed back through the onboarding flow.
+  useEffect(() => {
+    if (user) {
+      createUserProfileDocument(user, { onboardingCompleted: true })
+        .catch(err => console.error('Failed to mark onboarding complete:', err));
+    }
+  }, [user]);
 
   const handleContinue = () => {
     router.push('/dashboard');
