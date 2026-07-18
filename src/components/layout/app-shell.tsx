@@ -65,6 +65,38 @@ export function AppShell({ children }: AppShellProps) {
 
   const isActive = (path: string) => pathname === path;
 
+  // Bottom-nav item — the active tab expands to show its label.
+  const renderNavItem = (item: typeof navItems[number]) => {
+    const active = isActive(item.href);
+    const dark = theme === 'dark';
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        aria-label={item.label}
+        className="flex items-center justify-center gap-[7px] rounded-full transition-all duration-300 active:scale-90"
+        style={active
+          ? {
+              height: 44, padding: '0 14px',
+              background: dark ? 'rgba(193,154,107,0.20)' : 'rgba(50,14,59,0.12)',
+              border: `0.5px solid ${dark ? 'rgba(193,154,107,0.40)' : 'transparent'}`,
+              color: dark ? 'rgba(214,178,130,1)' : '#320E3B',
+            }
+          : {
+              height: 44, width: 44,
+              color: dark ? 'rgba(255,240,215,0.40)' : 'rgba(50,14,59,0.50)',
+            }}
+      >
+        <item.icon className="h-[22px] w-[22px] shrink-0" />
+        {active && (
+          <span className="text-[13px] font-sans font-medium whitespace-nowrap" style={{ color: dark ? 'rgba(255,240,215,0.96)' : '#320E3B' }}>
+            {item.label}
+          </span>
+        )}
+      </Link>
+    );
+  };
+
   // List of routes where the top header is hidden because they provide their own header/toggle
   const hideHeaderRoutes = ['/dashboard', '/snap-yoga', '/practice-calendar', '/challenges', '/challenges/headstand', '/challenges/crow', '/profile', '/mood-tracker'];
 
@@ -114,47 +146,46 @@ export function AppShell({ children }: AppShellProps) {
           {children}
         </main>
 
-        {/* BOTTOM NAVIGATION — floating pill; the active tab expands with its label */}
-        <nav
-          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex items-center gap-1 rounded-full px-2 py-2 backdrop-blur-xl transition-colors duration-300"
-          style={theme === 'dark'
-            ? { background: 'rgba(255,255,255,0.06)', border: '0.5px solid rgba(255,255,255,0.10)', boxShadow: '0 8px 22px rgba(0,0,0,0.35)' }
-            : { background: 'rgba(255,252,248,0.90)', border: '0.5px solid rgba(255,255,255,0.50)', boxShadow: '0 8px 22px rgba(60,40,70,0.18)' }}
+        {/* BOTTOM NAVIGATION — notched floating pill with a raised Analyze button */}
+        <div
+          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40"
+          style={{ width: 'min(340px, calc(100vw - 32px))' }}
         >
-          {[navItems[0], navItems[2], navItems[1], navItems[3], navItems[4]].map((item) => {
-            const active = isActive(item.href);
-            const dark = theme === 'dark';
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-label={item.label}
-                className="flex items-center justify-center gap-[7px] rounded-full transition-all duration-300 active:scale-90"
-                style={active
-                  ? {
-                      height: 44, padding: '0 16px',
-                      background: dark ? 'rgba(193,154,107,0.20)' : 'rgba(50,14,59,0.12)',
-                      border: `0.5px solid ${dark ? 'rgba(193,154,107,0.40)' : 'transparent'}`,
-                      color: dark ? 'rgba(214,178,130,1)' : '#320E3B',
-                    }
-                  : {
-                      height: 44, width: 44,
-                      color: dark ? 'rgba(255,240,215,0.40)' : 'rgba(50,14,59,0.50)',
-                    }}
-              >
-                <item.icon className="h-[22px] w-[22px] shrink-0" />
-                {active && (
-                  <span
-                    className="text-[13px] font-sans font-medium whitespace-nowrap"
-                    style={{ color: dark ? 'rgba(255,240,215,0.96)' : '#320E3B' }}
-                  >
-                    {item.label}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
-        </nav>
+          <nav
+            className="relative flex items-center rounded-full px-3 backdrop-blur-xl transition-colors duration-300"
+            style={{
+              height: 56,
+              maskImage: 'radial-gradient(circle 33px at 50% 0, transparent 32px, #000 33px)',
+              WebkitMaskImage: 'radial-gradient(circle 33px at 50% 0, transparent 32px, #000 33px)',
+              ...(theme === 'dark'
+                ? { background: 'rgba(255,255,255,0.06)', border: '0.5px solid rgba(255,255,255,0.10)', boxShadow: '0 8px 22px rgba(0,0,0,0.35)' }
+                : { background: 'rgba(255,252,248,0.90)', border: '0.5px solid rgba(255,255,255,0.50)', boxShadow: '0 8px 22px rgba(60,40,70,0.18)' }),
+            }}
+          >
+            <div className="flex flex-1 items-center justify-start gap-1">
+              {[navItems[0], navItems[2]].map(renderNavItem)}
+            </div>
+            <div style={{ width: 58, flexShrink: 0 }} aria-hidden="true" />
+            <div className="flex flex-1 items-center justify-end gap-1">
+              {[navItems[3], navItems[4]].map(renderNavItem)}
+            </div>
+          </nav>
+
+          {/* Raised Analyze button, nestled in the dent */}
+          <Link
+            href={navItems[1].href}
+            aria-label={navItems[1].label}
+            className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center rounded-full transition-transform hover:scale-105 active:scale-90"
+            style={{
+              top: -20, width: 56, height: 56,
+              ...(theme === 'dark'
+                ? { background: 'linear-gradient(180deg, rgba(214,178,130,0.98), rgba(193,154,107,0.92))', color: '#1a1210', boxShadow: '0 8px 20px rgba(193,154,107,0.50), inset 0 1px 0 rgba(255,255,255,0.40)' }
+                : { background: '#320E3B', color: 'rgba(255,248,235,0.96)', boxShadow: '0 8px 20px rgba(50,14,59,0.42), inset 0 1px 0 rgba(255,255,255,0.22)' }),
+            }}
+          >
+            <Sparkles className="h-[26px] w-[26px]" />
+          </Link>
+        </div>
       </div>
     </div>
   );
