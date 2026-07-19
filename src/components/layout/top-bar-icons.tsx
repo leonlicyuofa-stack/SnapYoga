@@ -33,7 +33,7 @@ function getInitials(email?: string | null, displayName?: string | null) {
  * main app routes whose AppShell header is hidden. Right-aligned by default.
  */
 export function TopBarIcons({ className }: { className?: string }) {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { isDark } = useTheme();
   const [panel, setPanel] = React.useState<'search' | 'notifications' | null>(null);
   const iconColor = isDark ? 'rgba(255,240,215,0.82)' : 'rgba(50,14,59,0.85)';
@@ -61,9 +61,9 @@ export function TopBarIcons({ className }: { className?: string }) {
       </button>
       <Link href="/profile" aria-label="Profile" className="transition-opacity hover:opacity-80">
         <Avatar style={{ width: 30, height: 30, border: `1.5px solid ${isDark ? 'rgba(193,154,107,0.40)' : 'rgba(50,14,59,0.40)'}` }}>
-          <AvatarImage src={user?.photoURL ?? undefined} alt={user?.displayName ?? 'Profile'} />
+          <AvatarImage src={(profile?.photoURL || user?.photoURL) ?? undefined} alt={(profile?.displayName || user?.displayName) ?? 'Profile'} />
           <AvatarFallback style={{ background: profileBg, color: profileFg, fontSize: 12, fontWeight: 600 }}>
-            {getInitials(user?.email, user?.displayName)}
+            {getInitials(user?.email, profile?.displayName || user?.displayName)}
           </AvatarFallback>
         </Avatar>
       </Link>

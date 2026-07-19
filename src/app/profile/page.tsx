@@ -43,7 +43,11 @@ const passwordChangeSchema = z.object({
 type PasswordChangeFormValues = z.infer<typeof passwordChangeSchema>;
 
 export default function ProfilePage() {
-  const { user, updateUserPassword, updateUserDisplayName, signOutUser, loading: authLoading, membershipTier, isGold } = useAuth();
+  const { user, profile, updateUserPassword, updateUserDisplayName, signOutUser, loading: authLoading, membershipTier, isGold } = useAuth();
+  // Prefer the live Firestore photoURL (updates instantly after an avatar save)
+  // over the auth user's, which isn't refreshed until the next auth state change.
+  const avatarUrl = profile?.photoURL || user?.photoURL;
+  const displayNameResolved = profile?.displayName || user?.displayName;
   const { t } = useLanguage();
   const { isDark, toggleTheme } = useTheme();
   const { toast } = useToast();
@@ -250,15 +254,15 @@ export default function ProfilePage() {
                       justifyContent: 'center',
                     }}
                   >
-                    {user?.photoURL ? (
+                    {avatarUrl ? (
                       <img
-                        src={user.photoURL}
-                        alt={user.displayName || 'Profile'}
+                        src={avatarUrl}
+                        alt={displayNameResolved || 'Profile'}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
                     ) : (
                       <span style={{ fontSize: 32, color: acc(0.85), fontFamily: "'Cormorant Garamond', serif" }}>
-                        {(user?.displayName?.[0] || user?.email?.[0] || 'U').toUpperCase()}
+                        {(displayNameResolved?.[0] || user?.email?.[0] || 'U').toUpperCase()}
                       </span>
                     )}
                   </div>
