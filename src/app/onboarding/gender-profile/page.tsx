@@ -10,7 +10,7 @@ import { firestore } from '@/lib/firebase/clientApp';
 import { ArrowLeft, ArrowRight, Check, Loader2 } from 'lucide-react';
 import { OnboardingHeader } from '@/components/onboarding/onboarding-header';
 import { OnboardingThemeToggle } from '@/components/onboarding/onboarding-theme-toggle';
-import { Character, ThoughtBubble, ItemIcon } from '@/components/onboarding/character/Character';
+import { Character, ThoughtBubble, ItemIcon, CharacterExport } from '@/components/onboarding/character/Character';
 import { svgElementToPng } from '@/components/onboarding/character/raster';
 import {
   SHAPE_LIST, COLOURS, MOODS, ITEMS, DEFAULT_CHARACTER, inkFor, labelFor,
@@ -157,7 +157,7 @@ export default function BuildCharacterPage() {
 
           {/* Hidden export frame — rasterized into the avatar PNG */}
           <div ref={exportRef} aria-hidden="true" style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden', opacity: 0, pointerEvents: 'none' }}>
-            <Character shape={config.shape} colour={config.colour} mood={config.mood} size={256} />
+            <CharacterExport shape={config.shape} colour={config.colour} mood={config.mood} item={config.item} isDark={isDark} size={256} />
           </div>
 
           <div style={{ borderRadius: 20, background: cardBg, border: `0.5px solid ${cardBorder}`, boxShadow: cardShadow, backdropFilter: 'blur(14px)', padding: '16px 16px 18px' }}>

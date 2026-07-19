@@ -59,7 +59,8 @@ export function ItemIcon({ item, size = 36 }: { item: Exclude<ItemId, 'none'>; s
 }
 
 // ── The character body (blob/stones + grain + face) ────────────────────────────
-function bodyMarkup(shape: ShapeId, colour: string, mood: MoodId, faceless: boolean, uid: string): string {
+// Inner markup only (no <svg> wrapper) so it can be composited with the bubble.
+function bodyInner(shape: ShapeId, colour: string, mood: MoodId, faceless: boolean, uid: string): string {
   const clipId = `cclip-${uid}`, grainId = `cgrain-${uid}`;
   const ink = inkFor(colour);
   let clipPaths: string, fills: string, faceDy = 0;
@@ -78,13 +79,11 @@ function bodyMarkup(shape: ShapeId, colour: string, mood: MoodId, faceless: bool
   }
 
   return (
-    `<svg width="100%" height="100%" viewBox="0 0 200 200">` +
     `<defs><clipPath id="${clipId}">${clipPaths}</clipPath>` +
     `<filter id="${grainId}" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="t"/><feColorMatrix in="t" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.6 0"/></filter></defs>` +
     fills +
     `<rect x="-20" y="-40" width="260" height="260" filter="url(#${grainId})" clip-path="url(#${clipId})" opacity="0.11"/>` +
-    (faceless ? '' : `<g transform="translate(0,${faceDy})">${faceMarkup(mood, ink)}</g>`) +
-    `</svg>`
+    (faceless ? '' : `<g transform="translate(0,${faceDy})">${faceMarkup(mood, ink)}</g>`)
   );
 }
 
@@ -99,11 +98,12 @@ interface CharacterProps {
 }
 export function Character({ shape, colour, mood = 'happy', size = 200, faceless = false, animate = false, className }: CharacterProps) {
   const uid = useId().replace(/:/g, '');
+  const svg = `<svg width="100%" height="100%" viewBox="0 0 200 200">${bodyInner(shape, colour, mood, faceless, uid)}</svg>`;
   return (
     <span
       className={[animate ? 'sy-char-bob' : '', className || ''].join(' ').trim()}
       style={{ display: 'inline-block', width: size, height: size, lineHeight: 0 }}
-      dangerouslySetInnerHTML={{ __html: bodyMarkup(shape, colour, mood, faceless, uid) }}
+      dangerouslySetInnerHTML={{ __html: svg }}
     />
   );
 }
@@ -120,7 +120,8 @@ function bubblePalette(isDark: boolean) {
     ? { ink: '#8A6A3C', fill: '#F4E7CE', q: 'rgba(199,163,110,0.55)' }
     : { ink: PLUM,      fill: '#FFFFFF', q: 'rgba(90,61,84,0.45)' };
 }
-function bubbleMarkup(item: ItemId, uid: string, isDark: boolean): string {
+// Inner markup only (no <svg> wrapper) so it can be composited into the export.
+function bubbleInner(item: ItemId, uid: string, isDark: boolean): string {
   const rf1 = `brf1-${uid}`, rf2 = `brf2-${uid}`, cr = `bcr-${uid}`;
   const { ink, fill, q } = bubblePalette(isDark);
   const cloud = 'M42,62 C30,64 27,49 38,45 C32,27 53,19 60,32 C67,19 86,25 82,45 C94,48 90,63 79,62 C76,69 46,69 42,62 Z';
@@ -131,7 +132,6 @@ function bubbleMarkup(item: ItemId, uid: string, isDark: boolean): string {
     ? `<g filter="url(#${cr})" transform="translate(-22,21) scale(0.8)">${itemArt(item)}</g>`
     : `<text x="58" y="47" text-anchor="middle" font-size="26" fill="${q}" font-family="Georgia,serif">?</text>`;
   return (
-    `<svg width="110" height="98" viewBox="0 0 110 98" style="overflow:visible;display:block">` +
     `<defs>` +
     `<filter id="${rf1}" x="-30%" y="-30%" width="160%" height="160%"><feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="1" seed="7" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="3.4" xChannelSelector="R" yChannelSelector="G"/></filter>` +
     `<filter id="${rf2}" x="-30%" y="-30%" width="160%" height="160%"><feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="1" seed="3" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="2.5" xChannelSelector="R" yChannelSelector="G"/></filter>` +
@@ -141,13 +141,35 @@ function bubbleMarkup(item: ItemId, uid: string, isDark: boolean): string {
     `<path d="${cloud}" fill="none" stroke="${ink}" stroke-width="2.2" opacity="0.9" filter="url(#${rf1})"/>` +
     `<path d="${cloud}" fill="none" stroke="${ink}" stroke-width="1.3" opacity="0.6" filter="url(#${rf2})"/>` +
     dbl(scribble(40, 74, 3.8)) + dbl(scribble(31, 84, 2.5)) +
-    inner + `</svg>`
+    inner
   );
 }
 export function ThoughtBubble({ item, isDark = false, className, style }: { item: ItemId; isDark?: boolean; className?: string; style?: React.CSSProperties }) {
   const uid = useId().replace(/:/g, '');
   if (item === 'none') return null;
+  const svg = `<svg width="110" height="98" viewBox="0 0 110 98" style="overflow:visible;display:block">${bubbleInner(item, uid, isDark)}</svg>`;
   return (
-    <span className={className} style={style} aria-hidden="true" dangerouslySetInnerHTML={{ __html: bubbleMarkup(item, uid, isDark) }} />
+    <span className={className} style={style} aria-hidden="true" dangerouslySetInnerHTML={{ __html: svg }} />
+  );
+}
+
+// ── Composited export (body + thought bubble) for the saved avatar PNG ─────────
+// Character body sits low-centre; the bubble floats at the top-right so the item
+// is preserved in the raster, mirroring the on-screen preview.
+function exportMarkup(shape: ShapeId, colour: string, mood: MoodId, item: ItemId, isDark: boolean, uid: string): string {
+  const body = `<g transform="translate(3,28) scale(1.04)">${bodyInner(shape, colour, mood, false, uid)}</g>`;
+  const bubble = item !== 'none'
+    ? `<g transform="translate(102,-4)">${bubbleInner(item, uid, isDark)}</g>`
+    : '';
+  return `<svg width="100%" height="100%" viewBox="-14 -6 244 244">${body}${bubble}</svg>`;
+}
+export function CharacterExport({ shape, colour, mood = 'happy', item = 'none', isDark = false, size = 256 }: { shape: ShapeId; colour: string; mood?: MoodId; item?: ItemId; isDark?: boolean; size?: number }) {
+  const uid = useId().replace(/:/g, '');
+  return (
+    <span
+      aria-hidden="true"
+      style={{ display: 'inline-block', width: size, height: size, lineHeight: 0 }}
+      dangerouslySetInnerHTML={{ __html: exportMarkup(shape, colour, mood, item, isDark, uid) }}
+    />
   );
 }
