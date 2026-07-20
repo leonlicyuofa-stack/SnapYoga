@@ -1,0 +1,316 @@
+<title>SnapYoga — Brand Cosmetics Guide</title>
+<style>
+  :root{
+    --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
+    /* Light chrome — lavender-biased neutrals + amethyst */
+    --ground:#E9E4EF; --panel:#F7F5FA; --panel-2:#FBFAFC;
+    --ink:#2C0E36; --ink-soft:rgba(44,14,54,.70); --muted:rgba(44,14,54,.52);
+    --line:rgba(44,14,54,.13); --line-strong:rgba(44,14,54,.24);
+    --amethyst:#320E3B; --mauve:#6E4C7A; --gold:#8C6A3C;
+    --hero-shadow:0 1px 3px rgba(70,60,80,.22);
+    --card-shadow:0 10px 30px rgba(80,70,110,.14);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --ground:#0F0B14; --panel:#191320; --panel-2:#1E1726;
+      --ink:rgba(255,240,215,.92); --ink-soft:rgba(255,240,215,.66); --muted:rgba(255,240,215,.44);
+      --line:rgba(193,154,107,.20); --line-strong:rgba(193,154,107,.34);
+      --amethyst:#C4AAD0; --mauve:#B79AC2; --gold:rgba(193,154,107,.95);
+      --hero-shadow:none; --card-shadow:0 12px 34px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="light"]{
+    --ground:#E9E4EF; --panel:#F7F5FA; --panel-2:#FBFAFC;
+    --ink:#2C0E36; --ink-soft:rgba(44,14,54,.70); --muted:rgba(44,14,54,.52);
+    --line:rgba(44,14,54,.13); --line-strong:rgba(44,14,54,.24);
+    --amethyst:#320E3B; --mauve:#6E4C7A; --gold:#8C6A3C;
+    --hero-shadow:0 1px 3px rgba(70,60,80,.22); --card-shadow:0 10px 30px rgba(80,70,110,.14);
+  }
+  :root[data-theme="dark"]{
+    --ground:#0F0B14; --panel:#191320; --panel-2:#1E1726;
+    --ink:rgba(255,240,215,.92); --ink-soft:rgba(255,240,215,.66); --muted:rgba(255,240,215,.44);
+    --line:rgba(193,154,107,.20); --line-strong:rgba(193,154,107,.34);
+    --amethyst:#C4AAD0; --mauve:#B79AC2; --gold:rgba(193,154,107,.95);
+    --hero-shadow:none; --card-shadow:0 12px 34px rgba(0,0,0,.5);
+  }
+
+  *{box-sizing:border-box}
+  .wrap{max-width:940px;margin:0 auto;padding:0 22px 88px;color:var(--ink);
+    font-family:var(--sans);line-height:1.65;background:var(--ground)}
+  .wrap{padding-top:0}
+
+  /* ---- Masthead ---- */
+  .mast{position:relative;text-align:center;padding:64px 20px 40px;overflow:hidden}
+  .orbit{position:absolute;top:26px;left:50%;transform:translateX(-50%);width:120px;height:120px;
+    border-radius:50%;border:1px dashed var(--line-strong);opacity:.7;pointer-events:none}
+  .orbit-spin{position:absolute;top:26px;left:50%;width:0;height:0;animation:spin 12s linear infinite;pointer-events:none}
+  .orbit-dot{position:absolute;top:-60px;left:-2.5px;width:5px;height:5px;border-radius:50%;background:var(--mauve)}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion: reduce){.orbit-spin{animation:none}}
+  .wordmark{font-family:var(--serif);font-weight:500;font-size:clamp(38px,7vw,58px);
+    letter-spacing:.04em;color:var(--ink);margin:0;position:relative;text-wrap:balance}
+  .kicker{font-family:var(--sans);font-size:10px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--mauve);margin:10px 0 0;font-weight:600}
+  .rule{width:30px;height:1px;background:var(--line-strong);margin:16px auto 0}
+  .lede{max-width:60ch;margin:22px auto 0;font-size:16px;color:var(--ink-soft)}
+
+  /* ---- Section scaffolding ---- */
+  section{padding:34px 0;border-top:1px solid var(--line)}
+  .eyebrow{font-size:10px;letter-spacing:.28em;text-transform:uppercase;font-weight:700;
+    color:var(--mauve);margin:0 0 6px}
+  h2{font-family:var(--serif);font-weight:600;font-size:clamp(26px,4.4vw,34px);margin:0 0 6px;
+    letter-spacing:.01em;color:var(--ink);text-wrap:balance}
+  h3{font-family:var(--serif);font-weight:600;font-size:19px;margin:26px 0 10px;color:var(--ink)}
+  .say{max-width:64ch;color:var(--ink-soft);margin:0 0 4px}
+  p{margin:0 0 12px}
+  code,.hex{font-family:var(--mono);font-size:.86em}
+  .hex{color:var(--muted);letter-spacing:.02em}
+
+  /* ---- Dual brand-theme panels (fixed, not viewer-themed) ---- */
+  .themes{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+  @media (max-width:640px){.themes{grid-template-columns:1fr}}
+  .theme{border-radius:18px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--card-shadow)}
+  .theme-head{padding:16px 18px;display:flex;flex-direction:column;align-items:center;gap:5px;position:relative}
+  .light-bg{background:linear-gradient(175deg,#B0B5C0 0%,#9DA4B0 35%,#A8A0BC 70%,#9B96B5 100%)}
+  .dark-bg{background:linear-gradient(175deg,#1a1210 0%,#0D1821 55%,#1a0f1e 100%)}
+  .th-word{font-family:var(--serif);font-weight:500;font-size:22px;letter-spacing:.05em}
+  .th-tag{font-size:7px;letter-spacing:.24em;text-transform:uppercase}
+  .th-card{margin:2px 12px 12px;border-radius:14px;padding:12px 13px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+  .th-name{font-size:11px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;text-align:center;
+    padding:9px;background:var(--panel);color:var(--muted)}
+  .th-rows{display:flex;flex-direction:column;gap:7px}
+  .th-row{display:flex;align-items:center;gap:9px;font-size:11.5px}
+  .th-chip{width:16px;height:16px;border-radius:5px;flex:none;border:0.5px solid rgba(128,128,128,.25)}
+
+  /* ---- Swatch grid ---- */
+  .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:16px}
+  .sw{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .sw-chip{height:56px}
+  .sw-body{padding:9px 11px}
+  .sw-name{font-size:12px;font-weight:600;color:var(--ink);letter-spacing:.01em}
+  .sw-hex{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:1px}
+  .sw-use{font-size:11px;color:var(--muted);margin-top:3px}
+
+  /* ---- Type specimen ---- */
+  .type-row{display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+    padding:14px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .type-row:last-child{border-bottom:0}
+  .t-spec{font-size:11px;color:var(--muted);font-family:var(--mono);white-space:nowrap}
+  .demo-serif{font-family:var(--serif);color:var(--ink)}
+  .demo-eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;font-weight:600;color:var(--amethyst)}
+
+  /* ---- Component cards ---- */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+  @media (max-width:640px){.grid2{grid-template-columns:1fr}}
+  .spec{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .spec h3{margin-top:0}
+  .stage{border-radius:12px;padding:20px;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;min-height:92px}
+  .stage-l{background:linear-gradient(175deg,#A8A0BC,#9B96B5)}
+  .stage-d{background:linear-gradient(175deg,#1a1210,#1a0f1e)}
+  .pill{border-radius:999px;padding:11px 26px;font-family:var(--serif);font-size:16px;
+    letter-spacing:.06em;background:#320E3B;color:rgba(255,248,235,.96);border:0.5px solid rgba(50,14,59,.4)}
+  .pill.gold{background:rgba(193,154,107,.9);color:rgba(25,16,8,.95);border-color:rgba(255,255,255,.2)}
+  .circ{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 6px 16px rgba(50,14,59,.3);font-size:20px}
+  .circ-l{background:#320E3B;color:#fff;border:0.5px solid rgba(50,14,59,.4)}
+  .circ-d{background:rgba(0,0,0,.3);color:#fff;border:0.5px solid rgba(255,255,255,.2)}
+  .badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 13px;
+    font-family:var(--serif);font-size:12px;font-weight:600;letter-spacing:.06em}
+  .b-trial-l{background:rgba(50,14,59,.08);border:0.5px solid rgba(50,14,59,.35);color:#320E3B}
+  .b-streak-l{background:rgba(120,155,95,.22);border:0.5px solid rgba(90,130,60,.45);color:#3B6D11}
+  .b-trial-d{background:rgba(193,154,107,.12);border:0.5px solid rgba(193,154,107,.35);color:rgba(193,154,107,.92)}
+  .glasscard{border-radius:20px;padding:16px;box-shadow:0 8px 22px rgba(90,80,120,.16),inset 0 1px 0 rgba(255,255,255,.55)}
+  .glasscard.l{background:linear-gradient(160deg,rgba(255,255,255,.32),rgba(255,255,255,.14));border:0.5px solid rgba(255,255,255,.55)}
+  .glasscard.d{background:linear-gradient(160deg,rgba(255,240,215,.09),rgba(255,240,215,.02));border:0.5px solid rgba(193,154,107,.22);box-shadow:0 8px 22px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,240,215,.1)}
+  .gc-h{font-family:var(--serif);font-size:16px;font-weight:600}
+  .gc-s{font-size:11px;margin-top:2px}
+
+  /* ---- Do / Don't ---- */
+  .rules{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+  @media (max-width:640px){.rules{grid-template-columns:1fr}}
+  .rule-card{border-radius:12px;padding:14px 16px;border:1px solid var(--line);background:var(--panel)}
+  .rule-card p{margin:0;font-size:13.5px;color:var(--ink-soft)}
+  .tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    padding:2px 9px;border-radius:999px;margin-bottom:7px}
+  .do{color:#2f6b2a;background:rgba(90,150,70,.16)}
+  .dont{color:#9a3535;background:rgba(180,70,70,.14)}
+  @media (prefers-color-scheme: dark){.do{color:#a6d49b}.dont{color:#e79b9b}}
+  :root[data-theme="dark"] .do{color:#a6d49b}
+  :root[data-theme="dark"] .dont{color:#e79b9b}
+  :root[data-theme="light"] .do{color:#2f6b2a}
+  :root[data-theme="light"] .dont{color:#9a3535}
+  .rule-card b{color:var(--ink);font-weight:600}
+
+  .foot{margin-top:40px;padding-top:22px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+</style>
+
+<div class="wrap">
+
+  <header class="mast">
+    <div class="orbit" aria-hidden="true"></div>
+    <div class="orbit-spin" aria-hidden="true"><div class="orbit-dot"></div></div>
+    <p class="kicker">Brand · Cosmetics · Guide</p>
+    <h1 class="wordmark">SnapYoga</h1>
+    <div class="rule"></div>
+    <p class="lede">The visual system behind SnapYoga — a calm, premium yoga companion. Use this as the reference for every future surface so the app keeps reading as one considered, breathing whole across both of its themes.</p>
+  </header>
+
+  <section>
+    <p class="eyebrow">Essence</p>
+    <h2>Listen · Guide · Activate</h2>
+    <p class="say">SnapYoga should feel like a slow exhale — <b style="color:var(--ink)">warm, unhurried, and quietly premium</b>, never clinical or loud. The mood is a candle-lit studio at dusk, not a fitness tracker. Restraint is the house style: generous space, one accent doing the work, motion that breathes rather than blinks.</p>
+    <p class="say">Two moods, one identity. <b style="color:var(--ink)">Light</b> is a soft lavender morning; <b style="color:var(--ink)">dark</b> is an amber-lit evening. Every element must be designed for both — never invert one into the other.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">Colour · Two Themes</p>
+    <h2>Lavender by day, ink by night</h2>
+    <p class="say">The whole palette hangs off one full-bleed gradient background per theme. Amethyst leads in light; warm gold leads in dark. These are the ground truth — copy the values exactly.</p>
+
+    <div class="themes">
+      <div class="theme">
+        <div class="theme-head light-bg">
+          <span class="th-word" style="color:rgba(255,248,235,.96);text-shadow:0 1px 3px rgba(70,60,80,.32)">SnapYoga</span>
+          <span class="th-tag" style="color:#320E3B">Listen · Guide · Activate</span>
+          <div class="th-card" style="background:rgba(255,255,255,.14);border:0.5px solid rgba(255,255,255,.5)">
+            <span style="font-family:var(--serif);font-size:14px;color:#320E3B;font-weight:600">Frosted glass card</span>
+          </div>
+        </div>
+        <div class="th-name">Light</div>
+        <div style="padding:12px 14px;background:var(--panel-2)">
+          <div class="th-rows">
+            <div class="th-row"><span class="th-chip" style="background:linear-gradient(135deg,#B0B5C0,#9B96B5)"></span><b style="color:var(--ink)">Background</b> <span class="hex">lavender gradient · #B0B5C0→#9B96B5</span></div>
+            <div class="th-row"><span class="th-chip" style="background:#320E3B"></span><b style="color:var(--ink)">Amethyst</b> <span class="hex">#320E3B · text, icons, fills</span></div>
+            <div class="th-row"><span class="th-chip" style="background:rgba(255,248,235,.96);border-color:rgba(0,0,0,.15)"></span><b style="color:var(--ink)">Cream</b> <span class="hex">rgba(255,248,235,.96) · hero titles</span></div>
+            <div class="th-row"><span class="th-chip" style="background:rgba(255,255,255,.55)"></span><b style="color:var(--ink)">Glass</b> <span class="hex">white .12 fill · .40 hairline</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="theme">
+        <div class="theme-head dark-bg">
+          <span class="th-word" style="color:rgba(255,240,215,.92)">SnapYoga</span>
+          <span class="th-tag" style="color:rgba(193,154,107,.6)">Listen · Guide · Activate</span>
+          <div class="th-card" style="background:rgba(255,240,215,.06);border:0.5px solid rgba(193,154,107,.22);box-shadow:inset 0 1px 0 rgba(255,240,215,.1)">
+            <span style="font-family:var(--serif);font-size:14px;color:rgba(255,240,215,.9);font-weight:600">Frosted glass card</span>
+          </div>
+        </div>
+        <div class="th-name">Dark</div>
+        <div style="padding:12px 14px;background:var(--panel-2)">
+          <div class="th-rows">
+            <div class="th-row"><span class="th-chip" style="background:linear-gradient(135deg,#1a1210,#1a0f1e)"></span><b style="color:var(--ink)">Background</b> <span class="hex">ink gradient · #1a1210→#1a0f1e</span></div>
+            <div class="th-row"><span class="th-chip" style="background:rgba(193,154,107,.9)"></span><b style="color:var(--ink)">Gold</b> <span class="hex">rgba(193,154,107,*) · accent</span></div>
+            <div class="th-row"><span class="th-chip" style="background:rgba(255,240,215,.9);border-color:rgba(0,0,0,.2)"></span><b style="color:var(--ink)">Parchment</b> <span class="hex">rgba(255,240,215,*) · text</span></div>
+            <div class="th-row"><span class="th-chip" style="background:rgba(193,154,107,.25)"></span><b style="color:var(--ink)">Glass</b> <span class="hex">parchment .05 fill · gold .18 hairline</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Shared accents — the same meaning in both themes</h3>
+    <p class="say">Semantic colour is separate from the amethyst/gold identity. Deepen it for light so it survives the lavender; brighten it for dark.</p>
+    <div class="swatches">
+      <div class="sw"><div class="sw-chip" style="background:linear-gradient(90deg,#3B6D11,rgba(160,195,130,.95))"></div><div class="sw-body"><div class="sw-name">Mood · Green</div><div class="sw-hex">#3B6D11 &nbsp;/&nbsp; rgba(160,195,130)</div><div class="sw-use">light deep · dark mint</div></div></div>
+      <div class="sw"><div class="sw-chip" style="background:linear-gradient(90deg,#A8531C,rgba(200,140,90,.95))"></div><div class="sw-body"><div class="sw-name">Habits · Terracotta</div><div class="sw-hex">#A8531C &nbsp;/&nbsp; rgba(200,140,90)</div><div class="sw-use">light deep · dark warm</div></div></div>
+      <div class="sw"><div class="sw-chip" style="background:linear-gradient(90deg,#C8785A,#C88C5A,#B4BE78,#A0C382)"></div><div class="sw-body"><div class="sw-name">Score ramp</div><div class="sw-hex">coral → amber → sage → green</div><div class="sw-use">low → high result</div></div></div>
+      <div class="sw"><div class="sw-chip" style="background:linear-gradient(135deg,#5A3B66,#8A5A9A)"></div><div class="sw-body"><div class="sw-name">Session gradients</div><div class="sw-hex">amethyst · mocha · plum</div><div class="sw-use">cycle per card</div></div></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Typography</p>
+    <h2>A serif that breathes, a sans that steps back</h2>
+    <p class="say"><b style="color:var(--ink)">Cormorant Garamond</b> (falling back to Georgia) carries every headline, title, number and price — high-contrast, elegant, human. <b style="color:var(--ink)">System sans</b> handles labels, body and data, and never competes. Two weights only: 400 and 500–600.</p>
+
+    <div style="margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:6px 20px">
+      <div class="type-row"><span class="demo-serif" style="font-size:34px;font-weight:500;letter-spacing:.05em">SnapYoga</span><span class="t-spec">Wordmark · serif 500 · 28px · always the largest</span></div>
+      <div class="type-row"><span class="demo-serif" style="font-size:26px;font-weight:600">Hey, Yogi!</span><span class="t-spec">Hero title · serif 600 · 24–26px</span></div>
+      <div class="type-row"><span class="demo-serif" style="font-size:18px;font-weight:600">Yoga goals</span><span class="t-spec">Card heading · serif 600 · 18px</span></div>
+      <div class="type-row"><span class="demo-eyebrow">This Week</span><span class="t-spec">Eyebrow · sans 600 · 9–11px · .28em · UPPER</span></div>
+      <div class="type-row"><span style="font-size:15px;color:var(--ink-soft)">Confirm your video and add any notes.</span><span class="t-spec">Body · sans 400 · 12–15px</span></div>
+      <div class="type-row"><span class="demo-serif" style="font-size:30px;font-weight:700">82<span style="font-size:15px">/100</span></span><span class="t-spec">Numerals · serif · scores, stats, streaks</span></div>
+    </div>
+    <p class="say" style="margin-top:14px">Sentence case everywhere except the eyebrow labels. Give uppercase eyebrows real tracking (≈.28em) and keep them small but <b style="color:var(--ink)">full-strength in colour</b> — a faint eyebrow reads as a mistake, not a whisper.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">Components</p>
+    <h2>The kit, shown in both grounds</h2>
+
+    <div class="grid2">
+      <div class="spec">
+        <h3>Frosted glass card</h3>
+        <p class="say" style="font-size:13.5px">Every surface. Gradient fill + inset top highlight + soft drop shadow = depth. <b style="color:var(--ink)">Uniform 20px radius</b> — no mixed or notched corners.</p>
+        <div class="stage stage-l" style="min-height:auto"><div class="glasscard l" style="width:100%"><div class="gc-h" style="color:#320E3B">Practice</div><div class="gc-s" style="color:rgba(50,14,59,.6)">On track — keep going</div></div></div>
+        <div class="stage stage-d" style="min-height:auto;margin-top:10px"><div class="glasscard d" style="width:100%"><div class="gc-h" style="color:rgba(255,240,215,.9)">Practice</div><div class="gc-s" style="color:rgba(255,240,215,.5)">On track — keep going</div></div></div>
+      </div>
+
+      <div class="spec">
+        <h3>Buttons</h3>
+        <p class="say" style="font-size:13.5px">Primary = <b style="color:var(--ink)">filled pill</b>, serif label. Navigation = <b style="color:var(--ink)">circular icon</b>, 48px. Amethyst-filled in light, translucent-black in dark.</p>
+        <div class="stage stage-l" style="flex-direction:column;gap:14px"><span class="pill">Sign Up →</span><div style="display:flex;gap:12px"><span class="circ circ-l">←</span><span class="circ circ-l">→</span></div></div>
+        <div class="stage stage-d" style="flex-direction:column;gap:14px;margin-top:10px"><span class="pill gold">Login</span><div style="display:flex;gap:12px"><span class="circ circ-d">←</span><span class="circ circ-d">→</span></div></div>
+      </div>
+
+      <div class="spec">
+        <h3>Badges &amp; pills</h3>
+        <p class="say" style="font-size:13.5px">Small, serif, rounded. Status colour follows meaning; membership follows the theme accent.</p>
+        <div class="stage stage-l"><span class="badge b-trial-l">✦ Trial</span><span class="badge b-streak-l">7 day streak</span></div>
+        <div class="stage stage-d" style="margin-top:10px"><span class="badge b-trial-d">✦ Trial</span></div>
+      </div>
+
+      <div class="spec">
+        <h3>Circular icon nav</h3>
+        <p class="say" style="font-size:13.5px">Back and next are always the same 48px circle. On content pages a 40px variant is fine; keep the shape and fill identical.</p>
+        <div class="stage stage-l"><span class="circ circ-l" style="width:40px;height:40px;font-size:17px">←</span><span class="circ circ-l">→</span></div>
+        <div class="stage stage-d" style="margin-top:10px"><span class="circ circ-d" style="width:40px;height:40px;font-size:17px">←</span><span class="circ circ-d">→</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Motifs</p>
+    <h2>The signatures</h2>
+    <div class="grid2">
+      <div class="spec">
+        <h3>The orbit</h3>
+        <p class="say" style="font-size:13.5px">A dashed ring with a single dot in slow, continuous orbit — the brand's quiet heartbeat. It haloes the avatar and echoes softly behind the wordmark on auth &amp; onboarding. Continuous rotation only; <b style="color:var(--ink)">never fade the dot on/off</b> (it reads as a flicker).</p>
+      </div>
+      <div class="spec">
+        <h3>Glass &amp; light</h3>
+        <p class="say" style="font-size:13.5px">Depth comes from three layers, not borders: a subtle gradient fill, a 1px inset top highlight (the "glass edge"), and a soft outer shadow. A whisper of sparkle (≤2 marks) is allowed; heavy glow is not.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Layout Patterns</p>
+    <h2>How a screen is composed</h2>
+    <h3>Onboarding &amp; auth</h3>
+    <p class="say">Brand lockup up top (wordmark — <b style="color:var(--ink)">always the largest text</b> — tagline, divider, orbit echo). The step's title and subtitle live <b style="color:var(--ink)">centred inside the frosted card</b>, above the content. Back/next circles sit inside the card; the theme toggle pins top-right.</p>
+    <h3>Dashboard &amp; app</h3>
+    <p class="say">A compact greeting header (“Hey, {name}!” left, actions right) over a stack of frosted section cards, each led by a small eyebrow. Summary before detail; state shown as form (rings, dots, bars, chips) as well as number. Interactive things look interactive.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">Principles</p>
+    <h2>Hard-won rules</h2>
+    <div class="rules">
+      <div class="rule-card"><span class="tag do">Do</span><p><b>Amethyst on glass.</b> Text on a frosted-light card is amethyst; cream is reserved for hero titles on the bare gradient — cream on glass washes out.</p></div>
+      <div class="rule-card"><span class="tag dont">Don't</span><p><b>Don't let the page title beat the logo.</b> On onboarding the wordmark is the hero; the step heading sits smaller beneath it.</p></div>
+      <div class="rule-card"><span class="tag do">Do</span><p><b>Two amethyst tones.</b> Full <span class="hex">#320E3B</span> for body and eyebrows; the same hue reads as <b>fill</b> on buttons — pair with cream, never black text.</p></div>
+      <div class="rule-card"><span class="tag dont">Don't</span><p><b>Don't invert a theme.</b> Design each ground on its own terms — dark isn't light with the lights off. Gold leads dark; amethyst leads light.</p></div>
+      <div class="rule-card"><span class="tag do">Do</span><p><b>One radius, one rhythm.</b> Uniform 20px card corners; consistent eyebrow → title → body → caption ladder on every card.</p></div>
+      <div class="rule-card"><span class="tag dont">Don't</span><p><b>Don't over-animate.</b> Motion breathes (4–5s pulses, slow orbits). No blinking, no bright glows, no scattered effects — respect reduced-motion.</p></div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <span>SnapYoga — internal brand cosmetics reference</span>
+    <span>Listen · Guide · Activate</span>
+  </div>
+
+</div>
