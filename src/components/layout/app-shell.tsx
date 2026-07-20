@@ -65,37 +65,13 @@ export function AppShell({ children }: AppShellProps) {
 
   const isActive = (path: string) => pathname === path;
 
-  // Bottom-nav item — the active tab expands to show its label.
-  const renderNavItem = (item: typeof navItems[number]) => {
-    const active = isActive(item.href);
-    const dark = theme === 'dark';
-    return (
-      <Link
-        key={item.href}
-        href={item.href}
-        aria-label={item.label}
-        className="flex items-center justify-center gap-[7px] rounded-full transition-all duration-300 active:scale-90"
-        style={active
-          ? {
-              height: 44, padding: '0 14px',
-              background: dark ? 'rgba(193,154,107,0.20)' : 'rgba(50,14,59,0.12)',
-              border: `0.5px solid ${dark ? 'rgba(193,154,107,0.40)' : 'transparent'}`,
-              color: dark ? 'rgba(214,178,130,1)' : '#320E3B',
-            }
-          : {
-              height: 44, width: 44,
-              color: dark ? 'rgba(255,240,215,0.40)' : 'rgba(50,14,59,0.50)',
-            }}
-      >
-        <item.icon className="h-[22px] w-[22px] shrink-0" />
-        {active && (
-          <span className="text-[13px] font-sans font-medium whitespace-nowrap" style={{ color: dark ? 'rgba(255,240,215,0.96)' : '#320E3B' }}>
-            {item.label}
-          </span>
-        )}
-      </Link>
-    );
-  };
+  // Bottom-nav display order (Analyze in the centre) + the active tab drives the
+  // rolling indicator position (10% / 30% / 50% / 70% / 90%).
+  const navDisplay = [navItems[0], navItems[2], navItems[1], navItems[3], navItems[4]];
+  const activeNavIndex = navDisplay.findIndex(it => isActive(it.href));
+  const navPct = activeNavIndex >= 0 ? (activeNavIndex + 0.5) * 20 : 50;
+  const showNavIndicator = activeNavIndex >= 0;
+  const notchMask = `radial-gradient(circle 33px at var(--sy-nx) -2px, transparent 32px, #000 33px)`;
 
   // List of routes where the top header is hidden because they provide their own header/toggle
   const hideHeaderRoutes = ['/dashboard', '/snap-yoga', '/practice-calendar', '/challenges', '/challenges/headstand', '/challenges/crow', '/profile', '/mood-tracker'];
@@ -146,45 +122,63 @@ export function AppShell({ children }: AppShellProps) {
           {children}
         </main>
 
-        {/* BOTTOM NAVIGATION — notched floating pill with a raised Analyze button */}
+        {/* BOTTOM NAVIGATION — icons-only bar with a rolling indicator that slides to the active tab */}
         <div
-          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40"
-          style={{ width: 'min(340px, calc(100vw - 32px))' }}
+          className="sy-navbar fixed bottom-4 left-1/2 -translate-x-1/2 z-40"
+          style={{ width: 'min(340px, calc(100vw - 32px))', height: 78, '--sy-nx': `${navPct}%` } as React.CSSProperties}
         >
+          {/* Bar (with a dent under the active tab) */}
           <nav
-            className="relative flex items-center rounded-full px-3 backdrop-blur-xl transition-colors duration-300"
+            aria-label="Primary"
+            className="absolute bottom-0 left-0 w-full rounded-full backdrop-blur-xl transition-colors duration-300"
             style={{
               height: 56,
-              maskImage: 'radial-gradient(circle 33px at 50% 0, transparent 32px, #000 33px)',
-              WebkitMaskImage: 'radial-gradient(circle 33px at 50% 0, transparent 32px, #000 33px)',
+              ...(showNavIndicator ? { maskImage: notchMask, WebkitMaskImage: notchMask } : {}),
               ...(theme === 'dark'
                 ? { background: 'rgba(255,255,255,0.06)', border: '0.5px solid rgba(255,255,255,0.10)', boxShadow: '0 8px 22px rgba(0,0,0,0.35)' }
                 : { background: 'rgba(255,252,248,0.90)', border: '0.5px solid rgba(255,255,255,0.50)', boxShadow: '0 8px 22px rgba(60,40,70,0.18)' }),
             }}
-          >
-            <div className="flex flex-1 items-center justify-start gap-1">
-              {[navItems[0], navItems[2]].map(renderNavItem)}
-            </div>
-            <div style={{ width: 58, flexShrink: 0 }} aria-hidden="true" />
-            <div className="flex flex-1 items-center justify-end gap-1">
-              {[navItems[3], navItems[4]].map(renderNavItem)}
-            </div>
-          </nav>
+          />
 
-          {/* Raised Analyze button, nestled in the dent */}
-          <Link
-            href={navItems[1].href}
-            aria-label={navItems[1].label}
-            className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center rounded-full transition-transform hover:scale-105 active:scale-90"
-            style={{
-              top: -20, width: 56, height: 56,
-              ...(theme === 'dark'
-                ? { background: 'linear-gradient(180deg, rgba(214,178,130,0.98), rgba(193,154,107,0.92))', color: '#1a1210', boxShadow: '0 8px 20px rgba(193,154,107,0.50), inset 0 1px 0 rgba(255,255,255,0.40)' }
-                : { background: '#320E3B', color: 'rgba(255,248,235,0.96)', boxShadow: '0 8px 20px rgba(50,14,59,0.42), inset 0 1px 0 rgba(255,255,255,0.22)' }),
-            }}
-          >
-            <Sparkles className="h-[26px] w-[26px]" />
-          </Link>
+          {/* Rolling indicator circle */}
+          {showNavIndicator && (
+            <span
+              aria-hidden="true"
+              className="absolute rounded-full"
+              style={{
+                top: -4, left: 'var(--sy-nx)', transform: 'translateX(-50%)', width: 52, height: 52, zIndex: 2,
+                ...(theme === 'dark'
+                  ? { background: 'linear-gradient(180deg, rgba(214,178,130,0.98), rgba(193,154,107,0.92))', boxShadow: '0 6px 16px rgba(193,154,107,0.45)' }
+                  : { background: '#320E3B', boxShadow: '0 6px 16px rgba(50,14,59,0.40)' }),
+              }}
+            />
+          )}
+
+          {/* Icons */}
+          <div className="absolute bottom-0 left-0 w-full flex" style={{ height: 56, zIndex: 3 }}>
+            {navDisplay.map((item, i) => {
+              const active = i === activeNavIndex;
+              const dark = theme === 'dark';
+              const isAnalyze = item.href === navItems[1].href;
+              const color = active
+                ? (dark ? '#1a1210' : 'rgba(255,248,235,0.96)')
+                : isAnalyze
+                  ? (dark ? 'rgba(214,178,130,1)' : '#320E3B')
+                  : (dark ? 'rgba(255,240,215,0.72)' : 'rgba(50,14,59,0.62)');
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-label={item.label}
+                  aria-current={active ? 'page' : undefined}
+                  className="sy-navicon flex-1 flex items-center justify-center active:scale-90"
+                  style={{ transform: active ? 'translateY(-28px)' : 'none', color }}
+                >
+                  <item.icon className="h-[22px] w-[22px]" />
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

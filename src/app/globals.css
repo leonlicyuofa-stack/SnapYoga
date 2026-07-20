@@ -274,3 +274,11 @@
   .sy-char-bob { animation: none !important; }
   .sy-echo-spin { animation: none !important; }
 }
+
+/* Bottom nav — rolling indicator slides to the active tab */
+@property --sy-nx { syntax: '<length-percentage>'; inherits: true; initial-value: 50%; }
+.sy-navbar { transition: --sy-nx 0.42s cubic-bezier(0.34, 1.2, 0.5, 1); }
+.sy-navicon { transition: transform 0.42s cubic-bezier(0.34, 1.2, 0.5, 1), color 0.3s ease; }
+@media (prefers-reduced-motion: reduce) {
+  .sy-navbar, .sy-navicon { transition: none !important; }
+}
