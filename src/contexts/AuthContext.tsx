@@ -11,7 +11,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  type FirebaseAuthProvider,
+  type AuthProvider as FirebaseAuthProvider,
   type AuthError,
   EmailAuthProvider,
   reauthenticateWithCredential,
@@ -28,7 +28,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
-import { getAvatarDataUri } from '@/lib/avatar-utils.tsx';
+import { getAvatarDataUri } from '@/lib/avatar-utils';
 import { FirebaseErrorListener } from '@/components/layout/FirebaseErrorListener';
 
 
@@ -165,6 +165,30 @@ export const createUserProfileDocument = async (user: User, additionalData: Docu
 };
 
 
+// Accounts created before we tracked `onboardingCompleted` may have finished
+// onboarding yet still carry a falsy flag, which would loop them back through
+// the flow on sign-in. Detect established users from the data onboarding
+// collects: `interestedPoses` is saved at the last substantive step (yoga-type),
+// so its presence means they got through the meaningful onboarding steps.
+const hasLegacyOnboardingSignal = (data: DocumentData | undefined | null): boolean =>
+  Array.isArray(data?.interestedPoses) && data.interestedPoses.length > 0;
+
+// Returns true if the user has (or should be treated as having) completed
+// onboarding, backfilling the flag for legacy accounts so future loads and
+// the sign-in routing both see it.
+const resolveOnboardingCompleted = async (user: User, data: DocumentData | undefined | null): Promise<boolean> => {
+  if (data?.onboardingCompleted) return true;
+  if (hasLegacyOnboardingSignal(data)) {
+    try {
+      await createUserProfileDocument(user, { onboardingCompleted: true });
+    } catch (err) {
+      console.error('Failed to backfill onboardingCompleted for legacy account:', err);
+    }
+    return true;
+  }
+  return false;
+};
+
 const recordDailyLogin = async (userId: string) => {
   if (!userId || !firestore) return;
   const todayStr = format(new Date(), 'yyyy-MM-dd');
@@ -284,7 +308,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const userDocRef = doc(firestore, 'users', result.user.uid);
       const userSnap = await getDoc(userDocRef);
 
-      if (userSnap.exists() && userSnap.data()?.onboardingCompleted) {
+      if (await resolveOnboardingCompleted(result.user, userSnap.data())) {
         toast({ title: 'Success', description: `${providerName} sign-in successful. Welcome back!` });
         router.push('/dashboard');
       } else {
@@ -390,7 +414,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const userDocRef = doc(firestore, 'users', userCredential.user.uid);
       const userSnap = await getDoc(userDocRef);
 
-      if (userSnap.exists() && userSnap.data()?.onboardingCompleted) {
+      if (await resolveOnboardingCompleted(userCredential.user, userSnap.data())) {
          toast({ title: 'Success', description: 'Signed in successfully. Welcome back!' });
          router.push('/dashboard');
       } else {
@@ -480,7 +504,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     signOutUser,
     updateUserPassword,
     updateUserDisplayName,
-    sendEmailVerification: sendVerificationEmail,
+    sendVerificationEmail,
     sendPasswordReset,
   };
 
