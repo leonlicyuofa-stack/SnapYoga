@@ -8,9 +8,9 @@ export function SnapYogaLogo() {
   return (
     <div className="flex items-center" aria-label={t('snapYogaTitle')}>
       <svg
-        width="220" 
+        width="250"
         height="50"
-        viewBox="0 0 220 50"
+        viewBox="0 0 250 50"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="h-10 w-auto"
@@ -29,7 +29,7 @@ export function SnapYogaLogo() {
           textAnchor="middle"
           fontFamily="Didot, 'Bodoni MT', 'Century Schoolbook', 'Palatino Linotype', Georgia, serif"
           fontSize="42"
-          letterSpacing="-1.5"
+          letterSpacing="2.5"
           fill="url(#logo-gold)"
           className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]"
         >

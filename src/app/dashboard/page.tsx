@@ -6,13 +6,15 @@ import { Button } from '@/components/ui/button';
 import { MessageSquare, RotateCcw, Play } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { doc, getDoc, collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, getDay, formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { MoodChart } from '@/components/features/dashboard/MoodChart';
 import { TopBarIcons } from '@/components/layout/top-bar-icons';
+import { MoonStreakIcon, MoonSalutationIcon, PuffyStarIcon } from '@/components/icons/SystemSignalIcons';
+import { PracticeIcon, HydrateIcon, RestIcon, SunlightIcon, ActiveIcon } from '@/components/icons/HabitIcons';
 import Link from 'next/link';
 
 const GOLD       = 'rgba(193,154,107';
@@ -117,10 +119,10 @@ function Ring({ size, stroke, pct, color, track, textColor, label, centerTop, ce
 }
 
 // Compact stat: icon + number + one word.
-function Chip({ emoji, num, word, color, t }: { emoji: string; num: number | string; word: string; color: string; t: ReturnType<typeof tok> }) {
+function Chip({ glyph, num, word, color, t }: { glyph: ReactNode; num: number | string; word: string; color: string; t: ReturnType<typeof tok> }) {
   return (
     <div style={{ background: t.chipInner, border: `0.5px solid ${t.goldBorder}`, borderRadius: 14, padding: '9px 4px', textAlign: 'center', boxShadow: `inset 0 1px 0 ${t.cardHi}` }}>
-      <div style={{ fontSize: 14 }}>{emoji}</div>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 28 }}>{glyph}</div>
       <div style={{ fontFamily: FONT_PANCAKE, fontSize: 19, fontWeight: 500, color, lineHeight: 1, margin: '2px 0 0' }}>{num}</div>
       <div style={{ fontSize: 8.5, letterSpacing: '0.06em', color: t.accent, marginTop: 3, fontFamily: FONT_CASUAL, textTransform: 'uppercase' as const }}>{word}</div>
     </div>
@@ -206,11 +208,11 @@ export default function DashboardPage() {
   }, [user]);
 
   const habitsList = [
-    { id: 'practice', label: 'Practice', emoji: '🧘', color: `${TERRACOTTA},0.85)` },
-    { id: 'hydrate',  label: 'Hydrate',  emoji: '💧', color: 'rgba(100,160,200,0.85)' },
-    { id: 'rest',     label: 'Rest',     emoji: '🌙', color: `${GOLD},0.85)` },
-    { id: 'sunlight', label: 'Sunlight', emoji: '☀️', color: 'rgba(220,180,80,0.85)' },
-    { id: 'active',   label: 'Active',   emoji: '🔥', color: `${SAGE},0.85)` },
+    { id: 'practice', label: 'Practice', Icon: PracticeIcon, color: `${TERRACOTTA},0.85)` },
+    { id: 'hydrate',  label: 'Hydrate',  Icon: HydrateIcon,  color: 'rgba(100,160,200,0.85)' },
+    { id: 'rest',     label: 'Rest',     Icon: RestIcon,     color: `${GOLD},0.85)` },
+    { id: 'sunlight', label: 'Sunlight', Icon: SunlightIcon, color: 'rgba(220,180,80,0.85)' },
+    { id: 'active',   label: 'Active',   Icon: ActiveIcon,   color: `${SAGE},0.85)` },
   ];
 
   // Session card gradients (amethyst / mocha / plum) — cycled per session, light text on all.
@@ -265,9 +267,9 @@ export default function DashboardPage() {
               </div>
               <p style={{ fontSize: 9, color: t.muted, fontFamily: FONT_CASUAL, margin: '6px 0 10px', textAlign: 'center' }}>Check-ins this week · {weekDays.size} of 7</p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
-                <Chip emoji="🔥" num={7} word="Streak" color={isDark ? 'rgba(160,195,130,0.92)' : t.text} t={t} />
-                <Chip emoji="📸" num={totalSessions} word="Poses" color={isDark ? t.text : t.text} t={t} />
-                <Chip emoji="⭐" num={avgScore} word="Score" color={isDark ? t.gold : t.text} t={t} />
+                <Chip glyph={<MoonStreakIcon size={26} />} num={7} word="Streak" color={isDark ? 'rgba(160,195,130,0.92)' : t.text} t={t} />
+                <Chip glyph={<MoonSalutationIcon size={26} />} num={totalSessions} word="Poses" color={isDark ? t.text : t.text} t={t} />
+                <Chip glyph={<PuffyStarIcon size={26} />} num={avgScore} word="Score" color={isDark ? t.gold : t.text} t={t} />
               </div>
             </GlassCard>
           </section>
@@ -358,9 +360,10 @@ export default function DashboardPage() {
                     {habitsList.map(h => {
                       const cnt = habitWeekCounts[h.id] || 0;
                       const pct = (cnt / 7) * 100;
+                      const Icon = h.Icon;
                       return (
                         <div key={h.id} style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-                          <span style={{ fontSize: 14, width: 16, textAlign: 'center' }}>{h.emoji}</span>
+                          <span style={{ width: 22, display: 'inline-flex', justifyContent: 'center', alignItems: 'center' }}><Icon size={22} /></span>
                           <span style={{ fontSize: 12, width: 56, color: isDark ? `${PARCHMENT},0.62)` : 'rgba(50,14,59,0.68)', fontFamily: FONT_CASUAL }}>{h.label}</span>
                           <div style={{ flex: 1, height: 9, borderRadius: 6, background: isDark ? `${PARCHMENT},0.07)` : 'rgba(50,14,59,0.10)', overflow: 'hidden', boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.10)' }}>
                             <div style={{ height: '100%', width: `${pct}%`, borderRadius: 6, background: h.color, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.5)', transition: 'width 0.9s ease' }} />

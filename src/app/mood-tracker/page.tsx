@@ -13,9 +13,10 @@ import { format } from 'date-fns';
 import { ArrowLeft, Wind, Sparkles, CheckCircle2, Loader2, Zap, Droplets, Moon, Sun, Flame, ArrowRight, Check } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { MoonPhaseRingLoader } from '@/components/layout/moon-phase-ring-loader';
 import { cn } from '@/lib/utils';
 import { getQuotesForMood } from '@/lib/mood-quotes';
+import { PracticeIcon, HydrateIcon, RestIcon, SunlightIcon, ActiveIcon } from '@/components/icons/HabitIcons';
 
 const GOLD       = 'rgba(193,154,107';
 const PARCHMENT  = 'rgba(255,240,215';
@@ -33,11 +34,11 @@ const MOOD_SPECTRUM = [
 ];
 
 const HABITS = [
-  { id: 'practice', label: 'Practice', emoji: '🧘', color: `${TERRACOTTA},0.85)` },
-  { id: 'hydrate',  label: 'Hydrate',  emoji: '💧', color: 'rgba(100,160,200,0.85)' },
-  { id: 'rest',     label: 'Rest',     emoji: '🌙', color: `${GOLD},0.85)` },
-  { id: 'sunlight', label: 'Sunlight', emoji: '☀️', color: 'rgba(220,180,80,0.85)' },
-  { id: 'active',   label: 'Active',   emoji: '🔥', color: `${SAGE},0.85)` },
+  { id: 'practice', label: 'Practice', Icon: PracticeIcon, color: `${TERRACOTTA},0.85)` },
+  { id: 'hydrate',  label: 'Hydrate',  Icon: HydrateIcon,  color: 'rgba(100,160,200,0.85)' },
+  { id: 'rest',     label: 'Rest',     Icon: RestIcon,     color: `${GOLD},0.85)` },
+  { id: 'sunlight', label: 'Sunlight', Icon: SunlightIcon, color: 'rgba(220,180,80,0.85)' },
+  { id: 'active',   label: 'Active',   Icon: ActiveIcon,   color: `${SAGE},0.85)` },
 ];
 
 const BODY_TAGS_OPTIONS = ['Energized', 'Sore', 'Flexible', 'Tired', 'Tense'];
@@ -161,7 +162,7 @@ export default function MoodTrackerPage() {
     triggerSave(undefined, undefined, undefined, undefined, updated);
   };
 
-  if (!isLoaded) return <AppShell><div className="flex items-center justify-center min-h-screen"><SmileyRockLoader /></div></AppShell>;
+  if (!isLoaded) return <AppShell><div className="flex items-center justify-center min-h-screen"><MoonPhaseRingLoader /></div></AppShell>;
 
   const headerColor = isDark ? `${PARCHMENT},1)` : `${DEEP_BARK},1)`;
   const labelColor = isDark ? 'white' : 'black';
@@ -259,6 +260,7 @@ export default function MoodTrackerPage() {
                 <div className="flex justify-around bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10" style={{ background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)' }}>
                   {HABITS.map(h => {
                     const done = completedHabits.includes(h.id);
+                    const Icon = h.Icon;
                     return (
                       <button 
                         key={h.id} 
@@ -267,16 +269,16 @@ export default function MoodTrackerPage() {
                       >
                         <div 
                           className={cn(
-                            "w-12 h-12 rounded-xl flex items-center justify-center text-xl transition-all duration-300",
+                            "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300",
                             done ? "scale-110 shadow-lg" : "grayscale opacity-40 scale-100"
                           )}
-                          style={{ 
+                          style={{
                             background: done ? h.color : (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'),
                             border: `1px solid ${done ? h.color : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)')}`,
                             boxShadow: done ? `0 4px 12px ${h.color}` : 'none'
                           }}
                         >
-                          {h.emoji}
+                          <Icon size={30} />
                         </div>
                         <span style={{ fontSize: 8, letterSpacing: 1, textTransform: 'uppercase', fontFamily: FONT_CASUAL, color: done ? labelColor : (isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'), fontWeight: done ? 700 : 400 }}>{h.label}</span>
                       </button>

@@ -6,17 +6,16 @@ import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Loader2, Check, ArrowRight } from 'lucide-react';
+import { Loader2, ArrowRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
-import Image from 'next/image';
-import { cn } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
 import { OnboardingScaffold } from '@/components/onboarding/onboarding-scaffold';
-import placeholderImages from '@/lib/placeholder-images.json';
+import { FlexibilityIcon, MobilityIcon, BalanceIcon, StrengthIcon } from '@/components/icons/PathIcons';
 
 const yogaGoalsSchema = z.object({
   mainGoals: z.array(z.string()).min(1, { message: "Please select at least one goal" }),
@@ -24,19 +23,33 @@ const yogaGoalsSchema = z.object({
 
 type YogaGoalsFormValues = z.infer<typeof yogaGoalsSchema>;
 
+// "Pick your path" cards — line-art icon on a coloured art panel + caption below.
+// Order is deliberate: Flexibility, Mobility, Balance, Strength.
 const mainGoalOptions = [
-  { value: "mobility", label: "Mobility", image: placeholderImages.onboardingGoalImages.mobility },
-  { value: "nourishment", label: "Nourishment", image: placeholderImages.onboardingGoalImages.nourishment },
-  { value: "flexibility", label: "Flexibility", image: { src: "/images/flexibility.png", width: 400, height: 400, hint: "yoga flexibility" } },
-  { value: "strength", label: "Strength", image: { src: "/images/strength.png", width: 400, height: 400, hint: "yoga strength" } },
+  { value: "flexibility", label: "Flexibility", line: "Deepen your range",  grad: "linear-gradient(135deg,#7a55a0,#3a2352)", Icon: FlexibilityIcon },
+  { value: "mobility",    label: "Mobility",    line: "Move with ease",     grad: "linear-gradient(135deg,#9a7350,#4b2f52)", Icon: MobilityIcon },
+  { value: "balance",     label: "Balance",     line: "Find your centre",   grad: "linear-gradient(135deg,#8a8455,#3f4028)", Icon: BalanceIcon },
+  { value: "strength",    label: "Strength",    line: "Build steady power", grad: "linear-gradient(135deg,#4d8817,#1f3a08)", Icon: StrengthIcon },
 ];
 
 
 export default function YogaGoalPage() {
   const { user, loading: authLoading } = useAuth();
+  const { isDark } = useTheme();
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // The art panels are the same dark gradients in both modes, so the icon ink
+  // stays cream in both for legibility (deep-purple ink was unreadable on them
+  // in light mode). Only the caption panel — which sits on the app ground —
+  // flips with the theme.
+  const ink        = 'rgba(255,244,225,0.9)';
+  const shadow     = 'rgba(255,244,225,0.16)';
+  const capBg      = isDark ? 'rgba(255,240,215,0.06)' : 'rgba(42,21,51,0.05)';
+  const capName    = isDark ? 'rgba(255,240,215,0.95)' : 'rgba(42,21,51,0.95)';
+  const capSub     = isDark ? 'rgba(255,240,215,0.5)'  : 'rgba(42,21,51,0.55)';
+  const liftShadow = isDark ? '0 14px 30px rgba(0,0,0,0.45)' : '0 14px 30px rgba(50,30,60,0.28)';
 
   const { control, handleSubmit, formState: { errors, isValid }, setValue, watch } = useForm<YogaGoalsFormValues>({
     resolver: zodResolver(yogaGoalsSchema),
@@ -114,11 +127,12 @@ export default function YogaGoalPage() {
                                 name="mainGoals"
                                 control={control}
                                 render={({ field }) => (
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
                                     {mainGoalOptions.map((option) => {
                                         const isChecked = field.value?.includes(option.value);
+                                        const Icon = option.Icon;
                                         return (
-                                            <div key={option.value} className="relative group">
+                                            <div key={option.value} className="relative">
                                                 <Checkbox
                                                     id={option.value}
                                                     checked={isChecked}
@@ -133,26 +147,21 @@ export default function YogaGoalPage() {
                                                 />
                                                 <Label
                                                     htmlFor={option.value}
-                                                    className={cn(
-                                                        "block cursor-pointer overflow-hidden rounded-2xl relative transition-all duration-300 aspect-square",
-                                                        isChecked ? 'ring-2 ring-offset-2 ring-offset-transparent ring-[rgba(193,154,107,0.75)]' : 'ring-0'
-                                                    )}
+                                                    className="block cursor-pointer overflow-hidden transition-all duration-300"
+                                                    style={{
+                                                        borderRadius: 20,
+                                                        boxSizing: 'border-box',
+                                                        border: isChecked ? '3px solid #C19A6B' : '1px solid rgba(193,154,107,0.18)',
+                                                        boxShadow: isChecked ? liftShadow : 'none',
+                                                    }}
                                                 >
-                                                    <Image 
-                                                        src={option.image.src} 
-                                                        alt={option.label}
-                                                        width={option.image.width}
-                                                        height={option.image.height}
-                                                        data-ai-hint={option.image.hint}
-                                                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                                    />
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent group-hover:from-black/60 transition-colors" />
-                                                    <h3 className="sy-option-label absolute bottom-4 left-4 text-lg drop-shadow-sm" style={{ color: 'rgba(255,240,215,0.95)' }}>{option.label}</h3>
-                                                    {isChecked && (
-                                                        <div className="absolute top-3 right-3 h-6 w-6 bg-[rgba(193,154,107,0.95)] backdrop-blur-sm text-black rounded-full flex items-center justify-center shadow-lg">
-                                                            <Check className="h-4 w-4" />
-                                                        </div>
-                                                    )}
+                                                    <div className="aspect-square" style={{ background: option.grad }}>
+                                                        <Icon ink={ink} shadow={shadow} />
+                                                    </div>
+                                                    <div style={{ padding: '16px 18px', background: capBg }}>
+                                                        <p style={{ fontSize: 19, fontWeight: 600, lineHeight: 1.2, margin: 0, color: capName }}>{option.label}</p>
+                                                        <p style={{ fontSize: 11.5, margin: '3px 0 0', color: capSub }}>{option.line}</p>
+                                                    </div>
                                                 </Label>
                                             </div>
                                         )
