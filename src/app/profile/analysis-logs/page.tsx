@@ -9,7 +9,7 @@ import { collection, query, orderBy, getDocs, type Timestamp } from 'firebase/fi
 import { AppShell } from '@/components/layout/app-shell';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, ChevronRight, MessageCircle } from 'lucide-react';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { MoonPhaseRingLoader } from '@/components/layout/moon-phase-ring-loader';
 import { format, isSameDay } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import type { DayContentProps } from 'react-day-picker';
@@ -124,7 +124,7 @@ export default function AnalysisLogsPage() {
     return (
       <AppShell>
         <div className="container mx-auto px-4 py-12 flex items-center justify-center min-h-[calc(100vh-10rem)]">
-          <SmileyRockLoader />
+          <MoonPhaseRingLoader />
         </div>
       </AppShell>
     );

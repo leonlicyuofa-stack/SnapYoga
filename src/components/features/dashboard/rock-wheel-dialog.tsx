@@ -6,7 +6,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from '@/components/ui/button';
 import { Gift, X } from 'lucide-react';
 import { allCollectibles, type Collectible } from './rock-data';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 

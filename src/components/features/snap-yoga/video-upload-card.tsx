@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { UploadCloud } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { MoonPhaseRingLoader } from '@/components/layout/moon-phase-ring-loader';
 
 interface VideoUploadCardProps {
   onVideoUpload: (videoDataUri: string, fileName: string, userNotes: string) => void;
@@ -162,7 +162,7 @@ export function VideoUploadCard({ onVideoUpload, isLoading }: VideoUploadCardPro
             aria-label="Analyze Pose"
           >
             {isLoading ? (
-              <SmileyRockLoader />
+              <MoonPhaseRingLoader text="" />
             ) : (
               <UploadCloud className="mr-2 h-5 w-5" />
             )}

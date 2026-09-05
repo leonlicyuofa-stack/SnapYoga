@@ -13,7 +13,7 @@ import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { Mail, KeyRound } from 'lucide-react';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { MoonPhaseRingLoader } from '@/components/layout/moon-phase-ring-loader';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { OnboardingHeader } from '@/components/onboarding/onboarding-header';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -146,7 +146,7 @@ export default function SignInPage() {
               )}
 
               <Button type="submit" className="sy-cta w-full h-12 text-base rounded-xl" disabled={isLoading}>
-                {isLoading ? <SmileyRockLoader /> : t('signIn')}
+                {isLoading ? <MoonPhaseRingLoader text="" /> : t('signIn')}
               </Button>
             </form>
           </main>

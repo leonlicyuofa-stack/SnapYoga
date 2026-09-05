@@ -10,7 +10,7 @@ import type { SummarizeFeedbackOutput } from '@/ai/flows/summarize-feedback';
 import { Send, MessageCircleQuestion, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { MoonPhaseRingLoader } from '@/components/layout/moon-phase-ring-loader';
 
 interface FeedbackSubmissionCardProps {
   onFeedbackSubmit: (feedback: string) => void;
@@ -89,7 +89,7 @@ export function FeedbackSubmissionCard({ onFeedbackSubmit, isLoading, summary, i
           aria-label="Submit Feedback"
         >
           {isLoading ? (
-            <SmileyRockLoader />
+            <MoonPhaseRingLoader text="" />
           ) : (
             <Send className="mr-2 h-5 w-5" />
           )}

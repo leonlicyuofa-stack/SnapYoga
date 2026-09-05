@@ -17,7 +17,7 @@ import type { AnalysisServiceOutput } from '@/app/actions/analyze-pose-action';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { MoonPhaseRingLoader } from '@/components/layout/moon-phase-ring-loader';
 
 
 interface StoredAnalysisData extends AnalysisServiceOutput {
@@ -171,7 +171,7 @@ export default function PastAnalysisPage() {
     return (
       <AppShell>
         <div className="container mx-auto px-4 py-12 flex items-center justify-center min-h-[calc(100vh-10rem)]">
-          <SmileyRockLoader text="Loading Analysis..." />
+          <MoonPhaseRingLoader text="Loading Analysis..." />
         </div>
       </AppShell>
     );

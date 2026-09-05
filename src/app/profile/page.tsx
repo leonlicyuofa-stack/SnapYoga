@@ -19,7 +19,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { cn } from '@/lib/utils';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { MoonPhaseRingLoader } from '@/components/layout/moon-phase-ring-loader';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { format, subDays, startOfDay, startOfWeek, isToday, isYesterday, differenceInDays } from 'date-fns';
@@ -225,7 +225,7 @@ export default function ProfilePage() {
   };
   
   if (authLoading && !user) {
-    return <AppShell><div className="flex justify-center items-center min-h-screen"><SmileyRockLoader /></div></AppShell>;
+    return <AppShell><div className="flex justify-center items-center min-h-screen"><MoonPhaseRingLoader /></div></AppShell>;
   }
 
   const whatsappShareUrl = inviteLink ? `whatsapp://send?text=${encodeURIComponent('Check out SnapYoga: ' + inviteLink)}` : '#';
@@ -474,7 +474,7 @@ export default function ProfilePage() {
                                         className={cn(usernameErrors.username ? "border-destructive" : "", "flex-grow h-11 text-sm rounded-lg bg-black/20 border-white/10 text-white")}
                                     />
                                     <Button type="submit" disabled={isUsernameSubmitting || authLoading} className="h-11 w-11 rounded-lg" style={{ background: acc(0.20), color: acc(0.85) }}>
-                                        {isUsernameSubmitting ? <SmileyRockLoader /> : <Save className="h-4 w-4" />}
+                                        {isUsernameSubmitting ? <MoonPhaseRingLoader text="" /> : <Save className="h-4 w-4" />}
                                     </Button>
                                 </div>
                                 {usernameErrors.username && <p className="text-xs text-destructive">{usernameErrors.username.message}</p>}
@@ -545,7 +545,7 @@ export default function ProfilePage() {
                                     {passwordErrors.confirmNewPassword && <p className="text-xs text-destructive">{passwordErrors.confirmNewPassword.message}</p>}
                                 </div>
                                 <Button type="submit" className="w-full h-10 rounded-lg text-xs" style={{ background: acc(0.12), color: txt(0.92) }} disabled={isPasswordSubmitting || authLoading}>
-                                    {isPasswordSubmitting ? <SmileyRockLoader /> : "Update Password"}
+                                    {isPasswordSubmitting ? <MoonPhaseRingLoader text="" /> : "Update Password"}
                                 </Button>
                              </form>
                           </div>

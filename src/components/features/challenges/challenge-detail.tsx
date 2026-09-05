@@ -11,7 +11,7 @@ import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { format } from 'date-fns';
 import { ensureChallengeStarted, computeChallengeDay } from '@/lib/challenge-progress';
 import { useToast } from '@/hooks/use-toast';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { MoonPhaseRingLoader } from '@/components/layout/moon-phase-ring-loader';
 import { TopBarIcons } from '@/components/layout/top-bar-icons';
 
 const FONT_PANCAKE = "'Cormorant Garamond', Georgia, serif";
@@ -162,7 +162,7 @@ export function ChallengeDetail(props: ChallengeDetailProps) {
               color: isCompletedToday ? 'rgba(99,196,122,0.95)' : (isDark ? '#2a1e12' : 'rgba(255,248,235,0.95)'), fontWeight: 600,
             }}
           >
-            {isLoading ? <SmileyRockLoader /> : isCompletedToday ? <><Check className="h-5 w-5" /> Completed Today</> : '✓ Mark Today Complete'}
+            {isLoading ? <MoonPhaseRingLoader text="" /> : isCompletedToday ? <><Check className="h-5 w-5" /> Completed Today</> : '✓ Mark Today Complete'}
           </button>
           <Link href="/snap-yoga" style={{ height: 48, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontFamily: FONT_PANCAKE, fontSize: 15, letterSpacing: '0.04em', border: `0.5px solid ${acc(0.3)}`, background: softBtn, color: txt(0.85), textDecoration: 'none' }}>
             <Video className="h-5 w-5" /> {props.analyzeLabel}

@@ -15,7 +15,7 @@ import { analyzeReflectionThemes, type ReflectionThemesOutput } from '@/ai/flows
 import { Button } from '@/components/ui/button';
 import { TopBarIcons } from '@/components/layout/top-bar-icons';
 import { getMoonPhase, getSuggestedPractices, pickPrizeForDate, getPrizeById } from '@/lib/moon';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { MoonPhaseRingLoader } from '@/components/layout/moon-phase-ring-loader';
 
 // ─── Brand tokens ────────────────────────────────────────────────────────────
 const FONT_PANCAKE = "'Cormorant Garamond', Georgia, serif";
@@ -277,7 +277,7 @@ export default function PracticeCalendarPage() {
 
   const reflectionsCount = Object.values(moodsByDate).filter(m => !!m.reflection).length;
 
-  if (!mounted) return <AppShell><div className="flex items-center justify-center min-h-screen"><SmileyRockLoader /></div></AppShell>;
+  if (!mounted) return <AppShell><div className="flex items-center justify-center min-h-screen"><MoonPhaseRingLoader /></div></AppShell>;
 
   return (
     <AppShell>

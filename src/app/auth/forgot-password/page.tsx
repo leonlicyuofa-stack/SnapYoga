@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { OnboardingHeader } from '@/components/onboarding/onboarding-header';
 import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { MoonPhaseRingLoader } from '@/components/layout/moon-phase-ring-loader';
 
 const schema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -115,7 +115,7 @@ export default function ForgotPasswordPage() {
                     disabled={isSubmitting}
                     className="sy-cta w-full h-12 text-base rounded-xl"
                   >
-                    {isSubmitting ? <SmileyRockLoader /> : 'Send Reset Link'}
+                    {isSubmitting ? <MoonPhaseRingLoader text="" /> : 'Send Reset Link'}
                   </Button>
                 </form>
               </>

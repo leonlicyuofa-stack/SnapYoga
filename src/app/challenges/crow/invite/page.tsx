@@ -19,7 +19,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/contexts/AuthContext'; 
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
-import { SmileyRockLoader } from '@/components/layout/smiley-rock-loader';
+import { MoonPhaseRingLoader } from '@/components/layout/moon-phase-ring-loader';
 import { errorEmitter } from '@/lib/firebase/error-emitter';
 import { FirestorePermissionError } from '@/lib/firebase/errors';
 
@@ -297,7 +297,7 @@ export default function CrowPoseInvitePage() {
                       disabled={isSearching || sendingInvites}
                     />
                     <Button variant="outline" onClick={handleSearchFriends} disabled={!friendSearchQuery.trim() || isSearching || sendingInvites}>
-                      {isSearching ? <SmileyRockLoader /> : <Search className="mr-2 h-4 w-4" />}
+                      {isSearching ? <MoonPhaseRingLoader text="" /> : <Search className="mr-2 h-4 w-4" />}
                        Search
                     </Button>
                   </div>
@@ -305,7 +305,7 @@ export default function CrowPoseInvitePage() {
 
                 {isSearching && (
                   <div className="p-4 border border-dashed rounded-md bg-muted/50 min-h-[80px] flex items-center justify-center">
-                    <SmileyRockLoader />
+                    <MoonPhaseRingLoader text="" />
                     <p className="ml-2 text-sm text-muted-foreground">Searching...</p>
                   </div>
                 )}
@@ -355,7 +355,7 @@ export default function CrowPoseInvitePage() {
                   onClick={handleSendInvitations} 
                   disabled={selectedFriends.length === 0 || sendingInvites || !currentUser}
                 >
-                  {sendingInvites ? <SmileyRockLoader /> : <Send className="mr-2 h-4 w-4" />}
+                  {sendingInvites ? <MoonPhaseRingLoader text="" /> : <Send className="mr-2 h-4 w-4" />}
                   {sendingInvites ? 'Sending...' : `Send In-App Invitations (${selectedFriends.length})`}
                 </Button>
               </div>
