@@ -24,6 +24,7 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { format, subDays, startOfDay, startOfWeek, isToday, isYesterday, differenceInDays } from 'date-fns';
 import { TierBadge } from '@/components/ui/tier-badge';
+import { GlossyButton } from '@/components/ui/glossy-button';
 
 const usernameChangeSchema = z.object({
   username: z.string().min(2, { message: "Username must be at least 2 characters" }).max(30, { message: "Username cannot be longer than 30 characters" }),
@@ -237,87 +238,78 @@ export default function ProfilePage() {
       <div className="relative min-h-[calc(100vh-4rem)]">
         <div className="relative z-10 flex flex-col h-full">
             
-            {/* PROFILE HEADER */}
-            <header className="container mx-auto px-4 pt-12 pb-8 relative flex flex-col items-center text-center">
-                <div className="relative mb-4">
+            {/* PROFILE HERO — full-bleed brand banner with the avatar overlapping */}
+            <header
+              className="relative flex flex-col items-center text-center overflow-hidden"
+              style={{
+                paddingTop: 48,
+                paddingBottom: 26,
+                // The cover reads as a distinct panel against the page ground, each
+                // theme on its own terms: warm amber-ink ("candle-lit evening") with a
+                // gold edge on dark — gold leads dark, never amethyst — and deep
+                // amethyst on the lavender ground in light.
+                background: isDark
+                  ? 'linear-gradient(150deg,#3A2D1E 0%,#2A2320 50%,#1E1A20 100%)'
+                  : 'linear-gradient(150deg,#5B3A6E 0%,#3E2352 55%,#320E3B 100%)',
+                borderBottom: `1px solid ${isDark ? 'rgba(193,154,107,0.32)' : 'rgba(255,248,235,0.35)'}`,
+                boxShadow: isDark ? '0 10px 30px rgba(0,0,0,0.50)' : '0 10px 30px rgba(50,14,59,0.22)',
+              }}
+            >
+                {/* orbit motif */}
+                <div aria-hidden="true" style={{ position: 'absolute', top: -46, right: -30, width: 180, height: 180, borderRadius: '50%', border: `1px dashed ${isDark ? 'rgba(193,154,107,0.28)' : 'rgba(255,255,255,0.28)'}` }}>
+                  <span style={{ position: 'absolute', top: -3, left: '50%', transform: 'translateX(-50%)', width: 6, height: 6, borderRadius: '50%', background: isDark ? 'rgba(193,154,107,0.85)' : 'rgba(255,255,255,0.85)' }} />
+                </div>
+                <div aria-hidden="true" style={{ position: 'absolute', bottom: -60, left: -40, width: 150, height: 150, borderRadius: '50%', border: `1px solid ${isDark ? 'rgba(193,154,107,0.12)' : 'rgba(255,255,255,0.14)'}` }} />
+
+                {/* avatar */}
+                <div style={{ position: 'relative' }}>
                   <div
                     style={{
-                      width: 84,
-                      height: 84,
+                      width: 92,
+                      height: 92,
                       borderRadius: '50%',
-                      border: `2px solid ${acc(0.45)}`,
-                      boxShadow: `0 0 0 6px ${acc(0.06)}, 0 0 0 12px ${acc(0.03)}`,
                       overflow: 'hidden',
-                      background: isDark ? 'rgba(193,154,107,0.15)' : 'rgba(255,255,255,0.18)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
+                      border: `2px solid ${isDark ? 'rgba(193,154,107,0.6)' : 'rgba(255,248,235,0.7)'}`,
+                      boxShadow: `0 0 0 6px ${isDark ? 'rgba(193,154,107,0.10)' : 'rgba(255,255,255,0.14)'}, 0 6px 18px rgba(0,0,0,0.4)`,
+                      background: isDark ? 'rgba(20,17,16,0.72)' : '#4A2E6B',
                     }}
                   >
                     {avatarUrl ? (
-                      <img
-                        src={avatarUrl}
-                        alt={displayNameResolved || 'Profile'}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
+                      <img src={avatarUrl} alt={displayNameResolved || 'Profile'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
-                      <span style={{ fontSize: 32, color: acc(0.85), fontFamily: "'Cormorant Garamond', serif" }}>
+                      <span style={{ fontSize: 36, color: 'rgba(255,248,235,0.9)', fontFamily: "'Cormorant Garamond', serif" }}>
                         {(displayNameResolved?.[0] || user?.email?.[0] || 'U').toUpperCase()}
                       </span>
                     )}
                   </div>
-                  
                   <a
                     href="/onboarding/gender-profile?edit=1"
-                    style={{
-                      position: 'absolute',
-                      bottom: 0,
-                      right: 0,
-                      width: 26,
-                      height: 26,
-                      borderRadius: '50%',
-                      background: isDark ? 'rgba(193,154,107,0.85)' : '#320E3B',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      border: 'none',
-                    }}
+                    aria-label="Edit profile"
+                    style={{ position: 'absolute', bottom: 2, right: 2, width: 26, height: 26, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: isDark ? 'rgba(214,178,130,0.95)' : '#FBF4E6', border: 'none' }}
                   >
-                    <Pencil style={{ width: 14, height: 14, color: isDark ? 'rgba(25,16,8,0.95)' : 'rgba(255,248,235,0.95)' }} />
+                    <Pencil style={{ width: 13, height: 13, color: isDark ? '#1a1210' : '#320E3B' }} />
                   </a>
                 </div>
 
-                <h2
-                  style={{
-                    fontSize: 24,
-                    fontWeight: 600,
-                    color: NAME_C,
-                    textShadow: NAME_SH,
-                    fontFamily: "'Cormorant Garamond', Georgia, serif",
-                    marginBottom: 8,
-                  }}
-                >
+                {/* name + tagline */}
+                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: 'rgba(255,248,235,0.97)', textShadow: '0 1px 8px rgba(20,10,25,0.4)', margin: '12px 0 0' }}>
                   {user?.displayName || user?.email?.split('@')[0] || 'Yogi'}
                 </h2>
+                <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 12.5, color: 'rgba(255,248,235,0.72)', margin: '3px 0 0', padding: '0 40px' }}>
+                  &ldquo;Move with your breath, rest with the moon.&rdquo;
+                </p>
 
-                <div className="flex gap-2">
-                  <TierBadge tier={membershipTier} />
-                  <div
-                    style={{
-                      background: isDark ? 'rgba(120,155,95,0.20)' : 'rgba(120,155,95,0.22)',
-                      color: isDark ? 'rgba(160,195,130,0.92)' : '#3B6D11',
-                      border: `0.5px solid ${isDark ? 'rgba(140,170,115,0.35)' : 'rgba(90,130,60,0.45)'}`,
-                      fontSize: 9,
-                      letterSpacing: '0.15em',
-                      textTransform: 'uppercase',
-                      fontWeight: 600,
-                      padding: '5px 12px',
-                      borderRadius: 999,
-                    }}
-                  >
-                    🔥 7 day streak
-                  </div>
+                {/* chips */}
+                <div style={{ display: 'flex', gap: 7, marginTop: 12 }}>
+                  <span style={{ fontSize: 8.5, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700, padding: '4px 11px', borderRadius: 999, background: 'rgba(214,178,130,0.95)', color: '#2a1e12' }}>
+                    {isGold ? 'Gold' : 'Trial'}
+                  </span>
+                  <span style={{ fontSize: 8.5, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700, padding: '4px 11px', borderRadius: 999, background: 'rgba(255,248,235,0.16)', color: 'rgba(255,248,235,0.9)', border: '0.5px solid rgba(255,248,235,0.3)' }}>
+                    🔥 7-day streak
+                  </span>
                 </div>
             </header>
 
@@ -456,7 +448,9 @@ export default function ProfilePage() {
                           onClick={() => setExpandedSection(expandedSection === 'username' ? null : 'username')}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <span style={{ fontSize: 15, color: panelIcon }}>◎</span>
+                            <span style={{ width: 34, height: 34, borderRadius: '50%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: isDark ? 'rgba(193,154,107,0.14)' : 'rgba(50,14,59,0.07)', color: panelIcon }}>
+                              <Pencil style={{ width: 16, height: 16 }} />
+                            </span>
                             <div>
                               <div style={{ fontSize: 13, fontWeight: 500, color: panelTitle }}>Display Name</div>
                               <div style={{ fontSize: 9.5, color: panelSub, fontStyle: 'italic', marginTop: 1 }}>{user?.displayName || 'jellycat'}</div>
@@ -488,7 +482,9 @@ export default function ProfilePage() {
                           onClick={() => setExpandedSection(expandedSection === 'subscription' ? null : 'subscription')}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <span style={{ fontSize: 15, color: panelIcon }}>♛</span>
+                            <span style={{ width: 34, height: 34, borderRadius: '50%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: isDark ? 'rgba(193,154,107,0.14)' : 'rgba(50,14,59,0.07)', color: panelIcon }}>
+                              <Crown style={{ width: 16, height: 16 }} />
+                            </span>
                             <div>
                               <div style={{ fontSize: 13, fontWeight: 500, color: panelTitle }}>Subscription</div>
                               <div style={{ fontSize: 9.5, color: panelSub, fontStyle: 'italic', marginTop: 1 }}>Manage your plan</div>
@@ -518,7 +514,9 @@ export default function ProfilePage() {
                           onClick={() => setExpandedSection(expandedSection === 'security' ? null : 'security')}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <span style={{ fontSize: 15, color: panelIcon }}>🔑</span>
+                            <span style={{ width: 34, height: 34, borderRadius: '50%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: isDark ? 'rgba(193,154,107,0.14)' : 'rgba(50,14,59,0.07)', color: panelIcon }}>
+                              <KeyRound style={{ width: 16, height: 16 }} />
+                            </span>
                             <div>
                               <div style={{ fontSize: 13, fontWeight: 500, color: panelTitle }}>Change Password</div>
                               <div style={{ fontSize: 9.5, color: panelSub, fontStyle: 'italic', marginTop: 1 }}>Update your credentials</div>
@@ -557,7 +555,9 @@ export default function ProfilePage() {
                           onClick={() => setExpandedSection(expandedSection === 'invite' ? null : 'invite')}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <span style={{ fontSize: 15, color: panelIcon }}>👥</span>
+                            <span style={{ width: 34, height: 34, borderRadius: '50%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: isDark ? 'rgba(193,154,107,0.14)' : 'rgba(50,14,59,0.07)', color: panelIcon }}>
+                              <Share2 style={{ width: 16, height: 16 }} />
+                            </span>
                             <div>
                               <div style={{ fontSize: 13, fontWeight: 500, color: panelTitle }}>Invite friends to SnapYoga</div>
                               <div style={{ fontSize: 9.5, color: panelSub, fontStyle: 'italic', marginTop: 1 }}>Share your practice</div>
@@ -596,8 +596,8 @@ export default function ProfilePage() {
                           aria-label="Toggle dark mode"
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <span style={{ fontSize: 15, color: panelIcon, display: 'flex' }}>
-                              {isDark ? <Moon style={{ width: 15, height: 15 }} /> : <Sun style={{ width: 15, height: 15 }} />}
+                            <span style={{ width: 34, height: 34, borderRadius: '50%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: isDark ? 'rgba(193,154,107,0.14)' : 'rgba(50,14,59,0.07)', color: panelIcon }}>
+                              {isDark ? <Moon style={{ width: 16, height: 16 }} /> : <Sun style={{ width: 16, height: 16 }} />}
                             </span>
                             <div>
                               <div style={{ fontSize: 13, fontWeight: 500, color: panelTitle }}>Appearance</div>
@@ -612,19 +612,11 @@ export default function ProfilePage() {
                         </div>
                       </div>
 
-                      <button
-                        onClick={handleSignOut}
-                        style={{
-                          width: '100%', marginTop: 12, height: 46, borderRadius: 14,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                          cursor: 'pointer', fontSize: 13, fontWeight: 500,
-                          background: isDark ? 'rgba(255,240,215,0.03)' : 'rgba(255,255,255,0.16)',
-                          border: `0.5px solid ${isDark ? 'rgba(193,154,107,0.40)' : 'rgba(50,14,59,0.35)'}`,
-                          color: isDark ? 'rgba(193,154,107,0.90)' : '#320E3B',
-                        }}
-                      >
-                        <LogOut style={{ width: 16, height: 16 }} /> Sign out
-                      </button>
+                      <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
+                        <GlossyButton onClick={handleSignOut} variant="coral" icon={<LogOut className="h-4 w-4" />}>
+                          Sign out
+                        </GlossyButton>
+                      </div>
                   </div>
               </div>
             </main>

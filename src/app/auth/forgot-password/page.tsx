@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { OnboardingHeader } from '@/components/onboarding/onboarding-header';
 import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
-import { MoonPhaseRingLoader } from '@/components/layout/moon-phase-ring-loader';
+import { GlossyButton } from '@/components/ui/glossy-button';
 
 const schema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -72,12 +72,11 @@ export default function ForgotPasswordPage() {
                 <p className="sy-body text-sm">
                   Follow the link in the email to reset your password. It may take a minute to arrive.
                 </p>
-                <Button
-                  onClick={() => router.push('/auth/signin')}
-                  className="sy-cta w-full h-12 text-base rounded-xl mt-4"
-                >
-                  Back to Sign In
-                </Button>
+                <div className="flex justify-center mt-4">
+                  <GlossyButton onClick={() => router.push('/auth/signin')} variant="ghost" icon={<ArrowLeft className="h-4 w-4" />}>
+                    Back to Sign In
+                  </GlossyButton>
+                </div>
                 <button
                   onClick={() => setEmailSent(false)}
                   className="sy-subtitle text-sm hover:underline underline-offset-2 transition-colors mt-2"
@@ -110,13 +109,11 @@ export default function ForgotPasswordPage() {
                     )}
                   </div>
 
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="sy-cta w-full h-12 text-base rounded-xl"
-                  >
-                    {isSubmitting ? <MoonPhaseRingLoader text="" /> : 'Send Reset Link'}
-                  </Button>
+                  <div className="flex justify-center">
+                    <GlossyButton type="submit" variant="primary" icon={<Mail className="h-4 w-4" />} loading={isSubmitting}>
+                      Send Reset Link
+                    </GlossyButton>
+                  </div>
                 </form>
               </>
             )}

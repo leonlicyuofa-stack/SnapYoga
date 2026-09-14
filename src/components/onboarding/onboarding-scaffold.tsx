@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { ArrowLeft } from 'lucide-react';
 import { OnboardingHeader } from '@/components/onboarding/onboarding-header';
 import { OnboardingThemeToggle } from '@/components/onboarding/onboarding-theme-toggle';
+import { GlossyButton } from '@/components/ui/glossy-button';
 
 interface OnboardingScaffoldProps {
   title?: string;
@@ -61,14 +62,9 @@ export function OnboardingScaffold({
             {(onBack || next) && (
               <div className="flex items-center justify-between mt-6">
                 {onBack ? (
-                  <button
-                    type="button"
-                    onClick={onBack}
-                    aria-label="Go back"
-                    className="rounded-full h-12 w-12 p-0 flex items-center justify-center bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border border-[rgba(50,14,59,0.4)] dark:border-white/20"
-                  >
-                    <ArrowLeft className="h-6 w-6" />
-                  </button>
+                  <GlossyButton type="button" variant="ghost" onClick={onBack} icon={<ArrowLeft className="h-4 w-4" />}>
+                    Back
+                  </GlossyButton>
                 ) : <span />}
                 {next ?? <span />}
               </div>

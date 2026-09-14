@@ -12,7 +12,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
-import { Mail, KeyRound } from 'lucide-react';
+import { Mail, KeyRound, LogIn } from 'lucide-react';
+import { GlossyButton } from '@/components/ui/glossy-button';
 import { MoonPhaseRingLoader } from '@/components/layout/moon-phase-ring-loader';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { OnboardingHeader } from '@/components/onboarding/onboarding-header';
@@ -145,9 +146,11 @@ export default function SignInPage() {
                 </div>
               )}
 
-              <Button type="submit" className="sy-cta w-full h-12 text-base rounded-xl" disabled={isLoading}>
-                {isLoading ? <MoonPhaseRingLoader text="" /> : t('signIn')}
-              </Button>
+              <div className="flex justify-center">
+                <GlossyButton type="submit" variant="primary" icon={<LogIn className="h-4 w-4" />} loading={isLoading}>
+                  {t('signIn')}
+                </GlossyButton>
+              </div>
             </form>
           </main>
           <footer className="text-center">

@@ -7,7 +7,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { AppleIcon } from '@/components/icons/AppleIcon';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
-import { Mail, User, KeyRound, EyeOff, Eye, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Mail, User, KeyRound, EyeOff, Eye, ArrowLeft, ArrowRight, UserPlus } from 'lucide-react';
+import { GlossyButton } from '@/components/ui/glossy-button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -146,16 +147,16 @@ export default function SignUpPage() {
                              {errors.password && <p className="text-sm text-red-400 text-left mt-1 pl-4">{errors.password.message}</p>}
                         </div>
 
-                        <div className="flex items-center justify-end mt-8">
-                          <Button
+                        <div className="mt-8 flex justify-center">
+                          <GlossyButton
                             type="submit"
-                            variant="ghost"
-                            aria-label="Sign up"
-                            disabled={isLoading || !isValid}
-                            className="rounded-full h-12 w-12 p-0 bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-[rgba(50,14,59,0.4)] dark:border-white/20"
+                            variant="primary"
+                            icon={<UserPlus className="h-4 w-4" />}
+                            loading={isLoading}
+                            disabled={!isValid}
                           >
-                            {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : <ArrowRight className="h-6 w-6" />}
-                          </Button>
+                            Create account
+                          </GlossyButton>
                         </div>
                     </form>
                 </main>

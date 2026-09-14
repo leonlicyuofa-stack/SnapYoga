@@ -8,6 +8,7 @@ import { doc, getDoc, type DocumentData } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Edit3, Loader2, Spline, Dumbbell, BrainCircuit, MoreHorizontal, Wind, HeartPulse } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { GlossyButton } from '@/components/ui/glossy-button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -255,14 +256,9 @@ export default function ProfileSummaryPage() {
       totalSteps={5}
       onBack={handleBackNavigation}
       next={
-        <Button
-          onClick={handleNext}
-          variant="ghost"
-          className="rounded-full h-12 w-12 p-0 bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-lg transition-all hover:scale-105 backdrop-blur-sm border-[rgba(50,14,59,0.4)] dark:border-white/20"
-          aria-label="Next"
-        >
-          <ArrowRight className="h-6 w-6" />
-        </Button>
+        <GlossyButton onClick={handleNext} variant="primary" icon={<ArrowRight className="h-4 w-4" />}>
+          Next
+        </GlossyButton>
       }
     >
                     {profileData?.photoURL && (
