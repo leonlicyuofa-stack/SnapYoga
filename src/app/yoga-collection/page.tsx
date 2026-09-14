@@ -4,7 +4,7 @@ import React from 'react';
 import { AppShell } from '@/components/layout/app-shell';
 import { useTheme } from '@/contexts/ThemeContext';
 import { allCollectibles, type Collectible } from '@/components/features/dashboard/rock-data';
-import { ArrowLeft, Check, Lock } from 'lucide-react';
+import { ArrowLeft, Check, Lock, ChevronLeft, ChevronRight, RotateCw } from 'lucide-react';
 import Link from 'next/link';
 
 const FONT_SERIF = "'Cormorant Garamond', Georgia, serif";
@@ -12,7 +12,8 @@ const FONT_SANS  = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
 
 const RARITY_RANK: Record<Collectible['rarity'], number> = { Common: 1, Uncommon: 2, Rare: 3, Epic: 4 };
 
-const CARD_HEIGHT = 256;
+const CARD_HEIGHT = 400;
+const GAP = 16;
 
 /** Tokens — amethyst leads light, gold leads dark. */
 function tok(isDark: boolean) {
@@ -24,7 +25,7 @@ function tok(isDark: boolean) {
     cardBg    : isDark ? 'linear-gradient(160deg,rgba(255,240,215,0.10),rgba(255,240,215,0.03))' : 'linear-gradient(160deg,rgba(255,255,255,0.34),rgba(255,255,255,0.16))',
     cardBorder: isDark ? 'rgba(193,154,107,0.18)' : 'rgba(255,255,255,0.42)',
     cardHi    : isDark ? 'rgba(255,240,215,0.10)' : 'rgba(255,255,255,0.60)',
-    cardShadow: isDark ? '0 8px 22px rgba(0,0,0,0.45)' : '0 8px 22px rgba(90,80,120,0.16)',
+    cardShadow: isDark ? '0 14px 34px rgba(0,0,0,0.50)' : '0 14px 34px rgba(90,80,120,0.20)',
     discBg    : isDark ? 'rgba(255,240,215,0.06)' : 'rgba(255,255,255,0.5)',
     discBorder: isDark ? 'rgba(193,154,107,0.18)' : 'rgba(255,255,255,0.7)',
     pipOn     : isDark ? 'rgba(193,154,107,0.95)' : '#320E3B',
@@ -34,9 +35,11 @@ function tok(isDark: boolean) {
     noBg      : isDark ? 'rgba(255,240,215,0.05)' : 'rgba(50,14,59,0.06)',
     progTrack : isDark ? 'rgba(255,240,215,0.10)' : 'rgba(50,14,59,0.12)',
     progFill  : isDark ? 'linear-gradient(90deg,rgba(214,178,130,0.98),rgba(193,154,107,0.92))' : '#320E3B',
-    backBg    : isDark ? 'rgba(193,154,107,0.14)' : '#320E3B',
-    backBorder: isDark ? 'rgba(193,154,107,0.4)'  : 'rgba(50,14,59,0.4)',
-    backColor : isDark ? 'rgba(255,240,215,0.9)'  : 'rgba(255,248,235,0.96)',
+    ctrlBg    : isDark ? 'rgba(193,154,107,0.14)' : '#320E3B',
+    ctrlBorder: isDark ? 'rgba(193,154,107,0.4)'  : 'rgba(50,14,59,0.4)',
+    ctrlColor : isDark ? 'rgba(255,240,215,0.9)'  : 'rgba(255,248,235,0.96)',
+    dotOn     : isDark ? 'rgba(214,178,130,0.98)' : '#320E3B',
+    dotOff    : isDark ? 'rgba(193,154,107,0.28)' : 'rgba(50,14,59,0.20)',
     // reverse face — the profile cover panel: amber evening in dark, amethyst in light
     faceBack  : isDark ? 'linear-gradient(160deg,#3A2D1E 0%,#2A2320 55%,#1E1A20 100%)' : 'linear-gradient(160deg,#3E2352,#320E3B)',
     faceBackLn: isDark ? 'rgba(193,154,107,0.34)' : 'rgba(255,248,235,0.30)',
@@ -56,7 +59,7 @@ function StatusPill({ collected, onBack, t }: { collected: boolean; onBack: bool
         ? { color: t.gotColor, background: 'rgba(120,155,95,0.15)' }
         : { color: t.noColor, background: t.noBg });
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 9, letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 700, borderRadius: 999, padding: '4px 10px', marginTop: 5, fontFamily: FONT_SANS, ...style }}>
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 700, borderRadius: 999, padding: '5px 12px', fontFamily: FONT_SANS, ...style }}>
       {collected ? <Check className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
       {collected ? 'Collected' : 'Locked'}
     </span>
@@ -65,101 +68,43 @@ function StatusPill({ collected, onBack, t }: { collected: boolean; onBack: bool
 
 function CollectibleCard({ item, collected, t }: { item: Collectible; collected: boolean; t: T }) {
   const [flipped, setFlipped] = React.useState(false);
-  const [hovered, setHovered] = React.useState(false);
-  const [dragDeg, setDragDeg] = React.useState<number | null>(null);
-  const cardRef = React.useRef<HTMLDivElement | null>(null);
-  const drag = React.useRef<{ x: number; y: number; w: number; live: boolean; id: number } | null>(null);
-  const swipedAt = React.useRef(0);
-
   const rank = RARITY_RANK[item.rarity];
-  const dragging = dragDeg !== null;
-
-  const onPointerDown = (e: React.PointerEvent) => {
-    if (e.button !== 0) return;
-    drag.current = { x: e.clientX, y: e.clientY, w: cardRef.current?.offsetWidth || 1, live: false, id: e.pointerId };
-    // Capture straight away so a fast swipe can't hand the gesture to the next card.
-    try { cardRef.current?.setPointerCapture(e.pointerId); } catch { /* not supported */ }
-  };
-
-  const onPointerMove = (e: React.PointerEvent) => {
-    const d = drag.current;
-    if (!d) return;
-    const dx = e.clientX - d.x;
-    if (!d.live) {
-      if (Math.abs(dx) < 6) return;
-      // a mostly-vertical gesture is a page scroll, not a card turn
-      if (Math.abs(dx) < Math.abs(e.clientY - d.y)) {
-        drag.current = null;
-        try { cardRef.current?.releasePointerCapture(d.id); } catch { /* already released */ }
-        return;
-      }
-      d.live = true;
-    }
-    setDragDeg((dx / d.w) * 180);
-  };
-
-  const endDrag = (e: React.PointerEvent) => {
-    const d = drag.current;
-    drag.current = null;
-    if (!d?.live) return;
-    const dx = e.clientX - d.x;
-    setDragDeg(null);
-    if (Math.abs(dx) > d.w * 0.28) setFlipped(f => !f);
-    swipedAt.current = Date.now();   // stop the trailing click from undoing the swipe
-  };
-
-  const onClick = () => {
-    if (Date.now() - swipedAt.current < 400) return;
-    setFlipped(f => !f);
-  };
-
-  const angle = (flipped ? 180 : 0) + (hovered && !dragging ? 180 : 0) + (dragDeg ?? 0);
 
   const face: React.CSSProperties = {
-    position: 'absolute', inset: 0, borderRadius: 20, overflow: 'hidden',
+    position: 'absolute', inset: 0, borderRadius: 24, overflow: 'hidden',
     backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
     display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center',
-    padding: '16px 14px 14px',
+    padding: '26px 20px 22px',
     boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}`,
   };
 
   return (
     <div
-      ref={cardRef}
       role="button"
       tabIndex={0}
       aria-pressed={flipped}
-      aria-label={`${item.name}, ${item.rarity}, ${collected ? 'collected' : 'locked'}. Turn card for details.`}
-      onClick={onClick}
+      aria-label={`${item.name}, ${item.rarity}, ${collected ? 'collected' : 'locked'}. Tap to turn the card over.`}
+      onClick={() => setFlipped(f => !f)}
       onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setFlipped(f => !f); } }}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={endDrag}
-      onPointerCancel={endDrag}
-      onPointerEnter={e => { if (e.pointerType === 'mouse') setHovered(true); }}
-      onPointerLeave={e => { if (e.pointerType === 'mouse') setHovered(false); }}
       style={{
-        perspective: 1100,
-        cursor: dragging ? 'grabbing' : 'pointer',
-        touchAction: 'pan-y',
-        userSelect: 'none',
-        WebkitUserSelect: 'none',
+        perspective: 1200,
+        cursor: 'pointer',
         WebkitTapHighlightColor: 'transparent',
+        height: CARD_HEIGHT,
       }}
     >
       <div
         className="sy-flip-inner"
         style={{
-          position: 'relative', width: '100%', height: CARD_HEIGHT,
+          position: 'relative', width: '100%', height: '100%',
           transformStyle: 'preserve-3d',
-          transform: `rotateY(${angle}deg)`,
-          transition: dragging ? 'none' : 'transform 0.62s cubic-bezier(0.22,0.72,0.26,1)',
-          willChange: 'transform',
+          transform: `rotateY(${flipped ? 180 : 0}deg)`,
+          transition: 'transform 0.62s cubic-bezier(0.22,0.72,0.26,1)',
         }}
       >
         {/* Front */}
-        <div style={{ ...face, gap: 8, justifyContent: 'flex-start', background: t.cardBg, border: `0.5px solid ${t.cardBorder}`, backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', opacity: collected ? 1 : 0.78 }}>
-          <div style={{ width: 84, height: 84, borderRadius: 16, overflow: 'hidden', flex: 'none', background: t.discBg, border: `0.5px solid ${t.discBorder}` }}>
+        <div style={{ ...face, gap: 12, justifyContent: 'center', paddingBottom: 44, background: t.cardBg, border: `0.5px solid ${t.cardBorder}`, backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', opacity: collected ? 1 : 0.8 }}>
+          <div style={{ width: 150, height: 150, borderRadius: 22, overflow: 'hidden', flex: 'none', background: t.discBg, border: `0.5px solid ${t.discBorder}` }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={item.imageUrl}
@@ -169,29 +114,33 @@ function CollectibleCard({ item, collected, t }: { item: Collectible; collected:
             />
           </div>
 
-          <p style={{ fontFamily: FONT_SERIF, fontSize: 18, fontWeight: 600, lineHeight: 1.14, margin: '2px 0 0', color: t.name }}>{item.name}</p>
+          <p style={{ fontFamily: FONT_SERIF, fontSize: 25, fontWeight: 600, lineHeight: 1.12, margin: 0, color: t.name }}>{item.name}</p>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ fontSize: 8, letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 700, color: t.eyebrow, fontFamily: FONT_SANS }}>{item.rarity}</span>
-            <span style={{ display: 'flex', gap: 3 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+            <span style={{ fontSize: 9, letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700, color: t.eyebrow, fontFamily: FONT_SANS }}>{item.rarity}</span>
+            <span style={{ display: 'flex', gap: 4 }}>
               {[1, 2, 3, 4].map(i => (
-                <span key={i} style={{ width: 5, height: 5, transform: 'rotate(45deg)', borderRadius: 1, background: i <= rank ? t.pipOn : t.pipOff }} />
+                <span key={i} style={{ width: 6, height: 6, transform: 'rotate(45deg)', borderRadius: 1, background: i <= rank ? t.pipOn : t.pipOff }} />
               ))}
             </span>
           </div>
 
           <StatusPill collected={collected} onBack={false} t={t} />
 
-          <p style={{ marginTop: 'auto', fontSize: 8.5, letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700, color: t.sub, opacity: 0.75, fontFamily: FONT_SANS }}>Swipe to turn</p>
+          <p style={{ position: 'absolute', bottom: 18, left: 0, right: 0, margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 700, color: t.sub, opacity: 0.8, fontFamily: FONT_SANS }}>
+            <RotateCw className="h-3 w-3" /> Tap to turn
+          </p>
         </div>
 
         {/* Back */}
-        <div style={{ ...face, gap: 7, justifyContent: 'center', background: t.faceBack, border: `0.5px solid ${t.faceBackLn}`, transform: 'rotateY(180deg)', color: t.backInk }}>
-          <p style={{ fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 700, color: t.backMuted, margin: 0, fontFamily: FONT_SANS }}>How to earn</p>
-          <p style={{ fontSize: 12.5, lineHeight: 1.45, margin: 0, color: t.backInk, fontFamily: FONT_SANS }}>{item.description}</p>
-          <span style={{ width: 34, height: 1, background: t.faceBackLn, margin: '2px 0' }} />
-          <p style={{ fontFamily: FONT_SERIF, fontStyle: 'italic', fontSize: 12.5, lineHeight: 1.45, margin: 0, color: t.backMuted }}>&ldquo;{item.story}&rdquo;</p>
+        <div style={{ ...face, gap: 12, justifyContent: 'center', background: t.faceBack, border: `0.5px solid ${t.faceBackLn}`, transform: 'rotateY(180deg)', color: t.backInk }}>
+          <p style={{ fontFamily: FONT_SERIF, fontSize: 22, fontWeight: 600, lineHeight: 1.12, margin: 0, color: t.backInk }}>{item.name}</p>
+          <span style={{ width: 40, height: 1, background: t.faceBackLn }} />
+          <p style={{ fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 700, color: t.backMuted, margin: 0, fontFamily: FONT_SANS }}>How to earn</p>
+          <p style={{ fontSize: 14, lineHeight: 1.5, margin: 0, color: t.backInk, fontFamily: FONT_SANS }}>{item.description}</p>
+          <p style={{ fontFamily: FONT_SERIF, fontStyle: 'italic', fontSize: 15, lineHeight: 1.5, margin: 0, color: t.backMuted }}>&ldquo;{item.story}&rdquo;</p>
           <StatusPill collected={collected} onBack t={t} />
+          <p style={{ position: 'absolute', bottom: 18, left: 0, right: 0, fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 700, color: t.backMuted, opacity: 0.7, margin: 0, fontFamily: FONT_SANS }}>Tap to turn back</p>
         </div>
       </div>
     </div>
@@ -202,30 +151,66 @@ export default function YogaCollectionPage() {
   const { isDark } = useTheme();
   const t = tok(isDark);
 
+  const railRef = React.useRef<HTMLDivElement | null>(null);
+  const [index, setIndex] = React.useState(0);
+
   // Which items are collected (demo). Progress is derived from this.
   const collectedIds = ['welcome_mat', 'first_analysis_block', 'join_challenge_strap'];
   const collectedCount = allCollectibles.filter(c => collectedIds.includes(c.id)).length;
   const pct = Math.round((collectedCount / allCollectibles.length) * 100);
+  const last = allCollectibles.length - 1;
+
+  // Whichever card sits nearest the middle of the rail is the one you're on.
+  const onScroll = () => {
+    const rail = railRef.current;
+    if (!rail) return;
+    const mid = rail.scrollLeft + rail.clientWidth / 2;
+    let best = 0, bestGap = Infinity;
+    Array.from(rail.children).forEach((child, i) => {
+      const el = child as HTMLElement;
+      const gap = Math.abs(el.offsetLeft + el.offsetWidth / 2 - mid);
+      if (gap < bestGap) { bestGap = gap; best = i; }
+    });
+    setIndex(best);
+  };
+
+  const goTo = (i: number) => {
+    const rail = railRef.current;
+    if (!rail) return;
+    const clamped = Math.max(0, Math.min(last, i));
+    const el = rail.children[clamped] as HTMLElement | undefined;
+    if (!el) return;
+    rail.scrollTo({ left: el.offsetLeft - (rail.clientWidth - el.offsetWidth) / 2, behavior: 'smooth' });
+  };
+
+  const current = allCollectibles[index];
 
   return (
     <AppShell>
-      {/* People who ask for less motion get an instant face swap, not a spin. */}
-      <style>{`@media (prefers-reduced-motion: reduce){.sy-flip-inner{transition:none !important;}}`}</style>
+      <style>{`
+        /* The rail scrolls by swipe; its scrollbar would only be clutter. */
+        .sy-rail{ -ms-overflow-style:none; scrollbar-width:none; }
+        .sy-rail::-webkit-scrollbar{ display:none; }
+        @media (prefers-reduced-motion: reduce){
+          .sy-flip-inner{ transition:none !important; }
+          .sy-rail{ scroll-behavior:auto; }
+        }
+      `}</style>
 
-      <div style={{ maxWidth: 1040, margin: '0 auto', padding: '28px 18px 90px' }}>
+      <div style={{ padding: '28px 0 90px' }}>
 
         {/* Header */}
-        <div style={{ position: 'relative', textAlign: 'center', marginBottom: 24 }}>
+        <div style={{ position: 'relative', textAlign: 'center', padding: '0 18px', maxWidth: 1040, margin: '0 auto 20px' }}>
           <Link
             href="/dashboard"
             aria-label="Back to dashboard"
-            style={{ position: 'absolute', left: 0, top: 2, width: 40, height: 40, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: t.backBg, border: `0.5px solid ${t.backBorder}`, color: t.backColor, textDecoration: 'none' }}
+            style={{ position: 'absolute', left: 18, top: 2, width: 40, height: 40, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: t.ctrlBg, border: `0.5px solid ${t.ctrlBorder}`, color: t.ctrlColor, textDecoration: 'none' }}
           >
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <p style={{ fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 600, color: t.eyebrow, margin: 0, fontFamily: FONT_SANS }}>SnapYoga · Collection</p>
           <h1 style={{ fontFamily: FONT_SERIF, fontSize: 30, fontWeight: 600, color: t.heroTitle, margin: '4px 0 0' }}>The Yoga Collection</h1>
-          <p style={{ fontSize: 13, color: t.sub, margin: '4px 0 0' }}>Swipe a card to see how it&rsquo;s earned.</p>
+          <p style={{ fontSize: 13, color: t.sub, margin: '4px 0 0' }}>Swipe to browse. Tap a card to see how it&rsquo;s earned.</p>
 
           {/* Progress */}
           <div style={{ maxWidth: 260, margin: '14px auto 0' }}>
@@ -238,17 +223,88 @@ export default function YogaCollectionPage() {
           </div>
         </div>
 
-        {/* Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 14 }}>
+        {/* Swipeable rail */}
+        <div
+          ref={railRef}
+          className="sy-rail"
+          onScroll={onScroll}
+          tabIndex={0}
+          role="group"
+          aria-label="Collectibles. Swipe sideways, or use the left and right arrow keys."
+          onKeyDown={e => {
+            if (e.key === 'ArrowRight') { e.preventDefault(); goTo(index + 1); }
+            if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(index - 1); }
+          }}
+          style={{
+            display: 'flex',
+            gap: GAP,
+            overflowX: 'auto',
+            overscrollBehaviorX: 'contain',
+            scrollSnapType: 'x mandatory',
+            scrollBehavior: 'smooth',
+            paddingBlock: '10px 4px',
+            // Centre the first and last card instead of pinning them to the edges.
+            paddingInline: 'max(18px, calc(50% - min(320px, 78vw) / 2))',
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
           {allCollectibles.map(item => (
-            <CollectibleCard
+            <div
               key={item.id}
-              item={item}
-              collected={collectedIds.includes(item.id)}
-              t={t}
-            />
+              style={{ flex: '0 0 min(320px, 78vw)', scrollSnapAlign: 'center', scrollSnapStop: 'always' }}
+            >
+              <CollectibleCard
+                item={item}
+                collected={collectedIds.includes(item.id)}
+                t={t}
+              />
+            </div>
           ))}
         </div>
+
+        {/* Where you are — arrows for trackpads and keyboards, dots for everyone */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginTop: 18 }}>
+          <button
+            type="button"
+            onClick={() => goTo(index - 1)}
+            disabled={index === 0}
+            aria-label="Previous collectible"
+            style={{ width: 38, height: 38, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: t.ctrlBg, border: `0.5px solid ${t.ctrlBorder}`, color: t.ctrlColor, cursor: index === 0 ? 'default' : 'pointer', opacity: index === 0 ? 0.35 : 1, transition: 'opacity 0.2s ease' }}
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+            {allCollectibles.map((item, i) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => goTo(i)}
+                aria-label={`Go to ${item.name}`}
+                aria-current={i === index}
+                style={{
+                  width: i === index ? 20 : 7, height: 7, borderRadius: 999, padding: 0, border: 'none',
+                  background: i === index ? t.dotOn : t.dotOff, cursor: 'pointer',
+                  transition: 'width 0.28s ease, background 0.28s ease',
+                }}
+              />
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => goTo(index + 1)}
+            disabled={index === last}
+            aria-label="Next collectible"
+            style={{ width: 38, height: 38, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: t.ctrlBg, border: `0.5px solid ${t.ctrlBorder}`, color: t.ctrlColor, cursor: index === last ? 'default' : 'pointer', opacity: index === last ? 0.35 : 1, transition: 'opacity 0.2s ease' }}
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+
+        <p aria-live="polite" style={{ textAlign: 'center', fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700, color: t.sub, margin: '12px 0 0', fontFamily: FONT_SANS, fontVariantNumeric: 'tabular-nums' }}>
+          {index + 1} / {allCollectibles.length} · {current?.name}
+        </p>
       </div>
     </AppShell>
   );
