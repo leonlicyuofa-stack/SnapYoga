@@ -7,12 +7,11 @@ import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { GlossyButton } from '@/components/ui/glossy-button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Users, PlusCircle, Copy, Mail, Share2, Bookmark, X } from 'lucide-react';
+import { Users, Gift, Copy, Mail, Share2, Bookmark, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { TopBarIcons } from '@/components/layout/top-bar-icons';
 import { type Category, type PoseChallenge, CATEGORIES, poseChallenges } from '@/lib/challenges-data';
@@ -109,11 +108,6 @@ function InviteFriendDialog() {
     ? 'linear-gradient(160deg, rgba(38,33,30,0.97) 0%, rgba(20,17,22,0.97) 100%)'
     : 'linear-gradient(160deg, rgba(255,253,250,0.98) 0%, rgba(243,237,250,0.98) 100%)';
   const field = isDark ? 'rgba(255,240,215,0.07)' : 'rgba(255,255,255,0.75)';
-  // Semantic green, pitched for each ground rather than one washed-out tint.
-  const goodBg   = isDark ? 'rgba(120,155,95,0.16)' : 'rgba(120,155,95,0.16)';
-  const goodLine = isDark ? 'rgba(160,195,130,0.34)' : 'rgba(90,125,65,0.32)';
-  const goodInk  = isDark ? 'rgba(180,212,150,0.96)' : '#3B6D11';
-
   const shareBtn: React.CSSProperties = {
     height: 44, borderRadius: 12, background: isDark ? 'rgba(255,240,215,0.05)' : 'rgba(255,255,255,0.7)',
     border: `1px solid ${acc(isDark ? 0.22 : 0.18)}`, color: txt(0.88),
@@ -130,8 +124,10 @@ function InviteFriendDialog() {
       <DialogTrigger asChild>
         {/* Was hard-coded gold, which all but vanished on the light theme's
             lavender ground. The shared glossy pill carries both themes. */}
-        <GlossyButton variant="primary" icon={<PlusCircle className="h-4 w-4" />} style={{ height: 42, fontSize: 14 }}>
-          Add Friend
+        {/* "Share your link" is what the button actually does — it opens a
+            sharing sheet rather than adding anyone. */}
+        <GlossyButton variant="primary" icon={<Share2 className="h-4 w-4" />} style={{ height: 42, fontSize: 14 }}>
+          Share your link
         </GlossyButton>
       </DialogTrigger>
       <DialogContent
@@ -163,21 +159,17 @@ function InviteFriendDialog() {
         <DialogHeader>
           <p style={{ ...eyebrow, textAlign: 'center', margin: 0 }}>SnapYoga · Community</p>
           <DialogTitle style={{ fontFamily: FONT_PANCAKE, fontSize: 22, fontWeight: 600, color: txt(0.96), textAlign: 'center', margin: '2px 0 0' }}>
-            Invite a friend
+            Share your link
           </DialogTitle>
+          {/* The reward is made on the card now, so this only has to hand over
+              the link and the places to send it. */}
           <DialogDescription style={{ fontFamily: FONT_SANS, fontSize: 12.5, lineHeight: 1.5, fontWeight: 400, color: txt(0.62), textAlign: 'center', margin: '5px 0 0' }}>
-            Share your love for yoga — invite friends to join you on SnapYoga.
+            Send it any way you like — the $3 lands when they sign up.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
-          <div
-            className="text-center p-3 rounded-xl"
-            style={{ background: goodBg, border: `1px solid ${goodLine}`, color: goodInk, fontFamily: FONT_SANS, fontSize: 12.5, fontWeight: 500 }}
-          >
-            {t('referralBonusText')}
-          </div>
           <div className="space-y-2">
-            <Label htmlFor="invite-link" style={eyebrow}>Copy your invite link</Label>
+            <Label htmlFor="invite-link" style={eyebrow}>Your invite link</Label>
             <div className="flex space-x-2">
               <Input
                 id="invite-link"
@@ -243,12 +235,6 @@ export default function ChallengesPage() {
   const card = isDark ? 'rgba(13,20,30,0.50)' : 'rgba(255,255,255,0.12)';
   const cardBorder = isDark ? 'rgba(193,154,107,0.18)' : 'rgba(255,255,255,0.40)';
   const sectionCard: React.CSSProperties = { borderRadius: 16, border: `0.5px solid ${cardBorder}`, background: card, backdropFilter: 'blur(14px)' };
-
-  const friends = [
-    { id: '1', name: 'Elena' },
-    { id: '2', name: 'Marcus' },
-    { id: '3', name: 'Anya' },
-  ];
 
   const [selectedCategory, setSelectedCategory] = useState<'All' | Category>('All');
   const [bookmarks, setBookmarks] = useState<string[]>([]);
@@ -454,20 +440,47 @@ export default function ChallengesPage() {
 
         {/* COMMUNITY */}
         <SectionHead>Community</SectionHead>
-        <div style={{ ...sectionCard, borderRadius: 18, padding: 18, textAlign: 'center' }}>
-          <div style={{ fontFamily: FONT_PANCAKE, fontSize: 18, fontWeight: 600, color: TITLE, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            <Users className="h-5 w-5" style={{ color: acc(0.8) }} /> {t('challengesWithFriendsTitle')}
-          </div>
-          <p style={{ fontSize: 11, fontStyle: 'italic', color: txt(0.5), margin: '4px 0 12px' }}>{t('challengesWithFriendsDesc')}</p>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
-            {friends.map((f, i) => (
-              /* A thin separator ring, not a frame — enough to read the overlap. */
-              <Avatar key={f.id} style={{ width: 38, height: 38, border: `1.5px solid ${isDark ? '#11121d' : 'rgba(255,250,245,0.92)'}`, marginLeft: i === 0 ? 0 : -9 }}>
-                <AvatarFallback style={{ background: acc(0.16), color: isDark ? 'rgba(214,178,130,0.95)' : '#320E3B', fontSize: 13, fontWeight: 500 }}>{f.name.charAt(0)}</AvatarFallback>
-              </Avatar>
+        {/*
+          The reward leads. This used to show three invented friends (Elena /
+          Marcus / Anya) above a button, with the $3 hidden inside the dialog —
+          so the card promised a friends list the app doesn't have, and buried
+          the only reason to tap.
+        */}
+        <div style={{ ...sectionCard, borderRadius: 20, padding: 18, position: 'relative', overflow: 'hidden' }}>
+          {/* orbit motif */}
+          <div aria-hidden="true" style={{ position: 'absolute', top: -38, right: -26, width: 130, height: 130, borderRadius: '50%', border: `1px dashed ${acc(0.34)}` }} />
+
+          <p style={{ fontFamily: FONT_PANCAKE, fontSize: 26, fontWeight: 600, lineHeight: 1.1, color: TITLE, margin: 0, position: 'relative' }}>
+            <span style={{ color: acc(isDark ? 0.95 : 1) }}>$3</span> for every friend who joins
+          </p>
+          <p style={{ fontFamily: FONT_SANS, fontSize: 12, lineHeight: 1.5, color: txt(0.66), margin: '7px 0 0', position: 'relative' }}>
+            Earn $3 each time a friend signs up with your link — and practise the monthly challenges side by side.
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 11, margin: '15px 0 0', position: 'relative' }}>
+            {[
+              { key: 'cash',  art: null, icon: <Gift className="h-4 w-4" style={{ color: acc(0.95) }} />,  title: '$3 a friend',                  line: 'Paid when they sign up with your link.' },
+              { key: 'pair',  art: null, icon: <Users className="h-4 w-4" style={{ color: acc(0.95) }} />, title: 'Practise together',            line: 'Join the same monthly challenges and compare notes.' },
+              { key: 'pouch', art: '/images/collectible_Yoga Bottle.png', icon: null,                      title: 'Unlock the Community Carafe',  line: 'A Rare collectible, earned on your first invite.' },
+            ].map(b => (
+              <div key={b.key} style={{ display: 'flex', gap: 11, alignItems: 'flex-start' }}>
+                <span style={{ width: 34, height: 34, borderRadius: '50%', flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', background: isDark ? 'rgba(255,240,215,0.07)' : 'rgba(255,255,255,0.7)', border: `0.5px solid ${cardBorder}` }}>
+                  {b.art
+                    // eslint-disable-next-line @next/next/no-img-element
+                    ? <img src={b.art} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    : b.icon}
+                </span>
+                <div>
+                  <p style={{ fontFamily: FONT_SANS, fontSize: 13, fontWeight: 600, color: txt(0.92), margin: 0, lineHeight: 1.3 }}>{b.title}</p>
+                  <p style={{ fontFamily: FONT_SANS, fontSize: 11.5, color: txt(0.62), margin: '2px 0 0', lineHeight: 1.4 }}>{b.line}</p>
+                </div>
+              </div>
             ))}
           </div>
-          <InviteFriendDialog />
+
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16, position: 'relative' }}>
+            <InviteFriendDialog />
+          </div>
         </div>
 
       </div>
