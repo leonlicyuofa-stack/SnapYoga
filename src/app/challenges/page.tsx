@@ -72,6 +72,7 @@ function ComingSoon() {
 function InviteFriendDialog() {
   const { toast } = useToast();
   const { t } = useLanguage();
+  const { isDark } = useTheme();
   const [inviteLink, setInviteLink] = useState('');
 
   React.useEffect(() => { if (typeof window !== 'undefined') setInviteLink(window.location.origin); }, []);
@@ -97,6 +98,24 @@ function InviteFriendDialog() {
     }
   };
 
+  // Nothing here may assume a theme — the dialog used to be pinned to black
+  // with white text, so it stayed black on the light theme too.
+  const txt  = (a: number) => isDark ? `rgba(255,240,215,${a})` : `rgba(50,14,59,${a})`;
+  const acc  = (a: number) => isDark ? `rgba(193,154,107,${a})` : `rgba(50,14,59,${a})`;
+  const panel = isDark
+    ? 'linear-gradient(160deg, rgba(38,33,30,0.97) 0%, rgba(20,17,22,0.97) 100%)'
+    : 'linear-gradient(160deg, rgba(255,253,250,0.98) 0%, rgba(243,237,250,0.98) 100%)';
+  const field = isDark ? 'rgba(255,240,215,0.07)' : 'rgba(255,255,255,0.75)';
+  // Semantic green, pitched for each ground rather than one washed-out tint.
+  const goodBg   = isDark ? 'rgba(120,155,95,0.16)' : 'rgba(120,155,95,0.16)';
+  const goodLine = isDark ? 'rgba(160,195,130,0.34)' : 'rgba(90,125,65,0.32)';
+  const goodInk  = isDark ? 'rgba(180,212,150,0.96)' : '#3B6D11';
+
+  const shareBtn: React.CSSProperties = {
+    height: 44, borderRadius: 12, background: isDark ? 'rgba(255,240,215,0.05)' : 'rgba(255,255,255,0.7)',
+    border: `1px solid ${acc(isDark ? 0.22 : 0.18)}`, color: txt(0.88), fontSize: 14, fontWeight: 500,
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -106,31 +125,61 @@ function InviteFriendDialog() {
           Add Friend
         </GlossyButton>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md rounded-2xl bg-black/50 backdrop-blur-lg border-white/20 text-white">
+      <DialogContent
+        className="sm:max-w-md rounded-2xl backdrop-blur-lg"
+        style={{
+          background: panel,
+          border: `1px solid ${acc(isDark ? 0.24 : 0.16)}`,
+          boxShadow: isDark ? '0 24px 60px rgba(0,0,0,0.6)' : '0 24px 60px rgba(50,14,59,0.22)',
+          color: txt(0.9),
+        }}
+      >
         <DialogHeader>
-          <DialogTitle>Invite a Friend</DialogTitle>
-          <DialogDescription className="text-white/80">
+          <DialogTitle style={{ fontFamily: FONT_PANCAKE, fontSize: 24, fontWeight: 600, color: txt(0.96), textAlign: 'center' }}>
+            Invite a Friend
+          </DialogTitle>
+          <DialogDescription style={{ color: txt(0.66), textAlign: 'center', fontSize: 13.5 }}>
             Share your love for yoga! Invite friends to join you on SnapYoga using any of the options below.
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4 py-4">
-          <div className="text-center p-3 bg-green-500/20 text-green-300 border border-green-500/30 rounded-lg text-sm font-medium">{t('referralBonusText')}</div>
+        <div className="space-y-4 py-2">
+          <div
+            className="text-center p-3 rounded-xl text-sm font-medium"
+            style={{ background: goodBg, border: `1px solid ${goodLine}`, color: goodInk }}
+          >
+            {t('referralBonusText')}
+          </div>
           <div className="space-y-2">
-            <Label htmlFor="invite-link">Copy your invite link</Label>
+            <Label htmlFor="invite-link" style={{ color: txt(0.8), fontSize: 13 }}>Copy your invite link</Label>
             <div className="flex space-x-2">
-              <Input id="invite-link" value={inviteLink} readOnly className="h-11 rounded-lg text-base bg-black/20 border-white/20" />
-              <Button type="button" size="icon" onClick={handleCopyLink} className="rounded-lg bg-white/20 hover:bg-white/30"><Copy className="h-4 w-4" /></Button>
+              <Input
+                id="invite-link"
+                value={inviteLink}
+                readOnly
+                className="h-11 rounded-lg text-base"
+                style={{ background: field, border: `1px solid ${acc(0.2)}`, color: txt(0.9) }}
+              />
+              <Button
+                type="button"
+                size="icon"
+                onClick={handleCopyLink}
+                aria-label="Copy invite link"
+                className="rounded-lg"
+                style={{ background: acc(isDark ? 0.18 : 0.10), border: `1px solid ${acc(0.24)}`, color: txt(0.9) }}
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <Button variant="outline" asChild className="rounded-lg h-11 bg-transparent border-white/20 hover:bg-white/10"><a href={whatsappLink} target="_blank" rel="noopener noreferrer"><Share2 className="mr-2 h-4 w-4" /> WhatsApp</a></Button>
-            <Button variant="outline" asChild className="rounded-lg h-11 bg-transparent border-white/20 hover:bg-white/10"><a href={mailtoLink} target="_blank" rel="noopener noreferrer"><Mail className="mr-2 h-4 w-4" /> Email</a></Button>
-            <Button variant="outline" onClick={handleInstagramShare} className="rounded-lg h-11 bg-transparent border-white/20 hover:bg-white/10"><Share2 className="mr-2 h-4 w-4" /> Instagram</Button>
-            <Button variant="outline" asChild className="rounded-lg h-11 bg-transparent border-white/20 hover:bg-white/10"><a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer"><PinterestIcon className="mr-2 h-4 w-4" /> Pinterest</a></Button>
+            <Button variant="outline" asChild className="rounded-lg" style={shareBtn}><a href={whatsappLink} target="_blank" rel="noopener noreferrer"><Share2 className="mr-2 h-4 w-4" /> WhatsApp</a></Button>
+            <Button variant="outline" asChild className="rounded-lg" style={shareBtn}><a href={mailtoLink} target="_blank" rel="noopener noreferrer"><Mail className="mr-2 h-4 w-4" /> Email</a></Button>
+            <Button variant="outline" onClick={handleInstagramShare} className="rounded-lg" style={shareBtn}><Share2 className="mr-2 h-4 w-4" /> Instagram</Button>
+            <Button variant="outline" asChild className="rounded-lg" style={shareBtn}><a href={pinterestShareUrl} target="_blank" rel="noopener noreferrer"><PinterestIcon className="mr-2 h-4 w-4" /> Pinterest</a></Button>
           </div>
         </div>
         <DialogFooter>
-          <p className="text-xs text-white/70 text-center w-full">Sharing is caring! Grow your yoga community.</p>
+          <p className="text-xs text-center w-full" style={{ color: txt(0.55) }}>Sharing is caring! Grow your yoga community.</p>
         </DialogFooter>
       </DialogContent>
     </Dialog>
