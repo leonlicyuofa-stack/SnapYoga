@@ -26,6 +26,9 @@ import { format, startOfMonth, endOfMonth, getDaysInMonth } from 'date-fns';
 import { ensureChallengeStarted, computeChallengeDay } from '@/lib/challenge-progress';
 
 const FONT_PANCAKE = "'Cormorant Garamond', Georgia, serif";
+// The brand guide gives serif to titles and numbers, and system sans to labels,
+// body and data. The app body is font-serif, so sans has to be asked for.
+const FONT_SANS = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
 const FONT_CASUAL  = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
 
 // ─── Data ──────────────────────────────────────────────────────────────────
@@ -113,7 +116,13 @@ function InviteFriendDialog() {
 
   const shareBtn: React.CSSProperties = {
     height: 44, borderRadius: 12, background: isDark ? 'rgba(255,240,215,0.05)' : 'rgba(255,255,255,0.7)',
-    border: `1px solid ${acc(isDark ? 0.22 : 0.18)}`, color: txt(0.88), fontSize: 14, fontWeight: 500,
+    border: `1px solid ${acc(isDark ? 0.22 : 0.18)}`, color: txt(0.88),
+    fontFamily: FONT_SANS, fontSize: 13.5, fontWeight: 500,
+  };
+  // Eyebrow: sans 600, uppercase, .28em tracking, full-strength colour.
+  const eyebrow: React.CSSProperties = {
+    fontFamily: FONT_SANS, fontSize: 10, fontWeight: 600, letterSpacing: '0.28em',
+    textTransform: 'uppercase', color: acc(isDark ? 0.9 : 1),
   };
 
   return (
@@ -131,6 +140,7 @@ function InviteFriendDialog() {
           // Sit inside the page rather than running edge to edge.
           width: 'calc(100% - 48px)',
           maxWidth: 380,
+          borderRadius: 20,   // the brand's uniform card radius
           background: panel,
           border: `1px solid ${acc(isDark ? 0.24 : 0.16)}`,
           boxShadow: isDark ? '0 24px 60px rgba(0,0,0,0.6)' : '0 24px 60px rgba(50,14,59,0.22)',
@@ -151,29 +161,30 @@ function InviteFriendDialog() {
         </DialogClose>
 
         <DialogHeader>
-          <DialogTitle style={{ fontFamily: FONT_PANCAKE, fontSize: 24, fontWeight: 600, color: txt(0.96), textAlign: 'center' }}>
-            Invite a Friend
+          <p style={{ ...eyebrow, textAlign: 'center', margin: 0 }}>SnapYoga · Community</p>
+          <DialogTitle style={{ fontFamily: FONT_PANCAKE, fontSize: 22, fontWeight: 600, color: txt(0.96), textAlign: 'center', margin: '2px 0 0' }}>
+            Invite a friend
           </DialogTitle>
-          <DialogDescription style={{ color: txt(0.66), textAlign: 'center', fontSize: 13.5 }}>
-            Share your love for yoga! Invite friends to join you on SnapYoga using any of the options below.
+          <DialogDescription style={{ fontFamily: FONT_SANS, fontSize: 12.5, lineHeight: 1.5, fontWeight: 400, color: txt(0.62), textAlign: 'center', margin: '5px 0 0' }}>
+            Share your love for yoga — invite friends to join you on SnapYoga.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <div
-            className="text-center p-3 rounded-xl text-sm font-medium"
-            style={{ background: goodBg, border: `1px solid ${goodLine}`, color: goodInk }}
+            className="text-center p-3 rounded-xl"
+            style={{ background: goodBg, border: `1px solid ${goodLine}`, color: goodInk, fontFamily: FONT_SANS, fontSize: 12.5, fontWeight: 500 }}
           >
             {t('referralBonusText')}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="invite-link" style={{ color: txt(0.8), fontSize: 13 }}>Copy your invite link</Label>
+            <Label htmlFor="invite-link" style={eyebrow}>Copy your invite link</Label>
             <div className="flex space-x-2">
               <Input
                 id="invite-link"
                 value={inviteLink}
                 readOnly
-                className="h-11 rounded-lg text-base"
-                style={{ background: field, border: `1px solid ${acc(0.2)}`, color: txt(0.9) }}
+                className="h-11 rounded-lg"
+                style={{ background: field, border: `1px solid ${acc(0.2)}`, color: txt(0.9), fontFamily: FONT_SANS, fontSize: 13 }}
               />
               <Button
                 type="button"
@@ -195,7 +206,7 @@ function InviteFriendDialog() {
           </div>
         </div>
         <DialogFooter>
-          <p className="text-xs text-center w-full" style={{ color: txt(0.55) }}>Sharing is caring! Grow your yoga community.</p>
+          <p className="text-center w-full" style={{ fontFamily: FONT_SANS, fontSize: 11, color: txt(0.5) }}>Sharing is caring! Grow your yoga community.</p>
         </DialogFooter>
       </DialogContent>
     </Dialog>
