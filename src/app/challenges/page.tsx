@@ -8,11 +8,11 @@ import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
 import { GlossyButton } from '@/components/ui/glossy-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Users, PlusCircle, Copy, Mail, Share2, Bookmark } from 'lucide-react';
+import { Users, PlusCircle, Copy, Mail, Share2, Bookmark, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { TopBarIcons } from '@/components/layout/top-bar-icons';
 import { type Category, type PoseChallenge, CATEGORIES, poseChallenges } from '@/lib/challenges-data';
@@ -126,14 +126,30 @@ function InviteFriendDialog() {
         </GlossyButton>
       </DialogTrigger>
       <DialogContent
-        className="sm:max-w-md rounded-2xl backdrop-blur-lg"
+        className="rounded-2xl backdrop-blur-lg"
         style={{
+          // Sit inside the page rather than running edge to edge.
+          width: 'calc(100% - 48px)',
+          maxWidth: 380,
           background: panel,
           border: `1px solid ${acc(isDark ? 0.24 : 0.16)}`,
           boxShadow: isDark ? '0 24px 60px rgba(0,0,0,0.6)' : '0 24px 60px rgba(50,14,59,0.22)',
           color: txt(0.9),
         }}
       >
+        {/* Let people leave without sharing anything. */}
+        <DialogClose
+          aria-label="Close"
+          style={{
+            position: 'absolute', top: 12, right: 12, width: 30, height: 30, borderRadius: '50%',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: isDark ? 'rgba(255,240,215,0.07)' : 'rgba(50,14,59,0.07)',
+            border: `1px solid ${acc(0.2)}`, color: txt(0.7), cursor: 'pointer',
+          }}
+        >
+          <X className="h-4 w-4" />
+        </DialogClose>
+
         <DialogHeader>
           <DialogTitle style={{ fontFamily: FONT_PANCAKE, fontSize: 24, fontWeight: 600, color: txt(0.96), textAlign: 'center' }}>
             Invite a Friend
