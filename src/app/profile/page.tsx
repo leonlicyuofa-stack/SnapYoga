@@ -243,23 +243,39 @@ export default function ProfilePage() {
               className="relative flex flex-col items-center text-center overflow-hidden"
               style={{
                 paddingTop: 48,
-                paddingBottom: 26,
-                // The cover reads as a distinct panel against the page ground, each
-                // theme on its own terms: warm amber-ink ("candle-lit evening") with a
-                // gold edge on dark — gold leads dark, never amethyst — and deep
-                // amethyst on the lavender ground in light.
-                background: isDark
-                  ? 'linear-gradient(150deg,#3A2D1E 0%,#2A2320 50%,#1E1A20 100%)'
-                  : 'linear-gradient(150deg,#5B3A6E 0%,#3E2352 55%,#320E3B 100%)',
-                borderBottom: `1px solid ${isDark ? 'rgba(193,154,107,0.32)' : 'rgba(255,248,235,0.35)'}`,
-                boxShadow: isDark ? '0 10px 30px rgba(0,0,0,0.50)' : '0 10px 30px rgba(50,14,59,0.22)',
+                // Room at the foot for the cover to dissolve into the page ground.
+                paddingBottom: 60,
               }}
             >
+                {/*
+                  The cover colour lives on its own layer so it can fade out at the
+                  bottom without taking the avatar and name with it — no hard edge
+                  between the cover and My Progress, just a dissolve. Each theme on
+                  its own terms: warm amber-ink ("candle-lit evening") on dark — gold
+                  leads dark, never amethyst — and deep amethyst on lavender in light.
+                */}
+                <div
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    zIndex: 0,
+                    background: isDark
+                      ? 'linear-gradient(150deg,#3A2D1E 0%,#2A2320 50%,#1E1A20 100%)'
+                      : 'linear-gradient(150deg,#5B3A6E 0%,#3E2352 55%,#320E3B 100%)',
+                    maskImage: 'linear-gradient(to bottom, #000 0%, #000 82%, rgba(0,0,0,0.45) 93%, rgba(0,0,0,0) 100%)',
+                    WebkitMaskImage: 'linear-gradient(to bottom, #000 0%, #000 82%, rgba(0,0,0,0.45) 93%, rgba(0,0,0,0) 100%)',
+                  }}
+                />
+
                 {/* orbit motif */}
                 <div aria-hidden="true" style={{ position: 'absolute', top: -46, right: -30, width: 180, height: 180, borderRadius: '50%', border: `1px dashed ${isDark ? 'rgba(193,154,107,0.28)' : 'rgba(255,255,255,0.28)'}` }}>
                   <span style={{ position: 'absolute', top: -3, left: '50%', transform: 'translateX(-50%)', width: 6, height: 6, borderRadius: '50%', background: isDark ? 'rgba(193,154,107,0.85)' : 'rgba(255,255,255,0.85)' }} />
                 </div>
                 <div aria-hidden="true" style={{ position: 'absolute', bottom: -60, left: -40, width: 150, height: 150, borderRadius: '50%', border: `1px solid ${isDark ? 'rgba(193,154,107,0.12)' : 'rgba(255,255,255,0.14)'}` }} />
+
+                {/* Everything readable sits above the colour layer. */}
+                <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
 
                 {/* avatar */}
                 <div style={{ position: 'relative' }}>
@@ -310,6 +326,8 @@ export default function ProfilePage() {
                   <span style={{ fontSize: 8.5, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700, padding: '4px 11px', borderRadius: 999, background: 'rgba(255,248,235,0.16)', color: 'rgba(255,248,235,0.9)', border: '0.5px solid rgba(255,248,235,0.3)' }}>
                     🔥 7-day streak
                   </span>
+                </div>
+
                 </div>
             </header>
 
