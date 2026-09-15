@@ -54,13 +54,18 @@ function styleFor(variant: GlossyVariant, isDark: boolean): { button: React.CSSP
       };
 }
 
-export function GlossyButton({ variant = 'primary', icon, loading = false, fullWidth = false, children, className, disabled, style, ...props }: GlossyButtonProps) {
+// forwardRef so the button can stand in as a Radix `asChild` trigger.
+export const GlossyButton = React.forwardRef<HTMLButtonElement, GlossyButtonProps>(function GlossyButton(
+  { variant = 'primary', icon, loading = false, fullWidth = false, children, className, disabled, style, ...props },
+  ref,
+) {
   const { isDark } = useTheme();
   const s = styleFor(variant, isDark);
   const off = disabled || loading;
   return (
     <button
       {...props}
+      ref={ref}
       disabled={off}
       className={cn('sy-glossy-btn', className)}
       style={{
@@ -90,4 +95,4 @@ export function GlossyButton({ variant = 'primary', icon, loading = false, fullW
       <span>{children}</span>
     </button>
   );
-}
+});

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
+import { GlossyButton } from '@/components/ui/glossy-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -99,9 +100,11 @@ function InviteFriendDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="rounded-full" style={{ border: '0.5px solid rgba(193,154,107,0.30)', background: 'rgba(193,154,107,0.06)', color: 'rgba(214,178,130,0.9)', padding: '8px 18px' }}>
-          <PlusCircle className="mr-2 h-4 w-4" /> Add Friend
-        </Button>
+        {/* Was hard-coded gold, which all but vanished on the light theme's
+            lavender ground. The shared glossy pill carries both themes. */}
+        <GlossyButton variant="primary" icon={<PlusCircle className="h-4 w-4" />} style={{ height: 42, fontSize: 14 }}>
+          Add Friend
+        </GlossyButton>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md rounded-2xl bg-black/50 backdrop-blur-lg border-white/20 text-white">
         <DialogHeader>
@@ -382,8 +385,9 @@ export default function ChallengesPage() {
           <p style={{ fontSize: 11, fontStyle: 'italic', color: txt(0.5), margin: '4px 0 12px' }}>{t('challengesWithFriendsDesc')}</p>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
             {friends.map((f, i) => (
-              <Avatar key={f.id} style={{ width: 40, height: 40, border: `3px solid ${isDark ? '#11121d' : 'rgba(255,250,245,0.9)'}`, marginLeft: i === 0 ? 0 : -10 }}>
-                <AvatarFallback style={{ background: acc(0.2), color: acc(0.9), fontSize: 13 }}>{f.name.charAt(0)}</AvatarFallback>
+              /* A thin separator ring, not a frame — enough to read the overlap. */
+              <Avatar key={f.id} style={{ width: 38, height: 38, border: `1.5px solid ${isDark ? '#11121d' : 'rgba(255,250,245,0.92)'}`, marginLeft: i === 0 ? 0 : -9 }}>
+                <AvatarFallback style={{ background: acc(0.16), color: isDark ? 'rgba(214,178,130,0.95)' : '#320E3B', fontSize: 13, fontWeight: 500 }}>{f.name.charAt(0)}</AvatarFallback>
               </Avatar>
             ))}
           </div>
