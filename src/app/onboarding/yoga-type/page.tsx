@@ -22,13 +22,12 @@ const interestedPosesSchema = z.object({
 type InterestedPosesFormValues = z.infer<typeof interestedPosesSchema>;
 
 // Pose-interest cards — an illustration on the art panel + caption below, matching
-// the "Pick your path" (yoga goals) cards. `image: null` shows a calm placeholder
-// until that illustration is added.
+// the "Pick your path" (yoga goals) cards.
 const poseCategoryOptions = [
-  { id: "dynamic-flow",         label: "Dynamic Flow",           line: "Move with your breath",  image: null as string | null },
+  { id: "dynamic-flow",         label: "Dynamic Flow",           line: "Move with your breath",  image: "/images/dynamic_flow.png" },
   { id: "structural-alignment", label: "Structural Alignment",   line: "Build precise control",  image: "/images/structural_alignment.png" },
-  { id: "inversions-balancing", label: "Inversions & Balancing", line: "Find strength and lift", image: null as string | null },
-  { id: "backbend",             label: "Backbend",               line: "Open with confidence",   image: null as string | null },
+  { id: "inversions-balancing", label: "Inversions & Balancing", line: "Find strength and lift", image: "/images/arm_balancing.png" },
+  { id: "backbend",             label: "Backbend",               line: "Open with confidence",   image: "/images/backbend_alignment.png" },
 ];
 
 
@@ -141,15 +140,9 @@ export default function InterestedPosesPage() {
                           boxShadow: isChecked ? selShadow : 'none',
                         }}
                       >
-                        <div className="aspect-square" style={option.image ? undefined : { background: 'radial-gradient(circle at 50% 42%, #F4EEE2, #E3D9EE)' }}>
-                          {option.image ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={option.image} alt={option.label} className="w-full h-full object-cover" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <div style={{ width: '62%', height: '62%', borderRadius: '50%', background: 'radial-gradient(circle at 40% 35%, #DCCBE8, #C9BC7E)', opacity: 0.4 }} />
-                            </div>
-                          )}
+                        <div className="aspect-square">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={option.image} alt={option.label} className="w-full h-full object-cover" />
                         </div>
                         <div style={{ padding: '14px 13px', background: capBg, flexGrow: 1 }}>
                           <p style={{ fontSize: 16, fontWeight: 600, lineHeight: 1.2, margin: 0, color: capName, overflowWrap: 'break-word' }}>{option.label}</p>
