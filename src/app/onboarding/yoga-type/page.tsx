@@ -140,9 +140,15 @@ export default function InterestedPosesPage() {
                           boxShadow: isChecked ? selShadow : 'none',
                         }}
                       >
-                        <div className="aspect-square">
+                        {/*
+                          The illustrations ship with their own dark rounded corners
+                          painted into the artwork, which read as a second frame inside
+                          the card. A touch of scale pushes that baked-in edge outside
+                          the panel so the card's own 20px radius is the only one.
+                        */}
+                        <div className="aspect-square overflow-hidden">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={option.image} alt={option.label} className="w-full h-full object-cover" />
+                          <img src={option.image} alt={option.label} className="w-full h-full object-cover" style={{ transform: 'scale(1.10)' }} />
                         </div>
                         <div style={{ padding: '14px 13px', background: capBg, flexGrow: 1 }}>
                           <p style={{ fontSize: 16, fontWeight: 600, lineHeight: 1.2, margin: 0, color: capName, overflowWrap: 'break-word' }}>{option.label}</p>
