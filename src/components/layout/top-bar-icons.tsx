@@ -31,6 +31,10 @@ function getInitials(email?: string | null, displayName?: string | null) {
 /**
  * Shared top-bar action icons (search · notifications · profile) used on the
  * main app routes whose AppShell header is hidden. Right-aligned by default.
+ *
+ * The 16px gap to whatever follows lives here rather than in each page, so the
+ * headline sits at the same height everywhere. Pages that place the icons
+ * beside their title instead of above it pass `mb-0` to drop it.
  */
 export function TopBarIcons({ className }: { className?: string }) {
   const { user, profile } = useAuth();
@@ -51,7 +55,7 @@ export function TopBarIcons({ className }: { className?: string }) {
   };
 
   return (
-    <div className={cn('flex items-center justify-end gap-4', className)}>
+    <div className={cn('flex items-center justify-end gap-4 h-8 mb-4', className)}>
       <button type="button" aria-label="Search" onClick={() => setPanel('search')} className="transition-opacity hover:opacity-70" style={iconBtn}>
         <Search className="h-5 w-5" />
       </button>

@@ -106,18 +106,21 @@ export function ChallengeDetail(props: ChallengeDetailProps) {
   return (
     <AppShell>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
-      <div style={{ padding: '16px 14px 28px', maxWidth: 640, margin: '0 auto' }}>
+      {/* 12px, not 16: the icons sit centred beside a 40px back button, so the
+          shorter top padding lands them on the same line as every other page. */}
+      <div style={{ padding: '12px 14px 28px', maxWidth: 640, margin: '0 auto' }}>
 
         {/* Back + top actions */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
           <Link href="/challenges" aria-label="Back to challenges" style={{ textDecoration: 'none' }} className="rounded-full h-10 w-10 p-0 inline-flex items-center justify-center bg-[#320E3B] dark:bg-black/30 hover:bg-[#320E3B]/90 dark:hover:bg-black/50 text-white shadow-md transition-all hover:scale-105 backdrop-blur-sm border border-[rgba(50,14,59,0.4)] dark:border-white/20">
             <ArrowLeft className="h-5 w-5" />
           </Link>
-          <TopBarIcons />
+          {/* Sits in a row with the back button — the row spaces the hero. */}
+          <TopBarIcons className="mb-0" />
         </div>
 
         {/* Hero */}
-        <div style={{ position: 'relative', height: 180, borderRadius: 18, overflow: 'hidden', marginTop: 14, background: props.heroGrad, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'relative', height: 180, borderRadius: 18, overflow: 'hidden', marginTop: 16, background: props.heroGrad, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ fontSize: 64, opacity: 0.85 }}>{props.emoji}</span>
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(11,14,20,0.92), rgba(11,14,20,0.1) 60%, transparent)' }} />
           <div style={{ position: 'absolute', left: 14, right: 14, bottom: 12 }}>

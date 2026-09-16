@@ -297,10 +297,12 @@ export function SnapYogaPageClient() {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
-      
       <div style={{ padding: '16px 14px', display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 12rem)' }}>
-        <TopBarIcons className="mb-3" />
+        {/* Kept inside the padded block: as a sibling under space-y-6 this style
+            tag counted as a row and pushed the top bar 24px below every other
+            page's. */}
+        <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
+        <TopBarIcons />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
           {currentStep > 1 && !isLoadingAnalysis ? (
             <button

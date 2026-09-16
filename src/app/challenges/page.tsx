@@ -315,10 +315,10 @@ export default function ChallengesPage() {
   return (
     <AppShell>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
-      <div style={{ padding: '18px 14px 28px', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ padding: '16px 14px 28px', display: 'flex', flexDirection: 'column' }}>
 
         {/* HEADER */}
-        <TopBarIcons className="mb-4" />
+        <TopBarIcons />
 
         <header>
           <h1 style={{ fontFamily: FONT_PANCAKE, fontWeight: 600, color: TITLE, textShadow: TITLE_SH, fontSize: 26, margin: 0 }}>

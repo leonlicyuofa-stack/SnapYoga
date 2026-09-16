@@ -285,14 +285,19 @@ export default function PracticeCalendarPage() {
         @keyframes syWeekSwap { from { opacity: 0.45; transform: translateY(-3px); } to { opacity: 1; transform: none; } }`}</style>
       <div style={{ padding: '16px 14px 28px', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-        <TopBarIcons className="mb-3" />
+        {/* Top bar and headline share one block, so the page's 24px section gap
+            doesn't get added between them — that's what made this page's
+            headline sit lower than every other page's. */}
+        <div>
+          <TopBarIcons />
 
-        {/* HEADER */}
-        <header>
-          <h1 className="text-3xl font-bold" style={{ color: tokens.title, textShadow: tokens.titleShadow, fontFamily: FONT_PANCAKE, fontWeight: 600 }}>Practice Journal</h1>
-          <p className="text-[11px] uppercase tracking-widest mt-1" style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>Your mindful journey log</p>
-          <div style={{ width: 26, height: 1, background: acc(0.22), marginTop: 5 }} />
-        </header>
+          {/* HEADER */}
+          <header>
+            <h1 className="text-3xl font-bold" style={{ color: tokens.title, textShadow: tokens.titleShadow, fontFamily: FONT_PANCAKE, fontWeight: 600 }}>Practice Journal</h1>
+            <p className="text-[11px] uppercase tracking-widest mt-1" style={{ color: tokens.muted, fontFamily: FONT_CASUAL }}>Your mindful journey log</p>
+            <div style={{ width: 26, height: 1, background: acc(0.22), marginTop: 5 }} />
+          </header>
+        </div>
 
         {/* WEEK ROW + EXPANDING DAY PANEL */}
         <section>

@@ -226,12 +226,13 @@ export default function DashboardPage() {
     <AppShell>
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         {/* HEADER — compact greeting (left) + top-bar actions incl. profile avatar (right) */}
-        <header style={{ padding: '12px 16px 8px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+        <header style={{ padding: '16px 16px 8px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
           <div>
             <p style={{ fontSize: 9, letterSpacing: '0.22em', textTransform: 'uppercase', color: t.label, fontFamily: FONT_CASUAL, fontWeight: 600, margin: '0 0 3px', opacity: 0.85 }}>{format(new Date(), 'EEEE · MMM d')}</p>
             <h1 style={{ fontSize: 26, fontWeight: 600, color: isDark ? t.text : 'rgba(255,248,235,0.96)', textShadow: isDark ? 'none' : '0 1px 3px rgba(70,60,80,0.32)', fontFamily: FONT_PANCAKE, margin: 0, letterSpacing: '-0.5px' }}>Hey, {name}!</h1>
           </div>
-          <TopBarIcons className="pt-1" />
+          {/* Beside the greeting, not above it — no gap to add. */}
+          <TopBarIcons className="mb-0" />
         </header>
 
         {/* SCROLLABLE CONTENT */}
