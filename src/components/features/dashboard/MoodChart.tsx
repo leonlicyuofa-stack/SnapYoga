@@ -75,7 +75,14 @@ const CustomTooltip = ({ active, payload }: any) => {
     return null;
 };
 
-export function MoodChart({ className }: { className?: string }) {
+export interface MoodWeekSummary {
+  /** Days this week with a mood logged. */
+  logged: number;
+  /** The mood logged most often this week, if any. */
+  dominant: string | null;
+}
+
+export function MoodChart({ className, onSummary }: { className?: string; onSummary?: (s: MoodWeekSummary) => void }) {
   const { user } = useAuth();
   const [data, setData] = useState<any[]>([]);
 
@@ -117,6 +124,12 @@ export function MoodChart({ className }: { className?: string }) {
       });
       
       setData(chartData);
+
+      // Hand the week's shape back up so the dashboard can headline it.
+      const named = chartData.map(d => d.moodName).filter(Boolean) as string[];
+      const tally = named.reduce<Record<string, number>>((acc, n) => { acc[n] = (acc[n] || 0) + 1; return acc; }, {});
+      const dominant = Object.keys(tally).sort((a, b) => tally[b] - tally[a])[0] ?? null;
+      onSummary?.({ logged: named.length, dominant });
     });
 
     return () => unsubscribe();

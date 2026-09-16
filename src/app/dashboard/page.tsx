@@ -3,15 +3,16 @@
 import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/app-shell';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, RotateCcw, Play } from 'lucide-react';
+import { RotateCcw, Play } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect } from 'react';
 import { doc, getDoc, collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { firestore } from '@/lib/firebase/clientApp';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, getDay, formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { MoodChart } from '@/components/features/dashboard/MoodChart';
+import { MoodChart, type MoodWeekSummary } from '@/components/features/dashboard/MoodChart';
+import { allCollectibles, type Collectible } from '@/components/features/dashboard/rock-data';
 import { TopBarIcons } from '@/components/layout/top-bar-icons';
 import { MoonStreakIcon, MoonSalutationIcon, PuffyStarIcon } from '@/components/icons/SystemSignalIcons';
 import { PracticeIcon, HydrateIcon, RestIcon, SunlightIcon, ActiveIcon } from '@/components/icons/HabitIcons';
@@ -26,6 +27,12 @@ const DEEP_BARK  = 'rgba(25,16,8';
 // Font Stacks
 const FONT_PANCAKE = "'Cormorant Garamond', Georgia, serif";
 const FONT_CASUAL  = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
+
+const COLLECTIBLE_RANK: Record<Collectible['rarity'], number> = { Common: 1, Uncommon: 2, Rare: 3, Epic: 4 };
+
+// Which collectibles are earned. Placeholder for now — the same three the
+// collection page shows — until earning is recorded against the account.
+const collectedIds = ['welcome_mat', 'first_analysis_block', 'join_challenge_strap'];
 
 function tok(isDark: boolean) {
   return {
@@ -44,6 +51,36 @@ function tok(isDark: boolean) {
     cardSage:    isDark ? `${SAGE},0.18)`        : `rgba(120,155,95,0.14)`,
     cardBark:    isDark ? `${DEEP_BARK},0.65)`   : `rgba(255,255,255,0.85)`,
     cardDark:    isDark ? `${DEEP_BARK},0.50)`   : `rgba(255,255,255,0.75)`,
+    // The hero panel is solid, not frosted — the same material as the profile
+    // cover, so the top of the page reads as a different object.
+    heroBg:      isDark ? 'linear-gradient(150deg,#3A2D1E 0%,#2A2320 52%,#1E1A20 100%)' : 'linear-gradient(150deg,#5B3A6E 0%,#3E2352 55%,#320E3B 100%)',
+    heroLine:    isDark ? 'rgba(193,154,107,0.30)' : 'rgba(255,248,235,0.32)',
+    heroInk:     isDark ? `${PARCHMENT},0.96)`     : 'rgba(255,248,235,0.97)',
+  };
+}
+
+/** Bento tile shell — smaller radius than the cards, so the row reads as its own row. */
+function tileStyle(t: ReturnType<typeof tok>): React.CSSProperties {
+  return {
+    borderRadius: 18,
+    border: `0.5px solid ${t.goldBorder}`,
+    background: t.cardBg,
+    boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}`,
+    padding: '13px 13px 11px',
+    position: 'relative',
+    overflow: 'hidden',
+  };
+}
+
+function tileWord(t: ReturnType<typeof tok>): React.CSSProperties {
+  return {
+    fontSize: 8.5,
+    letterSpacing: '0.18em',
+    textTransform: 'uppercase' as const,
+    fontWeight: 700,
+    color: t.muted,
+    margin: '4px 0 0',
+    fontFamily: FONT_CASUAL,
   };
 }
 
@@ -74,30 +111,6 @@ function SectionHead({ children, t }: { children: React.ReactNode; t: ReturnType
   );
 }
 
-function CardLabel({ children, color }: { children: React.ReactNode; color: string }) {
-  return (
-    <p style={{ 
-      fontSize: 9, 
-      letterSpacing: 2.2, 
-      textTransform: 'uppercase' as const, 
-      color, 
-      margin: '0 0 4px', 
-      fontFamily: FONT_CASUAL,
-      fontWeight: 500
-    }}>
-      {children}
-    </p>
-  );
-}
-
-function Bar({ pct, color }: { pct: number; color: string }) {
-  return (
-    <div style={{ height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.05)', marginTop: 6 }}>
-      <div style={{ height: 4, borderRadius: 2, width: `${Math.min(pct, 100)}%`, background: color, transition: 'width 0.9s ease' }} />
-    </div>
-  );
-}
-
 // Circular progress ring with optional centred text — replaces text-heavy stat captions.
 function Ring({ size, stroke, pct, color, track, textColor, label, centerTop, centerSub, subColor }: {
   size: number; stroke: number; pct: number; color: string; track: string; textColor: string;
@@ -118,17 +131,6 @@ function Ring({ size, stroke, pct, color, track, textColor, label, centerTop, ce
   );
 }
 
-// Compact stat: icon + number + one word.
-function Chip({ glyph, num, word, color, t }: { glyph: ReactNode; num: number | string; word: string; color: string; t: ReturnType<typeof tok> }) {
-  return (
-    <div style={{ background: t.chipInner, border: `0.5px solid ${t.goldBorder}`, borderRadius: 14, padding: '9px 4px', textAlign: 'center', boxShadow: `inset 0 1px 0 ${t.cardHi}` }}>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 28 }}>{glyph}</div>
-      <div style={{ fontFamily: FONT_PANCAKE, fontSize: 19, fontWeight: 500, color, lineHeight: 1, margin: '2px 0 0' }}>{num}</div>
-      <div style={{ fontSize: 8.5, letterSpacing: '0.06em', color: t.accent, marginTop: 3, fontFamily: FONT_CASUAL, textTransform: 'uppercase' as const }}>{word}</div>
-    </div>
-  );
-}
-
 export default function DashboardPage() {
   const { user }                = useAuth();
   const { isDark }              = useTheme();
@@ -143,6 +145,7 @@ export default function DashboardPage() {
   const [avgScore,      setAvgScore]      = useState(78);
   const [commitmentDays, setCommitmentDays] = useState(5);
   const [showOverwrite, setShowOverwrite] = useState(false);
+  const [moodWeek,      setMoodWeek]      = useState<MoodWeekSummary>({ logged: 0, dominant: null });
   // Weekday indices (Mon=0) that had a practice this week — drives the check-in consistency dots.
   const [weekDays, setWeekDays] = useState<Set<number>>(new Set());
   const [recentSessions, setRecentSessions] = useState<any[]>([]);
@@ -224,6 +227,12 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
+      {/* The collection and session rails scroll by swipe; their scrollbars would
+          only be clutter on a phone. */}
+      <style>{`
+        .sy-rail{ -ms-overflow-style:none; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+        .sy-rail::-webkit-scrollbar{ display:none; }
+      `}</style>
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         {/* HEADER — compact greeting (left) + top-bar actions incl. profile avatar (right) */}
         <header style={{ padding: '16px 16px 8px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
@@ -238,87 +247,139 @@ export default function DashboardPage() {
         {/* SCROLLABLE CONTENT */}
         <main style={{ flex: 1, padding: '4px 14px 24px', display: 'flex', flexDirection: 'column', gap: 22 }}>
 
-          {/* THIS WEEK — hero practice ring, check-in dots + quick stat chips */}
+          {/* ── 1 · HERO — a solid panel, not another frosted card, so the page has a top */}
           <section>
-            <SectionHead t={t}>This Week</SectionHead>
+            <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 22, padding: '18px 18px 16px', background: t.heroBg, border: `1px solid ${t.heroLine}`, boxShadow: t.cardShadow, color: t.heroInk }}>
+              {/* orbit motif, bleeding off the corner */}
+              <div aria-hidden="true" style={{ position: 'absolute', top: -70, right: -56, width: 190, height: 190, borderRadius: '50%', border: `1px dashed ${t.heroLine}` }} />
+              <div aria-hidden="true" style={{ position: 'absolute', top: -34, right: -20, width: 120, height: 120, borderRadius: '50%', border: `1px solid ${t.heroLine}`, opacity: 0.5 }} />
 
-            <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: 20, padding: '14px 18px', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <Ring size={84} stroke={6} pct={exPct} color={t.gold} track={isDark ? `${PARCHMENT},0.08)` : 'rgba(255,255,255,0.20)'} centerTop={`${exerciseHrs}`} centerSub={`OF ${exerciseGoal} HRS`} textColor={t.text} subColor={t.accent} />
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12 }}>
                 <div>
-                  <p style={{ fontFamily: FONT_PANCAKE, fontSize: 19, fontWeight: 500, color: t.headline, margin: 0 }}>Practice</p>
-                  <p style={{ fontSize: 11, color: t.muted, margin: '4px 0 0', fontFamily: FONT_CASUAL }}>{practiceMsg}</p>
+                  <p style={{ fontSize: 8.5, letterSpacing: '0.24em', textTransform: 'uppercase', fontWeight: 700, opacity: 0.72, margin: 0, fontFamily: FONT_CASUAL }}>This week · practice</p>
+                  <p style={{ fontFamily: FONT_PANCAKE, fontSize: 50, fontWeight: 600, lineHeight: 0.92, letterSpacing: '-1px', margin: '5px 0 0' }}>
+                    {exerciseHrs}
+                    <span style={{ fontSize: 16, fontWeight: 500, opacity: 0.72, marginLeft: 4, letterSpacing: 0 }}>of {exerciseGoal} hrs</span>
+                  </p>
+                  <p style={{ fontSize: 11, opacity: 0.74, margin: '6px 0 0', lineHeight: 1.45, maxWidth: '20ch', fontFamily: FONT_CASUAL }}>{practiceMsg}</p>
                 </div>
+                <Ring
+                  size={86} stroke={6} pct={exPct}
+                  color={t.heroInk}
+                  track={isDark ? 'rgba(255,255,255,0.16)' : 'rgba(255,255,255,0.22)'}
+                  centerTop={`${Math.round(exPct)}%`} centerSub="GOAL"
+                  textColor={t.heroInk} subColor={t.heroInk}
+                />
               </div>
-              {/* Weekly check-in dots — a passive glance, distinct from the dated practice journal */}
-              <div style={{ display: 'flex', gap: 4, marginTop: 14 }}>
+
+              {/* the week at a glance */}
+              <div style={{ position: 'relative', display: 'flex', gap: 4, marginTop: 14 }}>
                 {['M','T','W','T','F','S','S'].map((d, i) => {
                   const on = weekDays.has(i);
                   const today = i === (getDay(new Date()) + 6) % 7;
                   return (
-                    <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-                      <span style={{ width: 10, height: 10, borderRadius: '50%',
-                        background: on ? t.accent : (isDark ? `${PARCHMENT},0.08)` : 'rgba(50,14,59,0.10)'),
-                        border: today ? `1.5px solid ${t.accent}` : 'none',
-                        boxShadow: today ? `0 0 0 2px ${isDark ? `${GOLD},0.20)` : 'rgba(50,14,59,0.15)'}` : 'none' }} />
-                      <span style={{ fontSize: 8, color: t.muted, fontFamily: FONT_CASUAL }}>{d}</span>
+                    <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                      <span style={{ width: 9, height: 9, borderRadius: '50%', background: on ? t.heroInk : 'rgba(255,255,255,0.18)', opacity: on ? 0.92 : 1, boxShadow: today ? '0 0 0 3px rgba(255,255,255,0.16)' : 'none' }} />
+                      <span style={{ fontSize: 7.5, opacity: 0.6, fontFamily: FONT_CASUAL }}>{d}</span>
                     </div>
                   );
                 })}
               </div>
-              <p style={{ fontSize: 9, color: t.muted, fontFamily: FONT_CASUAL, margin: '6px 0 10px', textAlign: 'center' }}>Check-ins this week · {weekDays.size} of 7</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
-                <Chip glyph={<MoonStreakIcon size={26} />} num={7} word="Streak" color={isDark ? 'rgba(160,195,130,0.92)' : t.text} t={t} />
-                <Chip glyph={<MoonSalutationIcon size={26} />} num={totalSessions} word="Poses" color={isDark ? t.text : t.text} t={t} />
-                <Chip glyph={<PuffyStarIcon size={26} />} num={avgScore} word="Score" color={isDark ? t.gold : t.text} t={t} />
+            </div>
+          </section>
+
+          {/* ── 2 · BENTO — deliberately uneven: one tall tile beside two short ones */}
+          <section style={{ display: 'grid', gridTemplateColumns: '1.05fr 1fr', gap: 10 }}>
+            <div style={{ ...tileStyle(t), display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ height: 30, display: 'flex', alignItems: 'center' }}><MoonStreakIcon size={28} /></div>
+                <p style={{ fontFamily: FONT_PANCAKE, fontSize: 32, fontWeight: 600, lineHeight: 1, color: t.text, margin: '9px 0 0' }}>{weekDays.size}</p>
+                <p style={tileWord(t)}>Days practised</p>
+              </div>
+              {/* a real micro-chart of the week, not decoration */}
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 26, marginTop: 10 }}>
+                {[0,1,2,3,4,5,6].map(i => (
+                  <span key={i} style={{ flex: 1, height: weekDays.has(i) ? '100%' : 6, borderRadius: 2, background: weekDays.has(i) ? t.accent : (isDark ? `${PARCHMENT},0.10)` : 'rgba(50,14,59,0.12)') }} />
+                ))}
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateRows: '1fr 1fr', gap: 10 }}>
+              <div style={{ ...tileStyle(t), display: 'flex', alignItems: 'center', gap: 10, padding: '11px 13px' }}>
+                <MoonSalutationIcon size={28} />
+                <div>
+                  <p style={{ fontFamily: FONT_PANCAKE, fontSize: 24, fontWeight: 600, lineHeight: 1, color: t.text, margin: 0 }}>{totalSessions}</p>
+                  <p style={{ ...tileWord(t), margin: '1px 0 0' }}>Poses</p>
+                </div>
+              </div>
+              <div style={{ ...tileStyle(t), display: 'flex', alignItems: 'center', gap: 10, padding: '11px 13px' }}>
+                <PuffyStarIcon size={28} />
+                <div>
+                  <p style={{ fontFamily: FONT_PANCAKE, fontSize: 24, fontWeight: 600, lineHeight: 1, color: t.text, margin: 0 }}>{avgScore}</p>
+                  <p style={{ ...tileWord(t), margin: '1px 0 0' }}>Avg score</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ── 3 · MOOD METER — brought up the page and given a headline */}
+          <section>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 9 }}>
+              <SectionHead t={t}>Mood Meter</SectionHead>
+              <Link href="/mood-tracker" style={{ fontSize: 10, color: t.accent, textDecoration: 'none' }}>Log today ›</Link>
+            </div>
+            <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: 20, padding: '14px 12px 8px', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 3px 4px' }}>
+                <span style={{ fontFamily: FONT_PANCAKE, fontSize: 16, fontWeight: 600, color: t.text }}>
+                  {moodWeek.dominant ? `Mostly ${moodWeek.dominant.toLowerCase()}` : 'No moods logged yet'}
+                </span>
+                <span style={{ fontSize: 8.5, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700, borderRadius: 999, padding: '3px 9px', background: 'rgba(151,196,89,0.18)', color: isDark ? 'rgba(176,214,124,0.98)' : '#5A7F2E', border: '0.5px solid rgba(151,196,89,0.40)' }}>
+                  {moodWeek.logged} of 7 logged
+                </span>
+              </div>
+              <div style={{ height: 150 }}>
+                <MoodChart onSummary={setMoodWeek} />
               </div>
             </GlassCard>
           </section>
 
-          {/* RECENT SESSIONS — the user's latest pose analyses, presented as cards */}
+          {/* ── 4 · COLLECTION — the reward moment, as a rail of real artwork */}
           <section>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
-              <p style={{ fontSize: 11, letterSpacing: '0.28em', textTransform: 'uppercase', color: t.label, fontFamily: FONT_CASUAL, fontWeight: 500, margin: 0 }}>Recent Sessions</p>
-              <Link href="/profile/analysis-logs" style={{ fontSize: 11, color: t.accent, textDecoration: 'none' }}>View all ›</Link>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 9 }}>
+              <SectionHead t={t}>Your Collection</SectionHead>
+              <Link href="/yoga-collection" style={{ fontSize: 10, color: t.accent, textDecoration: 'none' }}>See all ›</Link>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {recentSessions.length > 0 ? recentSessions.map((s, i) => {
-                const th = sessionThemes[i % sessionThemes.length];
-                const cue = typeof s.feedback === 'string' && s.feedback ? (s.feedback.length > 62 ? s.feedback.slice(0, 62).trim() + '…' : s.feedback) : 'Tap to view your feedback.';
-                const when = s.createdAt?.toDate ? formatDistanceToNow(s.createdAt.toDate(), { addSuffix: true }) : '';
+            <div className="sy-rail" style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 6, scrollSnapType: 'x mandatory' }}>
+              {allCollectibles.map(c => {
+                const got = collectedIds.includes(c.id);
+                const rank = COLLECTIBLE_RANK[c.rarity];
                 return (
-                  <Link key={s.id} href={`/analysis/${s.id}`} style={{ textDecoration: 'none' }} className="active:scale-[0.98] transition-transform">
-                    <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 20, padding: '13px 14px', display: 'flex', gap: 10, background: th.grad, boxShadow: '0 10px 24px rgba(50,30,60,0.22)' }}>
-                      <div style={{ flex: 1, color: '#F3EAF2' }}>
-                        <span style={{ display: 'inline-block', borderRadius: 999, padding: '2px 9px', fontSize: 9, letterSpacing: '0.06em', textTransform: 'uppercase', background: 'rgba(255,255,255,0.18)', fontFamily: FONT_CASUAL }}>{when}</span>
-                        <div style={{ fontFamily: FONT_PANCAKE, fontSize: 18, fontWeight: 600, margin: '6px 0 2px' }}>{s.identifiedPose || 'Practice'}</div>
-                        <div style={{ fontSize: 11, opacity: 0.75, lineHeight: 1.4 }}>{cue}</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 9 }}>
-                          <div style={{ width: 30, height: 30, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.22)', border: '0.5px solid rgba(255,255,255,0.35)' }}>
-                            <Play style={{ width: 13, height: 13, color: '#fff' }} />
-                          </div>
-                          {typeof s.score === 'number' && <span style={{ fontSize: 12, fontWeight: 600 }}>Score {Math.round(s.score)}</span>}
-                        </div>
-                      </div>
-                      <div style={{ width: 48, height: 48, borderRadius: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, alignSelf: 'center', background: 'rgba(255,255,255,0.16)', border: '0.5px solid rgba(255,255,255,0.22)' }}>{th.icon}</div>
+                  <Link key={c.id} href="/yoga-collection" style={{ flex: '0 0 84px', scrollSnapAlign: 'start', textAlign: 'center', textDecoration: 'none' }}>
+                    <div style={{ width: 84, height: 84, borderRadius: 20, overflow: 'hidden', border: `0.5px solid ${t.goldBorder}`, background: t.chipInner, boxShadow: t.cardShadow }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={c.imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: got ? 'none' : 'grayscale(1)', opacity: got ? 1 : 0.45 }} />
                     </div>
+                    <p style={{ fontFamily: FONT_PANCAKE, fontSize: 12, fontWeight: 600, color: t.text, margin: '6px 0 0', lineHeight: 1.2 }}>{c.name}</p>
+                    <span style={{ display: 'flex', gap: 2.5, justifyContent: 'center', marginTop: 4 }}>
+                      {[1,2,3,4].map(i => (
+                        <span key={i} style={{ width: 4, height: 4, transform: 'rotate(45deg)', borderRadius: 1, background: t.accent, opacity: i <= rank ? 1 : 0.28 }} />
+                      ))}
+                    </span>
                   </Link>
                 );
-              }) : (
-                <Link href="/snap-yoga" style={{ textDecoration: 'none' }} className="active:scale-[0.98] transition-transform">
-                  <GlassCard style={{ background: t.cardBg, border: `0.5px dashed ${t.goldBorder}`, borderRadius: 20, padding: '18px 16px', textAlign: 'center', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
-                    <div style={{ fontSize: 22 }}>🧘</div>
-                    <p style={{ fontFamily: FONT_PANCAKE, fontSize: 15, color: t.text, margin: '4px 0 0' }}>Start your first practice →</p>
-                    <p style={{ fontSize: 11, color: t.muted, margin: '2px 0 0', fontFamily: FONT_CASUAL }}>Analyze a pose to see it here.</p>
-                  </GlassCard>
-                </Link>
-              )}
+              })}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
+              <div style={{ flex: 1, height: 4, borderRadius: 999, background: t.chipInner, overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: `${(collectedIds.length / allCollectibles.length) * 100}%`, borderRadius: 999, background: t.accent, transition: 'width 0.9s ease' }} />
+              </div>
+              <span style={{ fontSize: 9, color: t.muted, fontFamily: FONT_CASUAL }}>{collectedIds.length} of {allCollectibles.length}</span>
             </div>
           </section>
 
-          {/* §1 DAILY CHECK-IN (mood + habits merged, whole box tappable) */}
+          {/* ── 5 · DAILY CHECK-IN — habits as dials rather than a fifth stack of bars */}
           <section>
-            <SectionHead t={t}>Mood & Reflections</SectionHead>
+            <SectionHead t={t}>Daily Check-in</SectionHead>
             <div
               onClick={handleCheckinClick}
               role="button"
@@ -326,70 +387,77 @@ export default function DashboardPage() {
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCheckinClick(); } }}
               className="active:scale-[0.99] transition-transform cursor-pointer"
             >
-              <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: 20, padding: '16px', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                    <div>
-                      <h3 style={{ fontSize: 16, fontWeight: 600, color: t.headline, fontFamily: FONT_PANCAKE }}>Daily Check-in</h3>
-                      <p style={{ fontSize: 11, color: t.muted, fontFamily: FONT_CASUAL }}>How is your spirit today?</p>
-                    </div>
-                    <span style={{ fontSize: 20, color: t.accent, lineHeight: 1 }}>›</span>
+              <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: 20, padding: '14px 13px 12px', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10 }}>
+                  <div>
+                    <h3 style={{ fontSize: 16, fontWeight: 600, color: t.text, fontFamily: FONT_PANCAKE, margin: 0 }}>
+                      {moodData ? `${moodData.emoji} ${moodData.name}` : 'How is your spirit today?'}
+                    </h3>
+                    <p style={{ fontSize: 11, color: t.muted, fontFamily: FONT_CASUAL, margin: '2px 0 0' }}>
+                      {moodData?.reflection
+                        ? `“${moodData.reflection.length > 60 ? moodData.reflection.slice(0, 60) + '…' : moodData.reflection}”`
+                        : 'Tap to log your mood and habits.'}
+                    </p>
                   </div>
+                  <span style={{ fontSize: 20, color: t.accent, lineHeight: 1 }}>›</span>
+                </div>
 
-                  {moodData ? (
-                    <div style={{ padding: '12px', background: 'rgba(255,255,255,0.06)', borderRadius: 12, border: `0.5px solid ${t.goldBorder}` }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: moodData.reflection ? 8 : 0 }}>
-                        <span style={{ fontSize: 20 }}>{moodData.emoji}</span>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: t.gold, textTransform: 'uppercase', letterSpacing: 1, fontFamily: FONT_CASUAL }}>{moodData.name}</span>
-                      </div>
-                      {moodData.reflection && (
-                        <p style={{ fontSize: 12, color: t.text, fontStyle: 'italic', margin: 0, opacity: 0.8, lineHeight: 1.4 }}>
-                          "{moodData.reflection.length > 80 ? moodData.reflection.substring(0, 80) + '...' : moodData.reflection}"
-                        </p>
-                      )}
-                    </div>
-                  ) : (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px', background: 'rgba(255,255,255,0.05)', borderRadius: 12, border: `0.5px dashed ${t.goldBorder}` }}>
-                      <MessageSquare style={{ width: 18, height: 18, color: t.muted }} />
-                      <p style={{ fontSize: 11, color: t.muted, margin: 0 }}>No reflection logged yet. Checking in helps track your mindful progress.</p>
-                    </div>
-                  )}
-
-                  {/* This week's habit consistency — completion bars (days done of 7) */}
-                  <div style={{ height: 1, background: t.goldBorder, margin: '2px 0' }} />
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-                    {habitsList.map(h => {
-                      const cnt = habitWeekCounts[h.id] || 0;
-                      const pct = (cnt / 7) * 100;
-                      const Icon = h.Icon;
-                      return (
-                        <div key={h.id} style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-                          <span style={{ width: 22, display: 'inline-flex', justifyContent: 'center', alignItems: 'center' }}><Icon size={22} /></span>
-                          <span style={{ fontSize: 12, width: 56, color: isDark ? `${PARCHMENT},0.62)` : 'rgba(50,14,59,0.68)', fontFamily: FONT_CASUAL }}>{h.label}</span>
-                          <div style={{ flex: 1, height: 9, borderRadius: 6, background: isDark ? `${PARCHMENT},0.07)` : 'rgba(50,14,59,0.10)', overflow: 'hidden', boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.10)' }}>
-                            <div style={{ height: '100%', width: `${pct}%`, borderRadius: 6, background: h.color, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.5)', transition: 'width 0.9s ease' }} />
-                          </div>
-                          <span style={{ fontSize: 10, width: 22, textAlign: 'right', color: t.muted, fontFamily: FONT_CASUAL }}>{cnt}/7</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 6 }}>
+                  {habitsList.map(h => {
+                    const cnt = habitWeekCounts[h.id] || 0;
+                    const Icon = h.Icon;
+                    return (
+                      <div key={h.id} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+                        <div style={{ position: 'relative', width: 40, height: 40 }}>
+                          <Ring size={40} stroke={3.4} pct={(cnt / 7) * 100} color={h.color} track={isDark ? `${PARCHMENT},0.08)` : 'rgba(50,14,59,0.10)'} textColor={t.text} />
+                          <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon size={20} /></span>
                         </div>
-                      );
-                    })}
-                  </div>
+                        <b style={{ fontSize: 9, fontWeight: 700, color: t.muted, fontFamily: FONT_CASUAL }}>{cnt}/7</b>
+                        <span style={{ fontSize: 7, letterSpacing: '0.1em', textTransform: 'uppercase', color: t.muted, fontFamily: FONT_CASUAL }}>{h.label}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </GlassCard>
             </div>
           </section>
 
-          {/* §3 MOOD METER */}
+          {/* ── 6 · RECENT SESSIONS — scrolls sideways, so the page ends in movement */}
           <section>
-            <SectionHead t={t}>Mood Meter</SectionHead>
-            <GlassCard style={{ background: t.cardBg, border: `0.5px solid ${t.goldBorder}`, borderRadius: 20, padding: '12px 14px 8px', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 9, color: t.muted, fontFamily: FONT_CASUAL, letterSpacing: 0.5, textTransform: 'uppercase' }}>This week</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 9 }}>
+              <SectionHead t={t}>Recent Sessions</SectionHead>
+              <Link href="/profile/analysis-logs" style={{ fontSize: 10, color: t.accent, textDecoration: 'none' }}>View all ›</Link>
+            </div>
+            {recentSessions.length > 0 ? (
+              <div className="sy-rail" style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 6, scrollSnapType: 'x mandatory' }}>
+                {recentSessions.map((s, i) => {
+                  const th = sessionThemes[i % sessionThemes.length];
+                  const when = s.createdAt?.toDate ? formatDistanceToNow(s.createdAt.toDate(), { addSuffix: true }) : '';
+                  return (
+                    <Link key={s.id} href={`/analysis/${s.id}`} style={{ flex: '0 0 168px', scrollSnapAlign: 'start', textDecoration: 'none' }} className="active:scale-[0.98] transition-transform">
+                      <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 18, padding: '12px 13px', minHeight: 112, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: th.grad, boxShadow: '0 10px 24px rgba(50,30,60,0.24)', color: '#F3EAF2' }}>
+                        <span style={{ alignSelf: 'flex-start', borderRadius: 999, padding: '2px 8px', fontSize: 8, letterSpacing: '0.06em', textTransform: 'uppercase', background: 'rgba(255,255,255,0.18)', fontFamily: FONT_CASUAL }}>{when}</span>
+                        <div>
+                          <div style={{ fontFamily: FONT_PANCAKE, fontSize: 16, fontWeight: 600, margin: '7px 0 0' }}>{s.identifiedPose || 'Practice'}</div>
+                          {typeof s.score === 'number' && <div style={{ fontSize: 10, opacity: 0.8, marginTop: 2 }}>Score {Math.round(s.score)}</div>}
+                        </div>
+                        <span style={{ position: 'absolute', right: 11, bottom: 11, width: 26, height: 26, borderRadius: '50%', background: 'rgba(255,255,255,0.22)', border: '0.5px solid rgba(255,255,255,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <Play style={{ width: 11, height: 11, color: '#fff' }} />
+                        </span>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
-              <div style={{ height: 150 }}>
-                <MoodChart />
-              </div>
-            </GlassCard>
+            ) : (
+              <Link href="/snap-yoga" style={{ textDecoration: 'none' }} className="active:scale-[0.98] transition-transform">
+                <GlassCard style={{ background: t.cardBg, border: `0.5px dashed ${t.goldBorder}`, borderRadius: 20, padding: '18px 16px', textAlign: 'center', boxShadow: `${t.cardShadow}, inset 0 1px 0 ${t.cardHi}` }}>
+                  <div style={{ fontSize: 22 }}>🧘</div>
+                  <p style={{ fontFamily: FONT_PANCAKE, fontSize: 15, color: t.text, margin: '4px 0 0' }}>Start your first practice →</p>
+                  <p style={{ fontSize: 11, color: t.muted, margin: '2px 0 0', fontFamily: FONT_CASUAL }}>Analyze a pose to see it here.</p>
+                </GlassCard>
+              </Link>
+            )}
           </section>
 
           {/* Overwrite confirmation when a mood is already logged today */}
