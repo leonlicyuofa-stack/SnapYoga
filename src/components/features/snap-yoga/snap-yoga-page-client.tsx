@@ -21,6 +21,7 @@ import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebas
 import { useTheme } from '@/contexts/ThemeContext';
 import { Textarea } from '@/components/ui/textarea';
 import { TopBarIcons } from '@/components/layout/top-bar-icons';
+import { recordPractice } from '@/lib/practice-streak';
 
 const MAX_UPLOAD_BYTES = 150 * 1024 * 1024; // 150MB
 
@@ -194,6 +195,10 @@ export function SnapYogaPageClient() {
         };
         const userAnalysesCollectionRef = collection(firestore, 'users', currentUser.uid, 'poseAnalyses');
         await addDoc(userAnalysesCollectionRef, analysisDataToSave);
+        // Stamp the day and move the streak on. Separately caught: a failed
+        // streak write must not look like a failed analysis.
+        try { await recordPractice(currentUser); }
+        catch (streakError) { console.error('Could not record the practice streak:', streakError); }
       } catch (saveError: any) {
         console.error("Error saving analysis to Firestore:", saveError);
       }

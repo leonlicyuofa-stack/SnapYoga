@@ -11,7 +11,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Users, Gift, Copy, Mail, Share2, Bookmark, X } from 'lucide-react';
+import { Users, Gift, Copy, Mail, Share2, Bookmark, X, ChevronDown, Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { TopBarIcons } from '@/components/layout/top-bar-icons';
 import { type Category, type PoseChallenge, CATEGORIES, poseChallenges } from '@/lib/challenges-data';
@@ -21,8 +21,9 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { PinterestIcon } from '@/components/icons/PinterestIcon';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { format, startOfMonth, endOfMonth, getDaysInMonth } from 'date-fns';
+import { format, startOfMonth, endOfMonth, getDaysInMonth, startOfWeek, addDays, getDate } from 'date-fns';
 import { ensureChallengeStarted, computeChallengeDay } from '@/lib/challenge-progress';
+import { loadPracticeDays, readStreak, currentStreak, streakFromDays, todayStillOpen, dayKey } from '@/lib/practice-streak';
 
 const FONT_PANCAKE = "'Cormorant Garamond', Georgia, serif";
 // The brand guide gives serif to titles and numbers, and system sans to labels,
@@ -246,6 +247,14 @@ export default function ChallengesPage() {
     if (cat && (CATEGORIES as string[]).includes(cat)) setSelectedCategory(cat as Category);
   }, []);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
+  // Hero breakdown: the range behind the dropdown, and the days behind the bars.
+  const [range, setRange] = useState<'week' | 'month'>('month');
+  const [rangeOpen, setRangeOpen] = useState(false);
+  const [practiceDays, setPracticeDays] = useState<Set<string>>(new Set());
+  const [streak, setStreak] = useState(0);
+  const [streakOpen, setStreakOpen] = useState(true);
+  const [minutes, setMinutes] = useState(0);
+  const [bestScore, setBestScore] = useState(0);
 
   const [practicedDaysCount, setPracticedDaysCount] = useState(0);
   const [daysInMonth, setDaysInMonth] = useState(30);
@@ -271,7 +280,7 @@ export default function ChallengesPage() {
   // Days-practiced tracker (activity ∩ analyses ∩ challenge tasks).
   useEffect(() => {
     if (!user) return;
-    const fetchPracticedDays = async () => {
+    const fetchPractice = async () => {
       setIsLoadingPracticed(true);
       try {
         const now = new Date();
@@ -279,28 +288,32 @@ export default function ChallengesPage() {
         const end = endOfMonth(now);
         setDaysInMonth(getDaysInMonth(now));
 
-        const activitySnap = await getDocs(query(collection(firestore, `users/${user.uid}/activity`), where('__name__', '>=', format(start, 'yyyy-MM-dd')), where('__name__', '<=', format(end, 'yyyy-MM-dd'))));
-        const activityDates = new Set(activitySnap.docs.map(d => d.id));
+        // Every day practised this month. This used to require an activity doc
+        // AND an analysis AND a challenge task on the same day — and nothing
+        // ever wrote the activity doc, so the count was always zero.
+        const days = await loadPracticeDays(user.uid, start, end);
+        setPracticeDays(days);
+        setPracticedDaysCount(days.size);
 
-        const analysesSnap = await getDocs(query(collection(firestore, `users/${user.uid}/poseAnalyses`), where('createdAt', '>=', start), where('createdAt', '<=', end)));
-        const analysesDates = new Set(analysesSnap.docs.map(d => { const data = d.data(); return data.createdAt ? format(data.createdAt.toDate(), 'yyyy-MM-dd') : null; }).filter(Boolean));
+        // Prefer the stored streak; fall back to counting the run in this
+        // month's days for accounts that practised before streaks existed.
+        const stored = await readStreak(user.uid);
+        setStreak(Math.max(currentStreak(stored, now), streakFromDays(days, now)));
+        setStreakOpen(todayStillOpen(stored, now));
 
-        const tasksSnap = await getDocs(query(collection(firestore, `users/${user.uid}/challengeTasks`), where('__name__', '>=', format(start, 'yyyy-MM-dd')), where('__name__', '<=', format(end, 'yyyy-MM-dd') + '')));
-        const tasksDates = new Set(tasksSnap.docs.map(d => d.id.split('_')[0]));
-
-        let count = 0;
-        for (let i = 1; i <= now.getDate(); i++) {
-          const dateStr = format(new Date(now.getFullYear(), now.getMonth(), i), 'yyyy-MM-dd');
-          if (activityDates.has(dateStr) && analysesDates.has(dateStr) && tasksDates.has(dateStr)) count++;
-        }
-        setPracticedDaysCount(count);
+        // Bento figures: 15 minutes an analysis, and the best score so far.
+        const analyses = await getDocs(query(collection(firestore, 'users', user.uid, 'poseAnalyses'), where('createdAt', '>=', start), where('createdAt', '<=', end)));
+        setMinutes(analyses.size * 15);
+        let best = 0;
+        analyses.forEach(d => { const sc = (d.data() as any).score; if (typeof sc === 'number' && sc > best) best = Math.round(sc); });
+        setBestScore(best);
       } catch (err) {
-        console.error("Error calculating practiced days:", err);
+        console.error('Error loading practice data:', err);
       } finally {
         setIsLoadingPracticed(false);
       }
     };
-    fetchPracticedDays();
+    fetchPractice();
   }, [user]);
 
   const toggleBookmark = async (id: string) => {
@@ -317,12 +330,60 @@ export default function ChallengesPage() {
     else toast({ title: c.name, description: "This challenge's guide is coming soon." });
   };
 
-  const visibleChallenges = selectedCategory === 'All' ? poseChallenges : poseChallenges.filter(c => c.category === selectedCategory);
+  // Hero panel material — the same solid cover used on the profile.
+  const heroBg   = isDark
+    ? 'linear-gradient(150deg,#3A2D1E 0%,#2A2320 52%,#1E1A20 100%)'
+    : 'linear-gradient(150deg,#5B3A6E 0%,#3E2352 55%,#320E3B 100%)';
+  const heroLine = isDark ? 'rgba(193,154,107,0.30)' : 'rgba(255,248,235,0.32)';
+  const heroInk  = isDark ? 'rgba(255,240,215,0.96)' : 'rgba(255,248,235,0.97)';
+
+  // The bars behind the dropdown. A week gets a bar a day; a month gets a bar
+  // a week, so the labels stay readable on a phone.
+  const rangeStats = React.useMemo(() => {
+    const now = new Date();
+    if (range === 'week') {
+      const start = startOfWeek(now, { weekStartsOn: 1 });
+      const bars = Array.from({ length: 7 }, (_, i) => {
+        const d = addDays(start, i);
+        const done = practiceDays.has(dayKey(d));
+        return { label: format(d, 'EEEEE'), v: done ? 1 : 0, now: dayKey(d) === dayKey(now) };
+      });
+      return { done: bars.filter(b => b.v > 0).length, of: 7, bars };
+    }
+    const monthStart = startOfMonth(now);
+    const weeks: { label: string; v: number; now: boolean }[] = [];
+    for (let w = 0; w < 5; w++) {
+      const from = addDays(monthStart, w * 7);
+      if (getDate(from) > daysInMonth || (w > 0 && from > endOfMonth(now))) break;
+      let hit = 0;
+      for (let i = 0; i < 7; i++) {
+        const d = addDays(from, i);
+        if (d > endOfMonth(now)) break;
+        if (practiceDays.has(dayKey(d))) hit++;
+      }
+      const inThisWeek = now >= from && now < addDays(from, 7);
+      weeks.push({ label: 'W' + (w + 1), v: hit / 7, now: inThisWeek });
+    }
+    return { done: practicedDaysCount, of: daysInMonth, bars: weeks };
+  }, [range, practiceDays, practicedDaysCount, daysInMonth]);
+
+  // This week, as ticks, for the streak tile.
+  const weekMarks = React.useMemo(() => {
+    const now = new Date();
+    const start = startOfWeek(now, { weekStartsOn: 1 });
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = addDays(start, i);
+      return { label: format(d, 'EEEEE'), done: practiceDays.has(dayKey(d)), today: dayKey(d) === dayKey(now) };
+    });
+  }, [practiceDays]);
+  const visibleChallenges = selectedCategory === 'All' ? poseChallenges : poseChallenges.filter(c => c.category === selectedCategory);
   const planIds = bookmarks.filter(id => planLookup[id]);
 
   return (
     <AppShell>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');
+        .sy-rail{ -ms-overflow-style:none; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+        .sy-rail::-webkit-scrollbar{ display:none; }`}</style>
       <div style={{ padding: '16px 14px 28px', display: 'flex', flexDirection: 'column' }}>
 
         {/* HEADER */}
@@ -336,15 +397,152 @@ export default function ChallengesPage() {
           <div style={{ width: 26, height: 1, background: acc(0.22), marginTop: 7 }} />
         </header>
 
-        {/* THIS MONTH'S PRACTICE (reward removed) */}
-        <div style={{ ...sectionCard, borderRadius: '20px 10px 20px 20px', padding: '14px 16px', marginTop: 18 }}>
-          <span style={{ fontFamily: FONT_PANCAKE, fontSize: 34, fontWeight: 600, color: TITLE }}>{isLoadingPracticed ? '—' : practicedDaysCount}</span>
-          <span style={{ fontFamily: FONT_PANCAKE, fontSize: 18, color: acc(0.7) }}> / {daysInMonth}</span>
-          <div style={{ fontSize: 9, letterSpacing: 1, textTransform: 'uppercase', color: acc(0.6), fontWeight: 600, marginTop: 2, fontFamily: FONT_CASUAL }}>days practiced</div>
-          <div style={{ height: 10, background: txt(0.08), borderRadius: 6, overflow: 'hidden', marginTop: 10 }}>
-            <div style={{ height: '100%', width: `${(practicedDaysCount / daysInMonth) * 100}%`, background: isDark ? 'linear-gradient(90deg, rgba(193,154,107,0.7), rgba(210,180,110,0.95))' : 'linear-gradient(90deg, rgba(50,14,59,0.55), rgba(50,14,59,0.85))', borderRadius: 6, transition: 'width 1.2s ease' }} />
+        {/* ── THIS WEEK / THIS MONTH — a chart, with a range behind a dropdown */}
+        <div style={{ position: 'relative', overflow: 'hidden', borderRadius: 22, padding: '16px 16px 14px', marginTop: 18, background: heroBg, border: `1px solid ${heroLine}`, boxShadow: isDark ? '0 12px 30px rgba(0,0,0,0.48)' : '0 12px 30px rgba(90,80,120,0.18)', color: heroInk }}>
+          <div aria-hidden="true" style={{ position: 'absolute', top: -64, right: -50, width: 180, height: 180, borderRadius: '50%', border: `1px dashed ${heroLine}` }} />
+
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
+            <div>
+              <p style={{ fontSize: 8.5, letterSpacing: '0.24em', textTransform: 'uppercase', fontWeight: 700, opacity: 0.7, margin: 0, fontFamily: FONT_CASUAL }}>Days practised</p>
+              <p style={{ fontFamily: FONT_PANCAKE, fontSize: 44, fontWeight: 600, lineHeight: 0.95, letterSpacing: '-1px', margin: '4px 0 0' }}>
+                {isLoadingPracticed ? '—' : rangeStats.done}
+                <span style={{ fontSize: 14, fontWeight: 500, opacity: 0.7, marginLeft: 5, letterSpacing: 0 }}>of {rangeStats.of}</span>
+              </p>
+              <p style={{ fontSize: 9.5, opacity: 0.62, margin: '7px 0 0', letterSpacing: '0.04em', fontFamily: FONT_CASUAL }}>
+                {rangeStats.done * 15} min · {rangeStats.done} {rangeStats.done === 1 ? 'session' : 'sessions'}
+              </p>
+            </div>
+
+            <div style={{ position: 'relative', flex: 'none' }}>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setRangeOpen(o => !o); }}
+                aria-haspopup="true"
+                aria-expanded={rangeOpen}
+                style={{ fontSize: 9.5, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 700, borderRadius: 999, padding: '6px 11px', border: `1px solid ${heroLine}`, background: 'rgba(255,255,255,0.10)', display: 'inline-flex', gap: 6, alignItems: 'center', cursor: 'pointer', color: 'inherit', fontFamily: FONT_CASUAL }}
+              >
+                {range === 'week' ? 'This week' : 'This month'}
+                <ChevronDown style={{ width: 11, height: 11, transform: rangeOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
+              </button>
+              {rangeOpen && (
+                <div role="menu" style={{ position: 'absolute', top: 'calc(100% + 6px)', right: 0, zIndex: 5, minWidth: 128, borderRadius: 14, overflow: 'hidden', border: `1px solid ${heroLine}`, boxShadow: '0 14px 30px rgba(0,0,0,0.45)', background: isDark ? 'rgba(34,29,26,0.98)' : 'rgba(58,33,72,0.98)' }}>
+                  {(['week', 'month'] as const).map(r => (
+                    <button
+                      key={r}
+                      type="button"
+                      role="menuitemradio"
+                      aria-checked={range === r}
+                      onClick={(e) => { e.stopPropagation(); setRange(r); setRangeOpen(false); }}
+                      style={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '9px 12px', fontSize: 10.5, fontWeight: 600, letterSpacing: '0.06em', background: 'none', border: 'none', borderTop: r === 'month' ? `1px solid ${heroLine}` : 'none', color: heroInk, cursor: 'pointer', fontFamily: FONT_CASUAL, textAlign: 'left' }}
+                    >
+                      {r === 'week' ? 'This week' : 'This month'}
+                      {/* Rendered only when chosen, so a screen reader doesn't
+                          announce a tick against every option. */}
+                      <span style={{ fontSize: 11 }}>{range === r ? '✓' : ''}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-          <p style={{ fontSize: 11, fontStyle: 'italic', color: txt(0.5), marginTop: 8, fontFamily: FONT_PANCAKE }}>Practice daily to fill your month.</p>
+
+          {/* One bar a day for a week; one bar a week for a month, because
+              thirty bars is unreadable at phone width. */}
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-end', gap: 6, height: 76, marginTop: 14 }}>
+            {rangeStats.bars.map((b, i) => (
+              <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+                <span style={{ display: 'block', width: '100%', borderRadius: 8, height: Math.max(6, Math.round(b.v * 58)), background: b.v > 0 ? heroInk : 'rgba(255,255,255,0.16)', opacity: b.v > 0 ? 0.9 : 1, boxShadow: b.now ? '0 0 0 3px rgba(255,255,255,0.14)' : 'none', transition: 'height 0.5s ease' }} />
+                <span style={{ fontSize: 7.5, opacity: 0.6, letterSpacing: '0.06em', fontFamily: FONT_CASUAL }}>{b.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── CONTINUE — the page's answer to "what do I do now?" */}
+        {(() => {
+          const live = poseChallenges.find(c => c.status === 'active' && challengeDays[c.id]);
+          const target = live ?? poseChallenges.find(c => c.status !== 'completed') ?? poseChallenges[0];
+          const day = live ? challengeDays[live.id] : 0;
+          const pct = live && live.totalDays ? Math.round((day / live.totalDays) * 100) : 0;
+          return (
+            <div
+              onClick={() => openChallenge(target)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openChallenge(target); } }}
+              className="active:scale-[0.98] transition-transform cursor-pointer"
+              style={{ position: 'relative', overflow: 'hidden', borderRadius: 22, marginTop: 14, padding: '15px 15px 14px', background: live ? target.grad : (isDark ? 'linear-gradient(150deg,rgba(90,70,110,0.45),rgba(20,17,26,0.8))' : 'linear-gradient(150deg,rgba(110,76,122,0.75),rgba(50,14,59,0.9))'), border: live ? 'none' : `1px dashed ${cardBorder}`, boxShadow: '0 12px 30px rgba(20,14,30,0.35)', color: '#F3EAF2', display: 'flex', gap: 13, alignItems: 'center' }}
+            >
+              <span style={{ width: 64, height: 64, borderRadius: 20, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30, background: 'rgba(255,255,255,0.14)', border: '0.5px solid rgba(255,255,255,0.22)', opacity: live ? 1 : 0.75 }}>{target.emoji}</span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', gap: 5, marginBottom: 5 }}>
+                  {live ? (
+                    <>
+                      <span style={{ fontSize: 7.5, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700, borderRadius: 999, padding: '3px 8px', background: 'rgba(160,195,130,0.9)', color: '#1c2a12' }}>Active</span>
+                      <span style={{ fontSize: 7.5, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700, borderRadius: 999, padding: '3px 8px', background: 'rgba(255,255,255,0.18)' }}>Day {day} of {target.totalDays}</span>
+                    </>
+                  ) : (
+                    <span style={{ fontSize: 7.5, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700, borderRadius: 999, padding: '3px 8px', background: 'rgba(255,255,255,0.18)' }}>Nothing started</span>
+                  )}
+                </div>
+                <h3 style={{ fontFamily: FONT_PANCAKE, fontSize: 19, fontWeight: 600, margin: 0, lineHeight: 1.1 }}>{live ? target.name : 'Start a challenge'}</h3>
+                <p style={{ fontSize: 10, opacity: 0.75, margin: '2px 0 7px', fontFamily: FONT_CASUAL }}>
+                  {live ? `${target.category} · 15 min today` : `${target.name} · ${target.category} · ${target.totalDays ?? 30} days`}
+                </p>
+                {live && (
+                  <div style={{ height: 4, borderRadius: 999, background: 'rgba(255,255,255,0.20)', overflow: 'hidden' }}>
+                    <span style={{ display: 'block', height: '100%', width: `${pct}%`, borderRadius: 999, background: '#fff', transition: 'width 0.9s ease' }} />
+                  </div>
+                )}
+              </div>
+              <span style={{ width: 42, height: 42, borderRadius: '50%', flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.92)', boxShadow: '0 6px 18px rgba(0,0,0,0.35)' }}>
+                <Play style={{ width: 15, height: 15, color: '#1a2233', marginLeft: 2 }} fill="#1a2233" />
+              </span>
+            </div>
+          );
+        })()}
+
+        {/* ── YOUR NUMBERS — led by the streak */}
+        <SectionHead action={<span style={{ fontSize: 10, color: acc(0.5), fontFamily: FONT_CASUAL }}>This month</span>}>Your Numbers</SectionHead>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.15fr 1fr', gap: 10 }}>
+          <div style={{ ...sectionCard, borderRadius: 18, padding: '12px 13px 10px', display: 'flex', flexDirection: 'column', gap: 9 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+              <span style={{ width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, background: 'rgba(232,131,106,0.22)' }}>🔥</span>
+              <div>
+                <p style={{ fontFamily: FONT_PANCAKE, fontSize: 26, fontWeight: 600, lineHeight: 1, color: TITLE, margin: 0 }}>{streak}</p>
+                <p style={{ fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700, color: txt(0.45), margin: '1px 0 0', fontFamily: FONT_CASUAL }}>Day streak</p>
+              </div>
+            </div>
+            {/* the week laid out, so the run — and what would break it — is visible */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 3 }}>
+              {weekMarks.map((m, i) => (
+                <span key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+                  <span style={{ width: 17, height: 17, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, background: m.done ? 'rgba(232,131,106,0.92)' : (isDark ? 'rgba(255,240,215,0.14)' : 'rgba(50,14,59,0.14)'), color: m.done ? '#2a1208' : 'transparent', boxShadow: m.today ? '0 0 0 2px rgba(232,131,106,0.45)' : 'none' }}>✓</span>
+                  <span style={{ fontSize: 7, color: txt(0.45), fontWeight: 700, fontFamily: FONT_CASUAL }}>{m.label}</span>
+                </span>
+              ))}
+            </div>
+            <p style={{ fontSize: 8.5, color: txt(0.45), margin: 0, letterSpacing: '0.04em', fontFamily: FONT_CASUAL }}>
+              {streakOpen ? 'Practise today to keep it' : 'Logged today — nice one'}
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateRows: '1fr 1fr', gap: 10 }}>
+            <div style={{ ...sectionCard, borderRadius: 18, padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 9 }}>
+              <span style={{ width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, background: 'rgba(214,178,130,0.22)' }}>⏱</span>
+              <div>
+                <p style={{ fontFamily: FONT_PANCAKE, fontSize: 21, fontWeight: 600, lineHeight: 1, color: TITLE, margin: 0 }}>{minutes}</p>
+                <p style={{ fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700, color: txt(0.45), margin: '1px 0 0', fontFamily: FONT_CASUAL }}>Minutes</p>
+              </div>
+            </div>
+            <div style={{ ...sectionCard, borderRadius: 18, padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 9 }}>
+              <span style={{ width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, background: 'rgba(160,195,130,0.20)' }}>⭐</span>
+              <div>
+                <p style={{ fontFamily: FONT_PANCAKE, fontSize: 21, fontWeight: 600, lineHeight: 1, color: TITLE, margin: 0 }}>{bestScore || '—'}</p>
+                <p style={{ fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700, color: txt(0.45), margin: '1px 0 0', fontFamily: FONT_CASUAL }}>Best score</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* YOUR PLAN */}
@@ -373,20 +571,22 @@ export default function ChallengesPage() {
 
         {/* CHALLENGES */}
         <SectionHead>Challenges</SectionHead>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        {/* Segmented pills — a control, not a row of labels. */}
+        <div className='sy-rail' style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 4 }}>
           {(['All', ...CATEGORIES] as const).map(cat => {
             const on = selectedCategory === cat;
             return (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
+                aria-pressed={on}
                 style={{
-                  borderRadius: 999, padding: '6px 14px', fontSize: 11, whiteSpace: 'nowrap', cursor: 'pointer',
-                  border: `0.5px solid ${on ? acc(0.85) : acc(0.28)}`,
-                  background: on
-                    ? (isDark ? 'linear-gradient(180deg, rgba(214,178,130,0.92), rgba(193,154,107,0.78))' : '#320E3B')
-                    : (isDark ? 'rgba(193,154,107,0.05)' : 'rgba(255,255,255,0.10)'),
-                  color: on ? (isDark ? '#2a1e12' : 'rgba(255,248,235,0.95)') : txt(0.7), fontWeight: on ? 600 : 400, fontFamily: FONT_CASUAL,
+                  flex: 'none', borderRadius: 999, padding: '8px 14px', fontSize: 11, whiteSpace: 'nowrap', cursor: 'pointer',
+                  fontWeight: 600, fontFamily: FONT_CASUAL, transition: 'all 0.18s ease',
+                  border: on ? '1px solid transparent' : '0.5px solid ' + cardBorder,
+                  background: on ? (isDark ? 'rgba(214,178,130,0.92)' : '#320E3B') : (isDark ? 'rgba(255,240,215,0.07)' : 'rgba(255,255,255,0.55)'),
+                  color: on ? (isDark ? '#2a1e12' : 'rgba(255,248,235,0.96)') : txt(0.66),
+                  boxShadow: on ? (isDark ? '0 6px 16px rgba(0,0,0,0.4)' : '0 6px 16px rgba(50,14,59,0.22)') : 'none',
                 }}
               >
                 {cat}
@@ -394,25 +594,39 @@ export default function ChallengesPage() {
             );
           })}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 10 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 10 }}>
           {visibleChallenges.map(c => (
-            <div key={c.id} onClick={() => openChallenge(c)} style={{ borderRadius: 14, overflow: 'hidden', border: `0.5px solid ${cardBorder}`, background: card, position: 'relative', cursor: 'pointer' }}>
+            <div key={c.id} onClick={() => openChallenge(c)} className="active:scale-[0.97] transition-transform" style={{ borderRadius: 18, overflow: 'hidden', border: `0.5px solid ${cardBorder}`, background: card, position: 'relative', cursor: 'pointer', boxShadow: isDark ? '0 10px 24px rgba(0,0,0,0.42)' : '0 10px 24px rgba(90,80,120,0.16)' }}>
               <BookmarkBtn active={bookmarks.includes(c.id)} onToggle={() => toggleBookmark(c.id)} />
-              <div style={{ height: 88, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 34, background: c.grad }}>
+              <div style={{ height: 82, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, background: c.grad }}>
                 {c.emoji}
-                {c.status === 'active' && challengeDays[c.id] && (
-                  <span style={{ position: 'absolute', bottom: 7, left: 7, fontSize: 8, letterSpacing: 0.5, textTransform: 'uppercase', color: 'rgba(255,240,215,0.9)', background: 'rgba(0,0,0,0.5)', borderRadius: 999, padding: '2px 7px' }}>Day {challengeDays[c.id]}/{c.totalDays}</span>
+                {/* Status reads at a glance, so started and untouched challenges
+                    no longer look identical. */}
+                {c.status === 'active' && (
+                  <span style={{ position: 'absolute', top: 7, left: 7, fontSize: 7, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 700, color: '#1c2a12', background: 'rgba(160,195,130,0.92)', borderRadius: 999, padding: '3px 7px' }}>Active</span>
                 )}
                 {c.status === 'completed' && (
-                  <span style={{ position: 'absolute', bottom: 7, left: 7, fontSize: 8, letterSpacing: 0.5, textTransform: 'uppercase', color: 'rgba(160,195,130,0.95)', background: 'rgba(0,0,0,0.5)', borderRadius: 999, padding: '2px 7px' }}>Completed</span>
+                  <span style={{ position: 'absolute', top: 7, left: 7, fontSize: 7, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 700, color: '#FFF8EB', background: 'rgba(255,255,255,0.22)', borderRadius: 999, padding: '3px 7px' }}>Done</span>
                 )}
               </div>
-              <div style={{ padding: '8px 10px 10px' }}>
-                <div style={{ fontFamily: FONT_PANCAKE, fontSize: 14, fontWeight: 600, color: TITLE, lineHeight: 1.1 }}>{c.name}</div>
+              <div style={{ padding: '9px 10px 10px' }}>
+                <div style={{ fontFamily: FONT_PANCAKE, fontSize: 15, fontWeight: 600, color: TITLE, lineHeight: 1.15 }}>{c.name}</div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 5 }}>
-                  <span style={{ fontSize: 8, letterSpacing: 1, textTransform: 'uppercase', color: acc(0.7) }}>{c.category}</span>
+                  <span style={{ fontSize: 7.5, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700, color: txt(0.45), fontFamily: FONT_CASUAL }}>{c.category}</span>
                   <Stars n={c.difficulty} />
                 </div>
+                {(() => {
+                  const pct = c.status === 'completed' ? 100
+                    : (c.status === 'active' && challengeDays[c.id] && c.totalDays)
+                      ? Math.round((challengeDays[c.id] / c.totalDays) * 100)
+                      : 0;
+                  if (!pct) return null;
+                  return (
+                    <div style={{ height: 3, borderRadius: 999, background: isDark ? 'rgba(255,240,215,0.14)' : 'rgba(50,14,59,0.14)', marginTop: 7, overflow: 'hidden' }}>
+                      <span style={{ display: 'block', height: '100%', width: `${pct}%`, borderRadius: 999, background: acc(0.9), transition: 'width 0.9s ease' }} />
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           ))}
@@ -420,9 +634,9 @@ export default function ChallengesPage() {
 
         {/* PROGRAMS */}
         <SectionHead>Programs · multi-day</SectionHead>
-        <div style={{ display: 'flex', gap: 10 }}>
+        <div className='sy-rail' style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 6 }}>
           {programs.map(p => (
-            <div key={p.id} style={{ flex: 1, borderRadius: 14, border: `0.5px solid ${acc(0.2)}`, background: isDark ? 'linear-gradient(160deg, rgba(193,154,107,0.14), rgba(13,20,30,0.5))' : 'rgba(255,255,255,0.12)', padding: '12px 8px 10px', textAlign: 'center', position: 'relative' }}>
+            <div key={p.id} style={{ flex: '0 0 118px', borderRadius: 18, border: `0.5px solid ${acc(0.2)}`, background: isDark ? 'linear-gradient(160deg, rgba(193,154,107,0.14), rgba(13,20,30,0.5))' : 'rgba(255,255,255,0.12)', padding: '12px 8px 10px', textAlign: 'center', position: 'relative' }}>
               <BookmarkBtn active={bookmarks.includes(p.id)} onToggle={() => toggleBookmark(p.id)} />
               <div style={{ fontFamily: FONT_PANCAKE, fontSize: 24, fontWeight: 600, color: TITLE, lineHeight: 1 }}>{p.days}</div>
               <div style={{ fontSize: 8, letterSpacing: 1, textTransform: 'uppercase', color: acc(0.7) }}>day</div>
@@ -434,9 +648,9 @@ export default function ChallengesPage() {
 
         {/* QUICK ROUTINES */}
         <SectionHead>Quick Routines</SectionHead>
-        <div style={{ display: 'flex', gap: 10 }}>
+        <div className='sy-rail' style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 6 }}>
           {routines.map(r => (
-            <div key={r.id} style={{ flex: 1, borderRadius: 14, border: `0.5px solid ${acc(0.2)}`, background: card, padding: 12, position: 'relative' }}>
+            <div key={r.id} style={{ flex: '0 0 118px', borderRadius: 18, border: `0.5px solid ${acc(0.2)}`, background: card, padding: 12, position: 'relative' }}>
               <BookmarkBtn active={bookmarks.includes(r.id)} onToggle={() => toggleBookmark(r.id)} />
               <div style={{ fontSize: 22 }}>{r.icon}</div>
               <div style={{ fontFamily: FONT_PANCAKE, fontSize: 15, color: TITLE, marginTop: 4 }}>{r.name}</div>
