@@ -237,6 +237,14 @@ export default function ChallengesPage() {
   const sectionCard: React.CSSProperties = { borderRadius: 16, border: `0.5px solid ${cardBorder}`, background: card, backdropFilter: 'blur(14px)' };
 
   const [selectedCategory, setSelectedCategory] = useState<'All' | Category>('All');
+
+  // Arriving from a profile interest tile pre-selects that category.
+  // Read from the URL directly rather than useSearchParams, which would drag a
+  // Suspense boundary around this whole page.
+  useEffect(() => {
+    const cat = new URLSearchParams(window.location.search).get('category');
+    if (cat && (CATEGORIES as string[]).includes(cat)) setSelectedCategory(cat as Category);
+  }, []);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
 
   const [practicedDaysCount, setPracticedDaysCount] = useState(0);

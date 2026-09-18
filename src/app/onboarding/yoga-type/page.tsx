@@ -69,7 +69,10 @@ export default function InterestedPosesPage() {
     setIsSubmitting(true);
     try {
       await createUserProfileDocument(user, { interestedPoses: data.interestedPoses });
-      router.push('/onboarding/profile-summary');
+      // Reached from the profile's interest tiles (?edit=1) — go back there
+      // rather than pushing on through the rest of onboarding.
+      const isEdit = new URLSearchParams(window.location.search).get('edit') === '1';
+      router.push(isEdit ? '/profile' : '/onboarding/profile-summary');
     } catch (error) {
       console.error("Error saving interested poses:", error);
       toast({

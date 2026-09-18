@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth, createUserProfileDocument } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Save, Share2, Copy, MessageSquare, Sun, Moon, Pencil, KeyRound, Star, Crown, LogOut } from 'lucide-react';
+import { Save, Share2, Copy, MessageSquare, Sun, Moon, Pencil, KeyRound, Star, Crown, LogOut, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { firestore } from '@/lib/firebase/clientApp';
 import { collection, query, where, getDocs, orderBy, limit, doc, getDoc } from 'firebase/firestore';
@@ -25,6 +25,7 @@ import { Badge } from '@/components/ui/badge';
 import { format, subDays, startOfDay, startOfWeek, isToday, isYesterday, differenceInDays } from 'date-fns';
 import { TierBadge } from '@/components/ui/tier-badge';
 import { GlossyButton } from '@/components/ui/glossy-button';
+import { allCollectibles } from '@/components/features/dashboard/rock-data';
 
 const usernameChangeSchema = z.object({
   username: z.string().min(2, { message: "Username must be at least 2 characters" }).max(30, { message: "Username cannot be longer than 30 characters" }),
@@ -42,6 +43,19 @@ const passwordChangeSchema = z.object({
 });
 
 type PasswordChangeFormValues = z.infer<typeof passwordChangeSchema>;
+
+// The pose interests saved at onboarding, with the illustration for each and the
+// challenge category a tile opens.
+const POSE_INTERESTS: Record<string, { label: string; image: string; category: string }> = {
+  'dynamic-flow':         { label: 'Dynamic Flow',           image: '/images/dynamic_flow.png',        category: 'Mobility' },
+  'structural-alignment': { label: 'Structural Alignment',   image: '/images/structural_alignment.png', category: 'Strength' },
+  'inversions-balancing': { label: 'Inversions & Balancing', image: '/images/arm_balancing.png',        category: 'Balancing' },
+  'backbend':             { label: 'Backbend',               image: '/images/backbend_alignment.png',   category: 'Flexibility' },
+};
+
+// Earned collectibles — placeholder, matching the collection page, until
+// earning is recorded against the account.
+const PROFILE_COLLECTED = ['welcome_mat', 'first_analysis_block', 'join_challenge_strap'];
 
 export default function ProfilePage() {
   const { user, profile, updateUserPassword, updateUserDisplayName, signOutUser, loading: authLoading, membershipTier, isGold } = useAuth();
@@ -69,6 +83,9 @@ export default function ProfilePage() {
   const cardBorder = isDark ? 'rgba(193,154,107,0.18)' : 'rgba(255,255,255,0.40)';
   const cardShadow = isDark ? '0 8px 22px rgba(0,0,0,0.45)' : '0 8px 22px rgba(90,80,120,0.16)';
   const cardHi = isDark ? 'rgba(255,240,215,0.10)' : 'rgba(255,255,255,0.60)';
+  // Cover plane — gold hairlines on dark, cream on the amethyst cover in light.
+  const coverLine = isDark ? 'rgba(193,154,107,0.30)' : 'rgba(255,248,235,0.32)';
+  const coverInk  = isDark ? 'rgba(255,240,215,0.96)' : 'rgba(255,248,235,0.97)';
   const NAME_C = isDark ? 'rgba(255,240,215,0.94)' : 'rgba(255,248,235,0.96)';
   const NAME_SH = isDark ? 'none' : '0 1px 3px rgba(70,60,80,0.32)';
   // Account card shares the same frosted-gradient surface as the other cards.
@@ -92,6 +109,24 @@ export default function ProfilePage() {
   const [habitsPercent, setHabitsPercent] = useState(0);
   const [recentPractices, setRecentPractices] = useState<any[]>([]);
   const [commitmentDays, setCommitmentDays] = useState<number>(5);
+  // Raw figures behind the rings — tapping a ring flips the percentage to these.
+  const [practiceRaw, setPracticeRaw] = useState('—');
+  const [moodRaw,     setMoodRaw]     = useState('—');
+  const [habitsRaw,   setHabitsRaw]   = useState('—');
+  const [interests,   setInterests]   = useState<string[]>([]);
+  const [flipped,     setFlipped]     = useState<Record<string, boolean>>({});
+  const coverRef = useRef<HTMLDivElement | null>(null);
+
+  // The cover drifts at about half the page's speed, so the card reads as
+  // floating in front of it rather than printed on it.
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const onScroll = () => {
+      if (coverRef.current) coverRef.current.style.transform = `translateY(${window.scrollY * 0.45}px)`;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const { 
     register: registerUsername, 
@@ -132,6 +167,9 @@ export default function ProfilePage() {
           days = profileSnap.data().commitmentDays;
           setCommitmentDays(days);
         }
+        if (profileSnap.exists() && Array.isArray(profileSnap.data().interestedPoses)) {
+          setInterests(profileSnap.data().interestedPoses as string[]);
+        }
 
         // 1. Practice — this week's hours vs the weekly goal
         const analysesRef = collection(firestore, 'users', user.uid, 'poseAnalyses');
@@ -139,6 +177,7 @@ export default function ProfilePage() {
         const weekAnalysesSnap = await getDocs(query(analysesRef, where('createdAt', '>=', weekStart)));
         const weeklyExerciseHrs = (weekAnalysesSnap.size * 15) / 60;
         setPracticePercent(Math.min(Math.round((weeklyExerciseHrs / days) * 100), 100));
+        setPracticeRaw(`${Math.round(weeklyExerciseHrs * 10) / 10} of ${days} hrs`);
 
         // 2. Recent Practices
         const practicesQuery = query(analysesRef, orderBy('createdAt', 'desc'), limit(5));
@@ -150,6 +189,7 @@ export default function ProfilePage() {
         const moodsQuery = query(moodsRef, where('loggedAt', '>=', startOfSevenDaysAgo));
         const moodsSnap = await getDocs(moodsQuery);
         setMoodPercent(Math.min(Math.round((moodsSnap.size / 7) * 100), 100));
+        setMoodRaw(`${moodsSnap.size} of 7 days`);
 
         // 4. Habits (Last 7 days)
         const habitsRef = collection(firestore, 'users', user.uid, 'habits');
@@ -160,6 +200,7 @@ export default function ProfilePage() {
           totalCompleted += (doc.data().completed || []).length;
         });
         setHabitsPercent(Math.min(Math.round((totalCompleted / (5 * 7)) * 100), 100));
+        setHabitsRaw(`${totalCompleted} of 35`);
       };
 
       fetchProgress();
@@ -234,111 +275,143 @@ export default function ProfilePage() {
 
   return (
     <AppShell>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');`}</style>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');
+        .sy-rail{ -ms-overflow-style:none; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+        .sy-rail::-webkit-scrollbar{ display:none; }`}</style>
       <div className="relative min-h-[calc(100vh-4rem)]">
         <div className="relative z-10 flex flex-col h-full">
             
-            {/* PROFILE HERO — full-bleed brand banner with the avatar overlapping */}
-            <header
-              className="relative flex flex-col items-center text-center overflow-hidden"
-              style={{
-                paddingTop: 48,
-                // Room at the foot for the cover to dissolve into the page ground.
-                paddingBottom: 60,
-              }}
-            >
-                {/*
-                  The cover colour lives on its own layer so it can fade out at the
-                  bottom without taking the avatar and name with it — no hard edge
-                  between the cover and My Progress, just a dissolve. Each theme on
-                  its own terms: warm amber-ink ("candle-lit evening") on dark — gold
-                  leads dark, never amethyst — and deep amethyst on lavender in light.
-                */}
-                <div
-                  aria-hidden="true"
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    zIndex: 0,
-                    background: isDark
-                      ? 'linear-gradient(150deg,#3A2D1E 0%,#2A2320 50%,#1E1A20 100%)'
-                      : 'linear-gradient(150deg,#5B3A6E 0%,#3E2352 55%,#320E3B 100%)',
-                    maskImage: 'linear-gradient(to bottom, #000 0%, #000 82%, rgba(0,0,0,0.45) 93%, rgba(0,0,0,0) 100%)',
-                    WebkitMaskImage: 'linear-gradient(to bottom, #000 0%, #000 82%, rgba(0,0,0,0.45) 93%, rgba(0,0,0,0) 100%)',
-                  }}
-                />
-
-                {/* orbit motif */}
-                <div aria-hidden="true" style={{ position: 'absolute', top: -46, right: -30, width: 180, height: 180, borderRadius: '50%', border: `1px dashed ${isDark ? 'rgba(193,154,107,0.28)' : 'rgba(255,255,255,0.28)'}` }}>
-                  <span style={{ position: 'absolute', top: -3, left: '50%', transform: 'translateX(-50%)', width: 6, height: 6, borderRadius: '50%', background: isDark ? 'rgba(193,154,107,0.85)' : 'rgba(255,255,255,0.85)' }} />
-                </div>
-                <div aria-hidden="true" style={{ position: 'absolute', bottom: -60, left: -40, width: 150, height: 150, borderRadius: '50%', border: `1px solid ${isDark ? 'rgba(193,154,107,0.12)' : 'rgba(255,255,255,0.14)'}` }} />
-
-                {/* Everything readable sits above the colour layer. */}
-                <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-
-                {/* avatar */}
-                <div style={{ position: 'relative' }}>
-                  <div
-                    style={{
-                      width: 92,
-                      height: 92,
-                      borderRadius: '50%',
-                      overflow: 'hidden',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      border: `2px solid ${isDark ? 'rgba(193,154,107,0.6)' : 'rgba(255,248,235,0.7)'}`,
-                      boxShadow: `0 0 0 6px ${isDark ? 'rgba(193,154,107,0.10)' : 'rgba(255,255,255,0.14)'}, 0 6px 18px rgba(0,0,0,0.4)`,
-                      background: isDark ? 'rgba(20,17,16,0.72)' : '#4A2E6B',
-                    }}
-                  >
-                    {avatarUrl ? (
-                      <img src={avatarUrl} alt={displayNameResolved || 'Profile'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : (
-                      <span style={{ fontSize: 36, color: 'rgba(255,248,235,0.9)', fontFamily: "'Cormorant Garamond', serif" }}>
-                        {(displayNameResolved?.[0] || user?.email?.[0] || 'U').toUpperCase()}
-                      </span>
-                    )}
+            {/*
+              PROFILE HERO — three planes, not one. The cover sits behind, the
+              identity card in front of it, and the avatar bridges the two by
+              breaking out of the card's top edge. That overlap is what stops
+              the page reading as flat.
+            */}
+            <header style={{ position: 'relative' }}>
+              {/* plane 1 — the cover */}
+              <div
+                ref={coverRef}
+                aria-hidden="true"
+                style={{
+                  // Anchored 160px above its slot and that much taller, so the
+                  // parallax drift can never expose the page behind it.
+                  position: 'absolute', top: -160, left: 0, right: 0, height: 338, overflow: 'hidden', willChange: 'transform',
+                  background: isDark
+                    ? 'linear-gradient(150deg,#3A2D1E 0%,#2A2320 52%,#1E1A20 100%)'
+                    : 'linear-gradient(150deg,#5B3A6E 0%,#3E2352 55%,#320E3B 100%)',
+                }}
+              >
+                {/* the visible 178px, where the motif and the foot fade live */}
+                <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 178 }}>
+                  <div style={{ position: 'absolute', top: -56, right: -40, width: 180, height: 180, borderRadius: '50%', border: `1px dashed ${coverLine}` }}>
+                    <span style={{ position: 'absolute', top: -3, left: '50%', transform: 'translateX(-50%)', width: 6, height: 6, borderRadius: '50%', background: coverInk, opacity: 0.85 }} />
                   </div>
-                  <a
-                    href="/onboarding/gender-profile?edit=1"
-                    aria-label="Edit profile"
-                    style={{ position: 'absolute', bottom: 2, right: 2, width: 26, height: 26, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: isDark ? 'rgba(214,178,130,0.95)' : '#FBF4E6', border: 'none' }}
-                  >
-                    <Pencil style={{ width: 13, height: 13, color: isDark ? '#1a1210' : '#320E3B' }} />
-                  </a>
+                  <div style={{ position: 'absolute', top: -26, right: -8, width: 112, height: 112, borderRadius: '50%', border: `1px solid ${coverLine}`, opacity: 0.5 }} />
+                  <div style={{ position: 'absolute', bottom: -70, left: -46, width: 150, height: 150, borderRadius: '50%', border: `1px solid ${coverLine}`, opacity: 0.35 }} />
+                  {/* the cover fades out at its foot so it never ends on a hard line */}
+                  <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(to bottom, transparent 62%, ${isDark ? 'rgba(13,24,33,0.85)' : 'rgba(223,214,239,0.75)'} 100%)` }} />
                 </div>
+              </div>
 
-                {/* name + tagline */}
-                <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 26, fontWeight: 600, color: 'rgba(255,248,235,0.97)', textShadow: '0 1px 8px rgba(20,10,25,0.4)', margin: '12px 0 0' }}>
-                  {user?.displayName || user?.email?.split('@')[0] || 'Yogi'}
-                </h2>
-                <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 12.5, color: 'rgba(255,248,235,0.72)', margin: '3px 0 0', padding: '0 40px' }}>
-                  &ldquo;Move with your breath, rest with the moon.&rdquo;
-                </p>
+              {/* plane 2 — the identity card, lifted off the cover */}
+              <div style={{ position: 'relative', padding: '104px 14px 0' }}>
+                <div style={{
+                  position: 'relative',
+                  borderRadius: 22,
+                  background: isDark
+                    ? 'linear-gradient(160deg,rgba(38,33,30,0.96),rgba(22,19,24,0.96))'
+                    : 'linear-gradient(160deg,rgba(255,253,250,0.98),rgba(246,241,252,0.98))',
+                  border: `1px solid ${isDark ? 'rgba(193,154,107,0.20)' : 'rgba(255,255,255,0.70)'}`,
+                  boxShadow: isDark ? '0 18px 40px rgba(0,0,0,0.55)' : '0 18px 40px rgba(60,40,80,0.22)',
+                  padding: '52px 16px 0',
+                  textAlign: 'center',
+                }}>
+                  {/* plane 3 — the avatar, breaking the card's edge */}
+                  <div style={{ position: 'absolute', top: -46, left: '50%', transform: 'translateX(-50%)' }}>
+                    <div style={{
+                      position: 'relative', width: 92, height: 92, borderRadius: '50%', overflow: 'visible',
+                      border: `3px solid ${isDark ? '#241F26' : '#FFFDFA'}`,
+                      boxShadow: isDark
+                        ? '0 10px 24px rgba(0,0,0,0.55), 0 0 0 4px rgba(193,154,107,0.22)'
+                        : '0 10px 24px rgba(60,40,80,0.30), 0 0 0 4px rgba(255,255,255,0.55)',
+                      background: isDark ? 'linear-gradient(160deg,#4A3A22,#241C16)' : '#4A2E6B',
+                    }}>
+                      <div style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {avatarUrl ? (
+                          <img src={avatarUrl} alt={displayNameResolved || 'Profile'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <span style={{ fontSize: 36, color: 'rgba(255,248,235,0.92)', fontFamily: "'Cormorant Garamond', serif" }}>
+                            {(displayNameResolved?.[0] || user?.email?.[0] || 'U').toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+                      <a
+                        href="/onboarding/gender-profile?edit=1"
+                        aria-label="Edit your character"
+                        style={{
+                          position: 'absolute', right: -2, bottom: -2, width: 26, height: 26, borderRadius: '50%',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          background: isDark ? 'rgba(214,178,130,0.95)' : '#FBF4E6',
+                          border: `2px solid ${isDark ? '#241F26' : '#FFFDFA'}`,
+                        }}
+                      >
+                        <Pencil style={{ width: 12, height: 12, color: isDark ? '#1a1210' : '#320E3B' }} />
+                      </a>
+                    </div>
+                  </div>
 
-                {/* chips */}
-                <div style={{ display: 'flex', gap: 7, marginTop: 12 }}>
-                  <span style={{ fontSize: 8.5, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700, padding: '4px 11px', borderRadius: 999, background: 'rgba(214,178,130,0.95)', color: '#2a1e12' }}>
-                    {isGold ? 'Gold' : 'Trial'}
-                  </span>
-                  <span style={{ fontSize: 8.5, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700, padding: '4px 11px', borderRadius: 999, background: 'rgba(255,248,235,0.16)', color: 'rgba(255,248,235,0.9)', border: '0.5px solid rgba(255,248,235,0.3)' }}>
-                    🔥 7-day streak
-                  </span>
+                  <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 24, fontWeight: 600, color: txt(0.94), margin: 0 }}>
+                    {displayNameResolved || user?.email?.split('@')[0] || 'Yogi'}
+                  </h2>
+                  {/* A brand line, the same for everyone — deliberately not editable. */}
+                  <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: 12.5, color: txt(0.62), margin: '3px 0 0', padding: '0 18px' }}>
+                    &ldquo;Move with your breath, rest with the moon.&rdquo;
+                  </p>
+
+                  <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginTop: 10 }}>
+                    <span style={{ fontSize: 8, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: isDark ? 'rgba(214,178,130,0.95)' : '#E8C98A', color: '#2a1e12' }}>
+                      {isGold ? 'Gold' : 'Trial'}
+                    </span>
+                    <span style={{ fontSize: 8, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700, padding: '4px 10px', borderRadius: 999, border: `0.5px solid ${cardBorder}`, background: isDark ? 'rgba(255,240,215,0.07)' : 'rgba(50,14,59,0.05)', color: txt(0.66) }}>
+                      🔥 7-day streak
+                    </span>
+                  </div>
+
+                  {/* the divided action strip */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', marginTop: 16, borderTop: `1px solid ${cardBorder}` }}>
+                    {[
+                      { href: '/snap-yoga',             Icon: Star,   n: recentPractices.length, w: 'Practices' },
+                      { href: '/practice-calendar',     Icon: MessageSquare, n: commitmentDays,  w: 'Days/week' },
+                      { href: '/yoga-collection',       Icon: Share2, n: 3,                      w: 'Collected' },
+                    ].map((a, i) => {
+                      const A = a.Icon;
+                      return (
+                        <Link
+                          key={a.w}
+                          href={a.href}
+                          className="active:opacity-70 transition-opacity"
+                          style={{ padding: '13px 4px 14px', textAlign: 'center', textDecoration: 'none', borderLeft: i === 0 ? 'none' : `1px solid ${cardBorder}` }}
+                        >
+                          <A style={{ width: 19, height: 19, color: acc(isDark ? 0.9 : 0.75), margin: '0 auto' }} />
+                          <b style={{ display: 'block', fontFamily: "'Cormorant Garamond', serif", fontSize: 17, fontWeight: 600, color: txt(0.92), marginTop: 4, lineHeight: 1 }}>{a.n}</b>
+                          <span style={{ display: 'block', fontSize: 8, letterSpacing: '0.16em', textTransform: 'uppercase', color: txt(0.44), marginTop: 4 }}>{a.w}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
                 </div>
-
-                </div>
+              </div>
             </header>
 
             <main className="flex-grow container mx-auto px-4 mt-4">
               <div className="max-w-2xl mx-auto space-y-8 w-full pb-12">
                   
-                  {/* MY PROGRESS */}
+                  {/* MY PROGRESS — each ring is a button: tap to swap the
+                      percentage for the figure behind it. */}
                   <div className="space-y-1">
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                         <p style={{ fontSize: 9, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: isDark ? 'rgba(193,154,107,0.55)' : '#320E3B' }}>My Progress</p>
-                        <span style={{ fontSize: 11, color: acc(0.40) }}>This Week</span>
+                        <span style={{ fontSize: 11, color: acc(0.40) }}>Tap a ring</span>
                       </div>
                       <div style={{
                         borderRadius: 20,
@@ -349,37 +422,107 @@ export default function ProfilePage() {
                         boxShadow: `${cardShadow}, inset 0 1px 0 ${cardHi}`,
                       }}>
                         <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'flex-end' }}>
-                          <div className="flex flex-col items-center gap-2">
-                            <svg width="58" height="58" viewBox="0 0 58 58">
-                              <circle cx="29" cy="29" r="24" fill="none" stroke={isDark ? 'rgba(255,240,215,0.07)' : 'rgba(50,14,59,0.10)'} strokeWidth="5"/>
-                              <circle cx="29" cy="29" r="24" fill="none" stroke={acc(0.85)} strokeWidth="5"
-                                strokeDasharray="150.8" strokeDashoffset={getOffset(practicePercent)} strokeLinecap="round"
-                                transform="rotate(-90 29 29)"/>
-                              <text x="29" y="34" textAnchor="middle" fontSize="13" fontWeight="700" fill={txt(0.92)} fontFamily="Cormorant Garamond, serif">{practicePercent}%</text>
-                            </svg>
-                            <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: acc(0.80) }}>Practice</span>
-                          </div>
-                          <div className="flex flex-col items-center gap-2">
-                            <svg width="58" height="58" viewBox="0 0 58 58">
-                              <circle cx="29" cy="29" r="24" fill="none" stroke={isDark ? 'rgba(255,240,215,0.07)' : 'rgba(50,14,59,0.10)'} strokeWidth="5"/>
-                              <circle cx="29" cy="29" r="24" fill="none" stroke={isDark ? 'rgba(160,195,130,0.85)' : 'rgba(59,109,17,0.90)'} strokeWidth="5"
-                                strokeDasharray="150.8" strokeDashoffset={getOffset(moodPercent)} strokeLinecap="round"
-                                transform="rotate(-90 29 29)"/>
-                              <text x="29" y="34" textAnchor="middle" fontSize="13" fontWeight="700" fill={txt(0.92)} fontFamily="Cormorant Garamond, serif">{moodPercent}%</text>
-                            </svg>
-                            <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: isDark ? 'rgba(160,195,130,0.85)' : '#3B6D11' }}>Mood</span>
-                          </div>
-                          <div className="flex flex-col items-center gap-2">
-                            <svg width="58" height="58" viewBox="0 0 58 58">
-                              <circle cx="29" cy="29" r="24" fill="none" stroke={isDark ? 'rgba(255,240,215,0.07)' : 'rgba(50,14,59,0.10)'} strokeWidth="5"/>
-                              <circle cx="29" cy="29" r="24" fill="none" stroke={isDark ? 'rgba(200,140,90,0.85)' : 'rgba(168,83,28,0.90)'} strokeWidth="5"
-                                strokeDasharray="150.8" strokeDashoffset={getOffset(habitsPercent)} strokeLinecap="round"
-                                transform="rotate(-90 29 29)"/>
-                              <text x="29" y="34" textAnchor="middle" fontSize="13" fontWeight="700" fill={txt(0.92)} fontFamily="Cormorant Garamond, serif">{habitsPercent}%</text>
-                            </svg>
-                            <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: isDark ? 'rgba(200,140,90,0.85)' : '#A8531C' }}>Habits</span>
-                          </div>
+                          {[
+                            { id: 'practice', pct: practicePercent, raw: practiceRaw, label: 'Practice', color: acc(0.85) },
+                            { id: 'mood',     pct: moodPercent,     raw: moodRaw,     label: 'Mood',     color: isDark ? 'rgba(160,195,130,0.85)' : 'rgba(59,109,17,0.90)' },
+                            { id: 'habits',   pct: habitsPercent,   raw: habitsRaw,   label: 'Habits',   color: isDark ? 'rgba(200,140,90,0.85)' : 'rgba(168,83,28,0.90)' },
+                          ].map(r => {
+                            const on = !!flipped[r.id];
+                            return (
+                              <button
+                                key={r.id}
+                                type="button"
+                                aria-pressed={on}
+                                aria-label={`${r.label}: ${r.pct}%${r.raw === '—' ? '' : ` — ${r.raw}`}`}
+                                // Nothing to flip to until the figures have loaded.
+                                disabled={r.raw === '—'}
+                                onClick={() => setFlipped(f => ({ ...f, [r.id]: !f[r.id] }))}
+                                className="flex flex-col items-center gap-2 active:scale-95 transition-transform"
+                                style={{ background: 'none', border: 'none', padding: 0, cursor: r.raw === '—' ? 'default' : 'pointer' }}
+                              >
+                                <span style={{ position: 'relative', width: 58, height: 58 }}>
+                                  <svg width="58" height="58" viewBox="0 0 58 58">
+                                    <circle cx="29" cy="29" r="24" fill="none" stroke={isDark ? 'rgba(255,240,215,0.07)' : 'rgba(50,14,59,0.10)'} strokeWidth="5"/>
+                                    <circle cx="29" cy="29" r="24" fill="none" stroke={r.color} strokeWidth="5"
+                                      strokeDasharray="150.8" strokeDashoffset={getOffset(r.pct)} strokeLinecap="round"
+                                      transform="rotate(-90 29 29)" style={{ transition: 'stroke-dashoffset 0.9s ease' }}/>
+                                  </svg>
+                                  <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Cormorant Garamond', serif", fontSize: 13, fontWeight: 700, color: txt(0.92), opacity: on ? 0 : 1, transform: on ? 'scale(0.82)' : 'none', transition: 'opacity 0.25s ease, transform 0.25s ease' }}>
+                                    {r.pct}%
+                                  </span>
+                                  <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', lineHeight: 1.1, fontSize: 9, fontWeight: 600, color: txt(0.92), padding: '0 6px', opacity: on ? 1 : 0, transform: on ? 'none' : 'scale(0.82)', transition: 'opacity 0.25s ease, transform 0.25s ease' }}>
+                                    {r.raw}
+                                  </span>
+                                </span>
+                                <span style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600, color: r.color }}>{r.label}</span>
+                              </button>
+                            );
+                          })}
                         </div>
+                      </div>
+                  </div>
+
+                  {/* WHAT I PRACTISE — the pose interests chosen at onboarding,
+                      as picture tiles. Each one opens Challenges filtered to the
+                      matching category. */}
+                  <div className="space-y-1">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                        <p style={{ fontSize: 9, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: isDark ? 'rgba(193,154,107,0.55)' : '#320E3B' }}>What I Practise</p>
+                        <Link href="/onboarding/yoga-type?edit=1" style={{ fontSize: 11, color: acc(0.40), textDecoration: 'none' }}>Edit ›</Link>
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 9 }}>
+                        {interests.map(id => {
+                          const p = POSE_INTERESTS[id];
+                          if (!p) return null;
+                          return (
+                            <Link
+                              key={id}
+                              href={`/challenges?category=${p.category}`}
+                              className="active:scale-95 transition-transform"
+                              style={{ position: 'relative', borderRadius: 18, overflow: 'hidden', aspectRatio: '1 / 1.18', display: 'block', textDecoration: 'none', border: `1px solid ${cardBorder}`, boxShadow: cardShadow }}
+                            >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={p.image} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.10)' }} />
+                              <span style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(24,14,30,0.86) 0%, rgba(24,14,30,0.22) 46%, transparent 72%)' }} />
+                              <span style={{ position: 'absolute', left: 8, right: 8, bottom: 8, fontSize: 10.5, fontWeight: 600, color: '#FFF8EB', lineHeight: 1.2, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>{p.label}</span>
+                            </Link>
+                          );
+                        })}
+                        {/* A dashed slot when the row would otherwise look thin. */}
+                        {interests.filter(id => POSE_INTERESTS[id]).length < 3 && (
+                          <Link
+                            href="/onboarding/yoga-type?edit=1"
+                            aria-label="Add another pose interest"
+                            className="active:scale-95 transition-transform"
+                            style={{ borderRadius: 18, aspectRatio: '1 / 1.18', display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px dashed ${cardBorder}`, background: isDark ? 'rgba(255,240,215,0.05)' : 'rgba(50,14,59,0.04)', textDecoration: 'none' }}
+                          >
+                            <Plus style={{ width: 20, height: 20, color: acc(0.7) }} />
+                          </Link>
+                        )}
+                      </div>
+                  </div>
+
+                  {/* COLLECTION — round, tactile, and the page's reward moment */}
+                  <div className="space-y-1">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                        <p style={{ fontSize: 9, letterSpacing: '0.28em', textTransform: 'uppercase', fontWeight: 500, color: isDark ? 'rgba(193,154,107,0.55)' : '#320E3B' }}>
+                          Collection · {PROFILE_COLLECTED.length} of {allCollectibles.length}
+                        </p>
+                        <Link href="/yoga-collection" style={{ fontSize: 11, color: acc(0.40), textDecoration: 'none' }}>See all ›</Link>
+                      </div>
+                      <div className="sy-rail" style={{ display: 'flex', gap: 11, overflowX: 'auto', paddingBottom: 6 }}>
+                        {allCollectibles.map(c => {
+                          const got = PROFILE_COLLECTED.includes(c.id);
+                          return (
+                            <Link key={c.id} href="/yoga-collection" className="active:scale-95 transition-transform" style={{ flex: '0 0 66px', textAlign: 'center', textDecoration: 'none' }}>
+                              <span style={{ display: 'block', width: 66, height: 66, borderRadius: '50%', overflow: 'hidden', border: `2px solid ${cardBorder}`, background: isDark ? 'rgba(255,240,215,0.07)' : 'rgba(255,255,255,0.6)', boxShadow: cardShadow }}>
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={c.imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: got ? 'none' : 'grayscale(1)', opacity: got ? 1 : 0.4 }} />
+                              </span>
+                              <span style={{ display: 'block', fontSize: 9.5, color: txt(0.66), margin: '6px 0 0', lineHeight: 1.2 }}>{c.name}</span>
+                            </Link>
+                          );
+                        })}
                       </div>
                   </div>
 
