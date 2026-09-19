@@ -42,15 +42,33 @@ function styleFor(variant: GlossyVariant, isDark: boolean): { button: React.CSSP
           icon: { background: 'rgba(50,14,59,0.08)', border: '1px solid rgba(50,14,59,0.22)', color: 'rgba(50,14,59,0.7)' },
         };
   }
-  // primary
+  // Primary. The brand guide is explicit: "filled pill, serif label. Amethyst
+  // fill + cream text in light; translucent in dark." Light used to be a
+  // translucent pill with amethyst text, which dissolved into the lavender card.
   return isDark
     ? {
-        button: { background: 'linear-gradient(160deg, rgba(214,178,130,0.28) 0%, rgba(193,154,107,0.08) 55%, rgba(16,20,26,0.55) 100%)', border: '1px solid rgba(193,154,107,0.4)', boxShadow: '0 0 24px rgba(193,154,107,0.22), inset 0 1px 0 rgba(255,240,215,0.16)', color: 'rgba(255,240,215,0.96)' },
-        icon: { background: 'rgba(214,178,130,0.3)', border: '1px solid rgba(214,178,130,0.5)', color: 'rgba(255,240,215,0.96)' },
+        button: { background: 'linear-gradient(160deg, rgba(214,178,130,0.30) 0%, rgba(193,154,107,0.10) 55%, rgba(16,20,26,0.55) 100%)', border: '1px solid rgba(193,154,107,0.45)', boxShadow: '0 0 24px rgba(193,154,107,0.22), inset 0 1px 0 rgba(255,240,215,0.18)', color: 'rgba(255,240,215,0.96)' },
+        icon: { background: 'rgba(214,178,130,0.32)', border: '1px solid rgba(214,178,130,0.55)', color: 'rgba(255,240,215,0.96)' },
       }
     : {
-        button: { background: 'linear-gradient(160deg, rgba(50,14,59,0.12) 0%, rgba(255,255,255,0.34) 100%)', border: '1px solid rgba(50,14,59,0.28)', boxShadow: '0 6px 18px rgba(50,14,59,0.16), inset 0 1px 0 rgba(255,255,255,0.6)', color: '#320E3B' },
-        icon: { background: 'rgba(50,14,59,0.12)', border: '1px solid rgba(50,14,59,0.3)', color: '#320E3B' },
+        button: { background: 'linear-gradient(170deg, #4A2E6B 0%, #320E3B 100%)', border: '1px solid rgba(50,14,59,0.9)', boxShadow: '0 8px 20px rgba(50,14,59,0.32), inset 0 1px 0 rgba(255,255,255,0.22)', color: '#FFF8EB' },
+        icon: { background: 'rgba(255,248,235,0.16)', border: '1px solid rgba(255,248,235,0.34)', color: '#FFF8EB' },
+      };
+}
+
+/**
+ * Disabled is drawn, not dimmed. Dropping the whole pill to 55% opacity read as
+ * broken; a flat, quiet pill reads as "not yet" and stays legible.
+ */
+function disabledStyleFor(isDark: boolean): { button: React.CSSProperties; icon: React.CSSProperties } {
+  return isDark
+    ? {
+        button: { background: 'rgba(255,240,215,0.06)', border: '1px solid rgba(193,154,107,0.20)', boxShadow: 'none', color: 'rgba(255,240,215,0.40)' },
+        icon: { background: 'rgba(193,154,107,0.10)', border: '1px solid rgba(193,154,107,0.22)', color: 'rgba(255,240,215,0.38)' },
+      }
+    : {
+        button: { background: 'rgba(50,14,59,0.10)', border: '1px solid rgba(50,14,59,0.18)', boxShadow: 'none', color: 'rgba(50,14,59,0.45)' },
+        icon: { background: 'rgba(50,14,59,0.08)', border: '1px solid rgba(50,14,59,0.16)', color: 'rgba(50,14,59,0.42)' },
       };
 }
 
@@ -60,8 +78,9 @@ export const GlossyButton = React.forwardRef<HTMLButtonElement, GlossyButtonProp
   ref,
 ) {
   const { isDark } = useTheme();
-  const s = styleFor(variant, isDark);
   const off = disabled || loading;
+  // Loading keeps the live styling — the action is happening, not unavailable.
+  const s = disabled && !loading ? disabledStyleFor(isDark) : styleFor(variant, isDark);
   return (
     <button
       {...props}
@@ -76,12 +95,14 @@ export const GlossyButton = React.forwardRef<HTMLButtonElement, GlossyButtonProp
         height: 48,
         padding: icon ? '0 22px 0 9px' : '0 24px',
         borderRadius: 999,
-        fontSize: 15,
-        fontWeight: 500,
-        fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+        // Serif label, per the guide — and it matches the card heading above it.
+        fontSize: 17,
+        fontWeight: 600,
+        letterSpacing: '0.01em',
+        fontFamily: "'Cormorant Garamond', Georgia, serif",
         cursor: off ? 'not-allowed' : 'pointer',
         width: fullWidth ? '100%' : undefined,
-        opacity: off ? 0.55 : 1,
+        opacity: loading ? 0.85 : 1,
         transition: 'transform .15s ease, box-shadow .2s ease, opacity .2s ease',
         ...s.button,
         ...style,

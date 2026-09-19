@@ -28,7 +28,9 @@ type YogaGoalsFormValues = z.infer<typeof yogaGoalsSchema>;
 const mainGoalOptions = [
   { value: "flexibility", label: "Flexibility", line: "Deepen your range",  image: "/images/flexibility.png" },
   { value: "mobility",    label: "Mobility",    line: "Move with ease",     image: "/images/mobility.png" },
-  { value: "balance",     label: "Balance",     line: "Find your centre",   image: "/images/balance.png" },
+  // The uploaded file is named yoga_type_balance.png; balance.png never existed,
+  // so this card was rendering a broken image.
+  { value: "balance",     label: "Balance",     line: "Find your centre",   image: "/images/yoga_type_balance.png" },
   { value: "strength",    label: "Strength",    line: "Build steady power", image: "/images/strength.png" },
 ];
 
